@@ -1,0 +1,61 @@
+/************************************/
+/***************SIDEBAR**************/
+/************************************/
+
+.appsidebar_container {
+  /* background-color: blueviolet; */
+  height: 80px;
+  width: fit-content;
+}
+
+.appsidebar_enemlogo1 {
+  /* background-color: aqua; */
+  display: flex;
+  justify-content: right;
+  color: var(--logo);
+}
+
+.appsidebar_enemlogo2 {
+  /* background-color: aqua; */
+  display: flex;
+  justify-content: right;
+  color: var(--logo);
+  font-size: 25px;
+}
+
+/***********************************/
+/***************HEADER**************/
+/***********************************/
+
+.header_container {
+  /* background-color: aquamarine; */
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: right;
+  padding-inline: 10px;
+}
+
+/*****************************************/
+/***************THEME_BUTTON**************/
+/*****************************************/
+
+.theme_button {
+  background-color: var(--background);
+  border: none;
+  height: 35px;
+  border-radius: 99px;
+  width: 35px;
+  padding: 0; /* Garante que nada empurre o SVG */
+  line-height: 0;
+}
+
+/*********************************/
+/***************CARD**************/
+/*********************************/
+
+.cardContainer {
+  background-color:var(--panel);
+  border-radius: 1rem;
+  padding: 10px;
+}

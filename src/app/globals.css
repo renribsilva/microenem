@@ -1,0 +1,29 @@
+:root, html, body {
+  --color-fill-light: rgb(247, 247, 247);
+  --color-text-base-light: rgb(42, 42, 44);
+  --color-panel-ligth: rgb(255, 255, 255);
+  
+  --color-fill-dark: rgb(26, 26, 26); 
+  --color-text-base-dark: rgb(255, 255, 255);
+  --color-panel-dark: rgb(38, 42, 51);  
+}
+
+.dark {
+  --background: var(--color-fill-dark);
+  --foreground: var(--color-text-base-dark);
+  --panel: var(--color-panel-dark);
+  --logo: var(--color-panel-ligth)
+}
+
+.light {
+  --background: var(--color-fill-light);
+  --foreground: var(--color-text-base-light);
+  --panel: var(--color-panel-ligth);
+  --logo: var(--color-panel-dark)
+}
+
+body {
+  background-color: var(--background);
+  margin: 0;
+  height: 100%;
+}

@@ -1,0 +1,31 @@
+/***********************************/
+/**************LAYOUT***************/
+/***********************************/
+
+.home_layout {
+  background-color: var(--background);
+  display: flex;
+  min-height: 100svh;
+  min-width: 100svh;
+}
+
+.app_sidebar {
+  background-color: var(--panel);
+  min-height: 100svh; /*altura da tela*/
+  width: 250px;
+  padding: 20px;
+  box-sizing: border-box;
+  border-right: 2px solid var(--background);
+}
+
+.app_header {
+  background-color: var(--panel);
+  height: 60px;
+  padding: 5px;
+  box-sizing: border-box;
+}
+
+.app_main {
+  display: block;
+  flex: 1;
+}

@@ -7,11 +7,9 @@ interface EnemLogoProps extends React.SVGProps<SVGSVGElement> {
 const EnemLogo = ({ size, ...props }: EnemLogoProps) => {
   return (
     <svg 
-      version="1.1" 
       xmlns="http://www.w3.org/2000/svg" 
       viewBox="0 0 2500 595.1"
-      height={size || props.height || "40"}
-      width="auto"
+      height={size || props.height || "30"} 
       // Garante que a cor do texto seja aplicada ao preenchimento
       style={{ color: 'inherit', ...props.style }} 
       {...props}

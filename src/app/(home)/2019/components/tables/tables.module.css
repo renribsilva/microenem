@@ -1,0 +1,33 @@
+.table_container {
+  display: flex;
+  justify-content: center;
+}
+
+.table {
+  /* background-color: aqua; */
+  width: '100%';
+  border-collapse: collapse;
+}
+
+.table tr {
+  border-bottom: none; 
+}
+
+/* Borda apenas abaixo do cabeçalho (primeira linha do thead ou primeira do tbody) */
+.table thead tr {
+  border-bottom: 1px solid var(--grid);
+}
+
+/* Borda apenas na última linha do corpo da tabela */
+.table tbody tr:last-child {
+  border-bottom: 1px solid var(--grid);
+}
+.table th {
+  text-align: left;
+  padding: 10px
+}
+
+.table td {
+  padding: 5px;
+  font-weight: 300;
+}

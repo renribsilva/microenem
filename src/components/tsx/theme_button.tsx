@@ -20,7 +20,7 @@ function Theme() {
   }, []);
 
   if (!mounted) {
-    return <div className={styles.theme_button} style={{ visibility: 'hidden' }}><Dark/></div>;
+    return null;
   }
 
   return (

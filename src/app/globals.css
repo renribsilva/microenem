@@ -1,29 +1,36 @@
 :root, html, body {
-  --color-fill-light: rgb(247, 247, 247);
+  --color-fill-light: rgb(236, 236, 236);
   --color-text-base-light: rgb(42, 42, 44);
   --color-panel-ligth: rgb(255, 255, 255);
+  --color-grid-ligth: rgba(0, 0, 0, 0.1);
   
   --color-fill-dark: rgb(26, 26, 26); 
   --color-text-base-dark: rgb(255, 255, 255);
   --color-panel-dark: rgb(38, 42, 51);  
+  --color-grid-dark: rgba(255, 255, 255, 0.1)
 }
 
 .dark {
   --background: var(--color-fill-dark);
   --foreground: var(--color-text-base-dark);
   --panel: var(--color-panel-dark);
-  --logo: var(--color-panel-ligth)
+  --logo: var(--color-panel-ligth);
+  --shadow: rgb(24, 24, 24) 0px 0px 4px 1px;
+  --grid: var(--color-grid-dark)
 }
 
 .light {
   --background: var(--color-fill-light);
   --foreground: var(--color-text-base-light);
   --panel: var(--color-panel-ligth);
-  --logo: var(--color-panel-dark)
+  --logo: var(--color-panel-dark);
+  --shadow: rgb(202, 202, 202) 0px 0px 4px 1px;
+  --grid: var(--color-grid-ligth)
 }
 
-body {
+html, body {
   background-color: var(--background);
   margin: 0;
   height: 100%;
+  min-width: 370px
 }

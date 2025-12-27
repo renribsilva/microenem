@@ -3,37 +3,100 @@
 /************************************/
 
 .appsidebar_container {
-  /* background-color: blueviolet; */
-  height: 80px;
-  width: fit-content;
+  background-color: var(--panel);
+  border-right: 1px solid var(--background);
+  width: 250px;
+  height: 100%;
+  padding: 10px;
+  padding-top: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overscroll-behavior: contain;
+
+  /* Animação */
+  transition: transform 0.3s ease-in-out;
 }
 
-.appsidebar_enemlogo1 {
-  /* background-color: aqua; */
-  display: flex;
-  justify-content: right;
-  color: var(--logo);
+@media (max-width: 800px) {
+  .appsidebar_container {
+    position: fixed; 
+    z-index: 100;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+    height: calc(100svh - 60px);
+  }
+
+  /* Classe para quando o usuário clicar no botão de abrir no mobile */
+  .appsidebar_mobile_open {
+    transform: translateX(0);
+  }
 }
 
-.appsidebar_enemlogo2 {
-  /* background-color: aqua; */
+.appsidebar_topper {
+  background-color: aquamarine;
+  /* height: 100%; */
+  flex: 1;
   display: flex;
-  justify-content: right;
-  color: var(--logo);
-  font-size: 25px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+}
+
+.appsidebar_footer {
+  background-color: rgb(158, 100, 52);
+  padding-block: 10px;
+}
+
+/***********************************/
+/***************NAVBAR**************/
+/***********************************/
+
+.appsidebar_navbar {
+  flex: 1;
+}
+
+.appsidebar_navbar ul {
+  list-style: none;
+}
+
+.appsidebar_navbar > ul {
+  padding: 10px;
 }
 
 /***********************************/
 /***************HEADER**************/
 /***********************************/
 
-.header_container {
-  /* background-color: aquamarine; */
-  height: 100%;
+.appheader_container {
+  background-color: var(--panel);
+  height: 60px;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
-  justify-content: right;
+  justify-content: space-between;
   padding-inline: 10px;
+  position: fixed; 
+}
+
+.appheader_enemlogo {
+  /* background-color: blueviolet; */
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  justify-content: left;
+  color: var(--logo);
+  font-size: 22px;
+}
+
+@media (max-width: 800px) {
+  .appheader_enemlogo {
+    justify-content: center;
+  }
 }
 
 /*****************************************/
@@ -46,7 +109,7 @@
   height: 35px;
   border-radius: 99px;
   width: 35px;
-  padding: 0; /* Garante que nada empurre o SVG */
+  padding: 0; 
   line-height: 0;
 }
 
@@ -57,5 +120,20 @@
 .cardContainer {
   background-color:var(--panel);
   border-radius: 1rem;
-  padding: 10px;
+  padding: 20px; 
+  display: flex;
+  justify-content: center;
+}
+
+/***********************************/
+/***************FOOTER**************/
+/***********************************/
+
+.footer {
+  /* background-color: aquamarine; */
+  font-weight: 300;
+  font-size: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }

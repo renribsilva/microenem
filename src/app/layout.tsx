@@ -1,9 +1,9 @@
+'use client'
+
 import { ThemeProvider } from '../components/tsx/theme_provider';
 import './globals.css';
 import { Ubuntu } from "next/font/google"
-import styles from "./layout.module.css"
-import AppHeader from '../components/tsx/header';
-import AppSidebar from '../components/tsx/sidebar';
+import { SidebarProvider } from '../context/sidebar_context';
 
 const roboto = Ubuntu({
   subsets: ["latin"],
@@ -16,6 +16,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+
   return (
     <html lang="pt-br">
       <body className={roboto.className}>
@@ -25,17 +26,9 @@ export default function RootLayout({
           enableSystem={true}
           disableTransitionOnChange
         >
-          <div className={styles.home_layout}>
-            <div className={styles.app_sidebar}>
-              <AppSidebar />  
-            </div>
-            <div className={styles.app_main}>
-              <div className={styles.app_header}>
-                <AppHeader />
-              </div>
-              <div>{children}</div>
-            </div>
-          </div>
+          <SidebarProvider>
+            {children} 
+          </SidebarProvider>
         </ThemeProvider>
       </body>
     </html>

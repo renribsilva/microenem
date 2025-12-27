@@ -5,7 +5,7 @@ import { Doughnut } from "react-chartjs-2"
 import ChartDataLabels from 'chartjs-plugin-datalabels'; // 1. Importar o plugin
 import sexo_data from "../../json/socials/sexo.json"
 import presence_data from "../../json/overview/presenca.json"
-import { useChartTheme } from "../../../../../hooks/chart_theme";
+import { useChartTheme } from "../../../../../../hooks/chart_theme";
 
 ChartJS.register(
   DoughnutController,

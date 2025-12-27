@@ -35,8 +35,7 @@
 }
 
 .appsidebar_topper {
-  background-color: aquamarine;
-  /* height: 100%; */
+  /* background-color: aquamarine; */
   flex: 1;
   display: flex;
   overflow-y: auto;
@@ -45,7 +44,7 @@
 }
 
 .appsidebar_footer {
-  background-color: rgb(158, 100, 52);
+  /* background-color: rgb(158, 100, 52); */
   padding-block: 10px;
 }
 

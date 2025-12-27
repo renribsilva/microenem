@@ -14,7 +14,7 @@ import { Bar } from 'react-chartjs-2';
 import fx_etaria_data from "../../json/socials/faixa_etaria.json"
 import presence_data from "../../json/overview/presenca.json"
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { useChartTheme } from "../../../../../hooks/chart_theme";
+import { useChartTheme } from "../../../../../../hooks/chart_theme";
 
   ChartJS.register(
     BarController, 

@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 import cor_raca_data from "../../json/socials/cor_raca.json";
 import presence_data from "../../json/overview/presenca.json";
-import { useChartTheme } from "../../../../../hooks/chart_theme";
+import { useChartTheme } from "../../../../../../hooks/chart_theme";
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 

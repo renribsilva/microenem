@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
 
 export default function HomePage() {
-  redirect('/2019');
+  redirect('/2019/visao-geral');
 }

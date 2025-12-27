@@ -2,7 +2,6 @@
 
 import React, { useCallback, useRef, useState } from "react"
 import styles from "./components.module.css"
-import EnemLogo from "../svg/enem_logo"
 import Footer from "./footer"
 import { useSidebar } from "../../context/sidebar_context";
 import Link from "next/link"

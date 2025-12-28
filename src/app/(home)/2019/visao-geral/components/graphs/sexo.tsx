@@ -18,6 +18,7 @@ ChartJS.register(
 )
 
 export default function SEXO() {
+  
   const { textColor, panelColor } = useChartTheme();
   const doughnutColor = ["rgba(60, 245, 188, 0.7)", "rgba(245, 99, 59, 0.7)",]
 

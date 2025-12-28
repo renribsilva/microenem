@@ -11,6 +11,7 @@
 
 .table tr {
   border-bottom: none; 
+  white-space: nowrap;
 }
 
 /* Borda apenas abaixo do cabeçalho (primeira linha do thead ou primeira do tbody) */

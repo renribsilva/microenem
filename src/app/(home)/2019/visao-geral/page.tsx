@@ -1,7 +1,7 @@
 'use client'
 
 import FX_ETARIA from "./components/graphs/fx_etaria"
-import styles from "./2019.module.css"
+import styles from "./visao-geral.module.css"
 import Card from "../../../../components/tsx/card"
 import SEXO from "./components/graphs/sexo"
 import Group from "../../../../components/svg/group"
@@ -10,7 +10,6 @@ import Abstencao_dia1 from "../visao-geral/json/overview/presenca_dia1.json"
 import Abstencao_dia2 from "../visao-geral/json/overview/presenca_dia2.json"
 import Presence from "./components/tables/presence"
 import PersonCheck from "../../../../components/svg/person_check"
-import { usePathname } from "next/navigation"
 import COR_RACA from "./components/graphs/cor_raca"
 import PersonCancel from "../../../../components/svg/person_cancel"
 
@@ -25,8 +24,7 @@ const abstencao_dia2 = Abstencao_dia2[0].abst.toLocaleString('pt-BR', {
   maximumFractionDigits: 1
 }) + '%';
 
-export default function Page() {
-
+export default function Visao() {
   return (
     <section className={styles.main}>
       {/* <div className={styles.title}>
@@ -83,7 +81,7 @@ export default function Page() {
             </Card>
           </div>
           <div className={styles.block_second_right}>
-            <Card display={"flex"}>
+            <Card display={"flex"} justifyContent="center">
               <SEXO/> 
             </Card>
           </div>

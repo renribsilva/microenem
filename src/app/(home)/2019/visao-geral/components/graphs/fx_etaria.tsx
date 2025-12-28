@@ -52,6 +52,7 @@ import { useChartTheme } from "../../../../../../hooks/chart_theme";
       indexAxis: 'y' as const,
       maintainAspectRatio: false,
       responsive: true,
+      // resizeDelay: 10 as const,
       interaction: {
         mode: 'index' as const,    
         intersect: false,          
@@ -127,5 +128,11 @@ import { useChartTheme } from "../../../../../../hooks/chart_theme";
       },
     };
 
-    return <Bar options={options} data={data} />
+    return (
+      <div style={{ position: 'relative', width: '100%', height: '100%', minHeight: '300px' }}>
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
+          <Bar options={options} data={data} />
+        </div>
+      </div>
+    )
   }

@@ -1,0 +1,51 @@
+"use client";
+
+import { Tabs } from "../../../../components/tsx/tab_card";
+
+export default function QuestoesPage() {
+  // Criando o array de conteúdo para as abas
+  const listaDeQuestoes = [
+    {
+      id: 'LC',
+      label: 'Linguagens',
+      content: (
+        <div>
+          conteúdo
+        </div>
+      )
+    },
+    {
+      id: 'CH',
+      label: 'Humanas',
+      content: (
+        <div>
+          conteúdo
+        </div>
+      )
+    },
+    {
+      id: 'CN',
+      label: 'Natureza',
+      content: (
+        <div>
+          conteúdo
+        </div>
+      )
+    },
+    {
+      id: 'MT',
+      label: 'Matemática',
+      content: (
+        <div>
+          conteúdo
+        </div>
+      )
+    },
+  ];
+
+  return (
+    <main style={{ padding: '10px'}}>      
+      <Tabs items={listaDeQuestoes} />      
+    </main>
+  );
+}

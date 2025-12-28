@@ -8,6 +8,7 @@
   height: fit-content;
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 @media (max-width: 800px) {
@@ -21,7 +22,14 @@
   flex: 2;
   display: flex;
   flex-direction: column;
-  gap: 10px;  
+  gap: 10px;
+  min-width: 700px
+}
+
+@media (max-width: 800px) {
+  .block1 {
+    min-width: 340px
+  }
 }
 
 .block2 {
@@ -40,6 +48,7 @@
   display: flex;
   gap: 10px;
   min-height: 250px;
+  /* flex-wrap: wrap; */
 }
 
 @media (max-width: 800px) {
@@ -50,27 +59,44 @@
 
 .block_first_left {
   /* background-color: bisque; */
-  flex: 1;
+  /* flex: 1; */
   display: flex;
   gap: 10px;
+  flex: 1 1 0 0;   /* Cresce 1, encolhe 1, base 0 */
+  width: 100%;    /* Garante que o ponto de partida seja metade do container */
+  min-width: 0;  /* Permite que o container encolha se necessário, evitando o tremor */
+  overflow: hidden;
 }
 
 .block_first_left1 {
   /* background-color: brown; */
-  flex: 1;
-  display: flex
+  /* flex: 1; */
+  display: flex;
+  flex: 1 1 0 0;   /* Cresce 1, encolhe 1, base 0 */
+  width: 100%;    /* Garante que o ponto de partida seja metade do container */
+  min-width: 0;  /* Permite que o container encolha se necessário, evitando o tremor */
+  overflow: hidden;
 }
 
 .block_first_left2 {
   /* background-color: brown; */
-  flex: 1;
+  /* flex: 1; */
   display: flex;
+  flex: 1 1 0 0;   /* Cresce 1, encolhe 1, base 0 */
+  width: 100%;    /* Garante que o ponto de partida seja metade do container */
+  min-width: 0;  /* Permite que o container encolha se necessário, evitando o tremor */
+  overflow: hidden;
 }
 
 .block_first_right {
   /* background-color: bisque; */
-  flex: 1;
+  /* flex: 1; */
   display: flex;
+  flex: 1 1 0 0;   /* Cresce 1, encolhe 1, base 0 */
+  width: 100%;    /* Garante que o ponto de partida seja metade do container */
+  min-width: 0;  /* Permite que o container encolha se necessário, evitando o tremor */
+  overflow: hidden;
+  min-width: 300px
 }
 
 /******************************************/
@@ -99,7 +125,7 @@
 
 .cards_title_num {
   /* background-color: aquamarine; */
-  font-size: 30px;
+  font-size: 22px;
   margin: 0;
 }
 
@@ -127,16 +153,24 @@
 
 .block_second_left {
   /* background-color: rgb(167, 123, 70); */
-  flex: 1;
+  /* flex: 1; */
   display: flex;
-  width: 100%;
+  /* width: 100%; */
+  flex: 1 1 0 0;   /* Cresce 1, encolhe 1, base 0 */
+  width: 100%;    /* Garante que o ponto de partida seja metade do container */
+  min-width: 0;  /* Permite que o container encolha se necessário, evitando o tremor */
+  overflow: hidden;
 }
 
 .block_second_right {
   /* background-color: rgb(167, 78, 78); */
   display: flex;
-  flex: 1;
-  width: 100%;
+  /* flex: 1; */
+  /* width: 100%; */
+  flex: 1 1 0 0;   /* Cresce 1, encolhe 1, base 0 */
+  width: 100%;    /* Garante que o ponto de partida seja metade do container */
+  min-width: 0;  /* Permite que o container encolha se necessário, evitando o tremor */
+  overflow: hidden;
 }
 
 .block_third {

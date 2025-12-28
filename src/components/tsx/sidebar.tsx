@@ -61,8 +61,8 @@ const navItems: NavItem[] = [
     name: "2019",
     subItems: [
       { name: "Visão geral", path: "/2019/visao-geral" },
-      { name: "Questões", path: "/2019/questoes" },
-      { name: "Tabela de notas", path: "/2019/tabela-notas" }
+      { name: "Dados dos items", path: "/2019/dados-dos-itens" },
+      { name: "Notas e acertos", path: "/2019/notas-e-acertos" }
     ],
   }
 ];
@@ -98,7 +98,7 @@ const AppSidebar: React.FC = () => {
     navItems: NavItem[]
   ) => (
     <>
-      <h2 className={styles.navbar_title}>EDIÇÕES</h2>
+      <h2 className={styles.navbar_title}>EDIÇÕES (aplicação  regular)</h2>
       <ul className={styles.navbar_list}>
         {navItems.map((nav, index) => (
           <li key={nav.name} className={styles.navbar_years}>

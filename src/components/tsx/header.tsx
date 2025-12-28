@@ -6,6 +6,7 @@ import styles from "./components.module.css";
 import EnemLogo from "../svg/enem_logo";
 import { useSidebar } from "../../context/sidebar_context";
 import MenuButton from "./menu_button";
+import Link from "next/link";
 
 const AppHeader: React.FC = () => {
 
@@ -14,14 +15,17 @@ const AppHeader: React.FC = () => {
   return (
     <section className={styles.appheader_container}>
       {isMobile && (
-        <div>
-          <MenuButton />
+        <div className={styles.appheader_menu_container}>
+          <MenuButton  />
         </div>
       )}
-      <div className={styles.appheader_enemlogo}>
-        <EnemLogo  />
-        &nbsp;&nbsp;micro
-      </div>
+      <Link href= '/' className={styles.appheader_enemlogo}>
+        <div>
+          {/* micro&nbsp; */}
+          <EnemLogo  />
+          &nbsp;micro
+        </div>
+      </Link>
       <div>
         <Theme />
       </div>

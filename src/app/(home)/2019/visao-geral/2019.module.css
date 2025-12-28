@@ -3,23 +3,31 @@
 /*********************************/
 
 .main {
-  /* background-color: aqua; */
+  /* background-color: rgb(86, 211, 211); */
   padding: 10px;
   height: fit-content;
   display: flex;
-  flex-direction: column; 
-}
-
-.title {
-  /* background-color: rgb(82, 126, 126); */
-  display: flex;
-  justify-content: center;
-}
-
-.block {
-  /* background-color: rgb(190, 121, 42); */
-  display: flex;
   gap: 10px;
+}
+
+@media (max-width: 800px) {
+  .main {
+    flex-direction: column;
+  }
+}
+
+.block1 {
+  /* background-color: rgb(190, 121, 42);   */
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;  
+}
+
+.block2 {
+  /* background-color: rgb(190, 121, 42); */
+  flex: 1;
+  display: flex;
 }
 
 /*****************************************/
@@ -30,40 +38,51 @@
   /* background-color: aquamarine; */
   flex: 1;
   display: flex;
-  flex-direction: column;
   gap: 10px;
+  min-height: 250px;
 }
 
-.block_first_top {
+@media (max-width: 800px) {
+  .block_first {
+    flex-direction: column;
+  }
+}
+
+.block_first_left {
   /* background-color: bisque; */
-  height: 220px;
-  width: 100%;
+  flex: 1;
   display: flex;
   gap: 10px;
 }
 
-.block_first_top1 {
+.block_first_left1 {
   /* background-color: brown; */
-  flex-grow: 1;
+  flex: 1;
+  display: flex
+}
+
+.block_first_left2 {
+  /* background-color: brown; */
+  flex: 1;
   display: flex;
 }
 
-.block_first_top2 {
-  /* background-color: brown; */
-  flex-grow: 1;
+.block_first_right {
+  /* background-color: bisque; */
+  flex: 1;
   display: flex;
 }
 
-.block_first_bottom {
-  /* background-color: brown; */
-  display: flex;
-  flex-grow: 1;
-  /* flex: 1 ; */
-}
+/******************************************/
+/***************CARD_CONTENT***************/
+/******************************************/
 
 .cards_title_container {
-  display: flex;
-  gap: 10px;
+  /* background-color: aqua; */
+}
+
+.cards_container {
+  /* background-color: aqua; */
 }
 
 .cards_title_txt1 {
@@ -84,33 +103,45 @@
   margin: 0;
 }
 
+.cards_table {
+  margin-top: 10px;
+}
+
 /******************************************/
 /***************BLOCK_SECOND***************/
 /******************************************/
 
 .block_second {
   /* background-color: aquamarine; */
-  flex: 1 ;
+  flex: 2 ;
   display: flex;
-  flex-direction: column;
   gap: 10px;
+  min-height: 300px;
 }
 
-.block_second_top {
+@media (max-width: 800px) {
+  .block_second {
+    flex-direction: column;
+  }
+}
+
+.block_second_left {
   /* background-color: rgb(167, 123, 70); */
-  height: 220px;
-  width: 100%;
+  flex: 1;
   display: flex;
-  gap: 10px;
+  width: 100%;
 }
 
-.block_second_bottom {
+.block_second_right {
   /* background-color: rgb(167, 78, 78); */
   display: flex;
+  flex: 1;
+  width: 100%;
 }
 
 .block_third {
   /* background-color: aquamarine; */
   display: flex;
-  flex: 1
+  flex: 1;
+  min-height: 300px;
 }

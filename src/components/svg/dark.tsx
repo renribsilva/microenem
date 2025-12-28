@@ -1,10 +1,10 @@
 import React from "react";
 
-const Dark = (props) => (
+const Dark = ({ width = "24px", height = "24px", ...props }) => (
   <svg 
     xmlns="http://www.w3.org/2000/svg" 
-    height="24px" 
-    width="24px" 
+    width={width}
+    height={height}
     fill="currentColor" 
     viewBox="0 -960 960 960" {...props}
   >

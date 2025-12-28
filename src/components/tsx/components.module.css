@@ -53,15 +53,126 @@
 /***********************************/
 
 .appsidebar_navbar {
+  /* background-color: bisque; */
   flex: 1;
 }
 
-.appsidebar_navbar ul {
-  list-style: none;
+.navbar_title {
+  /* background-color: aquamarine; */
+  font-weight: 300;
+  font-size: 16px;
+  color: var(--foreground);
+  margin-top: 15px;
 }
 
-.appsidebar_navbar > ul {
-  padding: 10px;
+.navbar_list {
+  /* background-color: blueviolet; */
+  list-style: none;
+  margin: 0;
+  padding-left: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.navbar_years {
+  /* background-color:azure; */
+}
+
+.navbar_button {
+  background-color: var(--panel);
+  border: none;
+  border-radius: 5px;
+  height: 30px;
+  width: 100%;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  font-family: Ubuntu;
+  font-size: large;
+  align-items: center;
+}
+
+.navbar_button_1 {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.navbar_button_2 {
+  display: flex;
+  align-items: center;
+}
+
+.navbar_button_active {
+  background-color: var(--background);
+}
+
+.navbar_button:hover  {
+  background-color: var(--background);
+}
+
+.navbar_subitems {
+  /* background-color: brown; */
+  overflow: hidden;
+  transition: height 0.3s ease-in-out;
+}
+
+.navbar_subitems_list {
+  /* background-color: aquamarine; */
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  list-style: none;
+  padding-top: 5px;
+  box-sizing: border-box;
+}
+
+.navbar_subitems_items {
+  /* background-color: aqua; */
+  min-height: 30px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.navbar_subitems_items a {
+  /* background-color: blueviolet; */
+  width: 100%;
+  height: 100%;
+}
+
+.navbar_subitems_items:hover {
+  background-color: var(--background);
+}
+
+.navbar_subitems_items_active {
+  background-color: var(--background);
+}
+
+.navbar_subitems_links {
+  text-decoration: none;
+  padding-inline: 5px;
+  color: var(--foreground);
+}
+
+.em_breve {
+  font-weight: 300;
+  font-size: 10px;
+  font-style: italic;
+}
+
+/***********************************/
+/***************FOOTER**************/
+/***********************************/
+
+.footer {
+  /* background-color: aquamarine; */
+  font-weight: 300;
+  font-size: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 /***********************************/
@@ -69,7 +180,7 @@
 /***********************************/
 
 .appheader_container {
-  background-color: var(--panel);
+  background-color: var(--panel); 
   height: 60px;
   width: 100%;
   padding: 10px;
@@ -79,6 +190,7 @@
   justify-content: space-between;
   padding-inline: 10px;
   position: fixed; 
+  border-bottom: 1px solid var(--background);
 }
 
 .appheader_enemlogo {
@@ -86,16 +198,36 @@
   height: 100%;
   width: 100%;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: left;
   color: var(--logo);
   font-size: 22px;
+  text-decoration: none;
 }
 
 @media (max-width: 800px) {
   .appheader_enemlogo {
     justify-content: center;
   }
+}
+
+.appheader_menu_container {
+  /* background-color: rgb(61, 196, 196); */
+}
+
+/*****************************************/
+/***************MENU_BUTTON**************/
+/*****************************************/
+
+.menu_button {
+  background-color: var(--background);
+  border: none;
+  height: 35px;
+  border-radius: 99px;
+  width: 35px;
+  padding: 0; 
+  line-height: 0;
+  cursor: pointer;
 }
 
 /*****************************************/
@@ -110,6 +242,7 @@
   width: 35px;
   padding: 0; 
   line-height: 0;
+  cursor: pointer;
 }
 
 /*********************************/
@@ -117,22 +250,11 @@
 /*********************************/
 
 .cardContainer {
-  background-color:var(--panel);
+  background-color: var(--panel);
   border-radius: 1rem;
-  padding: 20px; 
-  display: flex;
-  justify-content: center;
+  padding: 20px;   
 }
 
-/***********************************/
-/***************FOOTER**************/
-/***********************************/
-
-.footer {
-  /* background-color: aquamarine; */
-  font-weight: 300;
-  font-size: 15px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+.chartWrapper {
+  /* background-color: rgb(196, 96, 49); */
 }

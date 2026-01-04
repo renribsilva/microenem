@@ -61,7 +61,8 @@ const navItems: NavItem[] = [
     name: "2019",
     subItems: [
       { name: "Visão geral", path: "/2019/visao-geral" },
-      { name: "Dados dos items", path: "/2019/dados-dos-itens" },
+      { name: "Dados do exame", path: "/2019/dados-do-exame" },
+      { name: "Dados dos itens", path: "/2019/dados-dos-itens" },
       { name: "Notas e acertos", path: "/2019/notas-e-acertos" }
     ],
   }

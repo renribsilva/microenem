@@ -249,13 +249,13 @@
 /***************CARD**************/
 /*********************************/
 
-.cardContainer {
+.card_container {
   background-color: var(--panel);
   border-radius: 1rem;
   padding: 20px;   
 }
 
-.chartWrapper {
+.card_wrapper {
   /* background-color: rgb(196, 96, 49); */
 }
 
@@ -264,57 +264,48 @@
 /*************************************/
 
 .tab_card_container {
-  /* width: 100%; */
-  /* max-width: 450px; */
-  /* margin: 2rem auto; */
-  /* border: 1px solid #e2e8f0; */
   border-radius: 1rem;
   background-color: var(--panel);
-  /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); */
-  /* overflow: hidden; */
+  overflow: hidden;
 }
 
-.tabList {
+.tab_card_list {
   display: flex;
-  background-color: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
+  background-color: var(--tab-background);
+  border-bottom: 1px solid var(--tab-border)
 }
 
-.tabButton {
+.tab_card_button {
   flex: 1;
-  padding: 12px 16px;
+  padding: 10px;
   font-size: 0.875rem;
   font-weight: 500;
   border: none;
   background: transparent;
   cursor: pointer;
-  color: #64748b;
+  color: var(--tab-text);
   position: relative;
   transition: all 0.2s ease;
 }
 
-.tabButton:hover {
-  color: #1e293b;
-  background-color: #f1f5f9;
+.tab_card_button:hover {
+  color:var(--foreground);
+  background-color: var(--tab-hover)
 }
 
-.activeButton {
-  color: #2563eb;
-}
-
-.indicator {
+.tab_card_indicator {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   height: 2px;
-  background-color: #2563eb;
+  background-color: var(--tab-indicator)
 }
 
-.content {
-  padding: 24px;
+.tab_card_content {
+  padding: 10px;
 }
 
-.hidden {
+.tab_card_hidden {
   display: none;
 }

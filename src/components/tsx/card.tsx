@@ -2,7 +2,7 @@
   import styles from "./components.module.css"
 import { useSidebar } from "../../context/sidebar_context";
 
-  interface ChartCardProps {
+  interface CardProps {
     children: React.ReactNode;
     height?: string | number;
     width?: string | number;
@@ -16,15 +16,15 @@ import { useSidebar } from "../../context/sidebar_context";
     width = "100%",
     justifyContent = "center",
     display = "flex"
-  }: ChartCardProps) {
+  }: CardProps) {
 
     const { isExpanded } = useSidebar();
 
     return (
       <>
-        <div className={styles.cardContainer} style={{ width }} key={isExpanded ? 'open' : 'closed'}>
+        <div className={styles.card_container} style={{ width }} key={isExpanded ? 'open' : 'closed'}>
           <div 
-            className={styles.chartWrapper} 
+            className={styles.card_wrapper} 
             style={{ height, justifyContent, display}}
           >
             {children}

@@ -34,9 +34,8 @@ Interaction.modes.myCustomMode = function(chart, e, options, useFinalPosition) {
   const position = getRelativePosition(e, chart);
   const items: any[] = [];
   Interaction.evaluateInteractionItems(chart, 'x', position, (element, datasetIndex, index) => {
-    // Usamos 'as any' ou uma tipagem genérica para acessar o .id sem erro
+    // 'as any' é uma tipagem genérica para acessar o .id sem erro
     const dataset = chart.data.datasets[datasetIndex] as any;
-    // FILTRO: Se o dataset tiver o ID da linha, nós ignoramos e não damos o 'push'
     if (dataset.id !== 'highlight-line') {
       if (element.inXRange(position.x, useFinalPosition)) {
         items.push({ element, datasetIndex, index });
@@ -92,15 +91,13 @@ export default function FrequencyAcertosChart({ area = "LC", highlightItem }: { 
       const { mean, sd } = describeData.acertos;
       const lower = Math.round(mean) - Math.round(sd);
       const upper = Math.round(mean) + Math.round(sd);
-
       // Se o valor de acertos (p.x) estiver dentro do intervalo, destaca
       if (p.x >= lower && p.x <= upper) {
-        return colorExame["fill"]; // Cor de destaque (ex: Azul forte)
+        return colorExame["fill"];
       }
       // Se estiver fora, fica bem clarinho (esmaecido)
       return 'rgba(94, 149, 238, 0.4)'; 
     }
-
     // Cor padrão quando nada está selecionado ou outra métrica está ativa
     return 'rgba(94, 149, 238, 0.4)';
   });

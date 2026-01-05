@@ -1,6 +1,6 @@
 "use client";
 
-import { TabsCard } from "../../../../components/tsx/tab_card";
+// import { TabsCard } from "../../../../components/tsx/tab_card";
 
 export default function QuestoesPage() {
   // Criando o array de conteúdo para as abas
@@ -45,7 +45,7 @@ export default function QuestoesPage() {
 
   return (
     <main style={{ padding: '10px'}}>      
-      <TabsCard items={listaDeQuestoes} />      
+      {/* <TabsCard items={listaDeQuestoes} />       */}
     </main>
   );
 }

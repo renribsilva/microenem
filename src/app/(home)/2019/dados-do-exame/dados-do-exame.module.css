@@ -1,0 +1,59 @@
+/****************************************/
+/***************CONTAINERS***************/
+/****************************************/
+
+.main_container {
+  /* background-color: aquamarine; */
+  padding: 10px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.nav_container {
+  /* background-color: rgb(76, 113, 145); */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/**************************************/
+/***************MAIN TOP***************/
+/**************************************/
+
+.main_top {
+  /* background-color: aquamarine; */
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  align-items: stretch; /* Força as colunas a terem a mesma altura */
+  flex: 1;
+}
+
+@media (max-width: 1000px) {
+  .main_top {
+    flex-wrap: wrap;
+  }
+}
+
+.main_left, .main_right {
+  flex: 1 1 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+}
+
+.main_right > div {
+  flex: 1; 
+  display: flex; 
+  flex-direction: column;
+}
+
+.main_left > div {
+  flex: 1; 
+  display: flex; 
+  flex-direction: column;
+}

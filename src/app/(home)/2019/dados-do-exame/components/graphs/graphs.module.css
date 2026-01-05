@@ -1,0 +1,39 @@
+/***********************************************/
+/*******************DENSITY*********************/
+/***********************************************/
+
+.density_container {
+  /* background-color: aquamarine; */
+  height: fit-content; 
+  position: relative;
+  box-sizing: border-box;
+  height: 200px
+}
+
+.density_wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/*************************************************/
+/*******************FREQUENCY*********************/
+/*************************************************/
+
+.frequency_container {
+  /* background-color: aquamarine;   */
+  height: fit-content; 
+  position: relative;
+  box-sizing: border-box;
+  height: 200px
+}
+
+.frequency_wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}

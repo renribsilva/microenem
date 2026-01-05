@@ -253,6 +253,7 @@
   background-color: var(--panel);
   border-radius: 1rem;
   padding: 20px;   
+  box-sizing: border-box;
 }
 
 .card_wrapper {
@@ -263,19 +264,14 @@
 /***************TAB_CARD**************/
 /*************************************/
 
-.tab_card_container {
+.tab_container {
   border-radius: 1rem;
   background-color: var(--panel);
   overflow: hidden;
-}
-
-.tab_card_list {
   display: flex;
-  background-color: var(--tab-background);
-  border-bottom: 1px solid var(--tab-border)
 }
 
-.tab_card_button {
+.tab_button {
   flex: 1;
   padding: 10px;
   font-size: 0.875rem;
@@ -288,24 +284,16 @@
   transition: all 0.2s ease;
 }
 
-.tab_card_button:hover {
+.tab_button:hover {
   color:var(--foreground);
   background-color: var(--tab-hover)
 }
 
-.tab_card_indicator {
+.tab_indicator {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   height: 2px;
   background-color: var(--tab-indicator)
-}
-
-.tab_card_content {
-  padding: 10px;
-}
-
-.tab_card_hidden {
-  display: none;
 }

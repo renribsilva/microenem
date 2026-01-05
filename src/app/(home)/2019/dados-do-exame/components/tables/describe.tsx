@@ -10,8 +10,8 @@ const labelMap: Record<string, string> = {
   median: "Mediana", 
   mode: "Moda", 
   sd: "Desvio Padrão",
-  min: "Mínimo", 
-  max: "Máximo", 
+  min: "Mínima", 
+  max: "Máxima", 
   skew: "Assimetria", 
   kurtosis: "Curtose",
   q1: "1º quartil", 
@@ -51,8 +51,15 @@ export function DescribeTable({ area, onRowClick, selectedRowId }: {
         const valAcerto = describeData.acertos?.[key];
         const formatNotas = (val: any) => {
           if (typeof val !== "number") return val;
+          // Se for Skewness ou Kurtosis, força 2 casas decimais
+          if (key === 'skew' || key === 'kurtosis') {
+            return val.toLocaleString('pt-BR', { 
+              maximumFractionDigits: 2, 
+              minimumFractionDigits: 0 
+            });
+          }
           return val.toLocaleString('pt-BR', { 
-            maximumFractionDigits: 2, 
+            maximumFractionDigits: 1, 
             minimumFractionDigits: 0
           });
         };

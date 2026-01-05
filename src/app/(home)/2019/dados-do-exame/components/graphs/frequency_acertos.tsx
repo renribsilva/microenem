@@ -12,7 +12,8 @@ import {
   Legend,
   Tooltip,
   Filler,
-  ChartOptions
+  ChartOptions,
+  InteractionModeFunction
 } from 'chart.js';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { Bar } from 'react-chartjs-2';
@@ -20,6 +21,30 @@ import styles from "./graphs.module.css"
 import { useDescribe } from '../../../../../../hooks/use_describe_data';
 import { useFrequency } from '../../../../../../hooks/use_frequency_data';
 import { useChartTheme } from '../../../../../../hooks/chart_theme';
+import { Interaction } from 'chart.js';
+import { getRelativePosition } from 'chart.js/helpers';
+
+declare module 'chart.js' {
+  interface InteractionModeMap {
+    myCustomMode: InteractionModeFunction;
+  }
+}
+
+Interaction.modes.myCustomMode = function(chart, e, options, useFinalPosition) {
+  const position = getRelativePosition(e, chart);
+  const items: any[] = [];
+  Interaction.evaluateInteractionItems(chart, 'x', position, (element, datasetIndex, index) => {
+    // Usamos 'as any' ou uma tipagem genérica para acessar o .id sem erro
+    const dataset = chart.data.datasets[datasetIndex] as any;
+    // FILTRO: Se o dataset tiver o ID da linha, nós ignoramos e não damos o 'push'
+    if (dataset.id !== 'highlight-line') {
+      if (element.inXRange(position.x, useFinalPosition)) {
+        items.push({ element, datasetIndex, index });
+      }
+    }
+  });  
+  return items;
+};
 
 ChartJS.register(
   CategoryScale, LinearScale, BarElement, LineElement, PointElement,
@@ -125,7 +150,7 @@ export default function FrequencyAcertosChart({ area = "LC", highlightItem }: { 
       pointRadius: 0,
       fill: false,
       order: -2,
-      xAxisID: 'x', 
+      xAxisID: 'x',
     });
 
     chart.update(); 
@@ -171,6 +196,7 @@ export default function FrequencyAcertosChart({ area = "LC", highlightItem }: { 
       },
     },
     interaction: {
+      mode: 'myCustomMode' as any,
       intersect: false,  
       axis: 'x'          
     },

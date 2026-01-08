@@ -1,96 +1,100 @@
 'use client'
 
-import { ArcElement, Chart as ChartJS, DoughnutController, SubTitle, Title, Tooltip, Legend } from "chart.js"
-import { Doughnut } from "react-chartjs-2"
-import ChartDataLabels from 'chartjs-plugin-datalabels'; // 1. Importar o plugin
-import sexo_data from "../../json/socials/sexo.json"
-import presence_data from "../../json/overview/presenca.json"
+import React, { useMemo } from 'react';
+import Chart from 'react-apexcharts';
+import sexo_data from "../../json/socials/sexo.json";
+import presence_data from "../../json/overview/presenca.json";
 import { useChartTheme } from "../../../../../../hooks/chart_theme";
 
-ChartJS.register(
-  DoughnutController,
-  ArcElement,
-  Tooltip,
-  Title,
-  SubTitle,
-  Legend,
-  ChartDataLabels // 2. Registrar o plugin
-)
-
 export default function SEXO() {
-  
   const { textColor, panelColor } = useChartTheme();
-  const doughnutColor = ["rgba(60, 245, 188, 0.7)", "rgba(245, 99, 59, 0.7)",]
 
-  const data = {
-    ...sexo_data,
-    datasets: sexo_data.datasets.map((dataset) => ({
-      ...dataset,
-      backgroundColor: doughnutColor,
-      borderColor: panelColor,
-      borderWidth: 2
-    })),
-  };
+  const doughnutColors = ["rgba(60, 245, 188, 0.7)", "rgba(245, 99, 59, 0.7)"];
+  const n = (presence_data[0].subRows[0].total).toLocaleString('pt-BR');
 
-  const n = (presence_data[0].subRows[0].total).toLocaleString('pt-BR')
+  const series = useMemo(() => sexo_data.datasets[0].data, []);
+  const labels = useMemo(() => sexo_data.labels, []);
 
-  const options = {
-    cutout: '35%', 
-    radius: '90%', 
-    plugins: {
-      title: { 
-        display: true,
-        text: 'Sexo',
-        color: textColor, 
-        font: { size: 16, weight: 'bold' as const },
-      },
-      subtitle: {
-        display: true,
-        text: `*n = ${n}`,
-        color: textColor,
-        font: { size: 13, style: 'italic' as const },
-        position: 'bottom' as const,
-        align: 'center' as const,
-        padding: 10
-      },
-      tooltip: {
-        displayColors: false,
-        callbacks: {
-          label: (context: any) => {
-            const percentual = context.parsed;
-            const absoluto = context.dataset.abs_values[context.dataIndex];            
-            return [
-              `Porcentagem: ${percentual}%`,
-              `Total: ${absoluto.toLocaleString('pt-BR')}`
-            ];
-          }
-        }
-      },
-      // 3. Configuração dos DataLabels
-      datalabels: { 
-        color: textColor,
-        anchor: 'center' as const,
-        align: 'center' as const,
-        font: {
-          // weight: 'bold' as const,
-          size: 14
-        },
-        formatter: (value: any) => {
-          return `${value}%`; // Exibe o valor do dado seguido de %
-        }
-      },
-      legend: {
-        display: true,
-        labels: { color: textColor }
+  const options: ApexCharts.ApexOptions = useMemo(() => ({
+    chart: {
+      type: 'donut',
+      toolbar: { show: true },
+      animations: {
+        enabled: true,
+        easing: 'easeinout',
+        speed: 500,
+        dynamicAnimation: { enabled: false } 
       }
     },
-  };
-  
+    grid: {
+      padding: {
+        top: -15, 
+      },
+    },
+    colors: doughnutColors,
+    labels: labels,
+    plotOptions: {
+      pie: {
+        donut: {
+          size: '45%',
+        }
+      }
+    },
+    dataLabels: {
+      enabled: true,
+      style: {
+        fontSize: '12px',
+        fontWeight: '300',
+        colors: [textColor]
+      },
+      dropShadow: { enabled: false }
+    },
+    legend: {
+      position: 'top',
+      labels: { colors: textColor },
+      offsetY: -18  ,
+    },
+    tooltip: {
+      theme: 'dark',
+      y: {
+        formatter: (val, { seriesIndex, dataPointIndex, w }) => {
+          // Acessando valores absolutos como você fazia no Chart.js
+          const absValue = sexo_data.datasets[0].abs_values[dataPointIndex];
+          const absolutoFormatado = absValue.toLocaleString('pt-BR');
+          return `Porcentagem: ${val}% <br/> Total: ${absolutoFormatado}`;
+        },
+        title: {
+          formatter: () => '',
+        },
+      }
+    },
+    title: {
+      text: 'Sexo',
+      align: 'center',
+      style: {
+        color: textColor,
+        fontSize: '16px',
+        fontWeight: 'bold'
+      }
+    },
+    subtitle: {
+      text: `*n = ${n}`,
+      align: 'center',
+      style: {
+        color: textColor,
+        fontSize: '13px',
+        fontWeight: 'normal',
+      }
+    }
+  }), [textColor, panelColor, n, labels]);
+
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%', minHeight: '300px'}}>
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', justifyContent:"center" }}>
-        <Doughnut data={data} options={options} />
-      </div>
-    </div>
-  )
+    <Chart
+      options={options}
+      series={series}
+      type="donut"
+      height="95%"
+      width="95%"
+    />
+  );
 }

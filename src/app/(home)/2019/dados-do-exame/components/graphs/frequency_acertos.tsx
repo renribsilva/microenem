@@ -25,28 +25,41 @@ export default function FrequencyAcertosChart({ area = "LC", highlightItem }: { 
     }
     if (id === 'kurtosis') {
       if (val > 0) return `Acertos concentrados perto da média.`;
-      if (val < 0) return `Acertos mais dispersos.`;
+      if (val < 0) return `Acertos mais dispersas.`;
       return `Curtose Neutra.`;
     }
     return "";
   };
 
   const series = useMemo(() => {
-    const rawData = frequencyData?.datasets?.[1]?.data || [];
-    const colors = rawData.map((p: any) => {
+    if (!frequencyData) return [];
+    const rawData = frequencyData.datasets?.[1]?.data || [];
+    
+    const dataWithColors = rawData.map((p: any) => {
+      // Cor padrão (azul esmaecido)
+      let pointColor = 'rgba(94, 149, 238, 0.4)'; 
+
       if (highlightItem?.id === 'sd' && describeData?.acertos) {
         const { mean, sd } = describeData.acertos;
-        const lower = Math.round(mean) - Math.round(sd);
-        const upper = Math.round(mean) + Math.round(sd);
-        if (p.x >= lower && p.x <= upper) return colorExame["fill"];
+        const lower = Math.round(mean - sd);
+        const upper = Math.round(mean + sd);
+        
+        if (p.x >= lower && p.x <= upper) {
+          pointColor = colorExame["fill"]; // Cor sólida do seu tema para o destaque
+        }
       }
-      return 'rgba(94, 149, 238, 0.4)'; // Cor padrão esmaecida
+
+      return {
+        x: p.x,
+        y: p.y,
+        fillColor: pointColor, // Define a cor da barra individualmente
+        strokeColor: pointColor
+      };
     });
 
     return [{
       name: `Frequência ${area}`,
-      data: rawData.map((p: any) => ({ x: p.x, y: p.y })),
-      // No ApexCharts, passamos as cores por ponto se quisermos barras coloridas
+      data: dataWithColors
     }];
   }, [frequencyData, area, highlightItem, describeData, colorExame]);
 
@@ -54,7 +67,7 @@ export default function FrequencyAcertosChart({ area = "LC", highlightItem }: { 
     const isShape = ['skew', 'kurtosis'].includes(highlightItem?.id);
     const mean = describeData?.acertos?.mean || 0;
     
-    // Lógica de valor X para a linha de destaque
+    // Posição da linha vertical
     const valX = (isShape || highlightItem?.id === 'sd' || highlightItem?.id === 'mean')
       ? Math.round(mean) 
       : Math.round(parseFloat(highlightItem?.acerto?.replace(/\./g, '').replace(',', '.') || "0"));
@@ -63,29 +76,18 @@ export default function FrequencyAcertosChart({ area = "LC", highlightItem }: { 
 
     return {
       chart: {
+        id: `freq-${area}`,
         type: 'bar',
         toolbar: { show: false },
         animations: { enabled: true, speed: 400 }
       },
-      // Cores das barras via callback funcional
       plotOptions: {
         bar: {
-          distributed: true, // Permite cores diferentes para cada barra
-          columnWidth: '100%',
+          columnWidth: '95%',
+          distributed: false, // Importante: manter false para o fillColor do data funcionar
         }
       },
-      // Aqui aplicamos a lógica de cores que calculamos na série
-      colors: [({ value, dataPointIndex, w }: any) => {
-        const rawData = frequencyData?.datasets?.[1]?.data || [];
-        const p = rawData[dataPointIndex];
-        if (highlightItem?.id === 'sd' && describeData?.acertos) {
-          const { mean, sd } = describeData.acertos;
-          const lower = Math.round(mean) - Math.round(sd);
-          const upper = Math.round(mean) + Math.round(sd);
-          if (p?.x >= lower && p?.x <= upper) return colorExame["fill"];
-        }
-        return 'rgba(94, 149, 238, 0.4)';
-      }],
+      dataLabels: { enabled: false },
       xaxis: {
         type: 'numeric',
         min: xMin,
@@ -93,7 +95,7 @@ export default function FrequencyAcertosChart({ area = "LC", highlightItem }: { 
         tickAmount: 9,
         labels: { 
             style: { colors: axisColor },
-            formatter: (v) => v.toFixed(0)
+            formatter: (v: any) => Number(v).toFixed(0)
         },
         title: { text: 'Acertos', style: { color: axisColor, fontWeight: 'bold' } }
       },
@@ -132,10 +134,9 @@ export default function FrequencyAcertosChart({ area = "LC", highlightItem }: { 
             }
           }
         ] : [],
-        // Texto central para Assimetria/Curtose
         points: isShape ? [
           {
-            x: 22.5, // Meio de 0-45
+            x: 22.5,
             y: 0,
             marker: { size: 0 },
             label: {
@@ -148,7 +149,7 @@ export default function FrequencyAcertosChart({ area = "LC", highlightItem }: { 
                 color: '#fff',
                 background: colorExame["line"],
                 fontSize: '13px',
-                borderWidth: 8,
+                borderWidth: 10,
                 borderColor: colorExame["line"]
               }
             }
@@ -156,7 +157,7 @@ export default function FrequencyAcertosChart({ area = "LC", highlightItem }: { 
         ] : []
       }
     };
-  }, [describeData, frequencyData, highlightItem, colorExame, axisColor, gridColor]);
+  }, [describeData, frequencyData, highlightItem, colorExame, axisColor, gridColor, area]);
 
   if (!describeData?.acertos || !frequencyData) {
     return <div className={styles.loading}>Carregando...</div>;

@@ -1,35 +1,17 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,  
-  Title,
-  Legend,
-  Filler,
-  ChartOptions
-} from 'chart.js';
-import annotationPlugin from 'chartjs-plugin-annotation'; // Reativado para o box de texto
-import { Line } from 'react-chartjs-2';
-import styles from "./graphs.module.css"
+import { useMemo } from 'react';
+import Chart from 'react-apexcharts';
+import styles from "./graphs.module.css";
 import { useDescribe } from '../../../../../../hooks/use_describe_data';
 import { useDensity } from '../../../../../../hooks/use_density_data';
 import { useChartTheme } from '../../../../../../hooks/chart_theme';
-
-ChartJS.register(
-  CategoryScale, LinearScale, PointElement, LineElement,
-  Title, Legend, Filler, annotationPlugin
-);
 
 export default function DensityNotasChart({ area = "LC", highlightItem }: { area: string, highlightItem: any }) {
   
   const { describeData } = useDescribe(area);
   const { densityData } = useDensity(area);
-  const { colorExame, gridColor, textColor } = useChartTheme();
-  const chartRef = useRef<any>(null);
+  const { colorExame, gridColor, textColor, axisColor } = useChartTheme();
 
   const { xMin, xMax } = useMemo(() => {
     if (!describeData?.notas) return { xMin: 0, xMax: 1000 };
@@ -39,233 +21,149 @@ export default function DensityNotasChart({ area = "LC", highlightItem }: { area
     };
   }, [describeData]);
 
-  // Descrições dinâmicas baseadas no valor da estatística
-  const getStatDescription = () => {
-    if (!highlightItem) return "";
-    const val = parseFloat(highlightItem.nota.replace(/\./g, '').replace(',', '.'));
-    
-    if (highlightItem.id === 'skew') {
+  const getStatDescription = (id: string, valStr: string) => {
+    const val = parseFloat(valStr.replace(/\./g, '').replace(',', '.'));
+    if (id === 'skew') {
       if (val > 0) return `Notas baixas mais frequentes.`;
       if (val < 0) return `Notas altas mais frequentes.`;
-      return `Distribuição Simétrica: Equilíbrio entre notas altas e baixas.`;
+      return `Distribuição Simétrica.`;
     }
-    
-    if (highlightItem.id === 'kurtosis') {
+    if (id === 'kurtosis') {
       if (val > 0) return `Notas concentradas perto da média.`;
       if (val < 0) return `Notas mais dispersas.`;
-      return `Curtose Neutra: Distribuição de notas próxima da normal.`;
+      return `Mesocúrtica: Distribuição normal.`;
     }
     return "";
   };
 
-  // 2. Prepara os Datasets
-  const chartData = useMemo(() => {
-    const mainDs = densityData?.datasets?.find((ds: any) => ds.id === 'main-density');
-    const rawData = mainDs?.data || [];
-    const sortedData = [...rawData].sort((a, b) => a.x - b.x).map((p: any) => ({ x: p.x, y: p.y * 100 }));
+  const series = useMemo(() => {
+    if (!densityData) return [];
+    const mainDs = densityData.datasets?.find((ds: any) => ds.id === 'main-density');
+    const sortedData = [...(mainDs?.data || [])].sort((a, b) => a.x - b.x).map((p: any) => [p.x, p.y * 100]);
+    const datasets = [{ name: `Densidade ${area}`, data: sortedData }];
 
-    const datasets: any[] = [
-      {
-        id: 'main-density',
-        label: `Densidade ${area}`,
-        data: sortedData,
-        borderColor: colorExame["curve"],
-        borderWidth: 2,
-        fill: true, // Preenchimento base da curva toda
-        backgroundColor: colorExame["curve_fill"], // Use uma cor bem clara aqui
-        tension: 0.5,
-        pointRadius: 0,
-        order: 1
-      }
-    ];
-
-    // Lógica condicional: Só adiciona o dataset de preenchimento se for 'sd'
-    if (highlightItem?.id === 'sd' && describeData?.notas) {
-      const xStart = describeData.notas.mean - describeData.notas.sd; 
-      const xEnd = describeData.notas.mean + describeData.notas.sd; 
-      const highlightRegion = sortedData.filter(p => p.x >= xStart && p.x <= xEnd);
-
-      datasets.push({
-        id: 'clipped-fill',
-        label: `Área SD`,
-        data: highlightRegion,
-        backgroundColor: colorExame["fill"], // Cor de destaque mais forte
-        fill: 'origin',
-        borderColor: 'transparent',
-        tension: 0.5,
-        pointRadius: 0,
-        order: 0 // Ordem 0 para ficar na frente do preenchimento base se necessário
-      });
+    // Lógica de preenchimento (SD, Q1, Q3, P99)
+    const fillIds = ['sd', 'q1', 'q3', 'p99'];
+    if (fillIds.includes(highlightItem?.id) && describeData?.notas) {
+        const n = describeData.notas;
+        let start = 0, end = 0;
+        if (highlightItem.id === 'sd') { start = n.mean - n.sd; end = n.mean + n.sd; }
+        else if (highlightItem.id === 'q1') { start = n.q1; end = n.max; }
+        else if (highlightItem.id === 'q3') { start = n.q3; end = n.max; }
+        else if (highlightItem.id === 'p99') { start = n.p99; end = n.max; }
+        
+        const filtered = sortedData.filter(p => p[0] >= start && p[0] <= end);
+        datasets.push({ name: `Destaque`, data: filtered });
     }
+    return datasets;
+  }, [densityData, area, highlightItem, describeData]);
 
-    return { datasets };
-  }, [densityData, colorExame, highlightItem, describeData]);
+  // console.log(highlightItem)
 
-  useEffect(() => {
-    const chart = chartRef.current;
-    if (!chart || !describeData?.notas || !highlightItem) return;
-
-    // Limpeza de camadas dinâmicas
-    chart.data.datasets = chart.data.datasets.filter((ds: any) => 
-      !['highlight-ds', 'sd-area', 'normal-ref'].includes(ds.id)
+  const options: ApexCharts.ApexOptions = useMemo(() => {
+    
+    const isShape = ['skew', 'kurtosis'].includes(highlightItem?.id);
+    const isFill = ['sd', 'q1', 'q3', 'p99'].includes(highlightItem?.id);
+    
+    // Se for skew/kurtosis, fixa no meio do gráfico. Se não, usa a nota ou a média.
+    const centerPoint = (xMax + xMin) / 2;
+    const valX = isShape ? centerPoint : (
+                 ['mean', 'sd'].includes(highlightItem?.id) 
+                 ? (describeData?.notas?.mean || 0) 
+                 : parseFloat(highlightItem?.nota?.replace(/\./g, '').replace(',', '.') || '0')
     );
+    
+    const chartColors = isFill ? [colorExame["curve"], colorExame["fill"]] : [colorExame["curve"]];
+    const fillOpacity = isFill ? [0.2, 0.7] : [0.2];
+    const strokeWidths = isFill ? [2, 0] : [2];
 
-    const { mean, sd } = describeData.notas;
-    const isShapeMetric = ['sd', 'mean', 'skew', 'kurtosis'].includes(highlightItem.id);
-    const valX = isShapeMetric ? mean : parseFloat(highlightItem.nota.replace(/\./g, '').replace(',', '.'));    
-    const yMax = chart.scales.y.max;
+    return {
+      chart: {
+        id: `density-${area}`,
+        type: 'area',
+        toolbar: { show: true },
+      },
+      colors: chartColors,
+      stroke: { 
+        curve: 'smooth', 
+        width: strokeWidths 
+      },
+      fill: {
+        type: 'solid',
+        opacity: fillOpacity
+      },
+      xaxis: {
+        type: 'numeric',
+        min: xMin,
+        max: xMax,
+        tickAmount: (xMax - xMin) / 200,
+        axisBorder: { show: false },
+        labels: { style: { colors: axisColor } },
+        title: { text: 'Nota na escala do ENEM', style: { color: axisColor, fontWeight: 'bold' } }
+      },
+      yaxis: {
+        labels: { 
+          style: { colors: axisColor },
+          formatter: (val: number) => val.toFixed(1) 
+        },
+        title: { text: 'Densidade (x100)', style: { color: axisColor, fontWeight: 'bold' } }
+      },
+      grid: { borderColor: gridColor },
+      legend: { show: false },
+      tooltip: { enabled: true },
+      dataLabels: { enabled: false },
+      annotations: {
+        // Linhas verticais para notas (Média, Mediana, Q1, etc)
+        xaxis: !isShape ? [
+          {
+            x: valX,
+            borderColor: colorExame["line"],
+            borderWidth: 2,
+            label: {
+              text: `${highlightItem?.metric}: ${highlightItem?.nota}`,
+              borderWidth: 6,
+              borderColor: colorExame["line"],
+              style: { color: '#fff', background: colorExame["line"] },
+              position: 'top',
+            }
+          }
+        ] : [],
 
-    // B. Curva Normal de Referência (Vinda do JSON)
-    if (['kurtosis', 'skew'].includes(highlightItem.id)) {
-      const normalDs = densityData?.datasets?.find((ds: any) => ds.id === 'normal-reference');
-      if (normalDs) {
-        chart.data.datasets.push({
-          id: 'normal-ref',
-          type: 'line' as const,
-          label: 'Normal (Ref)',
-          data: normalDs.data.map((p: any) => ({ x: p.x, y: p.y * 100 })),
-          borderColor: textColor,
-          borderWidth: 1.5,
-          borderDash: [4, 4],
-          pointRadius: 0,
-          fill: false,
-          tension: 0.4,
-          order: -1
-        });
+        // Bloco de texto centralizado para Assimetria e Curtose
+        points: isShape ? [
+          {
+            x: (xMax + xMin) / 2,
+            marker: { size: 0 },
+            label: {
+              text: [
+                `${highlightItem.metric}: ${highlightItem.nota}`,
+                getStatDescription(highlightItem.id, highlightItem.nota)
+              ],
+              offsetY: 70,
+              style: {
+                color:  '#fff',
+                background: colorExame["line"],
+                fontSize: '14px',
+                fontWeight: '300',
+              },
+            }
+          }
+        ] : []
       }
-    }
+    };
+  }, [describeData, highlightItem, colorExame, textColor, gridColor, xMin, xMax, area]);
 
-    // C. Linha de Destaque (Média ou item selecionado)
-    chart.data.datasets.push({
-      id: 'highlight-ds',
-      label: highlightItem.metric,
-      data: [{ x: valX, y: 0 }, { x: valX, y: yMax }], 
-      borderColor: colorExame["line"],
-      borderWidth: 3,
-      pointRadius: 0,
-      order: 0
-    });
-    chart.update();
-  }, [highlightItem, describeData, densityData, colorExame, textColor]);
-
-  // 3. Renderização condicional para evitar que o Chart.js inicialize com valores nulos
   if (!describeData?.notas || !densityData) {
     return <div className={styles.loading}>Carregando gráfico...</div>;
   }
 
-  const chartOptions: ChartOptions<'line'> = {
-    responsive: true, 
-    maintainAspectRatio: false,
-    animation: { duration: 400 }, 
-    scales: {
-      x: { 
-        type: 'linear', 
-        min: xMin, 
-        max: xMax ,
-        grid: {
-          color: gridColor,
-        },
-        title: {
-          display: true,
-          text: 'Nota Final', // Nome do eixo X
-          color: '#666',
-          font: {
-            size: 12,
-            weight: 'bold'
-          }
-        }
-      },
-      y: { 
-        beginAtZero: true,
-        grid: {
-          color: gridColor,
-        },
-        title: {
-          display: true,
-          text: 'Densidade (x100)', // Nome do eixo Y
-          color: '#666',
-          font: {
-            size: 12,
-            weight: 'bold'
-          }
-        },
-      },
-    },
-    plugins: { 
-      legend: { display: false },
-      tooltip: { enabled: false }, 
-      datalabels: { display: false },              
-      annotation: { 
-        annotations: {
-          // Rótulo informativo que aparece ao lado da área sombreada do SD
-          sdLabel: {
-            type: 'label' as const,
-            display: highlightItem?.id === 'sd', 
-            xValue: describeData.notas.mean + describeData.notas.sd + 100,
-            yValue: '0%',
-            content: [
-              `Média: ${describeData.notas.mean.toFixed(1).toLocaleString('pt-BR', { minimumFractionDigits: 1 })}`, 
-              `Desvio-padrão: \u00B1 ${describeData.notas.sd.toFixed(1).toLocaleString('pt-BR', { minimumFractionDigits: 1 })}`
-            ],
-            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-            borderColor: colorExame["curve"],
-            borderWidth: 1,
-            borderRadius: 4,
-            padding: 10,
-            font: { size: 10, weight: 'bold' },
-            textAlign: 'center' as const,
-            yAdjust: (function() {
-              const numNota = parseFloat(highlightItem?.nota?.replace(/\./g, '').replace(',', '.') || '0');
-              return numNota < 500 ? 40 : 50; 
-            })(),
-            xAdjust: (function() {
-              const numNota = parseFloat(highlightItem?.nota?.replace(/\./g, '').replace(',', '.') || '0');
-              return numNota >= 500 ? -60 : 50;
-            })()
-          },
-          // Rótulo que fica "pendurado" na linha vertical de destaque
-          lineLabel: {
-            type: 'label' as const,
-            display: !!highlightItem && highlightItem.id !== 'sd',
-            xValue: ['skew', 'kurtosis'].includes(highlightItem?.id) 
-                    ? describeData.notas.mean 
-                    : parseFloat(highlightItem?.nota?.replace(/\./g, '').replace(',', '.') || '0'),
-            yValue: '0%', 
-            content: ['skew', 'kurtosis'].includes(highlightItem?.id)
-                     ? [`${highlightItem?.metric}: ${highlightItem?.nota} `,
-                        getStatDescription()]
-                     :`${highlightItem?.metric}: ${highlightItem?.nota}`, // Mostra o nome da métrica (Ex: "Mínimo", "Máximo")
-            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-            borderColor: colorExame["curve"],
-            borderWidth: 1,
-            borderRadius: 4,
-            padding: 10,
-            font: { size: 10, weight: 'bold' },
-            textAlign: 'center' as const,
-            // Lógica de Ajuste Corrigida
-            yAdjust: (function() {
-              const numNota = parseFloat(highlightItem?.nota?.replace(/\./g, '').replace(',', '.') || '0');
-              return numNota < 500 ? 40 : 50; 
-            })(),
-            xAdjust: (function() {
-              const numNota = parseFloat(highlightItem?.nota?.replace(/\./g, '').replace(',', '.') || '0');
-              return numNota >= 500 ? -60 : 50;
-            })()
-          }
-        }
-      }
-    }
-  }
-
   return (
-    <div className={styles.density_container}> 
-      <div className={styles.density_wrapper}>
-        <Line 
-          ref={chartRef}
-          data={chartData}
-          options={chartOptions}
-        />
-      </div>
-    </div>
+    <Chart 
+      options={options}
+      series={series}
+      type="area"
+      height="100%"
+      width="100%"
+    />
   );
 }

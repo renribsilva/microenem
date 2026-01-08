@@ -5,6 +5,7 @@
   --color-panel-light: hsl(0, 0%, 100%);       
   --color-grid-light: rgba(0, 0, 0, 0.05); 
   --color-tick-light: rgb(121, 119, 119);
+  --color-axis-label-light: hsl(240, 4%, 46%);
   
   --color-tab-background-light: hsl(240, 7%, 92%);
   --color-tab-border-light: hsl(240, 4%, 86%);     
@@ -24,6 +25,7 @@
   --color-tab-text-dark: #a1a1aa;        
   --color-tab-hover-dark: #3f3f46;
   --color-tab-indicator-dark:  hsl(219, 31%, 82%);
+  --color-axis-label-dark: hsl(240, 11%, 74%);
 }
 
 .dark {
@@ -38,7 +40,8 @@
   --tab-text: var(--color-tab-text-dark);
   --tab-hover: var(--color-tab-hover-dark);
   --tab-indicator: var(--color-tab-indicator-dark);
-  --tick: var(--color-tick-dark)
+  --tick: var(--color-tick-dark);
+  --axis-label: var(--color-axis-label-dark);
 }
 
 .light {
@@ -53,7 +56,8 @@
   --tab-text: var(--color-tab-text-light);
   --tab-hover: var(--color-tab-hover-light);
   --tab-indicator: var(--color-tab-indicator-light);
-  --tick: var(--color-tick-light)
+  --tick: var(--color-tick-light);
+  --axis-label: var(--color-axis-label-light);
 }
 
 html, body {

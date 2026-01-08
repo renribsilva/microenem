@@ -7,6 +7,7 @@ export function useChartTheme() {
   const [panelColor, setPanelColor] = useState(null);
   const [gridColor, setGridColor] = useState(null);
   const [tickColor, setTickColor] = useState(null);
+  const [axisColor, setAxisColor] = useState(null);
 
   const colorMap: Record<string, string> = {
       "Azul": "#2563eb", "Amarela": "#eab308", "Rosa": "#db2777",
@@ -15,8 +16,11 @@ export function useChartTheme() {
   };
 
   const colorExame: Record<string, string> = {
-    "fill": 'rgba(228, 96, 35, 0.8)', "border": 'rgba(239, 68, 68, 0.5)', 
-    "line": '#ef4444', "curve": '#3b82f6', "curve_fill": 'rgba(59, 130, 246, 0.15)'
+    "curve": '#6366f1',           
+    "curve_fill": 'rgba(99, 102, 241, 0.1)', 
+    "line": '#f97316',           
+    "fill": 'rgba(25, 27, 134, 0.45)', 
+    "border": 'rgba(249, 115, 22, 0.5)'
   }
 
   useEffect(() => {      
@@ -29,6 +33,7 @@ export function useChartTheme() {
       const panel_color = style.getPropertyValue('--panel').trim();
       const grid_color = style.getPropertyValue('--grid').trim();
       const tick_color = style.getPropertyValue('--tick').trim();
+      const axis_color = style.getPropertyValue('--tick').trim();
       
       if (txt_color) {
         setTextColor(txt_color);
@@ -46,6 +51,10 @@ export function useChartTheme() {
         setTickColor(tick_color);
       }
 
+      if (axis_color) {
+        setAxisColor(axis_color);
+      }
+
     };
 
     updateThemeValues();
@@ -59,5 +68,5 @@ export function useChartTheme() {
     return () => observer.disconnect();
   }, []);
 
-  return { isDark, textColor, panelColor, gridColor, colorMap, colorExame, tickColor };
+  return { isDark, textColor, panelColor, gridColor, colorMap, colorExame, tickColor, axisColor };
 }

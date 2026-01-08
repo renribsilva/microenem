@@ -5,6 +5,7 @@ import fx_etaria_data from "../../json/socials/faixa_etaria.json";
 import presence_data from "../../json/overview/presenca.json";
 import { useChartTheme } from "../../../../../../hooks/chart_theme";
 import { useMemo } from 'react';
+import customTooltip from '../../../../../../components/tsx/customTooltip';
 
 export default function FX_ETARIA() {
 
@@ -13,17 +14,21 @@ export default function FX_ETARIA() {
   const barColor = "rgba(255, 208, 53, 1)";
   const n = (presence_data[0].subRows[0].total).toLocaleString('pt-BR');
 
+  // ALTERAÇÃO 1: Mapear para objeto pro tooltip ler 'x', 'y' e 'abs'
   const series = useMemo(() => fx_etaria_data.datasets.map(dataset => ({
     name: 'Porcentagem',
-    data: dataset.data
+    data: dataset.data.map((val, i) => ({
+      x: fx_etaria_data.labels[i],
+      y: val,
+      abs: dataset.abs_values[i]
+    }))
   })), []);
 
-  const categories = fx_etaria_data.labels;
   const allValues = fx_etaria_data.datasets.flatMap(d => d.data);
   const maxValue = Math.max(...allValues);
   const chartMax = Math.ceil((maxValue + 10) / 10) * 10;
 
-  const options: ApexCharts.ApexOptions = {
+  const options: ApexCharts.ApexOptions = useMemo(() => ({
     chart: {
       type: 'bar',
     },
@@ -47,7 +52,8 @@ export default function FX_ETARIA() {
       }
     },
     xaxis: {
-      categories: categories,
+      // ALTERAÇÃO 2: categories removido (já está no mapeamento da series)
+      type: 'category', 
       max: chartMax,
       labels: {
         style: { colors: textColor }
@@ -71,20 +77,15 @@ export default function FX_ETARIA() {
     tooltip: {
       theme: 'dark',
       intersect: false,
+      hideDelay: 0,
       followCursor: true,
-      marker: {
-          show: false,
-      },
-      y: {
-        formatter: (val, { seriesIndex, dataPointIndex, w }) => {
-          // Acessando valores absolutos como você fazia no Chart.js
-          const absValue = fx_etaria_data.datasets[seriesIndex].abs_values[dataPointIndex];
-          const absolutoFormatado = absValue.toLocaleString('pt-BR');
-          return `Porcentagem: ${val}% <br/> Total: ${absolutoFormatado}`;
-        },
-        title: {
-          formatter: () => '', // REMOVE O NOME DA SÉRIE/PORCENTAGEM QUE APARECE ANTES
-        },
+      custom: function({ seriesIndex, dataPointIndex, w }: any) {
+        const dataConfig = w.config.series[seriesIndex].data[dataPointIndex];       
+        return customTooltip({ 
+          label: dataConfig.x, 
+          value: dataConfig.y, 
+          absolute: dataConfig.abs 
+        });
       }
     },
     title: {
@@ -108,7 +109,7 @@ export default function FX_ETARIA() {
     legend: {
       show: false
     }
-  };
+  }), [textColor, gridColor, n, series]);
 
   return (
     <Chart

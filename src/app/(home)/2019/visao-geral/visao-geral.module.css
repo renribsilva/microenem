@@ -11,7 +11,7 @@
   flex-wrap: wrap;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 1200px) {
   .main {
     flex-direction: column;
   }

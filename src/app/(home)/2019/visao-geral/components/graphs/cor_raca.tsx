@@ -1,13 +1,14 @@
 'use client'
 
-import dynamic from 'next/dynamic';
+import Chart from 'react-apexcharts';
 import cor_raca_data from "../../json/socials/cor_raca.json";
 import presence_data from "../../json/overview/presenca.json";
 import { useChartTheme } from "../../../../../../hooks/chart_theme";
-
-const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
+import customTooltip from '../../../../../../components/tsx/customTooltip';
+import { useMemo } from 'react';
 
 export default function COR_RACA() {
+
   const { textColor, panelColor } = useChartTheme();  
   const n = (presence_data[0].subRows[0].total).toLocaleString('pt-BR');  
 
@@ -22,10 +23,10 @@ export default function COR_RACA() {
       .sort((a: any, b: any) => b.y - a.y)
   }];
 
-  const options: ApexCharts.ApexOptions = {
+  const options: ApexCharts.ApexOptions = useMemo(() => ({
     chart: {
       type: 'treemap',
-      toolbar: { show: false },
+      toolbar: { show: true },
       background: 'transparent'
     },
     stroke: {
@@ -40,6 +41,15 @@ export default function COR_RACA() {
         color: textColor, 
         fontSize: '16px', 
         fontWeight: 'bold' 
+      }
+    },
+    subtitle: {
+      text: `*n = ${n}`,
+      align: 'center',
+      style: {
+        color: textColor,
+        fontSize: '13px',
+        fontWeight: 'normal',
       }
     },
     colors: ["#1D85B1", "#2D6B86", "#009BDB", "#2E4E5C", "#222E33", "#1B2429"],
@@ -70,50 +80,25 @@ export default function COR_RACA() {
     },
     tooltip: {
       theme: 'dark',
-      custom: function({ series, seriesIndex, dataPointIndex, w }: any) {
+      custom: function({ seriesIndex, dataPointIndex, w }: any) {
         // Recuperamos os dados diretamente do objeto de configuração
         const data = w.config.series[seriesIndex].data[dataPointIndex];
         const label = data.x;
         const value = data.y;
         const absolute = data.abs;
-        return `
-          <div style="padding: 10px; background: rgba(34, 34, 34, 0.70); border: 1px solid #444; color: #fff; font-size: 12px; line-height: 1.5;">
-            <div>
-              <strong>${label}</strong>
-            </div>
-            <div>
-              <span>Porcentagem: ${value}%</span><br/>
-              <span>Total: ${absolute.toLocaleString('pt-BR')}</span>
-            </div>
-          </div>
-        `;
+        return customTooltip({ label, value, absolute });
       }
     }
-  };
+  }), [textColor, panelColor, n, series]);
 
   return (
-    <div style={{ minWidth: '300px', width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
-      {/* Container do Gráfico */}
-      <div style={{ flex: 1 }}>
-        <Chart
-          options={options}
-          series={series}
-          type="treemap"
-          height="100%"
-        />
-      </div>
-      
-      {/* Subtítulo HTML (Livre de erros de TS e fora do gráfico) */}
-      <p style={{ 
-        color: textColor, 
-        fontSize: '13px', 
-        fontStyle: 'italic', 
-        textAlign: 'center',
-        marginTop: '15px',
-        fontWeight: 400,
-      }}>
-        *n = {n}
-      </p>
+    <div style={{ flex: 1 }}>
+      <Chart
+        options={options}
+        series={series}
+        type="treemap"
+        height="100%"
+      />
     </div>
   );
 }

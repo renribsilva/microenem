@@ -1,18 +1,21 @@
 'use client'
 
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import Chart from 'react-apexcharts';
 import sexo_data from "../../json/socials/sexo.json";
 import presence_data from "../../json/overview/presenca.json";
 import { useChartTheme } from "../../../../../../hooks/chart_theme";
+import customTooltip from '../../../../../../components/tsx/customTooltip';
 
 export default function SEXO() {
+
   const { textColor, panelColor } = useChartTheme();
 
   const doughnutColors = ["rgba(60, 245, 188, 0.7)", "rgba(245, 99, 59, 0.7)"];
   const n = (presence_data[0].subRows[0].total).toLocaleString('pt-BR');
 
   const series = useMemo(() => sexo_data.datasets[0].data, []);
+  const absValues = useMemo(() => sexo_data.datasets[0].abs_values, []);
   const labels = useMemo(() => sexo_data.labels, []);
 
   const options: ApexCharts.ApexOptions = useMemo(() => ({
@@ -25,6 +28,11 @@ export default function SEXO() {
         speed: 500,
         dynamicAnimation: { enabled: false } 
       }
+    },
+    stroke: {
+      show: true,
+      width: 2, // Aumente para separar mais os quadrados
+      colors: [panelColor] // Aqui você define a cor da borda (ex: a cor do seu fundo)
     },
     grid: {
       padding: {
@@ -56,16 +64,11 @@ export default function SEXO() {
     },
     tooltip: {
       theme: 'dark',
-      y: {
-        formatter: (val, { seriesIndex, dataPointIndex, w }) => {
-          // Acessando valores absolutos como você fazia no Chart.js
-          const absValue = sexo_data.datasets[0].abs_values[dataPointIndex];
-          const absolutoFormatado = absValue.toLocaleString('pt-BR');
-          return `Porcentagem: ${val}% <br/> Total: ${absolutoFormatado}`;
-        },
-        title: {
-          formatter: () => '',
-        },
+      custom: function({ series, seriesIndex, w }: any) {
+        const value = series[seriesIndex]
+        const label = w.globals.labels[seriesIndex]
+        const absolute = absValues[seriesIndex]
+        return customTooltip({ label, value, absolute });
       }
     },
     title: {

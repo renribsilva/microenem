@@ -1,0 +1,15 @@
+.icc_container {
+  width: 100%;
+  height: 100%;
+}
+
+.icc_rodape {
+  padding-top: 10px;
+  font-weight: 300;
+  font-size: 10px;
+}
+
+.icc_slider {
+  margin-left: 50px;
+  margin-right: 15px;
+}

@@ -42,8 +42,8 @@ export function useChartTheme() {
         setGridColor(grid_color);
       }
 
-      if (grid_color) {
-        setTickColor(grid_color);
+      if (tick_color) {
+        setTickColor(tick_color);
       }
 
     };

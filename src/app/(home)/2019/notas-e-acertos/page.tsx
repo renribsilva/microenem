@@ -5,10 +5,10 @@ import { TabsNavigation } from "../../../../components/tsx/tab_navigation";
 import { useState } from "react";
 import Card from "../../../../components/tsx/card";
 
-import tccData from "./json/tcc.json"
+import tccData from "../json/tcc.json"
 import TCCChart from "../notas-e-acertos/components/graphs/tcc";
 import { useTccLogic } from "../../../../hooks/use_tcc_logic";
-import InputShell from "./components/input_shell";
+import InputShell from "../../../../components/tsx/input_shell";
 
 const menuItems = [
   { id: 'LC', label: 'Linguagens' },

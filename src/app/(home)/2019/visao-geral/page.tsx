@@ -25,6 +25,7 @@ const abstencao_dia2 = Abstencao_dia2[0].abst.toLocaleString('pt-BR', {
 }) + '%';
 
 export default function Visao() {
+
   return (
     <section className={styles.main}>
       {/* <div className={styles.title}>

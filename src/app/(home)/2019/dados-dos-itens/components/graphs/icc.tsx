@@ -141,6 +141,7 @@ export default function ICCChart({
     },
     plugins: {
       legend: { display: false },
+      datalabels: {display: false},
       annotation: {
         annotations: {
           ...(codesFiltrados.length > 0 ? {

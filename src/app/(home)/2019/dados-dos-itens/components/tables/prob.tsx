@@ -8,7 +8,7 @@ interface ProbsTableProps {
 }
 
 export default function ProbsTable({ logic, activeCodes, area }: ProbsTableProps) {
-  if (!logic || !activeCodes || activeCodes.length === 0) {
+  if (!logic || !activeCodes || !area || !Probtrace) {
     return (
       <section style={{ padding: '20px', textAlign: 'center', color: '#666' }}>
         Selecione itens no gráfico para ver as probabilidades.

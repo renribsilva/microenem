@@ -75,6 +75,7 @@ export default function DadosDoExame() {
               <ProbsTable 
                 logic={chartLogic}
                 activeCodes={activeCodes}
+                area={activeArea}
               />
             </Card>
           </div>

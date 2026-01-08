@@ -6,12 +6,13 @@ import styles from "./graphs.module.css";
 import { useDescribe } from '../../../../../../hooks/use_describe_data';
 import { useFrequency } from '../../../../../../hooks/use_frequency_data';
 import { useChartTheme } from '../../../../../../hooks/chart_theme';
+import customTooltip from '../../../../../../components/tsx/customTooltip';
 
 export default function FrequencyAcertosChart({ area = "LC", highlightItem }: { area: string, highlightItem: any }) {
   
   const { describeData } = useDescribe(area);
   const { frequencyData } = useFrequency(area);
-  const { colorExame, gridColor, axisColor } = useChartTheme();
+  const { acertosColor, gridColor, axisColor, textColor } = useChartTheme();
 
   const xMin = 0;
   const xMax = 45;
@@ -25,7 +26,7 @@ export default function FrequencyAcertosChart({ area = "LC", highlightItem }: { 
     }
     if (id === 'kurtosis') {
       if (val > 0) return `Acertos concentrados perto da média.`;
-      if (val < 0) return `Acertos mais dispersas.`;
+      if (val < 0) return `Acertos mais dispersos.`;
       return `Curtose Neutra.`;
     }
     return "";
@@ -34,18 +35,22 @@ export default function FrequencyAcertosChart({ area = "LC", highlightItem }: { 
   const series = useMemo(() => {
     if (!frequencyData) return [];
     const rawData = frequencyData.datasets?.[1]?.data || [];
+    const fillIds = ['sd', 'q1', 'q3', 'p99']; 
     
     const dataWithColors = rawData.map((p: any) => {
-      // Cor padrão (azul esmaecido)
-      let pointColor = 'rgba(94, 149, 238, 0.4)'; 
-
-      if (highlightItem?.id === 'sd' && describeData?.acertos) {
-        const { mean, sd } = describeData.acertos;
-        const lower = Math.round(mean - sd);
-        const upper = Math.round(mean + sd);
-        
-        if (p.x >= lower && p.x <= upper) {
-          pointColor = colorExame["fill"]; // Cor sólida do seu tema para o destaque
+      let pointColor = acertosColor["bar"]; 
+      if (fillIds.includes(highlightItem?.id) && describeData?.acertos) {
+        const n = describeData.acertos;
+        let start = 0, end = 0;
+        if (highlightItem.id === 'sd') { 
+          start = Math.round(n.mean) - Math.round(n.sd); 
+          end = Math.round(n.mean) + Math.round(n.sd); 
+        }
+        else if (highlightItem.id === 'q1') { start = Math.round(n.q1); end = Math.round(n.max); }
+        else if (highlightItem.id === 'q3') { start = Math.round(n.q3); end = Math.round(n.max); }
+        else if (highlightItem.id === 'p99') { start = Math.round(n.p99); end = Math.round(n.max); }       
+        if (p.x >= start && p.x <= end) {
+          pointColor = acertosColor["fill"]; 
         }
       }
 
@@ -56,12 +61,11 @@ export default function FrequencyAcertosChart({ area = "LC", highlightItem }: { 
         strokeColor: pointColor
       };
     });
-
     return [{
       name: `Frequência ${area}`,
       data: dataWithColors
     }];
-  }, [frequencyData, area, highlightItem, describeData, colorExame]);
+  }, [frequencyData, area, highlightItem, describeData, acertosColor]);
 
   const options: ApexCharts.ApexOptions = useMemo(() => {
     const isShape = ['skew', 'kurtosis'].includes(highlightItem?.id);
@@ -72,14 +76,37 @@ export default function FrequencyAcertosChart({ area = "LC", highlightItem }: { 
       ? Math.round(mean) 
       : Math.round(parseFloat(highlightItem?.acerto?.replace(/\./g, '').replace(',', '.') || "0"));
 
-    const isNearStart = valX < xMin + 8;
-
     return {
       chart: {
         id: `freq-${area}`,
         type: 'bar',
-        toolbar: { show: false },
-        animations: { enabled: true, speed: 400 }
+        toolbar: { 
+          show: true,
+          offsetX: -5, // Move um pouco para a esquerda se estiver cortando na borda
+          offsetY: 80,  // Empurra a toolbar um pouco para baixo
+        },
+      },
+      title: {
+        text: 'Curva de densidade das notas',
+        align: 'left',
+        margin: 5,
+        style: { 
+          color: textColor, 
+          fontSize: '16px', 
+          fontWeight: 'bold' 
+        }
+      },
+      subtitle: {
+        text: [
+          'Pontos da proficiência onde as',
+          'notas se concentram mais.'
+        ] as any,
+        align: 'left' as const,
+        style: {
+          color: textColor,
+          fontSize: '13px',
+          fontWeight: 'normal',
+        }
       },
       plotOptions: {
         bar: {
@@ -92,6 +119,7 @@ export default function FrequencyAcertosChart({ area = "LC", highlightItem }: { 
         type: 'numeric',
         min: xMin,
         max: xMax,
+        tickPlacement: 'on', 
         tickAmount: 9,
         labels: { 
             style: { colors: axisColor },
@@ -102,35 +130,47 @@ export default function FrequencyAcertosChart({ area = "LC", highlightItem }: { 
       yaxis: {
         labels: { 
             style: { colors: axisColor },
-            formatter: (v) => v.toFixed(1) + '%'
+            formatter: (v) => v.toFixed(0) + '%'
         },
         title: { text: 'Frequência relativa', style: { color: axisColor, fontWeight: 'bold' } }
       },
-      grid: { borderColor: gridColor },
+      grid: { 
+        borderColor: gridColor,
+        padding: {
+          top: 10,
+          bottom: 0
+        }
+      },
       legend: { show: false },
       tooltip: {
-        shared: false,
-        intersect: true,
-        y: {
-          formatter: (val, { dataPointIndex }) => {
-            const rawAbs = frequencyData?.datasets?.[0]?.data?.[dataPointIndex]?.y || 0;
-            return `${val.toFixed(2)}% (${rawAbs} alunos)`;
-          }
+        theme: 'dark',
+        intersect: false,
+        hideDelay: 0,
+        followCursor: true,
+        custom: function({ series, seriesIndex, dataPointIndex, w }: any) {
+          const configPonto = w.config.series[seriesIndex].data[dataPointIndex];
+          const acertosReal = configPonto.x;
+          const porcentagem = configPonto.y;
+          const valorAbsoluto = frequencyData?.datasets?.[0]?.data?.[dataPointIndex]?.y || 0;
+          return customTooltip({ 
+            label: `Acertos ${acertosReal}`, 
+            value: porcentagem, 
+            absolute: valorAbsoluto 
+          });
         }
       },
       annotations: {
         xaxis: highlightItem && !isShape ? [
           {
             x: valX,
-            borderColor: colorExame["line"],
+            borderColor: acertosColor["line"],
             borderWidth: 2,
             label: {
               text: `${highlightItem?.metric}: ${highlightItem?.acerto}`,
               borderWidth: 6,
-              borderColor: colorExame["line"],
-              style: { color: '#fff', background: colorExame["line"], fontWeight: 'bold' },
+              borderColor: acertosColor["line"],
+              style: { color: '#fff', background: acertosColor["line"], fontWeight: 'bold' },
               position: 'top',
-              textAnchor: isNearStart ? 'start' : 'end',
             }
           }
         ] : [],
@@ -144,27 +184,27 @@ export default function FrequencyAcertosChart({ area = "LC", highlightItem }: { 
                 `${highlightItem.metric}: ${highlightItem.acerto}`,
                 getStatDescription(highlightItem.id, highlightItem.acerto)
               ],
-              offsetY: 80,
+              offsetY: -50,
               style: {
                 color: '#fff',
-                background: colorExame["line"],
+                background: acertosColor["line"],
                 fontSize: '13px',
                 borderWidth: 10,
-                borderColor: colorExame["line"]
+                borderColor: acertosColor["line"]
               }
             }
           }
         ] : []
       }
     };
-  }, [describeData, frequencyData, highlightItem, colorExame, axisColor, gridColor, area]);
+  }, [describeData, frequencyData, highlightItem, acertosColor, axisColor, gridColor, area]);
 
   if (!describeData?.acertos || !frequencyData) {
     return <div className={styles.loading}>Carregando...</div>;
   }
 
   return (
-    <div className={styles.frequency_container}>
+    <div style={{minHeight: '250px', height: '100%'}}>
       <Chart 
         options={options}
         series={series}

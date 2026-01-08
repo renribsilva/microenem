@@ -11,7 +11,7 @@ export default function DensityNotasChart({ area = "LC", highlightItem }: { area
   
   const { describeData } = useDescribe(area);
   const { densityData } = useDensity(area);
-  const { colorExame, gridColor, textColor, axisColor } = useChartTheme();
+  const { densidadeColor, gridColor, textColor, axisColor } = useChartTheme();
 
   const { xMin, xMax } = useMemo(() => {
     if (!describeData?.notas) return { xMin: 0, xMax: 1000 };
@@ -58,8 +58,6 @@ export default function DensityNotasChart({ area = "LC", highlightItem }: { area
     return datasets;
   }, [densityData, area, highlightItem, describeData]);
 
-  // console.log(highlightItem)
-
   const options: ApexCharts.ApexOptions = useMemo(() => {
     
     const isShape = ['skew', 'kurtosis'].includes(highlightItem?.id);
@@ -73,15 +71,19 @@ export default function DensityNotasChart({ area = "LC", highlightItem }: { area
                  : parseFloat(highlightItem?.nota?.replace(/\./g, '').replace(',', '.') || '0')
     );
     
-    const chartColors = isFill ? [colorExame["curve"], colorExame["fill"]] : [colorExame["curve"]];
+    const chartColors = isFill ? [densidadeColor["curve"], densidadeColor["fill"]] : [densidadeColor["curve"]];
     const fillOpacity = isFill ? [0.2, 0.7] : [0.2];
     const strokeWidths = isFill ? [2, 0] : [2];
 
     return {
       chart: {
         id: `density-${area}`,
-        type: 'area',
-        toolbar: { show: true },
+        type: 'area' as const,
+        toolbar: { 
+          show: true,
+          offsetX: -5, // Move um pouco para a esquerda se estiver cortando na borda
+          offsetY: 80,  // Empurra a toolbar um pouco para baixo
+        },
       },
       colors: chartColors,
       stroke: { 
@@ -92,14 +94,55 @@ export default function DensityNotasChart({ area = "LC", highlightItem }: { area
         type: 'solid',
         opacity: fillOpacity
       },
+      title: {
+        text: 'Curva de densidade das notas',
+        align: 'left',
+        margin: 5,
+        style: { 
+          color: textColor, 
+          fontSize: '16px', 
+          fontWeight: 'bold' 
+        }
+      },
+      subtitle: {
+        text: [
+          'Pontos da proficiência onde as',
+          'notas se concentram mais.'
+        ] as any,
+        align: 'left' as const,
+        style: {
+          color: textColor,
+          fontSize: '13px',
+          fontWeight: 'normal',
+        }
+      },
       xaxis: {
         type: 'numeric',
         min: xMin,
         max: xMax,
         tickAmount: (xMax - xMin) / 200,
-        axisBorder: { show: false },
         labels: { style: { colors: axisColor } },
-        title: { text: 'Nota na escala do ENEM', style: { color: axisColor, fontWeight: 'bold' } }
+        crosshairs: {
+          show: true,
+          stroke: { color: densidadeColor["line"], width: 1 }
+        },
+        tooltip: {
+          enabled: true,
+        },
+        title: {
+          text: "Notas na escala do ENEM",
+          style: { color: axisColor }
+        },
+      },
+      tooltip: {
+        theme: 'dark',
+        enabled: true,
+        shared: false,
+        intersect: false,
+        x: {
+          show: false,
+        },
+        marker: { show: false }
       },
       yaxis: {
         labels: { 
@@ -108,22 +151,27 @@ export default function DensityNotasChart({ area = "LC", highlightItem }: { area
         },
         title: { text: 'Densidade (x100)', style: { color: axisColor, fontWeight: 'bold' } }
       },
-      grid: { borderColor: gridColor },
+      grid: {
+        borderColor: gridColor,
+        padding: {
+          top: 10,
+          bottom: 0
+        }
+      },
       legend: { show: false },
-      tooltip: { enabled: true },
       dataLabels: { enabled: false },
       annotations: {
         // Linhas verticais para notas (Média, Mediana, Q1, etc)
         xaxis: !isShape ? [
           {
             x: valX,
-            borderColor: colorExame["line"],
+            borderColor: densidadeColor["line"],
             borderWidth: 2,
             label: {
               text: `${highlightItem?.metric}: ${highlightItem?.nota}`,
               borderWidth: 6,
-              borderColor: colorExame["line"],
-              style: { color: '#fff', background: colorExame["line"] },
+              borderColor: densidadeColor["line"],
+              style: { color: '#fff', background: densidadeColor["line"] },
               position: 'top',
             }
           }
@@ -142,7 +190,7 @@ export default function DensityNotasChart({ area = "LC", highlightItem }: { area
               offsetY: 70,
               style: {
                 color:  '#fff',
-                background: colorExame["line"],
+                background: densidadeColor["line"],
                 fontSize: '14px',
                 fontWeight: '300',
               },
@@ -151,19 +199,21 @@ export default function DensityNotasChart({ area = "LC", highlightItem }: { area
         ] : []
       }
     };
-  }, [describeData, highlightItem, colorExame, textColor, gridColor, xMin, xMax, area]);
+  }, [describeData, highlightItem, densidadeColor, textColor, gridColor, xMin, xMax, area]);
 
   if (!describeData?.notas || !densityData) {
     return <div className={styles.loading}>Carregando gráfico...</div>;
   }
 
   return (
-    <Chart 
-      options={options}
-      series={series}
-      type="area"
-      height="100%"
-      width="100%"
-    />
+    <div style={{minHeight: '250px', height: '100%'}}>
+      <Chart 
+        options={options}
+        series={series}
+        type="area"
+        height="100%"
+        width="100%"
+      />
+    </div>
   );
 }

@@ -8,7 +8,6 @@ import { useTccLogic } from "../../../../hooks/use_tcc_logic";
 import tccData from "../json/tcc.json"
 import ItensButtons from "./components/itens_buttons";
 import ICCChart from "./components/graphs/icc";
-import InputShell from "../../../../components/tsx/input_shell";
 import ProbsTable from "./components/tables/prob";
 
 const menuItems = [
@@ -28,7 +27,7 @@ export default function DadosDoExame() {
   const [selectedItems, setSelectedItems] = useState<ItemSelection>({});
   const [lastItemActivate, setLastItemActivate] = useState<number>(0);
   const [activeCodes, setActiveCodes] = useState<number[]>([]);
-
+  
   const handleTabChange = (id: string) => {
     setActiveArea(id);
   };
@@ -73,6 +72,7 @@ export default function DadosDoExame() {
             <Card display="block">
               <h3 className={styles.card_title}>Probabilidades</h3>
               <ProbsTable 
+                itemSelection={selectedItems} 
                 logic={chartLogic}
                 activeCodes={activeCodes}
                 area={activeArea}

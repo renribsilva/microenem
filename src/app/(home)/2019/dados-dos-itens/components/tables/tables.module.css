@@ -1,0 +1,39 @@
+.probtable_container {
+  /* background-color: aquamarine; */
+}
+
+.probtable_fallback{
+  /* background-color: aquamarine; */
+  padding: 20px;
+  text-align: center;
+  color: #666 
+}
+
+.probtable_proef {
+  /* background-color: aquamarine; */
+  font-size: 20px;
+  margin-bottom: 15px;
+  font-weight: 300;
+  padding: 7
+}
+
+.probtable_table {
+  /* background-color: aquamarine; */
+  min-width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  text-align: left;
+}
+
+
+.probtable_thead {
+  background-color:var(--tab-background);
+  text-transform: uppercase;
+  color:var(--tab-text);
+}
+
+.probtable_th {
+  padding: 10px;
+  border-bottom: 1px solid var(--grid);
+  font-weight: 300;
+}

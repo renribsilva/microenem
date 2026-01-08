@@ -1,77 +1,139 @@
+"use client";
+
+import { useMemo } from "react";
+import {
+  useReactTable,
+  getCoreRowModel,
+  flexRender,
+  createColumnHelper,
+} from "@tanstack/react-table";
+import styles from "./tables.module.css"
+
 import Probtrace from "../../../json/probtrace_2019.json";
-import constantes from "../../../../json/constantes.json"; // Importando constantes para destransformar
+import constantes from "../../../../json/constantes.json";
 
 interface ProbsTableProps {
   logic: any;
   activeCodes: number[];
-  area: string; // Adicionei a área para saber qual constante usar
+  area: string;
+  itemSelection: Record<number, "acerto" | "erro">;
 }
 
-export default function ProbsTable({ logic, activeCodes, area }: ProbsTableProps) {
-  if (!logic || !activeCodes || !area || !Probtrace) {
+// Tipo para os dados da linha
+type ProbRow = {
+  id: number;
+  estado: "acerto" | "erro";
+  probabilidade: number | null;
+};
+
+export default function ProbsTable({ logic, activeCodes, area, itemSelection }: ProbsTableProps) {
+  
+  const columnHelper = createColumnHelper<ProbRow>();
+  const { proficienciaAtual, selectedLabel } = logic;
+  const data = useMemo(() => {
+    if (!activeCodes.length || !logic) return [];
+    const [co_p_selected] = selectedLabel.split("_");
+    const provaData = (Probtrace.datasets as any)[co_p_selected];
+    const areaIdx = constantes.area.indexOf(area || "LC");
+    const d = constantes.d[areaIdx];
+    const k = constantes.k[areaIdx];
+    const thetaAlvo = (proficienciaAtual - d) / k;
+    const thetaLabels = Probtrace.theta_labels;
+    const closestIndex = thetaLabels.reduce((prevIdx, currVal, currIdx) => {
+      return Math.abs(currVal - thetaAlvo) < Math.abs(thetaLabels[prevIdx] - thetaAlvo)
+        ? currIdx
+        : prevIdx;
+    }, 0);
+
+    // Mapeia os códigos ativos para o formato da TanStack
+    return activeCodes.map((code) => {
+      const itemKey = String(code);
+      const status = itemSelection[code] || "acerto";
+      const quadraturas = provaData?.[itemKey];
+      const probBruta = quadraturas ? quadraturas[closestIndex] : null;
+
+      return {
+        id: code,
+        estado: status,
+        probabilidade: probBruta !== null 
+            ? (status === "erro" ? 1 - probBruta : probBruta) 
+            : null,
+      };
+    });
+  }, [activeCodes, logic, area, itemSelection, selectedLabel, proficienciaAtual]);
+
+  // 2. Definição das Colunas
+  const columns = useMemo(() => [
+    columnHelper.accessor("id", {
+      header: "ITEM",
+      cell: (info) => <strong>{info.getValue()}</strong>,
+    }),
+    columnHelper.accessor("estado", {
+      header: "ESTADO",
+      cell: (info) => (
+        <span style={{ fontSize: "0.75rem", color: "#888" }}>
+          {info.getValue().toUpperCase()}
+        </span>
+      ),
+    }),
+    columnHelper.accessor("probabilidade", {
+      header: "~PROB.",
+      cell: (info) => {
+        const val = info.getValue();
+        const status = info.row.original.estado;
+        const color = status === "erro" ? "#ff4d4f" : "#52c41a";
+        return (
+          <span style={{ fontWeight: "bold", color }}>
+            {val !== null ? `${(val * 100).toFixed(1)}%` : "N/A"}
+          </span>
+        );
+      },
+    }),
+  ], [columnHelper]);
+
+  // 3. Inicialização da Tabela
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
+  if (activeCodes.length === 0) {
     return (
-      <section style={{ padding: '20px', textAlign: 'center', color: '#666' }}>
-        Selecione itens no gráfico para ver as probabilidades.
+      <section className={styles.probtable_fallback}>
+        Selecione itens na tabela para ver as probabilidades de acerto ou erro para uma determinada proeficiência.
       </section>
     );
   }
 
-  const { proficienciaAtual, selectedLabel } = logic;
-  const [co_p_selected] = selectedLabel.split('_');
-  const provaData = (Probtrace.datasets as any)[co_p_selected];
-
-  // 1. Achar o Theta Correspondente (Destransformação)
-  const areaIdx = constantes.area.indexOf(area || "LC");
-  const d = constantes.d[areaIdx];
-  const k = constantes.k[areaIdx];
-
-  // Regra: Nota = (Theta * k) + d  =>  Theta = (Nota - d) / k
-  // Se for Matemática (MT), geralmente a escala já é o próprio Theta ou tem regra própria
-  const thetaAlvo = area === "MT" ? proficienciaAtual : (proficienciaAtual - d) / k;
-
-  // 2. Encontrar o índice da quadratura mais próxima (dentre as 40 ou 101 disponíveis)
-  // Usamos o array de labels do JSON original
-  const thetaLabels = Probtrace.theta_labels; 
-  
-  const closestIndex = thetaLabels.reduce((prevIdx, currVal, currIdx) => {
-    return Math.abs(currVal - thetaAlvo) < Math.abs(thetaLabels[prevIdx] - thetaAlvo) 
-      ? currIdx 
-      : prevIdx;
-  }, 0);
-
   return (
-    <section>
-      <div style={{ marginBottom: '15px', fontSize: '0.9rem' }}>
-        <strong>Proficiência:</strong> {Math.round(proficienciaAtual)} 
-        <small style={{ marginLeft: '10px', color: '#888' }}>
-          (θ ≈ {thetaAlvo.toFixed(2)})
-        </small>
+    <section className={styles.probtable_container}>
+      <div className={styles.probtable_proef}>
+        <strong>Proficiência:</strong> {Math.round(proficienciaAtual)}
       </div>
 
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr style={{ borderBottom: '1px solid #eee', fontSize: '0.8rem', color: '#666' }}>
-            <th style={{ textAlign: 'left', padding: '8px' }}>ITEM</th>
-            <th style={{ textAlign: 'right', padding: '8px' }}>PROB. ACERTO</th>
-          </tr>
+      <table className={styles.probtable_table}>
+        <thead className={styles.probtable_thead}>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id} style={{ borderBottom: "1px solid #eee", fontSize: "0.8rem", color: "#666" }}>
+              {headerGroup.headers.map((header) => (
+                <th key={header.id} style={{ textAlign: header.id === "id" ? "left" : "right", padding: "8px" }}>
+                  {flexRender(header.column.columnDef.header, header.getContext())}
+                </th>
+              ))}
+            </tr>
+          ))}
         </thead>
         <tbody>
-          {activeCodes.map((code) => {
-            const itemKey = String(code);
-            const quadraturas = provaData?.[itemKey];
-            const probabilidade = quadraturas ? quadraturas[closestIndex] : null;
-
-            return (
-              <tr key={code} style={{ borderBottom: '1px solid #f9f9f9' }}>
-                <td style={{ padding: '8px', fontWeight: 'bold' }}>{code}</td>
-                <td style={{ textAlign: 'right', padding: '8px' }}>
-                  {probabilidade !== null 
-                    ? `${(probabilidade * 100).toFixed(1)}%` 
-                    : "N/A"}
+          {table.getRowModel().rows.map((row) => (
+            <tr key={row.id} style={{ borderBottom: "1px solid #f9f9f9" }}>
+              {row.getVisibleCells().map((cell) => (
+                <td key={cell.id} style={{ textAlign: cell.column.id === "id" ? "left" : "right", padding: "8px" }}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
-              </tr>
-            );
-          })}
+              ))}
+            </tr>
+          ))}
         </tbody>
       </table>
     </section>

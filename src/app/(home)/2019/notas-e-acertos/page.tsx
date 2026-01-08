@@ -6,7 +6,7 @@ import { useState } from "react";
 import Card from "../../../../components/tsx/card";
 
 import tccData from "../json/tcc.json"
-import TCCChart from "../notas-e-acertos/components/graphs/tcc";
+import TCCChart from "../dados-do-exame/components/graphs/tcc";
 import { useTccLogic } from "../../../../hooks/use_tcc_logic";
 import InputShell from "../../../../components/tsx/input_shell";
 
@@ -37,7 +37,6 @@ export default function QuestoesPage() {
       <div className={styles.main_top}>
         <Card width={'100%'} height={'fit-content'} display="block">
           <h3 className={styles.card_title}>Acertos esperados por proeficiência</h3>
-          <TCCChart logic={chartLogic}/>
         </Card>
       </div>   
       <div className={styles.main_bottom}>

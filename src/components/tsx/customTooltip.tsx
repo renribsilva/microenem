@@ -1,7 +1,7 @@
 interface TooltipProps {
   label: string;
   value: number | string;
-  absolute: number;
+  absolute?: number;
 }
 
 export default function customTooltip ({ label, value, absolute }: TooltipProps) {

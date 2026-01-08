@@ -1,35 +1,13 @@
 "use client";
 
-import { 
-  CategoryScale,
-  Chart as ChartJS,
-  LinearScale,
-  LineController, 
-  LineElement,
-  PointElement,
-  Tooltip,
-  Legend
-} from "chart.js";
-import annotationPlugin from 'chartjs-plugin-annotation';
+import { useEffect, useMemo, useState } from "react";
+import Chart from "react-apexcharts";
 import probtraceData from "../../../json/probtrace_2019.json";
-import { Line } from "react-chartjs-2";
 import constantes from "../../../../json/constantes.json";
 import { useChartTheme } from "../../../../../../hooks/chart_theme";
-import ItensData from "../../../json/itens_2019.json"
-import { useEffect, useMemo } from "react";
-import styles from "./graphs.module.css"
+import ItensData from "../../../json/itens_2019.json";
+import styles from "./graphs.module.css";
 import InputShell2 from "../../../../../../components/tsx/input_shell2";
-
-ChartJS.register(
-  LineController, 
-  LineElement, 
-  PointElement, 
-  CategoryScale, 
-  LinearScale, 
-  Tooltip, 
-  Legend,
-  annotationPlugin
-);
 
 interface ICCChartProps {
   itemSelection: Record<number, 'acerto' | 'erro'>;
@@ -47,9 +25,14 @@ export default function ICCChart({
   onFilterChange
 }: ICCChartProps) {
   
-  const FIXED_PALETTE = Array.from({ length: 45 }, (_, i) => `hsl(${(i * 360) / 45}, 70%, 50%)`);
-  const { gridColor } = useChartTheme();
+  const { gridColor, axisColor } = useChartTheme();
+  const [activeCodes, setActiveCodes] = useState<number[]> ([]);
   
+  // Paleta fixa para manter consistência entre re-renderizações
+  const FIXED_PALETTE = useMemo(() => 
+    Array.from({ length: 45 }, (_, i) => `hsl(${(i * 360) / 45}, 70%, 50%)`), 
+  []);
+
   const abandonadosCodes = useMemo(() => {
     const codes = new Set<number>();
     const data = ItensData as any;
@@ -69,117 +52,155 @@ export default function ICCChart({
   const d = constantes.d[areaIdx];
   const k = constantes.k[areaIdx];
 
-  const transformTheta = (theta: number) => (area === "MT" ? theta : (theta * k) + d);
+  const transformTheta = (theta: number) => ((theta * k) + d);
 
   const provaData = (probtraceData.datasets as any)[co_p_selected];
-  const codes = Object.keys(itemSelection).map(Number);
-  let hasAbandonedItem = false;
 
-  const chartDatasets = codes.map((code) => {
-    const itemKey = String(code);
-    const status = itemSelection[code];
-    const rawPoints = provaData?.[itemKey] as (number | null)[];
-
-    if (!rawPoints) return null; 
-
-    const isAbandoned = abandonadosCodes.has(lastItemActive) && rawPoints.every(p => p === null);
-    if (isAbandoned) {
-      hasAbandonedItem = true;
-      return null;
-    }
-
+  // --- PROCESSAMENTO DE DADOS PARA APEXCHARTS ---
+  const { series, hasAbandonedItem } = useMemo(() => {
+    let abandonedFound = false;
+    const codes = Object.keys(itemSelection).map(Number);
     const allItemsInProva = Object.keys(provaData || {});
-    const colorIndex = allItemsInProva.indexOf(itemKey);
+    const chartSeries = codes
+      .map((code) => {
+        const itemKey = String(code);
+        const isAbandoned = abandonadosCodes.has(code); 
+        if (isAbandoned) {
+          if (code === lastItemActive) abandonedFound = true;
+          return null; // Remove o item abandonado da série do gráfico
+        }
+        const status = itemSelection[code];
+        const rawPoints = provaData?.[itemKey] as (number | null)[];
+        if (!rawPoints) return null;
+        const colorIndex = allItemsInProva.indexOf(itemKey);
+        return {
+          item: code,
+          name: `Item ${code}`, // Nomeclatura para o motor do gráfico
+          data: rawPoints.map((yValue, idx) => ({
+            x: transformTheta(probtraceData.theta_labels[idx]),
+            y: parseFloat((status === 'erro' ? 1 - (yValue || 0) : (yValue || 0)).toFixed(3))
+          })),
+          color: colorIndex !== -1 ? FIXED_PALETTE[colorIndex % 45] : "#999",
+          strokeDashArray: status === 'erro' ? 4 : 0,
+        };
+      })
+      .filter(Boolean); // Remove os nulls (itens abandonados ou sem dados)
 
+    return { series: chartSeries, hasAbandonedItem: abandonedFound};
+  }, [itemSelection, provaData, area, abandonadosCodes, lastItemActive]);
+  
+  const xMin = Math.floor(transformTheta(-6) / 100) * 100;
+  const xMax = Math.ceil(transformTheta(6) / 100) * 100;
+  
+  // --- CONFIGURAÇÕES DO APEXCHARTS ---
+  const options: ApexCharts.ApexOptions = useMemo(() => {
     return {
-      label: `Item ${code}`,
-      data: rawPoints.map((yValue, idx) => ({
-        x: transformTheta(probtraceData.theta_labels[idx]),
-        y: status === 'erro' ? 1 - (yValue || 0) : (yValue || 0)
-      })),
-      borderColor: colorIndex !== -1 ? FIXED_PALETTE[colorIndex % 45] : "#999",
-      backgroundColor: 'transparent',
-      tension: 0.3,
-      pointRadius: 0,
-      borderWidth: 2,
-      borderDash: status === 'erro' ? [4, 2] : [], 
-    };
-  }).filter(Boolean);
-
-  const xMin = area === "MT" ? -4 : Math.floor(transformTheta(-4) / 100) * 100;
-  const xMax = area === "MT" ? 6 : Math.ceil(transformTheta(5) / 100) * 100;
-
-  const codesFiltrados = useMemo(() => {
-    const allSelectedCodes = Object.keys(itemSelection).map(Number);
-    if (!provaData) return [];
-    
-    // Retorna apenas os códigos que existem nas chaves do JSON da prova atual
-    return allSelectedCodes.filter(code => String(code) in provaData);
-  }, [itemSelection, provaData]);
-
-  useEffect(() => {
-    if (onFilterChange) {
-      onFilterChange(codesFiltrados);
-    }
-  }, [area, codesFiltrados]);
-
-  const options: any = { // O 'any' aqui resolve o erro de atribuição do TS
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      y: { min: 0, max: 1, grid: { color: gridColor }, title: { display: true, text: 'Probabilidade' },},
-      x: {
-        type: 'linear',
-        min: xMin,
-        max: xMax,
-        grid: { color: gridColor },
-        ticks: {
-          callback: (val: number) => (area === "MT" ? val : (val % 100 === 0 ? val : null))
+      chart: {
+        id: "icc-chart",
+        type: 'line',
+        toolbar: { show: true },
+        animations: { enabled: false }, // Melhora performance com muitas linhas
+      },
+      stroke: {
+        curve: 'monotoneCubic', 
+        width: 2, 
+        lineCap: 'round',
+        dashArray: series.map((s: any) => s.strokeDashArray)
+      },
+      colors: series.map((s: any) => s.color),
+     xaxis: {
+      type: 'numeric',
+      min: xMin,
+      max: xMax,
+      labels: { 
+        style: { colors: axisColor },
+        formatter: (val: any) => parseFloat(val).toFixed(0)
+      },
+      title: { text: `Notas do Enem (${area})`, style: { color: axisColor } },
+      axisBorder: { show: false },
+      tooltip: {
+        enabled: true,
+      },
+      crosshairs: {
+        show: true,
+        width: 1,
+        position: 'back',
+        opacity: 0.9,
+        stroke: {
+          color: axisColor,
+          width: 1,
+          dashArray: 3,
         },
-        title: { display: true, text: `Notas do Enem (${area})` }
+      },
+    },
+    tooltip: {
+      enabled: true,       
+      shared: true,        
+      custom: function() { 
+        return ''; 
+      },
+      marker: {
+        show: false
       }
     },
-    plugins: {
-      legend: { display: false },
-      datalabels: {display: false},
-      annotation: {
-        annotations: {
-          ...(codesFiltrados.length > 0 ? {
-            proficienciaLinha: {
-              type: 'line',
-              xMin: proficienciaAtual,
-              xMax: proficienciaAtual,
-              borderColor: chartColor || '#ff0000',
-              borderWidth: 2,
+      yaxis: {
+        min: 0,
+        max: 1,
+        tickAmount: 5,
+        labels: { 
+          style: { colors: axisColor },
+          formatter: (val) => val.toFixed(1)
+        },
+        title: { text: 'Probabilidade', style: { color: axisColor } }
+      },
+      grid: { borderColor: gridColor },
+      legend: { show: false },
+      annotations: {
+        xaxis: [
+          {
+            x: proficienciaAtual,
+            borderColor: chartColor || '#ff0000',
+            strokeDashArray: 0,
+            label: {
+              text: `Traço de prob. da nota ${Math.round(proficienciaAtual)}`,
+              style: { color: '#fff', background: chartColor || '#ff0000' }
+            }
+          }
+        ],
+        points: hasAbandonedItem
+          ? [{
+              x: (xMin + xMax) / 2,
+              y: 0.5,
               label: {
-                display: true,
-                content: `Posição da nota: ${Math.round(proficienciaAtual)}`,
-                position: 'end',
-                backgroundColor: chartColor || '#ff0000',
-                color: '#fff'
+                text: '⚠️ Item abandonado na TRI (sem parâmetros)',
+                style: { color: '#fff', background: '#d32f2f' }
               }
-            }
-          } : {}),
-          ...(hasAbandonedItem ? {
-            aviso: {
-              type: 'label',
-              xValue: (xMin + xMax) / 2,
-              yValue: 0.5,
-              content: ['⚠️ Item abandonado na TRI', 'Sem parâmetros'],
-              color: '#d32f2f',
-              backgroundColor: 'rgba(255, 255, 255, 0.9)'
-            }
-          } : {})
-        }
+            }] 
+          : []
       }
+    };
+  }, [series, xMin, xMax, hasAbandonedItem, area, itemSelection, provaData, area, abandonadosCodes, lastItemActive, FIXED_PALETTE, proficienciaAtual, chartColor, axisColor, gridColor]);
+  
+  useEffect(() => {
+    const allSelectedCodes = Object.keys(itemSelection).map(Number);
+    if (provaData && onFilterChange) {
+      const filtrados = allSelectedCodes.filter(code => String(code) in provaData);
+      onFilterChange(filtrados);
+      setActiveCodes(filtrados)
     }
-  };
-
+  }, [area, itemSelection, provaData]);
+  
   return (
     <div className={styles.icc_container}>
-      <Line data={{ datasets: chartDatasets as any }} options={options} />
+      <Chart 
+        options={options} 
+        series={series as any} 
+        type="line" 
+        height="100%" 
+        width="100%" 
+      />
       <div className={styles.icc_slider}>
-        <InputShell2 logic={logic} />
+        <InputShell2 logic={logic} activeCodes={activeCodes}/>
       </div>
     </div>
   );

@@ -85,8 +85,8 @@ export default function COR_RACA() {
         const data = w.config.series[seriesIndex].data[dataPointIndex];
         const label = data.x;
         const value = data.y;
-        const absolute = data.abs;
-        return customTooltip({ label, value, absolute });
+        // const absolute = data.abs;
+        return customTooltip({ label, value, });
       }
     }
   }), [textColor, panelColor, n, series]);

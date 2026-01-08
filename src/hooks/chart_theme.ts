@@ -15,13 +15,19 @@ export function useChartTheme() {
     "Verde - Videoprova - Libras": "#22c55e",
   };
 
-  const colorExame: Record<string, string> = {
-    "curve": '#6366f1',           
-    "curve_fill": 'rgba(99, 102, 241, 0.1)', 
+  const densidadeColor: Record<string, string> = {
+    "curve": '#8b5cf6',           
+    "curve_fill": 'rgba(139, 92, 241, 0.1)', 
     "line": '#f97316',           
-    "fill": 'rgba(25, 27, 134, 0.45)', 
-    "border": 'rgba(249, 115, 22, 0.5)'
+    "fill": 'rgba(139, 92, 241, 0.45)', 
+    "border": 'rgba(139, 92, 241, 0.6)'
   }
+
+  const acertosColor = {
+    "bar": 'rgba(16, 185, 129, 0.2)', 
+    "fill": 'rgba(16, 185, 129, 0.8)', 
+    "line": '#f43f5e',
+};
 
   useEffect(() => {      
     const updateThemeValues = () => {
@@ -68,5 +74,14 @@ export function useChartTheme() {
     return () => observer.disconnect();
   }, []);
 
-  return { isDark, textColor, panelColor, gridColor, colorMap, colorExame, tickColor, axisColor };
+  return { 
+    isDark, 
+    textColor, 
+    panelColor, 
+    gridColor, 
+    colorMap, 
+    densidadeColor, 
+    tickColor, 
+    axisColor,
+    acertosColor};
 }

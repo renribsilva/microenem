@@ -99,7 +99,7 @@ const AppSidebar: React.FC = () => {
     navItems: NavItem[]
   ) => (
     <>
-      <h2 className={styles.navbar_title}>EDIÇÕES (aplicação  regular)</h2>
+      <h2 className={styles.navbar_title}>EDIÇÕES</h2>
       <ul className={styles.navbar_list}>
         {navItems.map((nav, index) => (
           <li key={nav.name} className={styles.navbar_years}>

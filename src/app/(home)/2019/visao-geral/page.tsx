@@ -21,8 +21,6 @@ const COR_RACA = dynamic(() => import("./components/graphs/cor_raca"), { ssr: fa
 
 export default function Visao() {
 
-  const [resizeKey, setResizeKey] = useState(0);
-
   const total_inscritos = Inscritos[0].total.toLocaleString('pt-BR');
   const abstencao_dia1 = Abstencao_dia1[0].abst.toLocaleString('pt-BR', {
     minimumFractionDigits: 1, maximumFractionDigits: 1
@@ -31,14 +29,8 @@ export default function Visao() {
     minimumFractionDigits: 1, maximumFractionDigits: 1
   }) + '%';
 
-  useEffect(() => {
-    const handleResize = () => setResizeKey(prev => prev + 1);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
   return (
-    <section className={styles.main} key={resizeKey}>
+    <section className={styles.main}>
       <div className={styles.block1}>
         <div className={styles.block1_first}>
           <div className={styles.block1_first_left}>

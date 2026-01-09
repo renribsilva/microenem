@@ -6,7 +6,6 @@ import { useState } from "react";
 import Card from "../../../../components/tsx/card";
 
 import tccData from "../json/tcc.json"
-import TCCChart from "../dados-do-exame/components/graphs/tcc";
 import { useTccLogic } from "../../../../hooks/use_tcc_logic";
 import InputShell from "../../../../components/tsx/input_shell";
 

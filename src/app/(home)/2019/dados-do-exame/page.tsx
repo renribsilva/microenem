@@ -28,21 +28,14 @@ export default function DadosDoExame() {
   const [activeArea, setActiveArea] = useState("LC");
   const [selectedRow, setSelectedRow] = useState<any>(null);
   const chartLogic = useTccLogic(tccData.datasets, activeArea);
-  const [resizeKey, setResizeKey] = useState(0);
 
   const handleTabChange = (id: string) => {
     setActiveArea(id);
     setSelectedRow(null); 
   };
 
-  useEffect(() => {
-    const handleResize = () => setResizeKey(prev => prev + 1);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
   return (
-    <section className={styles.main} key={resizeKey}>      
+    <section className={styles.main}>      
       <nav className={styles.nav}>
         <TabsNavigation 
           items={menuItems} 

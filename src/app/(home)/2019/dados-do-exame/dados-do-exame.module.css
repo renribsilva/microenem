@@ -2,18 +2,15 @@
 /***************CONTAINERS***************/
 /****************************************/
 
-.main_container {
-  /* background-color: aquamarine; */
+.main {
+  /* background-color: rgb(86, 211, 211); */
   padding: 10px;
-  box-sizing: border-box;
   display: flex;
-  flex-direction: column;
   gap: 10px;
-  width: 100%;
-  min-height: 100vh;
+  flex-wrap: wrap;
 }
 
-.nav_container {
+.nav {
   /* background-color: rgb(76, 113, 145); */
   width: 100%;
   box-sizing: border-box;
@@ -28,8 +25,6 @@
   display: flex;
   gap: 10px;
   width: 100%;
-  align-items: stretch; /* Força as colunas a terem a mesma altura */
-  flex: 1;
 }
 
 @media (max-width: 1200px) {
@@ -38,36 +33,27 @@
   }
 }
 
+.main_left {
+   /* background-color: aquamarine; */
+  flex: 1 1 30%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .main_right {
   /* background-color: aquamarine; */
   flex: 1 1 70%;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  min-height: 0;
-  height: 100%;
-}
-
-.main_left {
-  flex: 1 1 30%;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  min-height: 0;
-}
-
-.main_left > div {
-  flex: 1; 
-  display: flex; 
-  flex-direction: column;
 }
 
 .main_right_top {
   /* background-color: aquamarine; */
   display: flex;
   gap: 10px;
-  flex: 1;
-  min-height: 0;
+  height: fit-content;
 }
 
 @media (max-width: 1200px) {
@@ -77,8 +63,41 @@
 }
 
 .main_right_bottom {
-  flex: 1;
-  min-height: 0; 
+  /* background-color: aquamarine; */
   display: flex;
-  height: 100%;
+  height: fit-content
+}
+
+/*******************************************/
+/***************CARD_DESCRIBE***************/
+/*******************************************/
+
+.card_describe {
+  /* background-color: aquamarine; */
+}
+
+.card_describe_title {
+  /* background-color: aquamarine; */
+}
+
+/**********************************************************************/
+/***************CARD_DENSITY & CARD_FREQUENCY & CARD_TCC***************/
+/**********************************************************************/
+
+.card_density {
+  /* background-color: aquamarine; */
+  display: flex;
+  min-height: 260px;
+}
+
+.card_frequency {
+  /* background-color: aquamarine; */
+  display: flex;
+  min-height: 260px;
+}
+
+.card_tcc {
+  /* background-color: aquamarine; */
+  display: flex;
+  min-height: 260px;
 }

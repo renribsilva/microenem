@@ -205,7 +205,7 @@ export default function FrequencyAcertosChart({ area = "LC", highlightItem }: { 
   }
 
   return (
-    <div style={{minHeight: '250px', height: '100%'}}>
+    <div style={{ flex: 1}}>
       <Chart 
         options={options}
         series={series}

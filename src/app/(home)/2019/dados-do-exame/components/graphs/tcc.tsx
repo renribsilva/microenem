@@ -7,7 +7,8 @@ import InputShell from '../../../../../../components/tsx/input_shell';
 import styles from "./graphs.module.css"
 
 export default function TCCChart({ logic }: { logic: any }) {
-  const { gridColor, axisColor, colorMap, textColor } = useChartTheme();
+  
+  const { gridColor, axisColor, colorMap, tickColor } = useChartTheme();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -51,32 +52,32 @@ export default function TCCChart({ logic }: { logic: any }) {
     chart: {
       id: 'tcc-chart',
       type: 'line',
-      toolbar: { 
-        show: true,
+      toolbar: {
         offsetX: -5,
         offsetY: 0,
+        show: true,
       },
       zoom: { enabled: false },
       events: {
         // EVENTO DE CLIQUE PARA ATUALIZAR PROFICIÊNCIA
         click: function(event, chartContext, config) {
-          // config.dataPointIndex retorna o índice do ponto mais próximo ao clique
+          // Se o elemento clicado (ou o pai dele) tiver classes da toolbar, ignore.
+          const isToolbar = event.target.closest('.apexcharts-toolbar');
+          if (isToolbar) return;
           const clickedIndex = config.dataPointIndex;
-          
-          // Verificamos se o índice é válido (maior que -1)
-          if (clickedIndex > -1) {
+          if (clickedIndex !== undefined && clickedIndex > -1) {
             setPointIndex(clickedIndex);
           }
         }
       }
     },
     markers: {
-      size: 0,                   // Mantém a linha limpa (pontos ocultos por padrão)
-      colors: [chartColor],      // Força a cor do ponto que segue o mouse
-      strokeColors: '#fff',      // Borda branca para destacar
+      size: 0,
+      colors: [chartColor],
+      strokeColors: '#fff',
       strokeWidth: 0,
       hover: {
-        size: 6,                 // Tamanho do ponto quando o mouse passa
+        size: 6,
       }
     },
     stroke: {
@@ -177,21 +178,16 @@ export default function TCCChart({ logic }: { logic: any }) {
     <div className={styles.tcc_container}>    
       <div className={styles.tcc_cabecalho}>      
         <div className={styles.tcc_title}>
-          <h3 className={styles.tcc_h3}>Curva característica do teste</h3>
-          <p style={{ margin: '2px 20px 0 0', fontSize: '13px', color: textColor, lineHeight: '1.2' }}>
+          <h3 className={styles.tcc_title_h3}>Curva característica do teste</h3>
+          <p className={styles.tcc_subtitle_p}>
             Modelo que descreve o número de acertos esperados para cada proficiência. Destaque para o ponto de inflexão que representa a dificuldade média da prova.
           </p>
         </div>
 
-        <div style={{ position: 'relative', width: '250px' }} ref={dropdownRef}>
+        <div className={styles.dropdown_container} ref={dropdownRef}>
           <button 
             onClick={() => setIsOpen(!isOpen)}
-            style={{
-              padding: '8px 12px', borderRadius: '8px', border: '1px solid #e2e8f0',
-              backgroundColor: '#fff', cursor: 'pointer', display: 'flex',
-              alignItems: 'center', gap: '8px', fontSize: '0.85rem',
-              fontWeight: '600', width: '100%', justifyContent: 'space-between'
-            }}
+            className={styles.dropdown_button}
           >
             <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               Prova: <span style={{ color: chartColor }}>{currentInfo.fullText}</span>
@@ -200,11 +196,7 @@ export default function TCCChart({ logic }: { logic: any }) {
           </button> 
 
           {isOpen && (
-            <div style={{
-              position: 'absolute', top: '110%', right: 0, width: '250px',
-              backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px',
-              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)', maxHeight: '250px', overflowY: 'auto', zIndex: 101
-            }}>
+            <div className={styles.dropdown_list} >
               {availableDatasets.map((ds: any) => {
                 const info = getInfoCaderno(ds.metadata.codigo, ds.metadata.lingua);
                 const isSelected = selectedLabel === ds.label;
@@ -214,8 +206,8 @@ export default function TCCChart({ logic }: { logic: any }) {
                     onClick={() => { setSelectedLabel(ds.label); setIsOpen(false); }}
                     style={{
                       padding: '10px 14px', cursor: 'pointer', fontSize: '0.8rem',
-                      backgroundColor: isSelected ? '#f1f5f9' : 'transparent',
-                      color: isSelected ? (colorMap[info.corNome] || '#475569') : '#475569',
+                      backgroundColor: isSelected ? gridColor : 'transparent',
+                      color: isSelected ? (colorMap[info.corNome] || '#475569') : tickColor,
                       borderLeft: `4px solid ${isSelected ? (colorMap[info.corNome] || '#475569') : 'transparent'}`,
                     }}
                   >

@@ -1,30 +1,9 @@
-/*************************************************/
-/*******************FREQUENCY*********************/
-/*************************************************/
-
-.frequency_container {
-  /* background-color: aquamarine;   */
-  height: fit-content; 
-  position: relative;
-  box-sizing: border-box;
-  height: 200px;
-  z-index: 0;
-}
-
-.frequency_wrapper {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}
-
 /*******************************************/
 /*******************TCC*********************/
 /*******************************************/
 
 .tcc_container {
-  height: 100%;
+  /* background-color: blueviolet; */
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -34,6 +13,7 @@
   /* background-color: aquamarine; */
   display: flex;
   justify-content: space-between;
+  align-items: baseline;
 }
 
 @media (max-width: 800px) {
@@ -45,25 +25,91 @@
 }
 
 .tcc_title {
+  /* background-color: azure; */
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.tcc_h3 {
-  margin: 0;
+.tcc_title_h3 {
+  /* background-color: rgb(73, 182, 182); */
   color: var(--foreground);
   font-size: 16px;
-  font-weight: bold
+  font-weight: bold;
+  margin: 0;
+}
+
+.tcc_subtitle_p {
+  /* background-color: bisque; */
+  margin: 0;
+  font-size: 12px;
+  color: var(--foreground);
+  line-height: 1.2;
+  margin-right: 15px;
 }
 
 .tcc_graph_container {
   /* background-color: aquamarine; */
   display: flex;
-  flex: 1;
+  /* flex: 1; */
 }
 
 .tcc_graph_wrapper {
-  height: 100%;
+  /* height: 100%; */
   flex: 1;
+}
+
+/************************************************/
+/*******************DROPDOWN*********************/
+/************************************************/
+
+.dropdown_container {
+  position: relative;
+  width: 250px;
+}
+
+.dropdown_button {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--grid);
+  background-color:var(--panel);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.dropdown_list {
+  position: absolute;
+  top: 110%;
+  right: 0;
+  width: 250px;
+  background-color: var(--tab-background);
+  border: 1px solid var(--tab-border);
+  /* box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important; */
+  border-radius: 8px;
+  max-height: 250px;
+  overflow-y: auto;
+  z-index: 101
+}
+
+:global(.apexcharts-menu) {
+  background: var(--tab-background) !important; 
+  border: 1px solid var(--tab-border) !important;
+  color: var(--foreground) !important;
+  /* box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important; */
+}
+
+:global(.apexcharts-menu-item:hover) {
+  background: var(--tab-hover) !important;
+  /* color: var(--accent-color, #fff) !important; */
+}
+
+/* Customiza os ícones do toolbar caso o modo dark do Apex não baste */
+:global(.apexcharts-toolbar svg) {
+  fill: var(--foreground) !important;
 }

@@ -92,12 +92,13 @@ export default function COR_RACA() {
   }), [textColor, panelColor, n, series]);
 
   return (
-    <div style={{ flex: 1 }}>
+    <div style={{ flex: 1}}>
       <Chart
         options={options}
         series={series}
         type="treemap"
         height="100%"
+        width="100%"
       />
     </div>
   );

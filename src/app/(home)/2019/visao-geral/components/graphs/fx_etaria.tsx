@@ -97,27 +97,29 @@ export default function FX_ETARIA() {
         fontWeight: 'bold'
       }
     },
-    subtitle: {
-      text: `*n = ${n}`,
-      align: 'center',
-      style: {
-        color: textColor,
-        fontSize: '13px',
-        fontWeight: 'normal',
-      }
-    },
+    // subtitle: {
+    //   text: `*n = ${n}`,
+    //   align: 'center',
+    //   style: {
+    //     color: textColor,
+    //     fontSize: '13px',
+    //     fontWeight: 'normal',
+    //   }
+    // },
     legend: {
       show: false
     }
   }), [textColor, gridColor, n, series]);
 
   return (
-    <Chart
-      options={options}
-      series={series}
-      type="bar"
-      height="100%"
-      width="100%"
-    />
+    <div style={{ flex: 1}}>
+      <Chart
+        options={options}
+        series={series}
+        type="bar"
+        height="100%"
+        width="100%"
+      />
+    </div>
   );
 }

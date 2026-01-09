@@ -14,24 +14,22 @@
   flex-direction: column;
   justify-content: space-between;
   overscroll-behavior: contain;
-
-  /* Animação */
   transition: transform 0.3s ease-in-out;
+  @media (max-width: 800px) {
+    position: fixed;
+    left: 0;
+    top: 60px;
+    height: calc(100vh - 60px);
+    transform: translateX(-100%); 
+    visibility: hidden; 
+    pointer-events: none;
+  }
 }
 
-@media (max-width: 800px) {
-  .appsidebar_container {
-    position: fixed; 
-    z-index: 100;
-    transform: translateX(-100%);
-    transition: transform 0.3s ease-in-out;
-    height: calc(100svh - 60px);
-  }
-
-  /* Classe para quando o usuário clicar no botão de abrir no mobile */
-  .appsidebar_mobile_open {
-    transform: translateX(0);
-  }
+.appsidebar_mobile_open {
+  transform: translateX(0) !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
 }
 
 .appsidebar_topper {
@@ -260,10 +258,12 @@
   border-radius: 1rem;
   padding: 20px;   
   box-sizing: border-box;
+  width: 100%;
+  height: 100%;
 }
 
 .card_wrapper {
-  /* background-color: rgb(196, 96, 49); */
+  box-sizing: border-box;
 }
 
 /*************************************/

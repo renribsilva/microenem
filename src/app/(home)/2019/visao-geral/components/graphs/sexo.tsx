@@ -80,24 +80,26 @@ export default function SEXO() {
         fontWeight: 'bold'
       }
     },
-    subtitle: {
-      text: `*n = ${n}`,
-      align: 'center',
-      style: {
-        color: textColor,
-        fontSize: '13px',
-        fontWeight: 'normal',
-      }
-    }
+    // subtitle: {
+    //   text: `*n = ${n}`,
+    //   align: 'center',
+    //   style: {
+    //     color: textColor,
+    //     fontSize: '13px',
+    //     fontWeight: 'normal',
+    //   }
+    // }
   }), [textColor, panelColor, n, labels]);
 
   return (
-    <Chart
-      options={options}
-      series={series}
-      type="donut"
-      height="95%"
-      width="95%"
-    />
+    <div style={{ flex: 1 }}>
+      <Chart
+        options={options}
+        series={series}
+        type="donut"
+        height="100%"
+        width="100%"
+      />
+    </div>
   );
 }

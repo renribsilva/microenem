@@ -1,97 +1,104 @@
 'use client'
 
-import FX_ETARIA from "./components/graphs/fx_etaria"
+import { useState, useEffect, Suspense } from "react"
+import dynamic from "next/dynamic"
 import styles from "./visao-geral.module.css"
 import Card from "../../../../components/tsx/card"
-import SEXO from "./components/graphs/sexo"
+
+// Componentes estáticos
 import Group from "../../../../components/svg/group"
+import PersonCheck from "../../../../components/svg/person_check"
+import PersonCancel from "../../../../components/svg/person_cancel"
+import Presence from "./components/tables/presence"
+
+// JSON Data
 import Inscritos from "../visao-geral/json/overview/inscritos.json"
 import Abstencao_dia1 from "../visao-geral/json/overview/presenca_dia1.json"
 import Abstencao_dia2 from "../visao-geral/json/overview/presenca_dia2.json"
-import Presence from "./components/tables/presence"
-import PersonCheck from "../../../../components/svg/person_check"
-import COR_RACA from "./components/graphs/cor_raca"
-import PersonCancel from "../../../../components/svg/person_cancel"
 
-
-const total_inscritos = Inscritos[0].total.toLocaleString('pt-BR');
-const abstencao_dia1 = Abstencao_dia1[0].abst.toLocaleString('pt-BR', {
-  minimumFractionDigits: 1,
-  maximumFractionDigits: 1
-}) + '%';
-const abstencao_dia2 = Abstencao_dia2[0].abst.toLocaleString('pt-BR', {
-  minimumFractionDigits: 1,
-  maximumFractionDigits: 1
-}) + '%';
+// Imports dinâmicos
+const FX_ETARIA = dynamic(() => import("./components/graphs/fx_etaria"), { ssr: false })
+const SEXO = dynamic(() => import("./components/graphs/sexo"), { ssr: false })
+const COR_RACA = dynamic(() => import("./components/graphs/cor_raca"), { ssr: false })
 
 export default function Visao() {
+  
+  const [resizeKey, setResizeKey] = useState(0);
+
+  const total_inscritos = Inscritos[0].total.toLocaleString('pt-BR');
+  const abstencao_dia1 = Abstencao_dia1[0].abst.toLocaleString('pt-BR', {
+    minimumFractionDigits: 1, maximumFractionDigits: 1
+  }) + '%';
+  const abstencao_dia2 = Abstencao_dia2[0].abst.toLocaleString('pt-BR', {
+    minimumFractionDigits: 1, maximumFractionDigits: 1
+  }) + '%';
+
+  useEffect(() => {
+    const handleResize = () => setResizeKey(prev => prev + 1);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
-    <section className={styles.main}>
-      {/* <div className={styles.title}>
-        <h1>
-          {folderName}: visão geral (regular)
-        </h1>
-      </div> */}
+    <section className={styles.main} key={resizeKey}>
       <div className={styles.block1}>
-        <div className={styles.block_first}>
-          <div className={styles.block_first_left}>
-            <div className={styles.block_first_left1}>
-              <Card height={"200px"} display={"block" }>
-                <div className={styles.cards_container}>
-                  <div className={styles.cards_title_container}>
-                    <Group />
-                    <h3 className={styles.cards_title_txt1}>Inscrições</h3>
-                  </div>
-                  <p className={styles.cards_title_txt2}>total</p>
-                  <p className={styles.cards_title_num}>{total_inscritos}</p>
-                </div>
+        <div className={styles.block1_first}>
+          <div className={styles.block1_first_left}>
+            <div className={styles.block1_first_left1}>
+              <Card className={styles.card_inscritos}>
+                <Group />
+                <h3 className={styles.card_inscritos_title}>Inscrições</h3>
+                <p className={styles.card_inscritos_subtitle}>total</p>
+                <p className={styles.card_inscritos_num}>{total_inscritos}</p>
               </Card>
             </div>
-            <div className={styles.block_first_left2}>
-              <Card height={"200px"} justifyContent={"left"}>
-                <div className={styles.cards_container}>
-                  <div className={styles.cards_title_container}>
-                    <PersonCancel />
-                    <h3 className={styles.cards_title_txt1}>Abstenção</h3>
-                  </div>
-                  <p className={styles.cards_title_txt2}>dia 1</p>
-                  <p className={styles.cards_title_num}>{abstencao_dia1}</p>
-                  <p className={styles.cards_title_txt2}>dia 2</p>
-                  <p className={styles.cards_title_num}>{abstencao_dia2}</p>
-                </div>
+            <div className={styles.block1_first_left2}>
+              <Card className={styles.card_abstencao}>
+                <PersonCancel />
+                <h3 className={styles.card_abstencao_title}>Abstenção</h3>
+                <p className={styles.card_abstencao_subtitle}>dia 1</p>
+                <p className={styles.card_abstencao_num}>{abstencao_dia1}</p>
+                <p className={styles.card_abstencao_subtitle}>dia 2</p>
+                <p className={styles.card_abstencao_num}>{abstencao_dia2}</p>
               </Card>
             </div>
           </div>
-          <div className={styles.block_first_right}>
-            <Card height={"200px"} display={"block"}>
-              <div className={styles.cards_title_container}>
-                <PersonCheck />
-                <h3 className={styles.cards_title_txt1}>Presença (em ao menos um dia)</h3>
-              </div>
-              <div className={styles.cards_table}>
+          <div className={styles.block1_first_right}>
+            <Card className={styles.card_presenca}>
+              <PersonCheck />
+              <h3 className={styles.card_presenca_title}>Presença</h3>
+              <div className={styles.card_presenca_table}>
                 <Presence />
               </div>
             </Card>
           </div>
         </div>
-        <div className={styles.block_second}>
-          <div className={styles.block_second_left}>
-            <Card display={"block"}>
-              <FX_ETARIA/>
+
+        <div className={styles.block1_second}>
+          {/* ADICIONADO STYLE INLINE PARA FORÇAR O ENCOLHIMENTO EM TELAS PEQUENAS */}
+          <div className={styles.block1_second_left} style={{ minWidth: 0, minHeight: 0 }}>
+            <Card className={styles.card_fxetaria}>
+              <Suspense fallback={<p>...</p>}>
+                <FX_ETARIA />
+              </Suspense>
             </Card>
           </div>
-          <div className={styles.block_second_right}>
-            <Card display={"flex"} justifyContent="center">
-              <SEXO/> 
+          <div className={styles.block1_second_right} style={{ minWidth: 0, minHeight: 0 }}>
+            <Card className={styles.card_sexo}>
+              <Suspense fallback={<p>...</p>}>
+                <SEXO />
+              </Suspense>
             </Card>
           </div>
         </div>
       </div>
-      <div className={styles.block2}>
-        <div className={styles.block_third}>
-           <Card height={"100%"}>
-            <COR_RACA/>
+
+      <div className={styles.block2} style={{ minWidth: 0, minHeight: 0 }}>
+        <div className={styles.block_third} style={{ minWidth: 0, minHeight: 0 }}>
+          <Card className={styles.card_racacor}>
+            <Suspense fallback={<p>...</p>}>
+              <COR_RACA />
+            </Suspense>
           </Card>
         </div>
       </div>

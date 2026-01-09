@@ -4,32 +4,20 @@ import { useSidebar } from "../../context/sidebar_context";
 
 interface CardProps {
   children: React.ReactNode;
-  height?: string | number;
-  width?: string | number;
-  justifyContent?: string
-  display?: string
+  className?: string; // Classe para o WRAPPER
 }
 
-export default function Card({
-  children,
-  height = "300px",
-  width = "100%",
-  justifyContent = "center",
-  display = "flex"
-}: CardProps) {
-
+export default function Card({ children, className }: CardProps) {
   const { isExpanded } = useSidebar();
 
   return (
-    <>
-      <div className={styles.card_container} style={{ width }} key={isExpanded ? 'open' : 'closed'}>
-        <div 
-          className={styles.card_wrapper} 
-          style={{ height, justifyContent, display}}
-        >
-          {children}
-        </div>
+    <div 
+      className={styles.card_container} 
+      key={isExpanded ? 'open' : 'closed'}
+    >
+      <div className={`${styles.card_wrapper} ${className || ""}`}>
+        {children}
       </div>
-    </>
+    </div>
   )
 }

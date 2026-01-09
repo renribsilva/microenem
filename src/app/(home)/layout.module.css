@@ -7,6 +7,7 @@
   display: flex;
   height: 100svh;
   width: 100svw;
+  overflow: hidden;
 } 
 
 .layout_sidebar {
@@ -16,6 +17,11 @@
   position: fixed;
   margin-top: 60px;
   z-index: 100;
+  @media (max-width: 800px) {
+    width: 0; 
+    pointer-events: none; 
+    overflow: visible; 
+  }
 }
 
 .layout_header {
@@ -27,17 +33,23 @@
 }
 
 .layout_main {
-  background-color: var(--background);
+  /* background-color:aqua; */
   margin-top: 60px;
-  width: 100%;
   box-sizing: border-box;
   transition: margin 0.3s ease-in-out, transform 0.3s ease-in-out;
   z-index: 1;
+  overflow-y: auto;
+  position: relative;
+  margin-left: 250px;
+  width: calc(100% - 250px);
+  min-height: calc(100svh - 60px);
 }
 
-@media (min-width: 801px) {
+@media (max-width: 800px) {
   .layout_main {
-    margin-left: 250px;
+    margin-left: 0;
+    /* background-color:blue; */
+    width: 100svw;
     transition: margin 0.3s ease-in-out, transform 0.3s ease-in-out;
   }
 }

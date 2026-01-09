@@ -5,7 +5,6 @@
 .main {
   /* background-color: rgb(86, 211, 211); */
   padding: 10px;
-  height: fit-content;
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
@@ -25,155 +24,175 @@
   gap: 10px;
 }
 
-@media (max-width: 800px) {
-  .block1 {
-    min-width: 300px
-  }
-}
-
 .block2 {
   /* background-color: rgb(190, 121, 42); */
   flex: 1;
   display: flex;
-}
-
-/*****************************************/
-/***************BLOCK_FIRST***************/
-/*****************************************/
-
-.block_first {
-  /* background-color: aquamarine; */
-  flex: 1;
-  display: flex;
-  gap: 10px;
-  min-height: 250px;
-  /* flex-wrap: wrap; */
+  flex-direction: column;
 }
 
 @media (max-width: 800px) {
-  .block_first {
+  .block1 {
+    min-width: 300px
+  }
+
+  .block2 {
+    min-width: 300px
+  }
+}
+
+/******************************************/
+/***************BLOCK1_FIRST***************/
+/******************************************/
+
+.block1_first {
+  /* background-color: aquamarine; */
+  /* flex: 1; */
+  display: flex;
+  gap: 10px;
+  min-height: 230px;
+}
+
+@media (max-width: 1000px) {
+  .block1_first {
     flex-direction: column;
   }
 }
 
-.block_first_left {
+.block1_first_left {
   /* background-color: bisque; */
-  /* flex: 1; */
   display: flex;
   gap: 10px;
-  flex: 1 1 50%;   /* Cresce 1, encolhe 1, base 0 */
-  min-width: 0;  /* Permite que o container encolha se necessário, evitando o tremor */
-  overflow: hidden;
+  flex: 1 1 50%;
 }
 
-.block_first_left1 {
-  /* background-color: brown; */
-  /* flex: 1; */
-  display: flex;
-  flex: 1 1 0 0;   /* Cresce 1, encolhe 1, base 0 */
-  width: 100%;    /* Garante que o ponto de partida seja metade do container */
-  min-width: 0;  /* Permite que o container encolha se necessário, evitando o tremor */
-  overflow: hidden;
-}
-
-.block_first_left2 {
-  /* background-color: brown; */
-  /* flex: 1; */
-  display: flex;
-  flex: 1 1 0 0;   /* Cresce 1, encolhe 1, base 0 */
-  width: 100%;    /* Garante que o ponto de partida seja metade do container */
-  min-width: 0;  /* Permite que o container encolha se necessário, evitando o tremor */
-  overflow: hidden;
-}
-
-.block_first_right {
+.block1_first_left1 {
   /* background-color: bisque; */
-  /* flex: 1; */
+  flex: 1 1 50%;
+}
+
+.block1_first_left2 {
+  /* background-color: bisque; */
+  flex: 1 1 50%;
+}
+
+.block1_first_right {
+  /* background-color: bisque; */
+  flex: 1 1 50%;
+}
+
+/*******************************************/
+/***************BLOCK1_SECOND***************/
+/*******************************************/
+
+.block1_second {
+  /* background-color: aquamarine; */
+  /* flex: 1 ; */
   display: flex;
-  flex: 1 1 50%;   /* Cresce 1, encolhe 1, base 0 */
-  width: 100%;    /* Garante que o ponto de partida seja metade do container */
-  min-width: 0;  /* Permite que o container encolha se necessário, evitando o tremor */
-  overflow: hidden;
-  min-width: 300px
+  gap: 10px;
+  min-height: 300px;
+}
+
+@media (max-width: 800px) {
+  .block1_second {
+    flex-direction: column;
+  }
+}
+
+.block1_second_left {
+  /* background-color: rgb(167, 123, 70); */
+  flex: 1 1 50%;
+}
+
+.block1_second_right {
+  /* background-color: rgb(167, 78, 78); */
+  flex: 1 1 50%; 
 }
 
 /******************************************/
-/***************CARD_CONTENT***************/
+/***************BLOCK2_THIRD***************/
 /******************************************/
 
-.cards_title_container {
-  /* background-color: aqua; */
+.block_third {
+  /* background-color: aquamarine; */
+  min-height: 300px;
+  height: 100%;
 }
 
-.cards_container {
+/*************************************************************/
+/***************CARD_INSCRITOS & CARD_ABSTENCAO***************/
+/*************************************************************/
+
+.card_inscritos, .card_abstencao {
   /* background-color: aqua; */
+  height: fit-content;
 }
 
-.cards_title_txt1 {
+.card_inscritos_title, .card_abstencao_title {
   /* background-color: aquamarine; */
   margin: 0;
 }
 
-.cards_title_txt2 {
+.card_inscritos_subtitle, .card_abstencao_subtitle {
   /* background-color: aquamarine; */
   margin: 0;
   margin-top: 20px;
   font-weight: 300;
 }
 
-.cards_title_num {
+.card_inscritos_num, .card_abstencao_num{
   /* background-color: aquamarine; */
   font-size: 22px;
   margin: 0;
 }
 
-.cards_table {
-  margin-top: 10px;
+/*******************************************/
+/***************CARD_PRESENCA***************/
+/*******************************************/
+
+.card_presenca {
+  /* background-color: aqua; */
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+}
+
+.card_presenca_title {
+   margin: 0;
+}
+
+.card_presenca_table {
+  /* background-color: aquamarine; */
+  padding-top: 15px;
+}
+
+/*******************************************/
+/***************CARD_FXETARIA***************/
+/*******************************************/
+
+.card_fxetaria {
+  /* background-color: aquamarine; */
+  height: 100%;
+  width: 100%;
+  min-height: 300px;
+  display: flex;
+}
+
+.card_sexo {
+  /* background-color: aquamarine; */
+  height: 100%;
+  width: 100%;
+  min-height: 300px;
+  display: flex;
 }
 
 /******************************************/
-/***************BLOCK_SECOND***************/
+/***************CARD_RACACOR***************/
 /******************************************/
 
-.block_second {
-  /* background-color: aquamarine; */
-  flex: 2 ;
-  display: flex;
-  gap: 10px;
+.card_racacor {
+  /* background-color: aquamarine;  */
+  height: 100%;
   min-height: 300px;
-}
-
-@media (max-width: 800px) {
-  .block_second {
-    flex-direction: column;
-  }
-}
-
-.block_second_left {
-  /* background-color: rgb(167, 123, 70); */
-  /* flex: 1; */
   display: flex;
-  /* width: 100%; */
-  flex: 1 1 0 0;   /* Cresce 1, encolhe 1, base 0 */
-  width: 100%;    /* Garante que o ponto de partida seja metade do container */
-  min-width: 0;  /* Permite que o container encolha se necessário, evitando o tremor */
-  overflow: hidden;
-}
-
-.block_second_right {
-  /* background-color: rgb(167, 78, 78); */
-  display: flex;
-  /* flex: 1; */
-  /* width: 100%; */
-  flex: 1 1 0 0;   /* Cresce 1, encolhe 1, base 0 */
-  width: 100%;    /* Garante que o ponto de partida seja metade do container */
-  min-width: 0;  /* Permite que o container encolha se necessário, evitando o tremor */
-  overflow: hidden;
-}
-
-.block_third {
-  /* background-color: aquamarine; */
-  display: flex;
-  flex: 1;
-  min-height: 300px;
 }

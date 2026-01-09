@@ -25,6 +25,7 @@ export default function TCCChart({ logic }: { logic: any }) {
     activeDataset, 
     proficienciaAtual,
     resultadoAtual,
+    setPointIndex, // Extraído da logic para uso no evento
     getInfoCaderno 
   } = logic;
 
@@ -37,6 +38,14 @@ export default function TCCChart({ logic }: { logic: any }) {
     })) || []
   }], [activeDataset, currentInfo.fullText]);
 
+  const yBMedio = useMemo(() => {
+    if (!activeDataset || !bMedio) return 22.5;
+    const closestIndex = activeDataset.labels_x.reduce((prev: number, curr: number, idx: number) => {
+      return Math.abs(curr - bMedio) < Math.abs(activeDataset.labels_x[prev] - bMedio) ? idx : prev;
+    }, 0);
+    return activeDataset.data[closestIndex];
+  }, [activeDataset, bMedio]);
+
   // --- CONFIGURAÇÕES DO APEXCHARTS ---
   const options: ApexCharts.ApexOptions = useMemo(() => ({
     chart: {
@@ -44,11 +53,30 @@ export default function TCCChart({ logic }: { logic: any }) {
       type: 'line',
       toolbar: { 
         show: true,
-        offsetX: -5, // Move um pouco para a esquerda se estiver cortando na borda
-        offsetY: 0,  // Empurra a toolbar um pouco para baixo
+        offsetX: -5,
+        offsetY: 0,
       },
-      zoom: {
-        enabled: false
+      zoom: { enabled: false },
+      events: {
+        // EVENTO DE CLIQUE PARA ATUALIZAR PROFICIÊNCIA
+        click: function(event, chartContext, config) {
+          // config.dataPointIndex retorna o índice do ponto mais próximo ao clique
+          const clickedIndex = config.dataPointIndex;
+          
+          // Verificamos se o índice é válido (maior que -1)
+          if (clickedIndex > -1) {
+            setPointIndex(clickedIndex);
+          }
+        }
+      }
+    },
+    markers: {
+      size: 0,                   // Mantém a linha limpa (pontos ocultos por padrão)
+      colors: [chartColor],      // Força a cor do ponto que segue o mouse
+      strokeColors: '#fff',      // Borda branca para destacar
+      strokeWidth: 0,
+      hover: {
+        size: 6,                 // Tamanho do ponto quando o mouse passa
       }
     },
     stroke: {
@@ -56,9 +84,7 @@ export default function TCCChart({ logic }: { logic: any }) {
       width: 3,
       colors: [chartColor]
     },
-    grid: { 
-      borderColor: gridColor,
-    },
+    grid: { borderColor: gridColor },
     xaxis: {
       type: 'numeric',
       min: xMin,
@@ -77,42 +103,34 @@ export default function TCCChart({ logic }: { logic: any }) {
       tickAmount: 9,
       labels: { 
         style: { colors: axisColor },
-        // Adicione o formatter abaixo:
         formatter: (val) => val.toFixed(0) 
       },
       title: { text: 'Acertos esperados', style: { color: axisColor, fontWeight: 'bold' } }
     },
-    // REMOVE A CAIXA DE DADOS (Tooltip das séries)
     tooltip: {
       theme: 'dark',
       followCursor: true,
       enabled: true,
-      marker: {
-        show: false
-      },
+      marker: { show: false },
       x: {
-        show: true, // Garante que a parte de cima apareça
-        formatter: function(val) {
-          // Adiciona 3 espaços antes do texto para simular o padding-left
-          return "\u00A0\u00A0Proficiência: " + val;
-        }
+        show: true,
+        formatter: (val) => "\u00A0\u00A0Proficiência: " + val
       },
       y: {
-        title: {
-          formatter: () => "Acertos esperados: " // ISSO AQUI mata o nome da série e força o seu texto
-        },
+        title: { formatter: () => "Acertos esperados: " },
         formatter: (val) => val.toFixed(0)
       }
     },
     annotations: {
-      xaxis: [
+      yaxis: [
         {
-          x: bMedio,
+          y: yBMedio,
           borderColor: chartColor,
           strokeDashArray: 4,
           label: {
             text: `Dificuldade Média: ${bMedio.toFixed(0)}`,
-            style: { color: '#fff', background: chartColor }
+            style: { color: '#fff', background: chartColor },
+            offsetY: 20,
           }
         }
       ],
@@ -124,6 +142,7 @@ export default function TCCChart({ logic }: { logic: any }) {
             size: 6,
             fillColor: chartColor,
             strokeColor: '#fff',
+            strokeWidth: 0,
             radius: 2
           },
           label: {
@@ -135,14 +154,15 @@ export default function TCCChart({ logic }: { logic: any }) {
               background: chartColor,
               padding: { left: 10, right: 10, top: 5, bottom: 5 }
             },
-            text: [`proficiência de ${proficienciaAtual.toFixed(0)}`,
+            text: [
+              `proficiência de ${proficienciaAtual.toFixed(0)}`,
               `${resultadoAtual.toFixed(0)} acertos esperados`
             ] 
           }
         }
       ]
     }
-  }), [chartColor, gridColor, axisColor, xMin, xMax, bMedio, proficienciaAtual, resultadoAtual]);
+  }), [chartColor, gridColor, axisColor, xMin, xMax, bMedio, proficienciaAtual, resultadoAtual, setPointIndex]);
 
   // Fechar dropdown ao clicar fora
   useEffect(() => {
@@ -154,83 +174,72 @@ export default function TCCChart({ logic }: { logic: any }) {
   }, []);
 
   return (
-  <div className={styles.tcc_container}>    
-    <div className={styles.tcc_cabecalho}>      
-      <div className={styles.tcc_title}>
-        <h3 className={styles.tcc_h3}>
-          Curva característica do teste
-        </h3>
-        <p style={{ 
-          margin: '2px 20px 0 0', 
-          fontSize: '13px', 
-          color: textColor, 
-          lineHeight: '1.2'
-        }}>
-          Modelo que descreve o número de acertos
-          esperados para cada proficiência. Destaque
-          para o ponto de inflexão: a dificuldade média dos itens.
-        </p>
+    <div className={styles.tcc_container}>    
+      <div className={styles.tcc_cabecalho}>      
+        <div className={styles.tcc_title}>
+          <h3 className={styles.tcc_h3}>Curva característica do teste</h3>
+          <p style={{ margin: '2px 20px 0 0', fontSize: '13px', color: textColor, lineHeight: '1.2' }}>
+            Modelo que descreve o número de acertos esperados para cada proficiência. Destaque para o ponto de inflexão.
+          </p>
+        </div>
+
+        <div style={{ position: 'relative', width: '250px' }} ref={dropdownRef}>
+          <button 
+            onClick={() => setIsOpen(!isOpen)}
+            style={{
+              padding: '8px 12px', borderRadius: '8px', border: '1px solid #e2e8f0',
+              backgroundColor: '#fff', cursor: 'pointer', display: 'flex',
+              alignItems: 'center', gap: '8px', fontSize: '0.85rem',
+              fontWeight: '600', width: '100%', justifyContent: 'space-between'
+            }}
+          >
+            <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              Prova: <span style={{ color: chartColor }}>{currentInfo.fullText}</span>
+            </span>
+            <span style={{ transform: isOpen ? 'rotate(180deg)' : 'none', transition: '0.2s' }}>▼</span>
+          </button> 
+
+          {isOpen && (
+            <div style={{
+              position: 'absolute', top: '110%', right: 0, width: '250px',
+              backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px',
+              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)', maxHeight: '250px', overflowY: 'auto', zIndex: 101
+            }}>
+              {availableDatasets.map((ds: any) => {
+                const info = getInfoCaderno(ds.metadata.codigo, ds.metadata.lingua);
+                const isSelected = selectedLabel === ds.label;
+                return (
+                  <div
+                    key={ds.label}
+                    onClick={() => { setSelectedLabel(ds.label); setIsOpen(false); }}
+                    style={{
+                      padding: '10px 14px', cursor: 'pointer', fontSize: '0.8rem',
+                      backgroundColor: isSelected ? '#f1f5f9' : 'transparent',
+                      color: isSelected ? (colorMap[info.corNome] || '#475569') : '#475569',
+                      borderLeft: `4px solid ${isSelected ? (colorMap[info.corNome] || '#475569') : 'transparent'}`,
+                    }}
+                  >
+                    {info.fullText}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Dropdown de Seleção de Prova (Lado Direito) */}
-      <div style={{ position: 'relative', zIndex: 20, width: '250px' }} ref={dropdownRef}>
-        <button 
-          onClick={() => setIsOpen(!isOpen)}
-          style={{
-            padding: '8px 12px', borderRadius: '8px', border: '1px solid #e2e8f0',
-            backgroundColor: '#fff', cursor: 'pointer', display: 'flex',
-            alignItems: 'center', gap: '8px', fontSize: '0.85rem',
-            fontWeight: '600', width: '100%', justifyContent: 'space-between'
-          }}
-        >
-          <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            Prova: <span style={{ color: chartColor }}>{currentInfo.fullText}</span>
-          </span>
-          <span style={{ transform: isOpen ? 'rotate(180deg)' : 'none', transition: '0.2s' }}>▼</span>
-        </button>
-
-        {isOpen && (
-          <div style={{
-            position: 'absolute', top: '110%', right: 0, width: '250px',
-            backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px',
-            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)', maxHeight: '250px', overflowY: 'auto'
-          }}>
-            {availableDatasets.map((ds: any) => {
-              const info = getInfoCaderno(ds.metadata.codigo, ds.metadata.lingua);
-              const isSelected = selectedLabel === ds.label;
-              return (
-                <div
-                  key={ds.label}
-                  onClick={() => { setSelectedLabel(ds.label); setIsOpen(false); }}
-                  style={{
-                    padding: '10px 14px', cursor: 'pointer', fontSize: '0.8rem',
-                    backgroundColor: isSelected ? '#f1f5f9' : 'transparent',
-                    color: isSelected ? (colorMap[info.corNome] || '#475569') : '#475569',
-                    borderLeft: `4px solid ${isSelected ? (colorMap[info.corNome] || '#475569') : 'transparent'}`,
-                  }}
-                >
-                  {info.fullText}
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-    </div>
-
-    {/* Container do Gráfico */}
-    <div className={styles.tcc_graph_container}>
-      <InputShell logic={logic}/>
-      <div className={styles.tcc_graph_wrapper}>
-        <Chart 
-          options={options} 
-          series={series} 
-          type="line" 
-          height='100%'
-          width='100%'
-          flex = '1'
-        />
+      <div className={styles.tcc_graph_container}>
+        <InputShell logic={logic}/>
+        <div className={styles.tcc_graph_wrapper}>
+          <Chart 
+            options={options} 
+            series={series} 
+            type="line" 
+            height='100%'
+            width='100%'
+          />
+        </div>
       </div>
     </div>
-  </div>
-)}
+  );
+}

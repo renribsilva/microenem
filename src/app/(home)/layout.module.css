@@ -37,7 +37,7 @@
   overflow-y: auto;
 }
 
-@media (min-width: 800px) {
+@media (min-width: 801px) {
   .layout_main {
     margin-left: 250px;
     transition: margin 0.3s ease-in-out, transform 0.3s ease-in-out;

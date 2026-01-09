@@ -110,41 +110,41 @@ export default function ICCChart({
         dashArray: series.map((s: any) => s.strokeDashArray)
       },
       colors: series.map((s: any) => s.color),
-     xaxis: {
-      type: 'numeric',
-      min: xMin,
-      max: xMax,
-      labels: { 
-        style: { colors: axisColor },
-        formatter: (val: any) => parseFloat(val).toFixed(0)
-      },
-      title: { text: `Notas do Enem (${area})`, style: { color: axisColor } },
-      axisBorder: { show: false },
-      tooltip: {
-        enabled: true,
-      },
-      crosshairs: {
-        show: true,
-        width: 1,
-        position: 'back',
-        opacity: 0.9,
-        stroke: {
-          color: axisColor,
+      xaxis: {
+        type: 'numeric',
+        min: xMin,
+        max: xMax,
+        labels: { 
+          style: { colors: axisColor },
+          formatter: (val: any) => parseFloat(val).toFixed(0)
+        },
+        title: { text: `Notas do Enem (${area})`, style: { color: axisColor } },
+        axisBorder: { show: false },
+        tooltip: {
+          enabled: true,
+        },
+        crosshairs: {
+          show: true,
           width: 1,
-          dashArray: 3,
+          position: 'back',
+          opacity: 0.9,
+          stroke: {
+            color: axisColor,
+            width: 1,
+            dashArray: 3,
+          },
         },
       },
-    },
-    tooltip: {
-      enabled: true,       
-      shared: true,        
-      custom: function() { 
-        return ''; 
+      tooltip: {
+        enabled: true,       
+        shared: true,        
+        custom: function() { 
+          return ''; 
+        },
+        marker: {
+          show: false
+        }
       },
-      marker: {
-        show: false
-      }
-    },
       yaxis: {
         min: 0,
         max: 1,
@@ -165,7 +165,8 @@ export default function ICCChart({
             strokeDashArray: 0,
             label: {
               text: `Traço de prob. da nota ${Math.round(proficienciaAtual)}`,
-              style: { color: '#fff', background: chartColor || '#ff0000' }
+              style: { color: '#fff', background: chartColor || '#ff0000' },
+              borderWidth: 0,
             }
           }
         ],

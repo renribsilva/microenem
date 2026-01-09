@@ -88,6 +88,14 @@ export default function DensityNotasChart({ area = "LC", highlightItem }: { area
           enabled: false
         }
       },
+      markers: {
+        size: 0,
+        colors: [densidadeColor["curve"]],
+        strokeWidth: 0, 
+        hover: {
+          size: 4,      
+        }
+      },
       colors: chartColors,
       stroke: { 
         curve: 'smooth', 
@@ -194,7 +202,7 @@ export default function DensityNotasChart({ area = "LC", highlightItem }: { area
               style: {
                 color:  '#fff',
                 background: densidadeColor["line"],
-                fontSize: '14px',
+                fontSize: '12px',
                 fontWeight: '300',
               },
             }

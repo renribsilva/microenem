@@ -190,9 +190,8 @@ export default function FrequencyAcertosChart({ area = "LC", highlightItem }: { 
               style: {
                 color: '#fff',
                 background: acertosColor["line"],
-                fontSize: '13px',
-                borderWidth: 10,
-                borderColor: acertosColor["line"]
+                fontSize: '12px',
+                fontWeight: 300
               }
             }
           }

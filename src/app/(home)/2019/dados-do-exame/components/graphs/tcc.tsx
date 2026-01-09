@@ -110,10 +110,10 @@ export default function TCCChart({ logic }: { logic: any }) {
           x: bMedio,
           borderColor: chartColor,
           strokeDashArray: 4,
-          // label: {
-          //   text: `Dificuldade Média: ${bMedio.toFixed(0)}`,
-          //   style: { color: '#fff', background: chartColor }
-          // }
+          label: {
+            text: `Dificuldade Média: ${bMedio.toFixed(0)}`,
+            style: { color: '#fff', background: chartColor }
+          }
         }
       ],
       points: [

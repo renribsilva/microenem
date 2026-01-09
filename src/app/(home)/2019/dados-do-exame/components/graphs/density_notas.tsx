@@ -190,7 +190,7 @@ export default function DensityNotasChart({ area = "LC", highlightItem }: { area
                 `${highlightItem.metric}: ${highlightItem.nota}`,
                 getStatDescription(highlightItem.id, highlightItem.nota)
               ],
-              offsetY: 80,
+              offsetY: 50,
               style: {
                 color:  '#fff',
                 background: densidadeColor["line"],

@@ -139,7 +139,7 @@ export default function FrequencyAcertosChart({ area = "LC", highlightItem }: { 
       grid: { 
         borderColor: gridColor,
         padding: {
-          top: 10,
+          top: 25,
           bottom: 0
         }
       },
@@ -186,7 +186,7 @@ export default function FrequencyAcertosChart({ area = "LC", highlightItem }: { 
                 `${highlightItem.metric}: ${highlightItem.acerto}`,
                 getStatDescription(highlightItem.id, highlightItem.acerto)
               ],
-              offsetY: -80,
+              offsetY: -60,
               style: {
                 color: '#fff',
                 background: acertosColor["line"],

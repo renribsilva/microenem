@@ -179,7 +179,7 @@ export default function TCCChart({ logic }: { logic: any }) {
         <div className={styles.tcc_title}>
           <h3 className={styles.tcc_h3}>Curva característica do teste</h3>
           <p style={{ margin: '2px 20px 0 0', fontSize: '13px', color: textColor, lineHeight: '1.2' }}>
-            Modelo que descreve o número de acertos esperados para cada proficiência. Destaque para o ponto de inflexão.
+            Modelo que descreve o número de acertos esperados para cada proficiência. Destaque para o ponto de inflexão que representa a dificuldade média da prova.
           </p>
         </div>
 

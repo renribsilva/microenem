@@ -4,8 +4,6 @@ import { useState, useEffect, Suspense } from "react"
 import dynamic from "next/dynamic"
 import styles from "./visao-geral.module.css"
 import Card from "../../../../components/tsx/card"
-
-// Componentes estáticos
 import Group from "../../../../components/svg/group"
 import PersonCheck from "../../../../components/svg/person_check"
 import PersonCancel from "../../../../components/svg/person_cancel"
@@ -22,7 +20,7 @@ const SEXO = dynamic(() => import("./components/graphs/sexo"), { ssr: false })
 const COR_RACA = dynamic(() => import("./components/graphs/cor_raca"), { ssr: false })
 
 export default function Visao() {
-  
+
   const [resizeKey, setResizeKey] = useState(0);
 
   const total_inscritos = Inscritos[0].total.toLocaleString('pt-BR');

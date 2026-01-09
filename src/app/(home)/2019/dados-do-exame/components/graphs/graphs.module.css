@@ -51,7 +51,14 @@
 .tcc_graph_container {
   /* background-color: aquamarine; */
   display: flex;
-  /* flex: 1; */
+  flex-direction: row;
+}
+
+@media (max-width: 800px) {
+  .tcc_graph_container {
+    flex-direction: column;
+    min-height: 350px;
+  }
 }
 
 .tcc_graph_wrapper {
@@ -95,21 +102,4 @@
   max-height: 250px;
   overflow-y: auto;
   z-index: 101
-}
-
-:global(.apexcharts-menu) {
-  background: var(--tab-background) !important; 
-  border: 1px solid var(--tab-border) !important;
-  color: var(--foreground) !important;
-  /* box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important; */
-}
-
-:global(.apexcharts-menu-item:hover) {
-  background: var(--tab-hover) !important;
-  /* color: var(--accent-color, #fff) !important; */
-}
-
-/* Customiza os ícones do toolbar caso o modo dark do Apex não baste */
-:global(.apexcharts-toolbar svg) {
-  fill: var(--foreground) !important;
 }

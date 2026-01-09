@@ -5,12 +5,11 @@ import styles from "./dados-do-exame.module.css"
 import { TabsNavigation } from "../../../../components/tsx/tab_navigation";
 import { Suspense, useEffect, useState } from "react";
 import Card from "../../../../components/tsx/card";
-// import DensityNotasChart from "./components/graphs/density_notas";
-// import FrequencyAcertosChart from "./components/graphs/frequency_acertos";
 import { useTccLogic } from "../../../../hooks/use_tcc_logic";
-// import TCCChart from "../dados-do-exame/components/graphs/tcc";
-import tccData from "../json/tcc.json"
 import dynamic from "next/dynamic";
+
+// JSON Data
+import tccData from "../json/tcc.json"
 
 // Imports dinâmicos
 const TCCChart = dynamic(() => import("./components/graphs/tcc"), { ssr: false })

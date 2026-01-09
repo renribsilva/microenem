@@ -7,7 +7,7 @@ import InputShell from '../../../../../../components/tsx/input_shell';
 import styles from "./graphs.module.css"
 
 export default function TCCChart({ logic }: { logic: any }) {
-  
+
   const { gridColor, axisColor, colorMap, tickColor } = useChartTheme();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -180,7 +180,7 @@ export default function TCCChart({ logic }: { logic: any }) {
         <div className={styles.tcc_title}>
           <h3 className={styles.tcc_title_h3}>Curva característica do teste</h3>
           <p className={styles.tcc_subtitle_p}>
-            Modelo que descreve o número de acertos esperados para cada proficiência. Destaque para o ponto de inflexão que representa a dificuldade média da prova.
+            Modelo que descreve o comportamento esperado (teórico) da relação nota/acerto. Destaque para o ponto de inflexão que representa a dificuldade média da prova.
           </p>
         </div>
 

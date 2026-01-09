@@ -30,7 +30,7 @@ export default function RootLayout({
       {isMobile && (
         <div 
           className={`${styles.backdrop} ${isMobileOpen ? styles.backdrop_active : ""}`}
-          onClick={toggleMobileSidebar} // Fecha ao clicar no escuro
+          onClick={toggleMobileSidebar}
         />
       )}
       <div className={styles.layout_sidebar}>
@@ -40,6 +40,7 @@ export default function RootLayout({
         <AppHeader />
       </header>
       <main className={styles.layout_main}>
+        {/* teste */}
         {children}
       </main>
     </div>

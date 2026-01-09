@@ -5,10 +5,15 @@ import { TabsNavigation } from "../../../../components/tsx/tab_navigation";
 import { useState } from "react";
 import Card from "../../../../components/tsx/card";
 import { useTccLogic } from "../../../../hooks/use_tcc_logic";
-import tccData from "../json/tcc.json"
-import ItensButtons from "./components/itens_buttons";
-import ICCChart from "./components/graphs/icc";
+import ItensButtons from "../../../../components/tsx/itens_buttons";
 import ProbsTable from "./components/tables/prob";
+
+// JSON Data
+import tccData from "../json/tcc.json"
+import dynamic from "next/dynamic";
+
+// Imports dinâmicos
+const ICCChart = dynamic(() => import("./components/graphs/icc"), { ssr: false })
 
 const menuItems = [
   { id: 'LC', label: 'Linguagens' },
@@ -33,32 +38,43 @@ export default function DadosDoExame() {
   };
 
   return (
-    <main className={styles.main_container}>      
-      <nav className={styles.nav_container}>
+    <main className={styles.main}>      
+      <nav className={styles.nav}>
         <TabsNavigation 
           items={menuItems} 
           activeId={activeArea} 
           onTabChange={handleTabChange} 
         />
-      </nav>
+      </nav>  
       <div className={styles.main_top}>
         <div className={styles.main_left}>
-          <Card display="block" width={'250px'} height={'100%'}>
-            <h3 className={styles.card_title}>Questões de {activeArea}</h3>
-            <ItensButtons 
-              logic={chartLogic} 
-              area={activeArea}
-              selectedItems={selectedItems} 
-              setSelectedItems={setSelectedItems}
-              setLastItemActivate={setLastItemActivate}
-            />
-          </Card>
+          <div className={styles.main_left1}>
+            <Card>
+              <h3 className={styles.card_title}>Questões de {activeArea}</h3>
+              <ItensButtons 
+                logic={chartLogic} 
+                area={activeArea}
+                selectedItems={selectedItems} 
+                setSelectedItems={setSelectedItems}
+                setLastItemActivate={setLastItemActivate}
+              />
+            </Card>
+          </div>
+          <div className={styles.main_left2}>
+            <Card >
+              <h3 className={styles.card_title}>Probabilidades</h3>
+              <ProbsTable 
+                itemSelection={selectedItems} 
+                logic={chartLogic}
+                activeCodes={activeCodes}
+                area={activeArea}
+              />
+            </Card>
+          </div>
         </div>
         <div className={styles.main_right}>
-          <div className={styles.main_right1}>
-            <Card display="block">
-              <h3 className={styles.card_title}>Curva característica do item</h3>
-              {/* O Gráfico agora recebe o objeto de mapeamento */}
+          <div className={styles.main_right_top}>
+            <Card>
               <ICCChart 
                 itemSelection={selectedItems} 
                 logic={chartLogic}
@@ -68,14 +84,14 @@ export default function DadosDoExame() {
               />
             </Card>
           </div>
-          <div className={styles.main_right2}>
-            <Card display="block">
-              <h3 className={styles.card_title}>Probabilidades</h3>
-              <ProbsTable 
+          <div className={styles.main_right_bottom}>
+            <Card>
+              <ICCChart 
                 itemSelection={selectedItems} 
                 logic={chartLogic}
-                activeCodes={activeCodes}
                 area={activeArea}
+                lastItemActive={lastItemActivate}
+                onFilterChange={(filtered) => setActiveCodes(filtered)}
               />
             </Card>
           </div>

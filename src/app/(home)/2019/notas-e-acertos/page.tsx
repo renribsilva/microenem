@@ -31,11 +31,11 @@ export default function QuestoesPage() {
           onTabChange={setActiveArea} 
         />
       </nav>
-      <Card width={'100%'}>
+      <Card>
         <InputShell logic={chartLogic} />
       </Card>
       <div className={styles.main_top}>
-        <Card width={'100%'} height={'fit-content'} display="block">
+        <Card>
           <h3 className={styles.card_title}>Acertos esperados por proeficiência</h3>
         </Card>
       </div>   

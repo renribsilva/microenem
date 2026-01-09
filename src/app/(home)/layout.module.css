@@ -7,7 +7,6 @@
   display: flex;
   height: 100svh;
   width: 100svw;
-  overflow: hidden;
 } 
 
 .layout_sidebar {
@@ -34,7 +33,6 @@
   box-sizing: border-box;
   transition: margin 0.3s ease-in-out, transform 0.3s ease-in-out;
   z-index: 1;
-  overflow-y: auto;
 }
 
 @media (min-width: 801px) {

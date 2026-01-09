@@ -101,7 +101,7 @@ export default function ProbsTable({ logic, activeCodes, area, itemSelection }: 
   if (activeCodes.length === 0) {
     return (
       <section className={styles.probtable_fallback}>
-        Selecione itens na tabela para ver as probabilidades de acerto ou erro para uma determinada proeficiência.
+        Selecione itens na tabela para ver as probabilidades de acerto ou erro para uma determinada proficiência.
       </section>
     );
   }
@@ -111,7 +111,6 @@ export default function ProbsTable({ logic, activeCodes, area, itemSelection }: 
       <div className={styles.probtable_proef}>
         <strong>Proficiência:</strong> {Math.round(proficienciaAtual)}
       </div>
-
       <table className={styles.probtable_table}>
         <thead className={styles.probtable_thead}>
           {table.getHeaderGroups().map((headerGroup) => (

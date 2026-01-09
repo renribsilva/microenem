@@ -45,7 +45,9 @@ export default function TCCChart({ logic }: { logic: any }) {
         offsetX: -5, // Move um pouco para a esquerda se estiver cortando na borda
         offsetY: 0,  // Empurra a toolbar um pouco para baixo
       },
-      animations: { enabled: false }
+      zoom: {
+        enabled: false
+      }
     },
     stroke: {
       curve: 'smooth',
@@ -64,7 +66,7 @@ export default function TCCChart({ logic }: { logic: any }) {
         style: { colors: axisColor },
         formatter: (val) => Number(val).toFixed(0)
       },
-      tooltip: { enabled: true },
+      tooltip: { enabled: false },
       title: { text: 'Notas na escala do ENEM', style: { color: axisColor, fontWeight: 'bold' } }
     },
     yaxis: {
@@ -89,14 +91,15 @@ export default function TCCChart({ logic }: { logic: any }) {
       x: {
         show: true, // Garante que a parte de cima apareça
         formatter: function(val) {
-          return "Proficiência: " + val; // ISSO AQUI é o que controla o texto do topo da caixinha
+          // Adiciona 3 espaços antes do texto para simular o padding-left
+          return "\u00A0\u00A0Proficiência: " + val;
         }
       },
       y: {
         title: {
           formatter: () => "Acertos esperados: " // ISSO AQUI mata o nome da série e força o seu texto
         },
-        formatter: (val) => val.toFixed(1)
+        formatter: (val) => val.toFixed(0)
       }
     },
     annotations: {
@@ -129,9 +132,9 @@ export default function TCCChart({ logic }: { logic: any }) {
               background: chartColor,
               padding: { left: 10, right: 10, top: 5, bottom: 5 }
             },
-            text: [ `Dificuldade média: 
-              ${proficienciaAtual.toFixed(0)} pts
-              | ${resultadoAtual.toFixed(0)} acertos esperados`
+            text: [ `Dificuldade média:`, 
+              `proficiência de ${proficienciaAtual.toFixed(0)}`,
+              `${resultadoAtual.toFixed(0)} acertos esperados`
             ] 
           }
         }

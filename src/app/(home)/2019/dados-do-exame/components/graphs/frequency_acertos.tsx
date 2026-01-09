@@ -85,9 +85,12 @@ export default function FrequencyAcertosChart({ area = "LC", highlightItem }: { 
           offsetX: -5, // Move um pouco para a esquerda se estiver cortando na borda
           offsetY: 80,  // Empurra a toolbar um pouco para baixo
         },
+         zoom: {
+          enabled: false
+        }
       },
       title: {
-        text: 'Curva de densidade das notas',
+        text: 'Frequência relativa dos acertos',
         align: 'left',
         margin: 5,
         style: { 
@@ -98,8 +101,7 @@ export default function FrequencyAcertosChart({ area = "LC", highlightItem }: { 
       },
       subtitle: {
         text: [
-          'Pontos da proficiência onde as',
-          'notas se concentram mais.'
+          'Distribuição da frequência de acertos.',
         ] as any,
         align: 'left' as const,
         style: {
@@ -184,7 +186,7 @@ export default function FrequencyAcertosChart({ area = "LC", highlightItem }: { 
                 `${highlightItem.metric}: ${highlightItem.acerto}`,
                 getStatDescription(highlightItem.id, highlightItem.acerto)
               ],
-              offsetY: -50,
+              offsetY: -80,
               style: {
                 color: '#fff',
                 background: acertosColor["line"],

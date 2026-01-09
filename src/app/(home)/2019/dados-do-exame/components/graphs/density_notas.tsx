@@ -84,6 +84,9 @@ export default function DensityNotasChart({ area = "LC", highlightItem }: { area
           offsetX: -5, // Move um pouco para a esquerda se estiver cortando na borda
           offsetY: 80,  // Empurra a toolbar um pouco para baixo
         },
+        zoom: {
+          enabled: false
+        }
       },
       colors: chartColors,
       stroke: { 
@@ -187,7 +190,7 @@ export default function DensityNotasChart({ area = "LC", highlightItem }: { area
                 `${highlightItem.metric}: ${highlightItem.nota}`,
                 getStatDescription(highlightItem.id, highlightItem.nota)
               ],
-              offsetY: 70,
+              offsetY: 80,
               style: {
                 color:  '#fff',
                 background: densidadeColor["line"],

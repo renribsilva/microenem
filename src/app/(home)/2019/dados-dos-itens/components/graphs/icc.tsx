@@ -99,7 +99,9 @@ export default function ICCChart({
         id: "icc-chart",
         type: 'line',
         toolbar: { show: true },
-        animations: { enabled: false }, // Melhora performance com muitas linhas
+        zoom: {
+          enabled: false
+        }
       },
       stroke: {
         curve: 'monotoneCubic', 

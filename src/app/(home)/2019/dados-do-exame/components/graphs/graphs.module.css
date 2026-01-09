@@ -17,3 +17,52 @@
   right: 0;
   bottom: 0;
 }
+
+/*******************************************/
+/*******************TCC*********************/
+/*******************************************/
+
+.tcc_container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tcc_cabecalho {
+  /* background-color: aquamarine; */
+  display: flex;
+  justify-content: space-between;
+}
+
+@media (max-width: 800px) {
+  .tcc_cabecalho {
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 10px;
+  }
+}
+
+.tcc_title {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tcc_h3 {
+  margin: 0;
+  color: var(--foreground);
+  font-size: 16px;
+  font-weight: bold
+}
+
+.tcc_graph_container {
+  /* background-color: aquamarine; */
+  display: flex;
+  flex: 1;
+}
+
+.tcc_graph_wrapper {
+  height: 100%;
+  flex: 1;
+}

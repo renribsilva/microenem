@@ -209,7 +209,7 @@ export default function DensityNotasChart({ area = "LC", highlightItem }: { area
   }
 
   return (
-    <div style={{minHeight: '250px', height: '100%'}}>
+    <div style={{minHeight: '250px', height: '100%' }}>
       <Chart 
         options={options}
         series={series}

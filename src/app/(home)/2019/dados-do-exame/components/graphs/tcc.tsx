@@ -3,6 +3,8 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import Chart from 'react-apexcharts';
 import { useChartTheme } from '../../../../../../hooks/chart_theme';
+import InputShell from '../../../../../../components/tsx/input_shell';
+import styles from "./graphs.module.css"
 
 export default function TCCChart({ logic }: { logic: any }) {
   const { gridColor, axisColor, colorMap, textColor } = useChartTheme();
@@ -126,14 +128,14 @@ export default function TCCChart({ logic }: { logic: any }) {
           },
           label: {
             borderColor: chartColor,
-            offsetY: proficienciaAtual > bMedio ? -5 : 40,
+            offsetY: proficienciaAtual > bMedio ? 35 : -20,
+            offsetX: proficienciaAtual <= bMedio ? 80 : -80,
             style: {
               color: '#fff',
               background: chartColor,
               padding: { left: 10, right: 10, top: 5, bottom: 5 }
             },
-            text: [ `Dificuldade média:`, 
-              `proficiência de ${proficienciaAtual.toFixed(0)}`,
+            text: [`proficiência de ${proficienciaAtual.toFixed(0)}`,
               `${resultadoAtual.toFixed(0)} acertos esperados`
             ] 
           }
@@ -152,40 +154,26 @@ export default function TCCChart({ logic }: { logic: any }) {
   }, []);
 
   return (
-  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>    
-    
-    {/* CABEÇALHO: Título à esquerda, Dropdown à direita */}
-    <div style={{ 
-      display: 'flex', 
-      justifyContent: 'space-between', 
-      alignItems: 'flex-start',
-      padding: '0 10px',
-    }}>
-      
-      {/* Título e Subtítulo em HTML (mais controle) */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        <h3 style={{ 
-          margin: 0, 
-          fontSize: '16px', 
-          fontWeight: 'bold', 
-          color: textColor ,
-        }}>
+  <div className={styles.tcc_container}>    
+    <div className={styles.tcc_cabecalho}>      
+      <div className={styles.tcc_title}>
+        <h3 className={styles.tcc_h3}>
           Curva característica do teste
         </h3>
         <p style={{ 
-          margin: '2px 0 0 0', 
+          margin: '2px 20px 0 0', 
           fontSize: '13px', 
           color: textColor, 
-          lineHeight: '1.2' 
+          lineHeight: '1.2'
         }}>
-          Modelo que descreve o número de acertos<br/>
-          esperados para cada proficiência. Destaque<br/>
+          Modelo que descreve o número de acertos
+          esperados para cada proficiência. Destaque
           para o ponto de inflexão: a dificuldade média dos itens.
         </p>
       </div>
 
       {/* Dropdown de Seleção de Prova (Lado Direito) */}
-      <div style={{ position: 'relative', zIndex: 20, width: '220px' }} ref={dropdownRef}>
+      <div style={{ position: 'relative', zIndex: 20, width: '250px' }} ref={dropdownRef}>
         <button 
           onClick={() => setIsOpen(!isOpen)}
           style={{
@@ -231,13 +219,18 @@ export default function TCCChart({ logic }: { logic: any }) {
     </div>
 
     {/* Container do Gráfico */}
-    <div style={{ flex: 1, minHeight: '250px', background: '#fff', borderRadius: '8px' }}>
-      <Chart 
-        options={options} 
-        series={series} 
-        type="line" 
-        height="100%" 
-      />
+    <div className={styles.tcc_graph_container}>
+      <InputShell logic={logic}/>
+      <div className={styles.tcc_graph_wrapper}>
+        <Chart 
+          options={options} 
+          series={series} 
+          type="line" 
+          height='100%'
+          width='100%'
+          flex = '1'
+        />
+      </div>
     </div>
   </div>
 )}

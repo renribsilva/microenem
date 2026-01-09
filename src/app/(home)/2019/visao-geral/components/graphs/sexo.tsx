@@ -31,8 +31,8 @@ export default function SEXO() {
     },
     stroke: {
       show: true,
-      width: 2, // Aumente para separar mais os quadrados
-      colors: [panelColor] // Aqui você define a cor da borda (ex: a cor do seu fundo)
+      width: 2, 
+      colors: [panelColor]
     },
     grid: {
       padding: {

@@ -14,7 +14,6 @@ export default function FX_ETARIA() {
   const barColor = "rgba(255, 208, 53, 1)";
   const n = (presence_data[0].subRows[0].total).toLocaleString('pt-BR');
 
-  // ALTERAÇÃO 1: Mapear para objeto pro tooltip ler 'x', 'y' e 'abs'
   const series = useMemo(() => fx_etaria_data.datasets.map(dataset => ({
     name: 'Porcentagem',
     data: dataset.data.map((val, i) => ({
@@ -52,8 +51,7 @@ export default function FX_ETARIA() {
       }
     },
     xaxis: {
-      // ALTERAÇÃO 2: categories removido (já está no mapeamento da series)
-      type: 'category', 
+      type: 'numeric', 
       max: chartMax,
       labels: {
         style: { colors: textColor }

@@ -19,7 +19,6 @@ export default function COR_RACA() {
         y: item.value,
         abs: item.abs 
       }))
-      // Ordena do maior valor para o menor (Decrescente)
       .sort((a: any, b: any) => b.y - a.y)
   }];
 
@@ -31,8 +30,8 @@ export default function COR_RACA() {
     },
     stroke: {
       show: true,
-      width: 2, // Aumente para separar mais os quadrados
-      colors: [panelColor] // Aqui você define a cor da borda (ex: a cor do seu fundo)
+      width: 2, 
+      colors: [panelColor]
     },
     title: {
       text: 'Cor ou raça',
@@ -81,12 +80,10 @@ export default function COR_RACA() {
     tooltip: {
       theme: 'dark',
       custom: function({ seriesIndex, dataPointIndex, w }: any) {
-        // Recuperamos os dados diretamente do objeto de configuração
         const data = w.config.series[seriesIndex].data[dataPointIndex];
         const label = data.x;
         const value = data.y;
-        // const absolute = data.abs;
-        return customTooltip({ label, value, });
+        return customTooltip({ label, value });
       }
     }
   }), [textColor, panelColor, n, series]);

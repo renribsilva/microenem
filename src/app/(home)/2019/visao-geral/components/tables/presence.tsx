@@ -1,17 +1,16 @@
 'use client'
 
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import {
   useReactTable,
   getCoreRowModel,
   getExpandedRowModel,
   flexRender,
-  ColumnDef // Import necessário para tipagem
+  ColumnDef
 } from '@tanstack/react-table'
 import presence_data from "../../json/overview/presenca.json"
 import styles from "./tables.module.css"
 
-// 1. Defina a interface do dado
 export interface InscritoData {
   grupo: string
   total: number

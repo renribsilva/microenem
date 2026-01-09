@@ -20,12 +20,10 @@
   white-space: nowrap;
 }
 
-/* Borda apenas abaixo do cabeçalho (primeira linha do thead ou primeira do tbody) */
 .table_body thead tr {
   border-bottom: 1px solid var(--grid);
 }
 
-/* Borda apenas na última linha do corpo da tabela */
 .table_body tbody tr:last-child {
   border-bottom: 1px solid var(--grid);
 }

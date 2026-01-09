@@ -131,16 +131,21 @@
 
 .navbar_subitems_items {
   /* background-color: aqua; */
-  min-height: 30px;
+  height: 30px;
   border-radius: 5px;
   display: flex;
   align-items: center;
 }
 
-.navbar_subitems_items a {
+.navbar_subitems_links {
   /* background-color: blueviolet; */
   width: 100%;
   height: 100%;
+  display: flex;
+}
+
+.navbar_subitems_links {
+  align-items: center;
 }
 
 .navbar_subitems_items:hover {

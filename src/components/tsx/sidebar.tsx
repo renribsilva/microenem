@@ -72,7 +72,7 @@ const AppSidebar: React.FC = () => {
 
   const pathname = usePathname();
   const isActive = useCallback((path: string) => path === pathname, [pathname]);
-  const { isMobileOpen, isMobile, isExpanded } = useSidebar();
+  const { isMobileOpen, isMobile, toggleMobileSidebar} = useSidebar();
   const [openSubmenu, setOpenSubmenu] = useState<number | null>(null);
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [subMenuHeight, setSubMenuHeight] = useState<Record<string, number>>({});
@@ -91,6 +91,12 @@ const AppSidebar: React.FC = () => {
       }
       return index;
     });
+  };
+
+  const handleItemClick = () => {
+    if (isMobile && isMobileOpen) {
+      toggleMobileSidebar();
+    }
   };
   
   // console.log(isActive(pathname))
@@ -134,7 +140,10 @@ const AppSidebar: React.FC = () => {
               </button>
             ) : (
               nav.path && (
-                <Link href={nav.path}>
+                <Link 
+                  href={nav.path}
+                  onClick={handleItemClick}
+                >
                   <span>
                     {nav.name}
                   </span>
@@ -163,6 +172,7 @@ const AppSidebar: React.FC = () => {
                       <Link
                         href={subItem.path}
                         className={styles.navbar_subitems_links}
+                        onClick={handleItemClick}
                       >
                         {subItem.name}
                       </Link>

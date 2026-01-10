@@ -87,6 +87,12 @@ export default function DensityNotasChart({ area = "LC", highlightItem }: { area
         zoom: {
           enabled: false
         },
+        animations: {
+          enabled: false, 
+          dynamicAnimation: {
+            enabled: false 
+          }
+        } 
       },
       markers: {
         size: 0,

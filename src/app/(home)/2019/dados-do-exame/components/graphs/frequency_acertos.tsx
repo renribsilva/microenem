@@ -87,7 +87,13 @@ export default function FrequencyAcertosChart({ area = "LC", highlightItem }: { 
         },
          zoom: {
           enabled: false
-        }
+        },
+        animations: {
+          enabled: false, 
+          dynamicAnimation: {
+            enabled: false 
+          }
+        } 
       },
       title: {
         text: 'Frequência relativa dos acertos',

@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import Chart from 'react-apexcharts';
 import { useChartTheme } from '../../../../../../hooks/chart_theme';
-import InputShell from '../../../../../../components/tsx/input_shell';
+// import InputShell from '../../../../../../components/tsx/input_shell';
 import styles from "./graphs.module.css"
 
 export default function TCCChart({ logic }: { logic: any }) {
@@ -69,7 +69,13 @@ export default function TCCChart({ logic }: { logic: any }) {
             setPointIndex(clickedIndex);
           }
         }
-      }
+      },
+      animations: {
+        enabled: false, 
+        dynamicAnimation: {
+          enabled: false 
+        }
+      } 
     },
     markers: {
       size: 0,
@@ -221,7 +227,7 @@ export default function TCCChart({ logic }: { logic: any }) {
       </div>
 
       <div className={styles.tcc_graph_container}>
-        <InputShell logic={logic}/>
+        {/* <InputShell logic={logic}/> */}
         <div className={styles.tcc_graph_wrapper}>
           <Chart 
             options={options} 

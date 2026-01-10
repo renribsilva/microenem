@@ -19,7 +19,7 @@
     position: fixed;
     left: 0;
     top: 60px;
-    height: calc(100vh - 60px);
+    height: calc(100dvh - 60px);
     transform: translateX(-100%); 
     visibility: hidden; 
     pointer-events: none;

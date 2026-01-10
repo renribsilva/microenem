@@ -22,7 +22,12 @@ const menuItems = [
   { id: 'MT', label: 'Matemática' },
 ];
 
-export type ItemSelection = Record<number, 'acerto' | 'erro'>;
+type ItemStatus = 'acerto' | 'erro';
+type ItemData = {
+  status: ItemStatus;
+  posicao: number; // Aqui guardamos o CO_POSICAO
+};
+type ItemSelection = Record<number, ItemData>;
 
 export default function DadosDoExame() {
 

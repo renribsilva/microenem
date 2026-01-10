@@ -2,17 +2,17 @@
 
 import { useState, useMemo, useEffect, useRef } from 'react';
 import Chart from 'react-apexcharts';
-import { useChartTheme } from '../../../../../../hooks/chart_theme';
+import { useChartTheme } from '../../../../../../hooks/use_chart_theme';
 // import InputShell from '../../../../../../components/tsx/input_shell';
 import styles from "./graphs.module.css"
+import { useHomeData } from '../../../../../../context/home_context';
 
-export default function TCCChart({ logic }: { logic: any }) {
+export default function TCCChart() {
 
+  const { chartLogic } = useHomeData();
   const { gridColor, axisColor, colorMap, tickColor } = useChartTheme();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-
-  if (!logic) return null;
 
   const { 
     chartColor, 
@@ -26,9 +26,9 @@ export default function TCCChart({ logic }: { logic: any }) {
     activeDataset, 
     proficienciaAtual,
     resultadoAtual,
-    setPointIndex, // Extraído da logic para uso no evento
-    getInfoCaderno 
-  } = logic;
+    getInfoCaderno,
+    setPointIndex
+  } = chartLogic;
 
   // --- CONFIGURAÇÃO DE DADOS ---
   const series = useMemo(() => [{

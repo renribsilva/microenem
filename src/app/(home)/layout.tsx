@@ -5,8 +5,9 @@ import AppHeader from "../../components/tsx/header"
 import AppSidebar from "../../components/tsx/sidebar";
 import { useSidebar } from "../../context/sidebar_context";
 import styles from "./layout.module.css"
+import { HomeProvider } from "../../context/home_context";
 
-export default function RootLayout({
+export default function HomeLayout({
   children,
 }: {
   children: React.ReactNode
@@ -26,23 +27,24 @@ export default function RootLayout({
   }, [isMobileOpen]);
 
   return (
-    <div className={styles.layout_container}>
-      {isMobile && (
-        <div 
-          className={`${styles.backdrop} ${isMobileOpen ? styles.backdrop_active : ""}`}
-          onClick={toggleMobileSidebar}
-        />
-      )}
-      <div className={styles.layout_sidebar}>
-        <AppSidebar />
+    <HomeProvider>
+      <div className={styles.layout_container}>
+        {isMobile && (
+          <div 
+            className={`${styles.backdrop} ${isMobileOpen ? styles.backdrop_active : ""}`}
+            onClick={toggleMobileSidebar}
+          />
+        )}
+        <div className={styles.layout_sidebar}>
+          <AppSidebar />
+        </div>
+        <header className={styles.layout_header}>
+          <AppHeader />
+        </header>
+        <main className={styles.layout_main}>
+          {children}
+        </main>
       </div>
-      <header className={styles.layout_header}>
-        <AppHeader />
-      </header>
-      <main className={styles.layout_main}>
-        {/* teste */}
-        {children}
-      </main>
-    </div>
+    </HomeProvider>
   );
 }

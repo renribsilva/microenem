@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { useChartTheme } from "../../hooks/chart_theme";
+import { useChartTheme } from "../../hooks/use_chart_theme";
 import ItensData from "../../app/(home)/2019/json/itens_2019.json"
 import styles from "./components.module.css"
 

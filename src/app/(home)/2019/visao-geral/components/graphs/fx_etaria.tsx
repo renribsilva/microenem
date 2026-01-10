@@ -3,7 +3,7 @@
 import Chart from 'react-apexcharts';
 import fx_etaria_data from "../../json/socials/faixa_etaria.json";
 import presence_data from "../../json/overview/presenca.json";
-import { useChartTheme } from "../../../../../../hooks/chart_theme";
+import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import { useMemo } from 'react';
 import customTooltip from '../../../../../../components/tsx/customTooltip';
 

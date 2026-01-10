@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Chart from "react-apexcharts";
 import probtraceData from "../../../json/probtrace_2019.json";
 import constantes from "../../../../json/constantes.json";
-import { useChartTheme } from "../../../../../../hooks/chart_theme";
+import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import ItensData from "../../../json/itens_2019.json";
 import styles from "./graphs.module.css";
 import InputShell2 from "../../../../../../components/tsx/input_shell2";

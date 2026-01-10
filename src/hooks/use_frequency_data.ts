@@ -1,20 +1,44 @@
-import { useMemo } from 'react';
-import frequencyLC from "../app/(home)/2019/dados-do-exame/json/LC/frequency_acertos.json";
-import frequencyCH from "../app/(home)/2019/dados-do-exame/json/CH/frequency_acertos.json";
-import frequencyCN from "../app/(home)/2019/dados-do-exame/json/CN/frequency_acertos.json";
-import frequencyMT from "../app/(home)/2019/dados-do-exame/json/MT/frequency_acertos.json";
+"use client";
 
-const frequencyMap: Record<string, any> = {
-  LC: frequencyLC,
-  CH: frequencyCH,
-  CN: frequencyCN,
-  MT: frequencyMT,
-};
+import { useState, useEffect } from 'react';
 
 export function useFrequency(area: string) {
-  // Retorna os dados da área selecionada ou LC como padrão
-  const frequencyData = useMemo(() => {
-    return frequencyMap[area] || frequencyLC;
+  const [frequencyData, setFrequencyData] = useState<any>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadFrequencyData = async () => {
+      try {
+        let data;
+        // O Next.js separa cada um desses arquivos em um "chunk" diferente
+        switch (area) {
+          case 'CH':
+            data = await import("../app/(home)/2019/dados-do-exame/json/CH/frequency_acertos.json");
+            break;
+          case 'CN':
+            data = await import("../app/(home)/2019/dados-do-exame/json/CN/frequency_acertos.json");
+            break;
+          case 'MT':
+            data = await import("../app/(home)/2019/dados-do-exame/json/MT/frequency_acertos.json");
+            break;
+          default:
+            data = await import("../app/(home)/2019/dados-do-exame/json/LC/frequency_acertos.json");
+        }
+
+        if (isMounted) {
+          setFrequencyData(data.default);
+        }
+      } catch (error) {
+        console.error("Erro ao carregar frequency_acertos dinamicamente:", error);
+      }
+    };
+
+    loadFrequencyData();
+
+    return () => {
+      isMounted = false;
+    };
   }, [area]);
 
   return {

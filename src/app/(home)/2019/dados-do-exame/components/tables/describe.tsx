@@ -3,35 +3,20 @@
 import { useMemo, memo } from 'react';
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import styles from "./tables.module.css";
-import { useDescribe } from '../../../../../../hooks/use_describe_data';
-
-const labelMap: Record<string, string> = {
-  mean: "Média", median: "Mediana", mode: "Moda", sd: "Desvio Padrão",
-  min: "Mínima", max: "Máxima", skew: "Assimetria", kurtosis: "Curtose",
-  q1: "1º quartil", q3: "3º quartil", p99: "Percentil 99"
-};
-
-const rowOrder = ["mean", "median", "mode", "min", "max", "sd", "q1", "q3", "p99", "skew", "kurtosis"];
-
-const formatValue = (key: string, val: any, type: 'nota' | 'acerto') => {
-  if (typeof val !== "number") return val;
-  const isSpecial = key === 'skew' || key === 'kurtosis';
-  return val.toLocaleString('pt-BR', { 
-    maximumFractionDigits: isSpecial ? 2 : (type === 'nota' ? 1 : 0), 
-    minimumFractionDigits: 0 
-  });
-};
+import { useHomeData } from '../../../../../../context/home_context';
+import { useNineteenData } from '../../../../../../context/nineteen_context';
 
 const columnHelper = createColumnHelper<any>();
 
-
 const TableRow = memo(({ row, selectedRowId, onRowClick }: any) => {
-  const isSelected = selectedRowId === row.original.id;
+  // A comparação agora é entre IDs (strings)
+  const isSelected = selectedRowId === row.original.id;  
   
   return (
     <tr 
       className={`${styles.describe_tr} ${isSelected ? styles.row_selected : ''}`}
-      onClick={() => onRowClick(row.original)}
+      // Alterado para passar apenas o ID da linha clicada
+      onClick={() => onRowClick(row.original.id)} 
       style={{ cursor: 'pointer' }}
     >
       {row.getVisibleCells().map((cell: any) => (
@@ -45,25 +30,12 @@ const TableRow = memo(({ row, selectedRowId, onRowClick }: any) => {
 
 TableRow.displayName = 'TableRow';
 
-export function DescribeTable({ area, onRowClick, selectedRowId }: { 
-  area: string, 
-  onRowClick: (data: any) => void,
-  selectedRowId?: string 
-}) {
-  // O hook useDescribe DEVE estar retornando dados novos quando a area muda
-  const { describeData } = useDescribe(area);
-
-  const tableData = useMemo(() => {
-    if (!describeData?.notas) return [];
-    return rowOrder
-      .filter(key => describeData.notas[key] !== undefined)
-      .map((key) => ({
-        id: key, 
-        metric: labelMap[key] || key,
-        nota: formatValue(key, describeData.notas[key], 'nota'),
-        acerto: formatValue(key, describeData.acertos?.[key], 'acerto')
-      }));
-  }, [describeData, area]); // Adicionado area como dependência por segurança
+export function DescribeTable() {
+  // 1. Pegamos selectedRowId (que é a string do ID) e a função para atualizá-lo
+  const { deferredArea, selectedRowId, setSelectedRowId } = useHomeData();
+  
+  // 2. Pegamos os dados já processados pelo NineteenProvider
+  const { describeRowData } = useNineteenData();
 
   const columns = useMemo(() => [
     columnHelper.accessor('metric', {
@@ -81,12 +53,14 @@ export function DescribeTable({ area, onRowClick, selectedRowId }: {
   ], []);
 
   const table = useReactTable({
-    data: tableData,
+    // Usamos os dados que já vêm mastigados do provider
+    data: describeRowData.data, 
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
-  if (!describeData?.notas) return null;
+  // Proteção contra dados nulos
+  if (!describeRowData.data.length) return null;
 
   return (
     <div className={styles.describe_wrapper}>
@@ -106,16 +80,18 @@ export function DescribeTable({ area, onRowClick, selectedRowId }: {
           <tbody>
             {table.getRowModel().rows.map(row => (
               <TableRow 
-                key={`${area}-${row.id}`} // KEY COM AREA PARA FORÇAR RE-RENDER NA TROCA DE ABA
+                // O ID da linha concatenado com a área garante o re-render correto no React
+                key={`${deferredArea}-${row.original.id}`}
                 row={row}
                 selectedRowId={selectedRowId}
-                onRowClick={onRowClick}
+                onRowClick={setSelectedRowId}
               />
             ))}
           </tbody>
         </table>
         <div className={styles.describe_footer}>
-          n = {describeData.notas.n.toLocaleString('pt-BR')}
+          {/* O valor de 'n' também vem direto do describeRowData */}
+          n = {describeRowData.n.toLocaleString('pt-BR')}
         </div>
       </div>
     </div>

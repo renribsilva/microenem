@@ -4,13 +4,10 @@ import styles from "./dados-dos-itens.module.css"
 import { TabsNavigation } from "../../../../components/tsx/tab_navigation";
 import { useState } from "react";
 import Card from "../../../../components/tsx/card";
-import { useTccLogic } from "../../../../hooks/use_tcc_logic";
 import ItensButtons from "../../../../components/tsx/itens_buttons";
 import ProbsTable from "./components/tables/prob";
-
-// JSON Data
-import tccData from "../json/tcc.json"
 import dynamic from "next/dynamic";
+import { useHomeData } from "../../../../context/home_context";
 
 // Imports dinâmicos
 const ICCChart = dynamic(() => import("./components/graphs/icc"), { ssr: false })
@@ -25,24 +22,28 @@ const menuItems = [
 type ItemStatus = 'acerto' | 'erro';
 type ItemData = {
   status: ItemStatus;
-  posicao: number; // Aqui guardamos o CO_POSICAO
+  posicao: number;
 };
 type ItemSelection = Record<number, ItemData>;
 
 export default function DadosDoExame() {
+  // TUDO VEM DO CONTEXTO PAI AGORA
+  const { 
+    activeArea, 
+    deferredArea, 
+    chartLogic, 
+    handleTabChange, 
+    isUpdating 
+  } = useHomeData();
 
-  const [activeArea, setActiveArea] = useState("LC");
-  const chartLogic = useTccLogic(tccData.datasets, activeArea);
+  // Estados locais que são específicos desta página de "Itens" permanecem aqui
   const [selectedItems, setSelectedItems] = useState<ItemSelection>({});
   const [lastItemActivate, setLastItemActivate] = useState<number>(0);
   const [activeCodes, setActiveCodes] = useState<number[]>([]);
-  
-  const handleTabChange = (id: string) => {
-    setActiveArea(id);
-  };
 
   return (
-    <main className={styles.main}>   
+    // Aplicamos a opacidade isUpdating para feedback visual de carregamento
+    <main className={styles.main} style={{ opacity: isUpdating ? 0.7 : 1, transition: 'opacity 0.1s' }}>   
       <nav className={styles.nav}>
         <TabsNavigation 
           items={menuItems} 
@@ -57,7 +58,7 @@ export default function DadosDoExame() {
               <h3 className={styles.card_title}>Questões de {activeArea}</h3>
               <ItensButtons 
                 logic={chartLogic} 
-                area={activeArea}
+                area={deferredArea} // Usamos deferredArea para evitar lag visual
                 selectedItems={selectedItems} 
                 setSelectedItems={setSelectedItems}
                 setLastItemActivate={setLastItemActivate}
@@ -71,7 +72,7 @@ export default function DadosDoExame() {
                 itemSelection={selectedItems} 
                 logic={chartLogic}
                 activeCodes={activeCodes}
-                area={activeArea}
+                area={deferredArea}
               />
             </Card>
           </div>
@@ -82,11 +83,11 @@ export default function DadosDoExame() {
               <ICCChart 
                 itemSelection={selectedItems} 
                 logic={chartLogic}
-                area={activeArea}
+                area={deferredArea}
                 lastItemActive={lastItemActivate}
                 onFilterChange={(filtered) => setActiveCodes(filtered)}
               />
-            </Card>
+            </Card> 
           </div>
           <div className={styles.main_right_bottom}>
           </div>

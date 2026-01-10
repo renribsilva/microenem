@@ -3,7 +3,7 @@
 import Chart from 'react-apexcharts';
 import cor_raca_data from "../../json/socials/cor_raca.json";
 import presence_data from "../../json/overview/presenca.json";
-import { useChartTheme } from "../../../../../../hooks/chart_theme";
+import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import customTooltip from '../../../../../../components/tsx/customTooltip';
 import { useMemo } from 'react';
 

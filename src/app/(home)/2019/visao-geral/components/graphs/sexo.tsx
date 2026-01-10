@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import Chart from 'react-apexcharts';
 import sexo_data from "../../json/socials/sexo.json";
 import presence_data from "../../json/overview/presenca.json";
-import { useChartTheme } from "../../../../../../hooks/chart_theme";
+import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import customTooltip from '../../../../../../components/tsx/customTooltip';
 
 export default function SEXO() {

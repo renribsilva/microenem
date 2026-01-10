@@ -11,7 +11,7 @@ import styles from "./tables.module.css"
 
 import Probtrace from "../../../json/probtrace_2019.json";
 import constantes from "../../../../json/constantes.json";
-import { useChartTheme } from "../../../../../../hooks/chart_theme";
+import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 
 type ItemStatus = 'acerto' | 'erro';
 type ItemData = {

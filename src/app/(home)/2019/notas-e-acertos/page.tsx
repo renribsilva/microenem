@@ -6,7 +6,6 @@ import { useState } from "react";
 import Card from "../../../../components/tsx/card";
 
 import tccData from "../json/tcc.json"
-import { useTccLogic } from "../../../../hooks/use_tcc_logic";
 import InputShell from "../../../../components/tsx/input_shell";
 
 const menuItems = [
@@ -19,7 +18,6 @@ const menuItems = [
 export default function QuestoesPage() {
   
   const [activeArea, setActiveArea] = useState("LC");
-  const chartLogic = useTccLogic(tccData.datasets, activeArea);
 
   return (
     <main className={styles.main_container}>      
@@ -30,9 +28,9 @@ export default function QuestoesPage() {
           onTabChange={setActiveArea} 
         />
       </nav>
-      <Card>
+      {/* <Card>
         <InputShell logic={chartLogic} />
-      </Card>
+      </Card> */}
       <div className={styles.main_top}>
         <Card>
           <h3 className={styles.card_title}>Acertos esperados por proeficiência</h3>

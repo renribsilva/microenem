@@ -1,23 +1,50 @@
-import { useMemo } from 'react';
-import describeLC from "../app/(home)/2019/dados-do-exame/json/LC/describe.json";
-import describeCH from "../app/(home)/2019/dados-do-exame/json/CH/describe.json";
-import describeCN from "../app/(home)/2019/dados-do-exame/json/CN/describe.json";
-import describeMT from "../app/(home)/2019/dados-do-exame/json/MT/describe.json";
+"use client";
 
-const describeMap: Record<string, any> = {
-  LC: describeLC,
-  CH: describeCH,
-  CN: describeCN,
-  MT: describeMT,
-};
+import { useState, useEffect } from 'react';
 
 export function useDescribe(area: string) {
-  // Retorna os dados da área selecionada ou LC como padrão
-  const describeData = useMemo(() => {
-    return describeMap[area] || describeLC;
+  // Iniciamos como null para saber que está carregando
+  const [describeData, setDescribeData] = useState<any>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadDescribeData = async () => {
+      try {
+        let data;
+        // O import dinâmico faz o Next.js separar esses JSONs em arquivos diferentes
+        switch (area) {
+          case 'CH':
+            data = await import("../app/(home)/2019/dados-do-exame/json/CH/describe.json");
+            break;
+          case 'CN':
+            data = await import("../app/(home)/2019/dados-do-exame/json/CN/describe.json");
+            break;
+          case 'MT':
+            data = await import("../app/(home)/2019/dados-do-exame/json/MT/describe.json");
+            break;
+          default:
+            data = await import("../app/(home)/2019/dados-do-exame/json/LC/describe.json");
+        }
+
+        if (isMounted) {
+          // No import dinâmico de JSON, os dados ficam na propriedade .default
+          setDescribeData(data.default);
+        }
+      } catch (error) {
+        console.error("Erro ao carregar describe.json dinamicamente:", error);
+      }
+    };
+
+    loadDescribeData();
+
+    return () => {
+      isMounted = false;
+    };
   }, [area]);
 
   return {
-    describeData
+    describeData,
+    isLoading: !describeData
   };
 }

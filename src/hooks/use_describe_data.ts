@@ -43,8 +43,5 @@ export function useDescribe(area: string) {
     };
   }, [area]);
 
-  return {
-    describeData,
-    isLoading: !describeData
-  };
+  return { describeData };
 }

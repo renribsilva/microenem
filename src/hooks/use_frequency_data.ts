@@ -41,7 +41,5 @@ export function useFrequency(area: string) {
     };
   }, [area]);
 
-  return {
-    frequencyData
-  };
+  return { frequencyData };
 }

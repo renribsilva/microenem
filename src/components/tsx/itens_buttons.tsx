@@ -22,7 +22,8 @@ export default function ItensButtons({
   area, 
   selectedItems, 
   setSelectedItems,
-  setLastItemActivate }: Props) {
+  setLastItemActivate,
+}: Props) {
   if (!logic) return null;
 
   const { 
@@ -38,6 +39,7 @@ export default function ItensButtons({
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const prevLabelRef = useRef(selectedLabel);
+  const [backdropAlert, setBackdropAlert] = useState<any | null>(false)
 
   const abandonadosCodes = useMemo(() => {
     const codes = new Set<number>();
@@ -62,29 +64,25 @@ export default function ItensButtons({
   const { start, end } = ranges[area] || { start: 1, end: 45 };
   const questions = Array.from({ length: end - start + 1 }, (_, i) => start + i);
   
-  // Função corrigida: sem erro de variável inexistente
   const getCodeByLabel = useCallback((num: number, label: string) => {
     const [co_p, ling] = label.split('_');
-    const p = ItensData as any; // Cast temporário apenas para o JSON
-    
+    const p = ItensData as any;     
     const idx = Object.keys(p.CO_POSICAO).find(i => {
       const matchPos = Number(p.CO_POSICAO[i]) === num;
       const matchProva = Number(p.CO_PROVA[i]) === Number(co_p);
       
       if (num > 5) return matchPos && matchProva;
       
-      // Para as 5 primeiras questões, valida a língua (Espanhol/Inglês)
       return matchPos && matchProva && Number(p.TP_LINGUA[i]) === Number(ling);
     });
 
     return idx ? Number(p.CO_ITEM[idx]) : null;
   }, []);
 
-  // Remapeamento por posição (Mantém o status Verde/Vermelho ao trocar a prova)
   useLayoutEffect(() => {
     if (prevLabelRef.current !== selectedLabel) {
       setSelectedItems(prev => {
-        const newMapping = { ...prev }; // Mantém TUDO o que já existia (outras áreas)
+        const newMapping = { ...prev };
         
         questions.forEach(num => {
           const oldCode = getCodeByLabel(num, prevLabelRef.current);
@@ -107,13 +105,25 @@ export default function ItensButtons({
     }
   }, [selectedLabel, setSelectedItems, getCodeByLabel, questions]);
 
-  // Ciclo: Off -> Acerto (Green) -> Erro (Red) -> Off
-  function handleToggle(num: number) {
+  function handleToggle(num: number, e?: React.MouseEvent<HTMLButtonElement>) {
     const codeItem = getCodeByLabel(num, selectedLabel);
     if (!codeItem) return;
     
     setLastItemActivate(codeItem);
     const isAbandoned = abandonadosCodes.has(codeItem);
+
+    setBackdropAlert(isAbandoned)
+
+    if (isAbandoned) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      setBackdropAlert({
+        num: num,
+        x: rect.left + rect.width / 2,
+        y: rect.top + window.scrollY
+      });
+    } else {
+      setBackdropAlert(null)
+    }
 
     setSelectedItems(prev => {
       const nextMapping = { ...prev };
@@ -139,6 +149,10 @@ export default function ItensButtons({
       }
       return nextMapping;
     });
+  }
+
+  const handleBackdrop = () => {
+    setBackdropAlert(false)
   }
 
   return (
@@ -223,7 +237,7 @@ export default function ItensButtons({
           return (
             <button
               key={num}
-              onClick={() => handleToggle(num)}
+              onClick={(e) => handleToggle(num, e)}
               onMouseEnter={(e) => {
                 e.currentTarget.style.filter = 'brightness(1.2)';
                 if (!status) {
@@ -273,6 +287,44 @@ export default function ItensButtons({
         <br></br>
         <span>3º clique (sem cor): item desativado</span>
       </div>
+      {backdropAlert && (
+        <>
+          <div 
+            className={`${styles.backdrop} ${styles.backdrop_active}`}
+            onClick={() => setBackdropAlert(null)}
+          />
+          <div 
+            style={{
+              position: 'fixed', // MUDOU PARA FIXED
+              left: backdropAlert.x,
+              top: backdropAlert.y - 10, // Sobe 10px para não cobrir o botão
+              transform: 'translate(-50%, -100%)',
+              zIndex: 9999,
+              backgroundColor: '#ef4444',
+              color: '#fff',
+              padding: '8px 12px',
+              borderRadius: '6px',
+              fontSize: '0.75rem',
+              width: 'fit-content',
+              textAlign: 'center',
+              pointerEvents: 'none',
+              boxShadow: '0 4px 10px rgba(0,0,0,0.3)',
+              transition: 'opacity 0.2s ease' 
+            }}
+          >
+            <strong>Item {backdropAlert.num} abandonado.</strong>
+            <p style={{ margin: 0, fontSize: '0.7rem', opacity: 0.9 }}>
+              Sem parâmetros <br /> a, b e c.
+            </p>
+            {/* SETINHA */}
+            <div style={{
+              position: 'absolute', bottom: '-5px', left: '50%', transform: 'translateX(-50%)',
+              borderLeft: '5px solid transparent', borderRight: '5px solid transparent',
+              borderTop: '5px solid #ef4444'
+            }} />
+          </div>
+        </>
+      )}
     </section>
   );
 }

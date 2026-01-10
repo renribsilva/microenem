@@ -22,7 +22,6 @@ const menuItems = [
   { id: 'MT', label: 'Matemática' },
 ];
 
-// Definimos o tipo do estado para ser consistente em todos os componentes
 export type ItemSelection = Record<number, 'acerto' | 'erro'>;
 
 export default function DadosDoExame() {
@@ -38,7 +37,7 @@ export default function DadosDoExame() {
   };
 
   return (
-    <main className={styles.main}>      
+    <main className={styles.main}>   
       <nav className={styles.nav}>
         <TabsNavigation 
           items={menuItems} 

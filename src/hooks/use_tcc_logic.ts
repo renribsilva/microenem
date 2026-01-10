@@ -1,75 +1,103 @@
-import { useState, useMemo, useEffect } from 'react';
+"use client";
+
+import { useState, useMemo } from 'react';
 import dic from "../app/(home)/2019/json/dic_2019.json"; 
 import { useChartTheme } from './chart_theme'; 
 
+// OTIMIZAÇÃO: Criar um mapa de busca fora do hook para não processar o JSON toda hora
+// Isso transforma uma busca lenta (indexOf) em uma busca instantânea (get)
+const dicMap = new Map(
+  dic.codigo.map((cod, i) => [
+    cod, 
+    { cor: dic.cor[i], aplicacao: dic.aplicacao[i] }
+  ])
+);
+
 export function useTccLogic(allDatasets: any[], area: string) {
-  
   const { colorMap } = useChartTheme();
 
-  // 1. Filtra os datasets da área
+  // 1. Filtra os datasets da área (Memorizado)
   const availableDatasets = useMemo(() => {
     return allDatasets.filter(ds => ds.metadata?.area === area);
   }, [allDatasets, area]);
 
-  // Sincroniza o label selecionado quando a área muda
-  const [selectedLabel, setSelectedLabel] = useState<string>(availableDatasets[0]?.label);
-  
-  useEffect(() => {
-    if (availableDatasets.length > 0) {
-      setSelectedLabel(availableDatasets[0].label);
-    }
-  }, [area, availableDatasets]);
+  // 2. Estado do Label selecionado
+  // Iniciamos com undefined para saber quando o usuário ainda não interagiu com a nova aba
+  const [internalSelectedLabel, setInternalSelectedLabel] = useState<string | null>(null);
 
-  // 2. Define o dataset ativo
+  // Fallback lógico: se não houver seleção manual, usa o primeiro da lista da aba atual
+  const selectedLabel = internalSelectedLabel && availableDatasets.some(d => d.label === internalSelectedLabel)
+    ? internalSelectedLabel 
+    : availableDatasets[0]?.label;
+
+  const setSelectedLabel = (label: string) => setInternalSelectedLabel(label);
+
+  // 3. Define o dataset ativo
   const activeDataset = useMemo(() => {
     return availableDatasets.find(d => d.label === selectedLabel) || availableDatasets[0];
   }, [selectedLabel, availableDatasets]);
 
-  // 3. Lógica do Índice Inicial (Slider deve nascer no b_medio)
+  // 4. Lógica do Índice Inicial (Cálculo puro, sem useEffect)
   const initialIndex = useMemo(() => {
     if (!activeDataset || !activeDataset.labels_x) return 0;
     const target = activeDataset.metadata.b_medio_enem;
     
-    // Encontra o índice cuja nota x é mais próxima do b_medio_enem
-    return activeDataset.labels_x.reduce((prev, curr, idx) => {
-      return Math.abs(curr - target) < Math.abs(activeDataset.labels_x[prev] - target) ? idx : prev;
-    }, 0);
+    let closestIdx = 0;
+    let minDiff = Math.abs(activeDataset.labels_x[0] - target);
+
+    for (let i = 1; i < activeDataset.labels_x.length; i++) {
+      const diff = Math.abs(activeDataset.labels_x[i] - target);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closestIdx = i;
+      }
+    }
+    return closestIdx;
   }, [activeDataset]);
 
-  // Estado do Slider inicializado em 0 e atualizado pelo useEffect
-  const [pointIndex, setPointIndex] = useState<number>(0);
+  // 5. Estado do Slider
+  const [userPointIndex, setUserPointIndex] = useState<number | null>(null);
 
-  useEffect(() => {
-    setPointIndex(initialIndex);
-  }, [initialIndex]);
+  // Se o usuário não mexeu no slider nesta aba, usamos o initialIndex (b_medio)
+  // Ao mudar a 'area', resetamos o userPointIndex para null no handleTabChange do pai
+  // Ou simplesmente deixamos a lógica de memo limpar aqui:
+  const pointIndex = userPointIndex !== null ? userPointIndex : initialIndex;
 
-  // 1. Defina a função primeiro (o motor lógico)
-  const getInfoCaderno = (codigo: number, lingua?: any) => {
-    const idx = dic.codigo.indexOf(codigo);
-    if (idx === -1) return { fullText: `Caderno ${codigo}`, corNome: "" };    
-    const corNome = dic.cor[idx];
-    const aplicacao = dic.aplicacao[idx];
-    let textoBase = corNome;    
+  // 6. Busca de informações do caderno OTIMIZADA com Map
+  const currentInfo = useMemo(() => {
+    if (!activeDataset?.metadata) return { fullText: "", corNome: "" };
+    
+    const { codigo, lingua } = activeDataset.metadata;
+    const info = dicMap.get(codigo);
+
+    if (!info) return { fullText: `Caderno ${codigo}`, corNome: "" };    
+    
+    let textoBase = info.cor;    
     if (area === 'LC' && (lingua === 0 || lingua === 1)) {
       textoBase += lingua === 0 ? " (Inglês)" : " (Espanhol)";
     }
-    return { fullText: `${textoBase} - ${aplicacao}`, corNome: corNome };
-  };
-
-  // 2. Use a função para pegar os dados do dataset ATIVO
-  const currentInfo = useMemo(() => {
-    if (!activeDataset?.metadata) return { fullText: "", corNome: "" };
-    return getInfoCaderno(activeDataset.metadata.codigo, activeDataset.metadata.lingua);
-  }, [activeDataset, area]); // Se o dataset mudar, o currentInfo atualiza automático
+    return { fullText: `${textoBase} - ${info.aplicacao}`, corNome: info.cor };
+  }, [activeDataset, area]);
 
   const chartColor = colorMap[currentInfo.corNome] || "#3b82f6";
 
-  // 5. Valores de saída para o gráfico e para o InputShell
+  // 7. Valores de saída
   const proficienciaAtual = activeDataset?.labels_x?.[pointIndex] || 0;
   const acertosEsperados = activeDataset?.data?.[pointIndex] || 0;
   
-  const xMin = Math.floor((activeDataset?.metadata?.min) / 100) * 100;
-  const xMax = Math.ceil((activeDataset?.metadata?.max) / 100) * 100;
+  const xMin = activeDataset?.metadata?.min ? Math.floor(activeDataset.metadata.min / 100) * 100 : 0;
+  const xMax = activeDataset?.metadata?.max ? Math.ceil(activeDataset.metadata.max / 100) * 100 : 1000;
+
+  // Função mantida para compatibilidade, mas agora usa o Map interno
+  const getInfoCaderno = (codigo: number, lingua?: any) => {
+    const info = dicMap.get(codigo);
+    if (!info) return { fullText: `Caderno ${codigo}`, corNome: "" };
+    let textoBase = info.cor;
+    if (area === 'LC' && (lingua === 0 || lingua === 1)) {
+      textoBase += lingua === 0 ? " (Inglês)" : " (Espanhol)";
+    }
+    return { fullText: `${textoBase} - ${info.aplicacao}`, corNome: info.cor };
+  };
 
   return {
     availableDatasets,
@@ -77,7 +105,7 @@ export function useTccLogic(allDatasets: any[], area: string) {
     setSelectedLabel,
     activeDataset,
     pointIndex,
-    setPointIndex,
+    setPointIndex: setUserPointIndex,
     chartColor,
     currentInfo,
     proficienciaAtual,

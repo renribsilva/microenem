@@ -85,15 +85,6 @@ export default function DadosDoExame() {
             </Card>
           </div>
           <div className={styles.main_right_bottom}>
-            <Card>
-              <ICCChart 
-                itemSelection={selectedItems} 
-                logic={chartLogic}
-                area={activeArea}
-                lastItemActive={lastItemActivate}
-                onFilterChange={(filtered) => setActiveCodes(filtered)}
-              />
-            </Card>
           </div>
         </div>
       </div>   

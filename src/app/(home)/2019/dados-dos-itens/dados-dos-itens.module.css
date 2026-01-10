@@ -48,13 +48,13 @@
 
 
 .main_left1 {
-  background-color: aquamarine;
+  /* background-color: aquamarine; */
   flex: 1 1 40%;
   min-width: 250px;
 }
 
 .main_left2 {
-  background-color: aquamarine;
+  /* background-color: aquamarine; */
   flex: 1 1 60%;
   min-width: 350px;
 }

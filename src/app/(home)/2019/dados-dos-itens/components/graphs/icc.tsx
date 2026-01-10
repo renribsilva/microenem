@@ -46,7 +46,7 @@ export default function ICCChart({
 
   if (!logic) return null;
 
-  const { selectedLabel, chartColor, proficienciaAtual } = logic;
+  const { selectedLabel, chartColor, proficienciaAtual, setPointIndex } = logic;
   const [co_p_selected] = selectedLabel.split('_');
   const areaIdx = constantes.area.indexOf(area || "LC");
   const d = constantes.d[areaIdx];
@@ -101,7 +101,25 @@ export default function ICCChart({
         toolbar: { show: true },
         zoom: {
           enabled: false
-        }
+        },
+        animations: {
+          enabled: false, 
+          dynamicAnimation: {
+            enabled: false 
+          }
+        },
+        events: {
+          // EVENTO DE CLIQUE PARA ATUALIZAR PROFICIÊNCIA
+          click: function(event, chartContext, config) {
+            // Se o elemento clicado (ou o pai dele) tiver classes da toolbar, ignore.
+            const isToolbar = event.target.closest('.apexcharts-toolbar');
+            if (isToolbar) return;
+            const clickedIndex = config.dataPointIndex;
+            if (clickedIndex !== undefined && clickedIndex > -1) {
+              setPointIndex(clickedIndex);
+            }
+          }
+        },
       },
       stroke: {
         curve: 'monotoneCubic', 
@@ -202,9 +220,9 @@ export default function ICCChart({
         height="100%" 
         width="100%" 
       />
-      <div className={styles.icc_slider}>
+      {/* <div className={styles.icc_slider}>
         <InputShell2 logic={logic} activeCodes={activeCodes}/>
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, Suspense } from "react"
+import { Suspense } from "react"
 import dynamic from "next/dynamic"
 import styles from "./visao-geral.module.css"
 import Card from "../../../../components/tsx/card"

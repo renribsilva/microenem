@@ -108,18 +108,6 @@ export default function ICCChart({
             enabled: false 
           }
         },
-        events: {
-          // EVENTO DE CLIQUE PARA ATUALIZAR PROFICIÊNCIA
-          click: function(event, chartContext, config) {
-            // Se o elemento clicado (ou o pai dele) tiver classes da toolbar, ignore.
-            const isToolbar = event.target.closest('.apexcharts-toolbar');
-            if (isToolbar) return;
-            const clickedIndex = config.dataPointIndex;
-            if (clickedIndex !== undefined && clickedIndex > -1) {
-              setPointIndex(clickedIndex);
-            }
-          }
-        },
       },
       stroke: {
         curve: 'monotoneCubic', 

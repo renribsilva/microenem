@@ -58,18 +58,6 @@ export default function TCCChart({ logic }: { logic: any }) {
         show: true,
       },
       zoom: { enabled: false },
-      events: {
-        // EVENTO DE CLIQUE PARA ATUALIZAR PROFICIÊNCIA
-        click: function(event, chartContext, config) {
-          // Se o elemento clicado (ou o pai dele) tiver classes da toolbar, ignore.
-          const isToolbar = event.target.closest('.apexcharts-toolbar');
-          if (isToolbar) return;
-          const clickedIndex = config.dataPointIndex;
-          if (clickedIndex !== undefined && clickedIndex > -1) {
-            setPointIndex(clickedIndex);
-          }
-        }
-      },
       animations: {
         enabled: false, 
         dynamicAnimation: {
@@ -152,20 +140,20 @@ export default function TCCChart({ logic }: { logic: any }) {
             strokeWidth: 0,
             radius: 2
           },
-          label: {
-            borderColor: chartColor,
-            offsetY: proficienciaAtual > bMedio ? 35 : -20,
-            offsetX: proficienciaAtual <= bMedio ? 80 : -80,
-            style: {
-              color: '#fff',
-              background: chartColor,
-              padding: { left: 10, right: 10, top: 5, bottom: 5 }
-            },
-            text: [
-              `proficiência de ${proficienciaAtual.toFixed(0)}`,
-              `${resultadoAtual.toFixed(0)} acertos esperados`
-            ] 
-          }
+          // label: {
+          //   borderColor: chartColor,
+          //   offsetY: proficienciaAtual > bMedio ? 35 : -20,
+          //   offsetX: proficienciaAtual <= bMedio ? 80 : -80,
+          //   style: {
+          //     color: '#fff',
+          //     background: chartColor,
+          //     padding: { left: 10, right: 10, top: 5, bottom: 5 }
+          //   },
+          //   text: [
+          //     `proficiência de ${proficienciaAtual.toFixed(0)}`,
+          //     `${resultadoAtual.toFixed(0)} acertos esperados`
+          //   ] 
+          // }
         }
       ]
     }

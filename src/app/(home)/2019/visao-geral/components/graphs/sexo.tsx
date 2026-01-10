@@ -48,7 +48,7 @@ export default function SEXO() {
       style: {
         fontSize: '12px',
         fontWeight: 'bold',
-        // colors: [textColor]
+        colors: [textColor]
       },
       dropShadow: { enabled: false }
     },

@@ -23,21 +23,16 @@ export default function SEXO() {
       type: 'donut',
       toolbar: { show: true },
       animations: {
-        enabled: true,
-        easing: 'easeinout',
-        speed: 500,
-        dynamicAnimation: { enabled: false } 
-      }
+        enabled: false, 
+        dynamicAnimation: {
+          enabled: false 
+        }
+      } 
     },
     stroke: {
       show: true,
       width: 2, 
       colors: [panelColor]
-    },
-    grid: {
-      padding: {
-        top: -15, 
-      },
     },
     colors: doughnutColors,
     labels: labels,
@@ -52,15 +47,15 @@ export default function SEXO() {
       enabled: true,
       style: {
         fontSize: '12px',
-        fontWeight: '300',
-        colors: [textColor]
+        fontWeight: 'bold',
+        // colors: [textColor]
       },
       dropShadow: { enabled: false }
     },
     legend: {
       position: 'top',
       labels: { colors: textColor },
-      offsetY: -18  ,
+      offsetY: 0,
     },
     tooltip: {
       theme: 'dark',

@@ -3,7 +3,7 @@
 import { DescribeTable } from "./components/tables/describe";
 import styles from "./dados-do-exame.module.css"
 import { TabsNavigation } from "../../../../components/tsx/tab_navigation";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useState } from "react";
 import Card from "../../../../components/tsx/card";
 import { useTccLogic } from "../../../../hooks/use_tcc_logic";
 import dynamic from "next/dynamic";

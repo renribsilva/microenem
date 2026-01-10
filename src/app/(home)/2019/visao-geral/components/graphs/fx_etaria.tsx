@@ -30,6 +30,12 @@ export default function FX_ETARIA() {
   const options: ApexCharts.ApexOptions = useMemo(() => ({
     chart: {
       type: 'bar',
+      animations: {
+        enabled: false, 
+        dynamicAnimation: {
+          enabled: false 
+        }
+      } 
     },
     plotOptions: {
       bar: {

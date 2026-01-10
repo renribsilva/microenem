@@ -26,7 +26,13 @@ export default function COR_RACA() {
     chart: {
       type: 'treemap',
       toolbar: { show: true },
-      background: 'transparent'
+      background: 'transparent',
+      animations: {
+        enabled: false, 
+        dynamicAnimation: {
+          enabled: false 
+        }
+      } 
     },
     stroke: {
       show: true,
@@ -42,15 +48,15 @@ export default function COR_RACA() {
         fontWeight: 'bold' 
       }
     },
-    subtitle: {
-      text: `*n = ${n}`,
-      align: 'center',
-      style: {
-        color: textColor,
-        fontSize: '13px',
-        fontWeight: 'normal',
-      }
-    },
+    // subtitle: {
+    //   text: `*n = ${n}`,
+    //   align: 'center',
+    //   style: {
+    //     color: textColor,
+    //     fontSize: '13px',
+    //     fontWeight: 'normal',
+    //   }
+    // },
     colors: ["#1D85B1", "#2D6B86", "#009BDB", "#2E4E5C", "#222E33", "#1B2429"],
     plotOptions: {
       treemap: {

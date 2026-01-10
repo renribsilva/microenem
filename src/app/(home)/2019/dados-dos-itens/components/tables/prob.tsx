@@ -11,6 +11,7 @@ import styles from "./tables.module.css"
 
 import Probtrace from "../../../json/probtrace_2019.json";
 import constantes from "../../../../json/constantes.json";
+import { useChartTheme } from "../../../../../../hooks/chart_theme";
 
 type ItemStatus = 'acerto' | 'erro';
 type ItemData = {
@@ -34,6 +35,8 @@ type ProbRow = {
 
 export default function ProbsTable({ logic, activeCodes, area, itemSelection }: ProbsTableProps) {
   
+  const {gridColor} = useChartTheme();
+
   const columnHelper = createColumnHelper<ProbRow>();
   const { proficienciaAtual, selectedLabel } = logic;
   const data = useMemo(() => {
@@ -120,7 +123,7 @@ export default function ProbsTable({ logic, activeCodes, area, itemSelection }: 
       <table className={styles.probtable_table}>
         <thead className={styles.probtable_thead}>
           {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id} style={{ borderBottom: "1px solid #eee", fontSize: "0.8rem", color: "#666" }}>
+            <tr key={headerGroup.id} style={{ borderBottom: `1px solid ${gridColor}`, fontSize: "0.8rem", color: "#666" }}>
               {headerGroup.headers.map((header) => (
                 <th key={header.id} style={{ textAlign: header.id === "id" ? "left" : "right", padding: "8px" }}>
                   {flexRender(header.column.columnDef.header, header.getContext())}
@@ -131,7 +134,7 @@ export default function ProbsTable({ logic, activeCodes, area, itemSelection }: 
         </thead>
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id} style={{ borderBottom: "1px solid #f9f9f9" }}>
+            <tr key={row.id} style={{ borderBottom: `1px solid ${gridColor}`}}>
               {row.getVisibleCells().map((cell) => (
                 <td key={cell.id} style={{ textAlign: cell.column.id === "id" ? "left" : "right", padding: "8px" }}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}

@@ -70,10 +70,17 @@ export default function DensityNotasChart({ area = "LC", highlightItem }: { area
                  ? (describeData?.notas?.mean || 0) 
                  : parseFloat(highlightItem?.nota?.replace(/\./g, '').replace(',', '.') || '0')
     );
+
+    const mainDs = densityData?.datasets?.find((ds: any) => ds.id === 'main-density');
+    const yMax = mainDs?.data 
+      ? Math.max(...mainDs.data.map((p: any) => p.y * 100)) 
+      : 0;
     
     const chartColors = isFill ? [densidadeColor["curve"], densidadeColor["fill"]] : [densidadeColor["curve"]];
     const fillOpacity = isFill ? [0.2, 0.7] : [0.2];
     const strokeWidths = isFill ? [2, 0] : [2];
+
+    console.log(yMax)
 
     return {
       chart: {
@@ -188,8 +195,9 @@ export default function DensityNotasChart({ area = "LC", highlightItem }: { area
               text: `${highlightItem?.metric}: ${highlightItem?.nota}`,
               borderWidth: 6,
               borderColor: densidadeColor["line"],
-              style: { color: '#fff', background: densidadeColor["line"] },
+              style: { color: '#000000ff', background: densidadeColor["line"], fontWeight: 'bold' },
               position: 'top',
+              orientation: 'horizontal'
             }
           }
         ] : [],
@@ -198,13 +206,14 @@ export default function DensityNotasChart({ area = "LC", highlightItem }: { area
         points: isShape ? [
           {
             x: (xMax + xMin) / 2,
+            y: yMax,
             marker: { size: 0 },
             label: {
               text: [
                 `${highlightItem.metric}: ${highlightItem.nota}`,
                 getStatDescription(highlightItem.id, highlightItem.nota)
               ],
-              offsetY: 50,
+              offsetY: 0,
               style: {
                 color:  '#fff',
                 background: densidadeColor["line"],

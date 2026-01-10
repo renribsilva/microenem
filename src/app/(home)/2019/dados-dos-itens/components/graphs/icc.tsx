@@ -7,6 +7,7 @@ import constantes from "../../../../json/constantes.json";
 import { useChartTheme } from "../../../../../../hooks/chart_theme";
 import ItensData from "../../../json/itens_2019.json";
 import styles from "./graphs.module.css";
+import InputShell2 from "../../../../../../components/tsx/input_shell2";
 
 type ItemStatus = 'acerto' | 'erro';
 type ItemData = {
@@ -30,7 +31,7 @@ export default function ICCChart({
   onFilterChange
 }: ICCChartProps) {
   
-  const { gridColor, axisColor } = useChartTheme();
+  const { gridColor, axisColor, textColor } = useChartTheme();
   const [activeCodes, setActiveCodes] = useState<number[]> ([]);
   
   // Paleta fixa para manter consistência entre re-renderizações
@@ -168,6 +169,28 @@ export default function ICCChart({
       },
       grid: { borderColor: gridColor },
       legend: { show: false },
+      title: {
+        text: 'Curva característica do item',
+        align: 'left' as const,
+        margin: 5,
+        style: { 
+          color: textColor, 
+          fontSize: '16px', 
+          fontWeight: 'bold' 
+        }
+      },
+      subtitle: {
+        text: [
+          `Cada proficiência possui um traço de probabilidades`,
+          `de acertos e erros.`
+        ] as any,
+        align: 'left' as const,
+        style: {
+          color: textColor,
+          fontSize: '13px',
+          fontWeight: 'normal',
+        }
+      },
       annotations: {
         xaxis: [
           {
@@ -213,9 +236,9 @@ export default function ICCChart({
         height="100%" 
         width="100%" 
       />
-      {/* <div className={styles.icc_slider}>
+      <div className={styles.icc_slider}>
         <InputShell2 logic={logic} activeCodes={activeCodes}/>
-      </div> */}
+      </div>
     </div>
   );
 }

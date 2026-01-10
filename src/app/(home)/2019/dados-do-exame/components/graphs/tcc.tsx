@@ -121,11 +121,15 @@ export default function TCCChart({ logic }: { logic: any }) {
         {
           y: yBMedio,
           borderColor: chartColor,
+          borderWidth: 2,
           strokeDashArray: 4,
           label: {
             text: `Dificuldade Média: ${bMedio.toFixed(0)}`,
-            style: { color: '#fff', background: chartColor },
-            offsetY: 20,
+            style: { color: '#000000ff', background: chartColor, fontWeight: 'bold' },
+            offsetY: 25,
+            offsetX: -10,
+            borderColor: chartColor,
+            borderWidth: 6,
           }
         }
       ],

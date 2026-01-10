@@ -76,6 +76,11 @@ export default function FrequencyAcertosChart({ area = "LC", highlightItem }: { 
       ? Math.round(mean) 
       : Math.round(parseFloat(highlightItem?.acerto?.replace(/\./g, '').replace(',', '.') || "0"));
 
+    const rawDataY = frequencyData.datasets?.[1]?.data || [];
+    const yMax = rawDataY.length > 0 
+      ? Math.max(...rawDataY.map((p: any) => p.y)) 
+      : 0;
+
     return {
       chart: {
         id: `freq-${area}`,
@@ -177,22 +182,23 @@ export default function FrequencyAcertosChart({ area = "LC", highlightItem }: { 
               text: `${highlightItem?.metric}: ${highlightItem?.acerto}`,
               borderWidth: 6,
               borderColor: acertosColor["line"],
-              style: { color: '#fff', background: acertosColor["line"], fontWeight: 'bold' },
+              style: { color: '#000000ff', background: acertosColor["line"], fontWeight: 'bold' },
               position: 'top',
+              orientation: 'horizontal',
             }
           }
         ] : [],
         points: isShape ? [
           {
             x: 22.5,
-            y: 0,
+            y: yMax,
             marker: { size: 0 },
             label: {
               text: [
                 `${highlightItem.metric}: ${highlightItem.acerto}`,
                 getStatDescription(highlightItem.id, highlightItem.acerto)
               ],
-              offsetY: -60,
+              offsetY: 0,
               style: {
                 color: '#fff',
                 background: acertosColor["line"],

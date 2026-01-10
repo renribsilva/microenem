@@ -7,10 +7,15 @@ import constantes from "../../../../json/constantes.json";
 import { useChartTheme } from "../../../../../../hooks/chart_theme";
 import ItensData from "../../../json/itens_2019.json";
 import styles from "./graphs.module.css";
-import InputShell2 from "../../../../../../components/tsx/input_shell2";
+
+type ItemStatus = 'acerto' | 'erro';
+type ItemData = {
+  status: ItemStatus;
+  posicao: number; // Aqui guardamos o CO_POSICAO
+};
 
 interface ICCChartProps {
-  itemSelection: Record<number, 'acerto' | 'erro'>;
+  itemSelection: Record<number, ItemData>;
   logic: any;
   area: string;
   lastItemActive: number;
@@ -69,7 +74,7 @@ export default function ICCChart({
           if (code === lastItemActive) abandonedFound = true;
           return null; // Remove o item abandonado da série do gráfico
         }
-        const status = itemSelection[code];
+        const status = itemSelection[code]?.status;
         const rawPoints = provaData?.[itemKey] as (number | null)[];
         if (!rawPoints) return null;
         const colorIndex = allItemsInProva.indexOf(itemKey);

@@ -7,7 +7,11 @@ import styles from "./components.module.css"
 
 // Tipagem rigorosa para evitar erros
 type ItemStatus = 'acerto' | 'erro';
-type ItemSelection = Record<number, ItemStatus>;
+type ItemData = {
+  status: ItemStatus;
+  posicao: number; // Aqui guardamos o CO_POSICAO
+};
+type ItemSelection = Record<number, ItemData>;
 
 interface Props {
   logic: any;
@@ -40,6 +44,7 @@ export default function ItensButtons({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const prevLabelRef = useRef(selectedLabel);
   const [backdropAlert, setBackdropAlert] = useState<any | null>(false)
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const abandonadosCodes = useMemo(() => {
     const codes = new Set<number>();
@@ -79,22 +84,22 @@ export default function ItensButtons({
     return idx ? Number(p.CO_ITEM[idx]) : null;
   }, []);
 
+  // 2. Remapeamento atualizado para preservar a posição
   useLayoutEffect(() => {
     if (prevLabelRef.current !== selectedLabel) {
       setSelectedItems(prev => {
-        const newMapping = { ...prev };
-        
+        const newMapping = { ...prev };        
         questions.forEach(num => {
           const oldCode = getCodeByLabel(num, prevLabelRef.current);
           const newCode = getCodeByLabel(num, selectedLabel);
-          
           if (oldCode && prev[oldCode] && newCode) {
-            const status = prev[oldCode];
-            // Se o código mudou (ex: mudou a cor do caderno), 
-            // removemos o antigo e passamos o status para o novo código
+            const oldData = prev[oldCode];           
             if (oldCode !== newCode) {
               delete newMapping[oldCode];
-              newMapping[newCode] = status;
+              newMapping[newCode] = { 
+                status: oldData.status, 
+                posicao: num 
+              };
             }
           }
         });
@@ -116,10 +121,15 @@ export default function ItensButtons({
 
     if (isAbandoned) {
       const rect = e.currentTarget.getBoundingClientRect();
+      const containerRect = containerRef.current?.getBoundingClientRect();
+
       setBackdropAlert({
         num: num,
         x: rect.left + rect.width / 2,
-        y: rect.top + window.scrollY
+        y: rect.top,
+        // Guardamos os limites do container pai
+        limitLeft: (containerRect?.left || 0) + 95,
+        limitRight: (containerRect?.right || window.innerWidth) - 95
       });
     } else {
       setBackdropAlert(null)
@@ -128,11 +138,9 @@ export default function ItensButtons({
     setSelectedItems(prev => {
       const nextMapping = { ...prev };
       const current = nextMapping[codeItem];
-
-      // LÓGICA PARA ITENS ABANDONADOS: Apenas On (acerto) ou Off
       if (isAbandoned) {
         if (!current) {
-          nextMapping[codeItem] = 'acerto'; // Usamos 'acerto' como flag de ativo
+          nextMapping[codeItem] = { status: 'acerto', posicao: num }; 
         } else {
           delete nextMapping[codeItem];
         }
@@ -141,18 +149,17 @@ export default function ItensButtons({
 
       // LÓGICA NORMAL: Ciclo de 3 estados
       if (!current) {
-        nextMapping[codeItem] = 'acerto';
-      } else if (current === 'acerto') {
-        nextMapping[codeItem] = 'erro';
+        // 1º CLIQUE: ACERTO
+        nextMapping[codeItem] = { status: 'acerto', posicao: num };
+      } else if (current.status === 'acerto') {
+        // 2º CLIQUE: MUDA PARA ERRO (preservando a posição)
+        nextMapping[codeItem] = { status: 'erro', posicao: num };
       } else {
+        // 3º CLIQUE: REMOVE
         delete nextMapping[codeItem];
-      }
+      }      
       return nextMapping;
     });
-  }
-
-  const handleBackdrop = () => {
-    setBackdropAlert(false)
   }
 
   return (
@@ -209,10 +216,10 @@ export default function ItensButtons({
       </div>
 
       {/* Grid de Botões */}
-      <div className={styles.itens_container}>
+      <div ref={containerRef} className={styles.itens_container}>
         {questions.map((num) => {
           const thisCodeItem = getCodeByLabel(num, selectedLabel);
-          const status = thisCodeItem ? selectedItems[thisCodeItem] : null;
+          const status = thisCodeItem ? selectedItems[thisCodeItem]?.status : null;
           const isAbandoned = thisCodeItem ? abandonadosCodes.has(thisCodeItem) : false;
 
           const getStyles = () => {
@@ -293,11 +300,11 @@ export default function ItensButtons({
             className={`${styles.backdrop} ${styles.backdrop_active}`}
             onClick={() => setBackdropAlert(null)}
           />
-          <div 
+          <div className={styles.backdrop_msg}
             style={{
-              position: 'fixed', // MUDOU PARA FIXED
-              left: backdropAlert.x,
-              top: backdropAlert.y - 10, // Sobe 10px para não cobrir o botão
+              position: 'fixed',
+              left: `clamp(${backdropAlert.limitLeft}px, ${backdropAlert.x}px, ${backdropAlert.limitRight}px)`,
+              top: backdropAlert.y - 10, 
               transform: 'translate(-50%, -100%)',
               zIndex: 9999,
               backgroundColor: '#ef4444',
@@ -314,7 +321,7 @@ export default function ItensButtons({
           >
             <strong>Item {backdropAlert.num} abandonado.</strong>
             <p style={{ margin: 0, fontSize: '0.7rem', opacity: 0.9 }}>
-              Sem parâmetros <br /> a, b e c.
+              Não teve participação no <br /> cálculo da nota final.
             </p>
             {/* SETINHA */}
             <div style={{

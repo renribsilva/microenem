@@ -12,11 +12,17 @@ import styles from "./tables.module.css"
 import Probtrace from "../../../json/probtrace_2019.json";
 import constantes from "../../../../json/constantes.json";
 
+type ItemStatus = 'acerto' | 'erro';
+type ItemData = {
+  status: ItemStatus;
+  posicao: number; // Aqui guardamos o CO_POSICAO
+};
+
 interface ProbsTableProps {
   logic: any;
   activeCodes: number[];
   area: string;
-  itemSelection: Record<number, "acerto" | "erro">;
+  itemSelection: Record<number, ItemData>;
 }
 
 // Tipo para os dados da linha
@@ -48,7 +54,7 @@ export default function ProbsTable({ logic, activeCodes, area, itemSelection }: 
     // Mapeia os códigos ativos para o formato da TanStack
     return activeCodes.map((code) => {
       const itemKey = String(code);
-      const status = itemSelection[code] || "acerto";
+      const status = itemSelection[code]?.status || "acerto";
       const quadraturas = provaData?.[itemKey];
       const probBruta = quadraturas ? quadraturas[closestIndex] : null;
 

@@ -1,10 +1,14 @@
 'use client'
 
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import styles from "./tables.module.css";
 import { useDescribe } from '../../../../../../hooks/use_describe_data';
 
+/**
+ * 1. Constantes e Helpers fora do componente
+ * Isso evita que sejam recriados a cada renderização, economizando memória.
+ */
 const labelMap: Record<string, string> = {
   mean: "Média", 
   median: "Mediana", 
@@ -20,73 +24,75 @@ const labelMap: Record<string, string> = {
 };
 
 const rowOrder = [
-  "mean", 
-  "median", 
-  "mode", 
-  "min", 
-  "max", 
-  "sd", 
-  "q1", 
-  "q3", 
-  "p99",
-  "skew", 
-  "kurtosis"];
+  "mean", "median", "mode", "min", "max", "sd", "q1", "q3", "p99", "skew", "kurtosis"
+];
+
+const formatValue = (key: string, val: any, type: 'nota' | 'acerto') => {
+  if (typeof val !== "number") return val;
+  const isSpecial = key === 'skew' || key === 'kurtosis';
+  
+  return val.toLocaleString('pt-BR', { 
+    maximumFractionDigits: isSpecial ? 2 : (type === 'nota' ? 1 : 0), 
+    minimumFractionDigits: 0 
+  });
+};
 
 const columnHelper = createColumnHelper<any>();
 
+/**
+ * 2. Componente de Linha Memoizado
+ * Crucial para performance: ao clicar em uma linha, apenas a linha que era ativa
+ * e a nova linha ativa são renderizadas novamente.
+ */
+const TableRow = memo(({ row, selectedRowId, onRowClick }: any) => {
+  const isSelected = selectedRowId === row.original.id;
+  
+  return (
+    <tr 
+      className={`${styles.describe_tr} ${isSelected ? styles.row_selected : ''}`}
+      onClick={() => onRowClick(row.original)}
+      style={{ cursor: 'pointer' }}
+    >
+      {row.getVisibleCells().map((cell: any) => (
+        <td key={cell.id} className={styles.describe_td}>
+          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+        </td>
+      ))}
+    </tr>
+  );
+}, (prev, next) => {
+  // Regra de memoização: só re-renderiza se o status de seleção desta linha mudou
+  const wasSelected = prev.selectedRowId === prev.row.original.id;
+  const isSelected = next.selectedRowId === next.row.original.id;
+  return wasSelected === isSelected && prev.row.id === next.row.id;
+});
+
+TableRow.displayName = 'TableRow';
+
+/**
+ * 3. Componente Principal
+ */
 export function DescribeTable({ area, onRowClick, selectedRowId }: { 
   area: string, 
   onRowClick: (data: any) => void,
   selectedRowId?: string 
 }) {
-
   const { describeData } = useDescribe(area);
 
+  // Formatação dos dados memorizada
   const tableData = useMemo(() => {
-    if (!describeData) return [];
+    if (!describeData?.notas) return [];
     return rowOrder
       .filter(key => describeData.notas[key] !== undefined)
-      .map((key) => {
-        const valNota = describeData.notas[key];
-        const valAcerto = describeData.acertos?.[key];
-        const formatNotas = (val: any) => {
-          if (typeof val !== "number") return val;
-          // Se for Skewness ou Kurtosis, força 2 casas decimais
-          if (key === 'skew' || key === 'kurtosis') {
-            return val.toLocaleString('pt-BR', { 
-              maximumFractionDigits: 2, 
-              minimumFractionDigits: 0 
-            });
-          }
-          return val.toLocaleString('pt-BR', { 
-            maximumFractionDigits: 1, 
-            minimumFractionDigits: 0
-          });
-        };
-        const formatAcertos = (val: any) => {
-          if (typeof val !== "number") return val;
-          
-          // Se for Skewness ou Kurtosis, força 2 casas decimais
-          if (key === 'skew' || key === 'kurtosis') {
-            return val.toLocaleString('pt-BR', { 
-              maximumFractionDigits: 2, 
-              minimumFractionDigits: 0 
-            });
-          }
-          return val.toLocaleString('pt-BR', { 
-            maximumFractionDigits: 0, 
-            minimumFractionDigits: 0
-          });
-        };
-        return {
-          id: key, 
-          metric: labelMap[key] || key,
-          nota: formatNotas(valNota),
-          acerto: formatAcertos(valAcerto)
-        };
-      });
+      .map((key) => ({
+        id: key, 
+        metric: labelMap[key] || key,
+        nota: formatValue(key, describeData.notas[key], 'nota'),
+        acerto: formatValue(key, describeData.acertos?.[key], 'acerto')
+      }));
   }, [describeData]);
 
+  // Definição de colunas memorizada
   const columns = useMemo(() => [
     columnHelper.accessor('metric', {
       header: 'Medidas',
@@ -116,7 +122,7 @@ export function DescribeTable({ area, onRowClick, selectedRowId }: {
         <table className={styles.describe_table}>
           <thead className={styles.describe_thead}>
             {table.getHeaderGroups().map(hg => (
-              <tr key={hg.id}>
+              <tr key={hg.id} className={styles.describe_tr}>
                 {hg.headers.map(header => (
                   <th key={header.id} className={styles.describe_th}>
                     {flexRender(header.column.columnDef.header, header.getContext())}
@@ -127,18 +133,12 @@ export function DescribeTable({ area, onRowClick, selectedRowId }: {
           </thead>
           <tbody>
             {table.getRowModel().rows.map(row => (
-              <tr 
-                key={row.id} 
-                className={`${styles.describe_tr} ${selectedRowId === row.original.id ? styles.row_selected : ''}`}
-                onClick={() => onRowClick(row.original)}
-                style={{ cursor: 'pointer' }}
-              >
-                {row.getVisibleCells().map(cell => (
-                  <td key={cell.id} className={styles.describe_td}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
+              <TableRow 
+                key={row.id}
+                row={row}
+                selectedRowId={selectedRowId}
+                onRowClick={onRowClick}
+              />
             ))}
           </tbody>
         </table>

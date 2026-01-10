@@ -40,6 +40,12 @@
   background-color:var(--background);
 }
 
+.describe_tr.row_selected {
+  background-color: var(--background);
+  /* Adicional: você pode colocar um border-left ou negrito para destacar mais */
+  font-weight: 600;
+}
+
 .describe_td {
   padding: 8px;
   border-bottom: 1px solid var(--grid);

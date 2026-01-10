@@ -5,32 +5,17 @@ import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '
 import styles from "./tables.module.css";
 import { useDescribe } from '../../../../../../hooks/use_describe_data';
 
-/**
- * 1. Constantes e Helpers fora do componente
- * Isso evita que sejam recriados a cada renderização, economizando memória.
- */
 const labelMap: Record<string, string> = {
-  mean: "Média", 
-  median: "Mediana", 
-  mode: "Moda", 
-  sd: "Desvio Padrão",
-  min: "Mínima", 
-  max: "Máxima", 
-  skew: "Assimetria", 
-  kurtosis: "Curtose",
-  q1: "1º quartil", 
-  q3: "3º quartil", 
-  p99: "Percentil 99"
+  mean: "Média", median: "Mediana", mode: "Moda", sd: "Desvio Padrão",
+  min: "Mínima", max: "Máxima", skew: "Assimetria", kurtosis: "Curtose",
+  q1: "1º quartil", q3: "3º quartil", p99: "Percentil 99"
 };
 
-const rowOrder = [
-  "mean", "median", "mode", "min", "max", "sd", "q1", "q3", "p99", "skew", "kurtosis"
-];
+const rowOrder = ["mean", "median", "mode", "min", "max", "sd", "q1", "q3", "p99", "skew", "kurtosis"];
 
 const formatValue = (key: string, val: any, type: 'nota' | 'acerto') => {
   if (typeof val !== "number") return val;
   const isSpecial = key === 'skew' || key === 'kurtosis';
-  
   return val.toLocaleString('pt-BR', { 
     maximumFractionDigits: isSpecial ? 2 : (type === 'nota' ? 1 : 0), 
     minimumFractionDigits: 0 
@@ -39,11 +24,7 @@ const formatValue = (key: string, val: any, type: 'nota' | 'acerto') => {
 
 const columnHelper = createColumnHelper<any>();
 
-/**
- * 2. Componente de Linha Memoizado
- * Crucial para performance: ao clicar em uma linha, apenas a linha que era ativa
- * e a nova linha ativa são renderizadas novamente.
- */
+
 const TableRow = memo(({ row, selectedRowId, onRowClick }: any) => {
   const isSelected = selectedRowId === row.original.id;
   
@@ -60,26 +41,18 @@ const TableRow = memo(({ row, selectedRowId, onRowClick }: any) => {
       ))}
     </tr>
   );
-}, (prev, next) => {
-  // Regra de memoização: só re-renderiza se o status de seleção desta linha mudou
-  const wasSelected = prev.selectedRowId === prev.row.original.id;
-  const isSelected = next.selectedRowId === next.row.original.id;
-  return wasSelected === isSelected && prev.row.id === next.row.id;
 });
 
 TableRow.displayName = 'TableRow';
 
-/**
- * 3. Componente Principal
- */
 export function DescribeTable({ area, onRowClick, selectedRowId }: { 
   area: string, 
   onRowClick: (data: any) => void,
   selectedRowId?: string 
 }) {
+  // O hook useDescribe DEVE estar retornando dados novos quando a area muda
   const { describeData } = useDescribe(area);
 
-  // Formatação dos dados memorizada
   const tableData = useMemo(() => {
     if (!describeData?.notas) return [];
     return rowOrder
@@ -90,9 +63,8 @@ export function DescribeTable({ area, onRowClick, selectedRowId }: {
         nota: formatValue(key, describeData.notas[key], 'nota'),
         acerto: formatValue(key, describeData.acertos?.[key], 'acerto')
       }));
-  }, [describeData]);
+  }, [describeData, area]); // Adicionado area como dependência por segurança
 
-  // Definição de colunas memorizada
   const columns = useMemo(() => [
     columnHelper.accessor('metric', {
       header: 'Medidas',
@@ -134,7 +106,7 @@ export function DescribeTable({ area, onRowClick, selectedRowId }: {
           <tbody>
             {table.getRowModel().rows.map(row => (
               <TableRow 
-                key={row.id}
+                key={`${area}-${row.id}`} // KEY COM AREA PARA FORÇAR RE-RENDER NA TROCA DE ABA
                 row={row}
                 selectedRowId={selectedRowId}
                 onRowClick={onRowClick}

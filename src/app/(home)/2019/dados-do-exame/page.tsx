@@ -39,16 +39,10 @@ const Skeleton = () => (
 );
 
 export default function DadosDoExame() {
-  // 1. Estado da UI: Muda instantaneamente ao clicar (Nav fluida)
-  const [activeArea, setActiveArea] = useState("LC");
   
-  // 2. Valor Adiado: O React prioriza a renderização da aba e 
-  // deixa o processamento pesado para milissegundos depois
+  const [activeArea, setActiveArea] = useState("LC");
   const deferredArea = useDeferredValue(activeArea);
-
   const [selectedRow, setSelectedRow] = useState<any>(null);
-
-  // 3. A lógica pesada agora depende do valor ADIADO
   const chartLogic = useTccLogic(tccData.datasets, deferredArea);
 
   const handleTabChange = (id: string) => {
@@ -56,7 +50,6 @@ export default function DadosDoExame() {
     setSelectedRow(null); 
   };
 
-  // Verifica se o conteúdo ainda está "atrás" da aba selecionada
   const isUpdating = activeArea !== deferredArea;
 
   return (

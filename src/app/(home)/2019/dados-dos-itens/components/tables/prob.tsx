@@ -9,46 +9,31 @@ import {
 } from "@tanstack/react-table";
 import styles from "./tables.module.css"
 
-import Probtrace from "../../../json/probtrace_2019.json";
-import constantes from "../../../../json/constantes.json";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
+import InputShell from "../../../../../../components/tsx/input_shell";
+import { useHomeData } from "../../../../../../context/home_context";
+import { useNineteenData } from "../../../../../../context/nineteen_context";
 
-type ItemStatus = 'acerto' | 'erro';
-type ItemData = {
-  status: ItemStatus;
-  posicao: number; // Aqui guardamos o CO_POSICAO
-};
-
-interface ProbsTableProps {
-  logic: any;
-  activeCodes: number[];
-  area: string;
-  itemSelection: Record<number, ItemData>;
-}
-
-// Tipo para os dados da linha
 type ProbRow = {
   id: number;
   estado: "acerto" | "erro";
   probabilidade: number | null;
 };
 
-export default function ProbsTable({ logic, activeCodes, area, itemSelection }: ProbsTableProps) {
+export default function ProbsTable() {
   
+  const { chartLogic, deferredArea } = useHomeData();
+  const { proficienciaAtual, selectedLabel } = chartLogic;
   const {gridColor} = useChartTheme();
+  const { k, d, probData, probLabels, selectedItems, activeCodes } = useNineteenData();
 
   const columnHelper = createColumnHelper<ProbRow>();
-  const { proficienciaAtual, selectedLabel } = logic;
+
   const data = useMemo(() => {
-    if (!activeCodes.length || !logic) return [];
-    const [co_p_selected] = selectedLabel.split("_");
-    const provaData = (Probtrace.datasets as any)[co_p_selected];
-    const areaIdx = constantes.area.indexOf(area || "LC");
-    const d = constantes.d[areaIdx];
-    const k = constantes.k[areaIdx];
+    if (!activeCodes.length || !chartLogic) return [];
     const thetaAlvo = (proficienciaAtual - d) / k;
-    const thetaLabels = Probtrace.theta_labels;
-    const closestIndex = thetaLabels.reduce((prevIdx, currVal, currIdx) => {
+    const thetaLabels = probLabels
+    const closestIndex = thetaLabels?.reduce((prevIdx, currVal, currIdx) => {
       return Math.abs(currVal - thetaAlvo) < Math.abs(thetaLabels[prevIdx] - thetaAlvo)
         ? currIdx
         : prevIdx;
@@ -57,8 +42,8 @@ export default function ProbsTable({ logic, activeCodes, area, itemSelection }: 
     // Mapeia os códigos ativos para o formato da TanStack
     return activeCodes.map((code) => {
       const itemKey = String(code);
-      const status = itemSelection[code]?.status || "acerto";
-      const quadraturas = provaData?.[itemKey];
+      const status = selectedItems[code]?.status || "acerto";
+      const quadraturas = probData?.[itemKey];
       const probBruta = quadraturas ? quadraturas[closestIndex] : null;
 
       return {
@@ -69,7 +54,7 @@ export default function ProbsTable({ logic, activeCodes, area, itemSelection }: 
             : null,
       };
     });
-  }, [activeCodes, logic, area, itemSelection, selectedLabel, proficienciaAtual]);
+  }, [activeCodes, chartLogic, deferredArea, selectedItems, selectedLabel, proficienciaAtual]);
 
   // 2. Definição das Colunas
   const columns = useMemo(() => [
@@ -113,13 +98,11 @@ export default function ProbsTable({ logic, activeCodes, area, itemSelection }: 
         Selecione itens na tabela para ver as probabilidades de acerto ou erro para uma determinada proficiência.
       </section>
     );
-  }
+  } 
 
   return (
     <section className={styles.probtable_container}>
-      <div className={styles.probtable_proef}>
-        <strong>Proficiência:</strong> {Math.round(proficienciaAtual)}
-      </div>
+      <InputShell/>
       <table className={styles.probtable_table}>
         <thead className={styles.probtable_thead}>
           {table.getHeaderGroups().map((headerGroup) => (

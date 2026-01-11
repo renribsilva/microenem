@@ -1,82 +1,45 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import Chart from "react-apexcharts";
 import probtraceData from "../../../json/probtrace_2019.json";
-import constantes from "../../../../json/constantes.json";
-import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
-import ItensData from "../../../json/itens_2019.json";
 import styles from "./graphs.module.css";
-import InputShell2 from "../../../../../../components/tsx/input_shell2";
+import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
+import { useNineteenData } from "../../../../../../context/nineteen_context";
+import { useHomeData } from "../../../../../../context/home_context";
 
-type ItemStatus = 'acerto' | 'erro';
-type ItemData = {
-  status: ItemStatus;
-  posicao: number; // Aqui guardamos o CO_POSICAO
-};
-
-interface ICCChartProps {
-  itemSelection: Record<number, ItemData>;
-  logic: any;
-  area: string;
-  lastItemActive: number;
-  onFilterChange?: (filtered: number[]) => void;
-}
-
-export default function ICCChart({ 
-  itemSelection, 
-  logic, 
-  area, 
-  lastItemActive,
-  onFilterChange
-}: ICCChartProps) {
+export default function ICCChart() {
   
-  const { gridColor, axisColor, textColor } = useChartTheme();
-  const [activeCodes, setActiveCodes] = useState<number[]> ([]);
-  
-  // Paleta fixa para manter consistência entre re-renderizações
-  const FIXED_PALETTE = useMemo(() => 
-    Array.from({ length: 45 }, (_, i) => `hsl(${(i * 360) / 45}, 70%, 50%)`), 
-  []);
-
-  const abandonadosCodes = useMemo(() => {
-    const codes = new Set<number>();
-    const data = ItensData as any;
-    if (data?.CO_ITEM && data?.IN_ITEM_ABAN) {
-      data.CO_ITEM.forEach((code: number, index: number) => {
-        if (data.IN_ITEM_ABAN[index] === 1) codes.add(code);
-      });
-    }
-    return codes;
-  }, []);
-
-  if (!logic) return null;
-
-  const { selectedLabel, chartColor, proficienciaAtual, setPointIndex } = logic;
-  const [co_p_selected] = selectedLabel.split('_');
-  const areaIdx = constantes.area.indexOf(area || "LC");
-  const d = constantes.d[areaIdx];
-  const k = constantes.k[areaIdx];
+  const { chartLogic, deferredArea } = useHomeData();
+  const { chartColor, proficienciaAtual, xMin, xMax } = chartLogic;
+  const { gridColor, axisColor } = useChartTheme();
+  const { 
+    abandonadosCodes, 
+    FIXED_PALETTE, 
+    k, 
+    d, 
+    probData,
+    selectedItems,
+    lastItemActivate
+  } = useNineteenData();
 
   const transformTheta = (theta: number) => ((theta * k) + d);
-
-  const provaData = (probtraceData.datasets as any)[co_p_selected];
 
   // --- PROCESSAMENTO DE DADOS PARA APEXCHARTS ---
   const { series, hasAbandonedItem } = useMemo(() => {
     let abandonedFound = false;
-    const codes = Object.keys(itemSelection).map(Number);
-    const allItemsInProva = Object.keys(provaData || {});
+    const codes = Object.keys(selectedItems).map(Number);
+    const allItemsInProva = Object.keys(probData || {});
     const chartSeries = codes
       .map((code) => {
         const itemKey = String(code);
         const isAbandoned = abandonadosCodes.has(code); 
         if (isAbandoned) {
-          if (code === lastItemActive) abandonedFound = true;
-          return null; // Remove o item abandonado da série do gráfico
+          if (code === lastItemActivate) abandonedFound = true;
+          return null;
         }
-        const status = itemSelection[code]?.status;
-        const rawPoints = provaData?.[itemKey] as (number | null)[];
+        const status = selectedItems[code]?.status;
+        const rawPoints = probData?.[itemKey] as (number | null)[];
         if (!rawPoints) return null;
         const colorIndex = allItemsInProva.indexOf(itemKey);
         return {
@@ -90,13 +53,13 @@ export default function ICCChart({
           strokeDashArray: status === 'erro' ? 4 : 0,
         };
       })
-      .filter(Boolean); // Remove os nulls (itens abandonados ou sem dados)
+      .filter(Boolean);
 
     return { series: chartSeries, hasAbandonedItem: abandonedFound};
-  }, [itemSelection, provaData, area, abandonadosCodes, lastItemActive]);
+  }, [selectedItems, probData, deferredArea, abandonadosCodes, lastItemActivate]);
   
-  const xMin = Math.floor(transformTheta(-6) / 100) * 100;
-  const xMax = Math.ceil(transformTheta(6) / 100) * 100;
+  // const xMin = Math.floor(transformTheta(-6) / 100) * 100;
+  // const xMax = Math.ceil(transformTheta(6) / 100) * 100;
   
   // --- CONFIGURAÇÕES DO APEXCHARTS ---
   const options: ApexCharts.ApexOptions = useMemo(() => {
@@ -130,7 +93,7 @@ export default function ICCChart({
           style: { colors: axisColor },
           formatter: (val: any) => parseFloat(val).toFixed(0)
         },
-        title: { text: `Notas do Enem (${area})`, style: { color: axisColor } },
+        title: { text: `Notas do Enem (${deferredArea})`, style: { color: axisColor } },
         axisBorder: { show: false },
         tooltip: {
           enabled: true,
@@ -169,28 +132,6 @@ export default function ICCChart({
       },
       grid: { borderColor: gridColor },
       legend: { show: false },
-      title: {
-        text: 'Curva característica do item',
-        align: 'left' as const,
-        margin: 5,
-        style: { 
-          color: textColor, 
-          fontSize: '16px', 
-          fontWeight: 'bold' 
-        }
-      },
-      subtitle: {
-        text: [
-          `Cada proficiência possui um traço de probabilidades`,
-          `de acertos e erros.`
-        ] as any,
-        align: 'left' as const,
-        style: {
-          color: textColor,
-          fontSize: '13px',
-          fontWeight: 'normal',
-        }
-      },
       annotations: {
         xaxis: [
           {
@@ -201,6 +142,8 @@ export default function ICCChart({
               text: `Traço de prob. da nota ${Math.round(proficienciaAtual)}`,
               style: { color: '#fff', background: chartColor || '#ff0000' },
               borderWidth: 0,
+              orientation: 'horizontal',
+              offsetY: -15
             }
           }
         ],
@@ -216,16 +159,7 @@ export default function ICCChart({
           : []
       }
     };
-  }, [series, xMin, xMax, hasAbandonedItem, area, itemSelection, provaData, area, abandonadosCodes, lastItemActive, FIXED_PALETTE, proficienciaAtual, chartColor, axisColor, gridColor]);
-  
-  useEffect(() => {
-    const allSelectedCodes = Object.keys(itemSelection).map(Number);
-    if (provaData && onFilterChange) {
-      const filtrados = allSelectedCodes.filter(code => String(code) in provaData);
-      onFilterChange(filtrados);
-      setActiveCodes(filtrados)
-    }
-  }, [area, itemSelection, provaData]);
+  }, [series, xMin, xMax, hasAbandonedItem, deferredArea, selectedItems, probData, abandonadosCodes, lastItemActivate, FIXED_PALETTE, proficienciaAtual, chartColor, axisColor, gridColor]);
   
   return (
     <div className={styles.icc_container}>
@@ -236,9 +170,6 @@ export default function ICCChart({
         height="100%" 
         width="100%" 
       />
-      <div className={styles.icc_slider}>
-        <InputShell2 logic={logic} activeCodes={activeCodes}/>
-      </div>
     </div>
   );
 }

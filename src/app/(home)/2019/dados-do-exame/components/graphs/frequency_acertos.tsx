@@ -16,7 +16,6 @@ export default function FrequencyAcertosChart() {
   const { frequencyData } = useFrequency(deferredArea);
   const { acertosColor, gridColor, axisColor, textColor } = useChartTheme();
 
-  // O "selectedRow" agora é o activeSelectedRow persistente do provider
   const selectedRow = activeSelectedRow;
 
   const xMin = 0;

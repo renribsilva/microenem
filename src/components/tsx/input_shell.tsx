@@ -2,20 +2,22 @@
 
 import { useEffect, useState } from "react";
 import styles from "./components.module.css"
+import { useHomeData } from "../../context/home_context";
 
-export default function InputShell({ logic }: { logic: any }) {
-  if (!logic) return null;
+export default function InputShell() {
+
+  const { chartLogic } = useHomeData();
 
   const { 
-    proficienciaAtual, 
-    resultadoAtual, 
     activeDataset, 
-    pointIndex, 
-    setPointIndex, 
-    chartColor,
+    proficienciaAtual,
+    xMax,
     xMin,
-    xMax
-  } = logic;
+    pointIndex,
+    setPointIndex,
+    chartColor,
+    resultadoAtual
+  } = chartLogic
 
   const [inputValue, setInputValue] = useState(proficienciaAtual.toFixed(0));
 
@@ -47,9 +49,13 @@ export default function InputShell({ logic }: { logic: any }) {
 
   return (
     <div className={styles.shell_container}>
-      {/* Bloco Nota */}
-      <div className={styles.label_group}>
-        <div className={styles.label_title}>NOTA</div>
+      {/* Bloco Superior */}
+      <div  className={styles.shell_superior}>
+        {/* Bloco Nota */}
+        <div className={styles.label_group1} style={{ textAlign: 'center' }}>
+          <div className={styles.label_title}>PROFICIÊNCIA</div>
+        </div>
+        {/* Bloco Acertos */}
         <input 
           type="text"
           value={inputValue}
@@ -59,26 +65,30 @@ export default function InputShell({ logic }: { logic: any }) {
           className={styles.label_input}
           style={{ borderBottom: `2px solid ${chartColor}`}}
         />
+        {/* <div className={styles.label_group2}>
+          <div className={styles.label_title}>ACERTOS</div>
+          <div style={{ 
+            fontSize: '1.3rem', width: '100%', justifyContent: "right", display: 'flex',
+            fontWeight: '600', color: chartColor, height: '100%',
+            alignItems: "flex-end", paddingBottom: '5px'
+          }}>
+            {resultadoAtual.toFixed(0)}
+          </div>
+        </div> */}
       </div>
-
-      {/* Slider */}
-      <div className={styles.slider_wrapper}>
-        <input 
-          type="range" 
-          className={styles.custom_slider}
-          style={{background: chartColor}}
-          min="0"
-          max={activeDataset.data.length - 1} 
-          value={pointIndex}
-          onChange={(e) => setPointIndex(Number(e.target.value))}
-        />
-      </div>
-
-      {/* Bloco Acertos */}
-      <div className={styles.label_group} style={{ textAlign: 'center' }}>
-        <div className={styles.label_title}>ACERTOS</div>
-        <div style={{ fontSize: '1.2rem', fontWeight: '800', color: chartColor }}>
-          {resultadoAtual.toFixed(0)}
+      {/* Bloco Inferior */}
+      <div  className={styles.shell_inferior}>
+        {/* Slider */}
+        <div className={styles.slider_wrapper}>
+          <input 
+            type="range" 
+            className={styles.custom_slider}
+            style={{background: chartColor}}
+            min="0"
+            max={activeDataset.data.length - 1} 
+            value={pointIndex}
+            onChange={(e) => setPointIndex(Number(e.target.value))}
+          />
         </div>
       </div>
     </div>

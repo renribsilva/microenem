@@ -1,34 +1,15 @@
 'use client'
 
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { useChartTheme } from "../../hooks/use_chart_theme";
 import ItensData from "../../app/(home)/2019/json/itens_2019.json"
 import styles from "./components.module.css"
+import { useChartTheme } from "../../hooks/use_chart_theme";
+import { useHomeData } from "../../context/home_context";
+import { useNineteenData } from "../../context/nineteen_context";
 
-// Tipagem rigorosa para evitar erros
-type ItemStatus = 'acerto' | 'erro';
-type ItemData = {
-  status: ItemStatus;
-  posicao: number; // Aqui guardamos o CO_POSICAO
-};
-type ItemSelection = Record<number, ItemData>;
+export default function ItensButtons() {
 
-interface Props {
-  logic: any;
-  area: string;
-  selectedItems: ItemSelection;
-  setSelectedItems: React.Dispatch<React.SetStateAction<ItemSelection>>;
-  setLastItemActivate: React.Dispatch<React.SetStateAction<number>>;
-}
-
-export default function ItensButtons({ 
-  logic, 
-  area, 
-  selectedItems, 
-  setSelectedItems,
-  setLastItemActivate,
-}: Props) {
-  if (!logic) return null;
+  const { chartLogic, deferredArea } = useHomeData();
 
   const { 
     chartColor,
@@ -37,27 +18,19 @@ export default function ItensButtons({
     getInfoCaderno,
     setSelectedLabel,
     selectedLabel,
-  } = logic;
+  } = chartLogic;
 
   const { colorMap, panelColor, textColor, gridColor, isDark } = useChartTheme();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const prevLabelRef = useRef(selectedLabel);
   const [backdropAlert, setBackdropAlert] = useState<any | null>(false)
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const abandonadosCodes = useMemo(() => {
-    const codes = new Set<number>();
-    const data = ItensData as any;
-    if (data?.CO_ITEM && data?.IN_ITEM_ABAN) {
-      data.CO_ITEM.forEach((code: number, index: number) => {
-        if (data.IN_ITEM_ABAN[index] === 1) {
-          codes.add(code);
-        }
-      });
-    }
-    return codes;
-  }, []);
+  const { 
+    abandonadosCodes, 
+    selectedItems, 
+    handleToggle, 
+    getCodeByLabel
+  } = useNineteenData();
 
   const ranges: Record<string, { start: number; end: number }> = {
     "LC": { start: 1, end: 45 },
@@ -66,101 +39,31 @@ export default function ItensButtons({
     "MT": { start: 136, end: 180 },
   };
 
-  const { start, end } = ranges[area] || { start: 1, end: 45 };
+  const { start, end } = ranges[deferredArea] || { start: 1, end: 45 };
   const questions = Array.from({ length: end - start + 1 }, (_, i) => start + i);
   
-  const getCodeByLabel = useCallback((num: number, label: string) => {
-    const [co_p, ling] = label.split('_');
-    const p = ItensData as any;     
-    const idx = Object.keys(p.CO_POSICAO).find(i => {
-      const matchPos = Number(p.CO_POSICAO[i]) === num;
-      const matchProva = Number(p.CO_PROVA[i]) === Number(co_p);
-      
-      if (num > 5) return matchPos && matchProva;
-      
-      return matchPos && matchProva && Number(p.TP_LINGUA[i]) === Number(ling);
-    });
-
-    return idx ? Number(p.CO_ITEM[idx]) : null;
-  }, []);
-
-  // 2. Remapeamento atualizado para preservar a posição
-  useLayoutEffect(() => {
-    if (prevLabelRef.current !== selectedLabel) {
-      setSelectedItems(prev => {
-        const newMapping = { ...prev };        
-        questions.forEach(num => {
-          const oldCode = getCodeByLabel(num, prevLabelRef.current);
-          const newCode = getCodeByLabel(num, selectedLabel);
-          if (oldCode && prev[oldCode] && newCode) {
-            const oldData = prev[oldCode];           
-            if (oldCode !== newCode) {
-              delete newMapping[oldCode];
-              newMapping[newCode] = { 
-                status: oldData.status, 
-                posicao: num 
-              };
-            }
-          }
-        });
-        
-        return newMapping;
-      });
-      prevLabelRef.current = selectedLabel;
-    }
-  }, [selectedLabel, setSelectedItems, getCodeByLabel, questions]);
-
-  function handleToggle(num: number, e?: React.MouseEvent<HTMLButtonElement>) {
+  const onButtonClick = (num: number, e: React.MouseEvent<HTMLButtonElement>) => {
     const codeItem = getCodeByLabel(num, selectedLabel);
     if (!codeItem) return;
-    
-    setLastItemActivate(codeItem);
+
     const isAbandoned = abandonadosCodes.has(codeItem);
-
-    setBackdropAlert(isAbandoned)
-
+    
     if (isAbandoned) {
       const rect = e.currentTarget.getBoundingClientRect();
       const containerRect = containerRef.current?.getBoundingClientRect();
-
       setBackdropAlert({
-        num: num,
+        num,
         x: rect.left + rect.width / 2,
         y: rect.top,
-        // Guardamos os limites do container pai
         limitLeft: (containerRect?.left || 0) + 95,
         limitRight: (containerRect?.right || window.innerWidth) - 95
       });
     } else {
-      setBackdropAlert(null)
+      setBackdropAlert(null);
     }
 
-    setSelectedItems(prev => {
-      const nextMapping = { ...prev };
-      const current = nextMapping[codeItem];
-      if (isAbandoned) {
-        if (!current) {
-          nextMapping[codeItem] = { status: 'acerto', posicao: num }; 
-        } else {
-          delete nextMapping[codeItem];
-        }
-        return nextMapping;
-      }
-
-      // LÓGICA NORMAL: Ciclo de 3 estados
-      if (!current) {
-        // 1º CLIQUE: ACERTO
-        nextMapping[codeItem] = { status: 'acerto', posicao: num };
-      } else if (current.status === 'acerto') {
-        // 2º CLIQUE: MUDA PARA ERRO (preservando a posição)
-        nextMapping[codeItem] = { status: 'erro', posicao: num };
-      } else {
-        // 3º CLIQUE: REMOVE
-        delete nextMapping[codeItem];
-      }      
-      return nextMapping;
-    });
-  }
+    handleToggle(num, isAbandoned);
+  };
 
   return (
     <section>
@@ -244,7 +147,7 @@ export default function ItensButtons({
           return (
             <button
               key={num}
-              onClick={(e) => handleToggle(num, e)}
+              onClick={(e) => onButtonClick(num, e)}
               onMouseEnter={(e) => {
                 e.currentTarget.style.filter = 'brightness(1.2)';
                 if (!status) {

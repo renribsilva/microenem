@@ -21,7 +21,7 @@
     top: 60px;
     height: calc(100dvh - 60px);
     transform: translateX(-100%); 
-    visibility: hidden; 
+    visibility: hidden;  
     pointer-events: none;
   }
 }
@@ -313,33 +313,38 @@
   padding: 6px;
   background: var(--tab-background); /* Ajustado para seu tema dark */
   border-radius: 12px;
-  border: 1px solid var(--tab-border);
-  display: flex;
-  flex-direction: column; /* Vertical por padrão */
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  user-select: none;
+  /* border: 1px solid var(--tab-border); */
   z-index: 50;
+  margin-bottom: 10px;
+}
+
+.shell_superior {
+  /* background-color: aquamarine; */
+  display: flex;
+  justify-content: space-between;
+}
+
+.shell_inferior {
+  /* background-color: blueviolet; */
+  display: flex;
+  justify-content: center;
 }
 
 .slider_wrapper {
-  height: 160px;
-  width: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
+  /* background-color: blueviolet; */
+  flex: 1; 
+  padding-block: 10px;
 }
 
 .custom_slider {
+  background-color: bisque;
   -webkit-appearance: none;
   appearance: none;
-  width: 140px; 
+  width: 100%;
   height: 6px;
   border-radius: 5px;
   outline: none;
-  transform: rotate(-90deg); /* Vertical */
+  transform: rotate(0deg);
   cursor: pointer;
 }
 
@@ -352,20 +357,16 @@
   cursor: pointer;
 }
 
-.label_group {
-  text-align: center;
-}
-
 .label_title {
-  font-size: 0.6rem;
+  font-size: 1rem;
   color: var(--tab-text);
-  font-weight: bold;
+  font-weight: 300;
 }
 
 .label_input {
-  font-size: 1.1rem;
-  font-weight: 800;
-  width: 40px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  width: 50px;
   border: none;
   background-color: transparent;
   outline: none;
@@ -374,33 +375,22 @@
   padding-block: 5px;
 }
 
-/* RESPONSIVIDADE < 800px (HORIZONTAL) */
-@media (max-width: 800px) {
-  .shell_container {
-    flex-direction: row; /* Muda para Horizontal */
-    width: 100%;
-    box-sizing: border-box;
-    height: auto;
-    padding: 8px;
-    justify-content: space-between;
-    margin-bottom: 10px;
-  }
-
-  .slider_wrapper {
-    height: 40px;
-    flex: 1; /* Ocupa o centro */
-    margin: 0 15px;
-  }
-
-  .custom_slider {
-    transform: none; 
-    width: 100%; 
-  }
-
-  .label_group {
-      min-width: 60px;
-  }
+.label_group1 {
+  /* background-color: aqua; */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: left;
+  padding-top: 10px;
 }
+
+.label_group2 {
+  /* background-color: aqua;  */
+  /* display: flex; */
+  /* flex-direction: column; */
+  /* justify-content: right; */
+}
+
 
 /*****************************************/
 /***************ITEMS_BUTTON**************/

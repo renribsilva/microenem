@@ -14,6 +14,7 @@ export default function DensityNotasChart() {
   const { activeSelectedRow, describeData } = useNineteenData();
   const { densityData } = useDensity(deferredArea);
   const { densidadeColor, gridColor, textColor, axisColor } = useChartTheme();
+  
   const selectedRow = activeSelectedRow;
 
   const { xMin, xMax } = useMemo(() => {

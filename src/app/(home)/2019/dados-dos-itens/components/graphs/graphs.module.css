@@ -1,6 +1,6 @@
 .icc_container {
   min-height: 350px;
-  /* height: 100%; */
+  display: flex;
 }
 
 .icc_rodape {

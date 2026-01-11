@@ -1,34 +1,41 @@
 "use client";
 
-import { createContext, useContext, useMemo, ReactNode } from "react";
+import { createContext, useContext, useMemo, ReactNode, useRef, useLayoutEffect, useState, useCallback } from "react";
 import { useHomeData } from "./home_context";
-import { useDescribe } from "../hooks/use_describe_data"; // Ajuste o caminho se necessário
+import { useDescribe } from "../hooks/use_describe_data"; 
+import ItensData from "../app/(home)/2019/json/itens_2019.json";
+import constantes from "../app/(home)/json/constantes.json";
+import probtraceData from "../app/(home)/2019/json/probtrace_2019.json";
 
 const NineteenContext = createContext<any>(null);
 
-// Mapeamentos e Helpers movidos para fora para evitar re-declaração
-const labelMap: Record<string, string> = {
-  mean: "Média", median: "Mediana", mode: "Moda", sd: "Desvio Padrão",
-  min: "Mínima", max: "Máxima", skew: "Assimetria", kurtosis: "Curtose",
-  q1: "1º quartil", q3: "3º quartil", p99: "Percentil 99"
-};
-
-const rowOrder = ["mean", "median", "mode", "min", "max", "sd", "q1", "q3", "p99", "skew", "kurtosis"];
-
-const formatValue = (key: string, val: any, type: 'nota' | 'acerto') => {
-  if (typeof val !== "number") return val;
-  const isSpecial = key === 'skew' || key === 'kurtosis';
-  return val.toLocaleString('pt-BR', { 
-    maximumFractionDigits: isSpecial ? 2 : (type === 'nota' ? 1 : 0), 
-    minimumFractionDigits: 0 
-  });
-};
-
 export function NineteenProvider({ children }: { children: ReactNode }) {
-  const { deferredArea, selectedRowId } = useHomeData();
-  const { describeData } = useDescribe(deferredArea);
 
-  // 1. Gera o array de linhas para a tabela
+  const { deferredArea, selectedRowId, chartLogic } = useHomeData();
+  const { describeData } = useDescribe(deferredArea);
+  const { selectedLabel } = chartLogic
+
+  //--------------------------------------------------------------------
+  //---------------------------DADOS DO EXAME---------------------------
+  //--------------------------------------------------------------------
+
+  const labelMap: Record<string, string> = {
+    mean: "Média", median: "Mediana", mode: "Moda", sd: "Desvio Padrão",
+    min: "Mínima", max: "Máxima", skew: "Assimetria", kurtosis: "Curtose",
+    q1: "1º quartil", q3: "3º quartil", p99: "Percentil 99"
+  };
+
+  const rowOrder = ["mean", "median", "mode", "min", "max", "sd", "q1", "q3", "p99", "skew", "kurtosis"];
+
+  const formatValue = (key: string, val: any, type: 'nota' | 'acerto') => {
+    if (typeof val !== "number") return val;
+    const isSpecial = key === 'skew' || key === 'kurtosis';
+    return val.toLocaleString('pt-BR', { 
+      maximumFractionDigits: isSpecial ? 2 : (type === 'nota' ? 1 : 0), 
+      minimumFractionDigits: 0 
+    });
+  };
+
   const tableData = useMemo(() => {
     if (!describeData?.notas) return [];
     return rowOrder
@@ -41,25 +48,139 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
       }));
   }, [describeData, deferredArea]);
 
-  // 2. Monta o objeto de retorno solicitado
-  // Inclui o describeData bruto caso o gráfico precise de valores não formatados
   const describeRowData = useMemo(() => ({
     data: tableData,
     n: describeData?.notas?.n || 0,
-    raw: describeData // Útil para os gráficos acessarem valores numéricos puros
+    raw: describeData 
   }), [tableData, describeData]);
 
-  // 3. Helper para encontrar a linha selecionada persistente
-  // Isso evita que cada gráfico tenha que procurar no array
+  
   const activeSelectedRow = useMemo(() => {
     return tableData.find(row => row.id === selectedRowId) || null;
   }, [tableData, selectedRowId]);
+
+  //--------------------------------------------------------------------
+  //--------------------------DADOS DOS ITENS---------------------------
+  //--------------------------------------------------------------------
+
+  const abandonadosCodes = useMemo(() => {
+    const codes = new Set<number>();
+    const data = ItensData as any;
+    if (data?.CO_ITEM && data?.IN_ITEM_ABAN) {
+      data.CO_ITEM.forEach((code: number, index: number) => {
+        if (data.IN_ITEM_ABAN[index] === 1) codes.add(code);
+      });
+    }
+    return codes;
+  }, []);
+
+  // Paleta fixa para os 45 itens
+  const FIXED_PALETTE = useMemo(() => 
+    Array.from({ length: 45 }, (_, i) => `hsl(${(i * 360) / 45}, 70%, 50%)`), 
+  []);
+
+  const areaIdx = constantes.area.indexOf(deferredArea || "LC");
+  const d = constantes.d[areaIdx];
+  const k = constantes.k[areaIdx];
+  const [co_p_selected] = selectedLabel.split('_');
+  const probData = (probtraceData.datasets as any)[co_p_selected];
+  const probLabels = probtraceData.theta_labels
+
+  //-----------------------------------------------------------------------
+  //--------------------------ITENS SELECIONADOS---------------------------
+  //-----------------------------------------------------------------------
+
+  const [selectedItems, setSelectedItems] = useState<Record<number, any>>({});
+  const [lastItemActivate, setLastItemActivate] = useState<number>(0);
+  const prevLabelRef = useRef(selectedLabel);
+
+  // Função para traduzir Posição (ex: questão 95) em Código (ex: 11234)
+  const getCodeByLabel = useCallback((num: number, label: string) => {
+    if (!label) return null;
+    const [co_p, ling] = label.split('_');
+    const p = ItensData as any;     
+    const idx = Object.keys(p.CO_POSICAO).find(i => {
+      const matchPos = Number(p.CO_POSICAO[i]) === num;
+      const matchProva = Number(p.CO_PROVA[i]) === Number(co_p);
+      if (num > 5) return matchPos && matchProva;
+      return matchPos && matchProva && Number(p.TP_LINGUA[i]) === Number(ling);
+    });
+    return idx ? Number(p.CO_ITEM[idx]) : null;
+  }, []);
+
+  // Handler de Clique (Toggle)
+  const handleToggle = useCallback((num: number, isAbandoned: boolean) => {
+    const codeItem = getCodeByLabel(num, selectedLabel);
+    if (!codeItem) return;
+
+    setLastItemActivate(codeItem);
+
+    setSelectedItems(prev => {
+      const nextMapping = { ...prev };
+      const current = nextMapping[codeItem];
+
+      if (isAbandoned) {
+        current ? delete nextMapping[codeItem] : nextMapping[codeItem] = { status: 'acerto', posicao: num };
+        return nextMapping;
+      }
+
+      if (!current) {
+        nextMapping[codeItem] = { status: 'acerto', posicao: num };
+      } else if (current.status === 'acerto') {
+        nextMapping[codeItem] = { status: 'erro', posicao: num };
+      } else {
+        delete nextMapping[codeItem];
+      }      
+      return nextMapping;
+    });
+  }, [selectedLabel, getCodeByLabel]);
+
+  // Efeito de Remapeamento (Persistir seleção ao trocar de cor de prova)
+  useLayoutEffect(() => {
+    if (prevLabelRef.current !== selectedLabel) {
+      const ranges: any = { "LC": [1,45], "CH": [46,90], "CN": [91,135], "MT": [136,180] };
+      const [start, end] = ranges[deferredArea] || [1, 45];
+      
+      setSelectedItems(prev => {
+        const newMapping = { ...prev };
+        for (let num = start; num <= end; num++) {
+          const oldCode = getCodeByLabel(num, prevLabelRef.current);
+          const newCode = getCodeByLabel(num, selectedLabel);
+          if (oldCode && prev[oldCode] && newCode && oldCode !== newCode) {
+            newMapping[newCode] = { ...prev[oldCode], posicao: num };
+            delete newMapping[oldCode];
+          }
+        }
+        return newMapping;
+      });
+      prevLabelRef.current = selectedLabel;
+    }
+  }, [selectedLabel, deferredArea, getCodeByLabel]);
+
+  const activeCodes = useMemo(() => {
+    const codes = Object.keys(selectedItems).map(Number);
+    // Filtra apenas os que existem no probData e não são abandonados
+    return codes.filter(code => 
+      String(code) in (probData || {}) && !abandonadosCodes.has(code)
+    );
+  }, [selectedItems, probData, abandonadosCodes]);
 
   return (
     <NineteenContext.Provider value={{ 
       describeRowData, 
       activeSelectedRow,
-      describeData // Dados brutos para hooks como useDensity que dependem dele
+      describeData,
+      abandonadosCodes,
+      FIXED_PALETTE,
+      d,
+      k,
+      probData,
+      probLabels,
+      selectedItems,
+      lastItemActivate,
+      handleToggle,
+      getCodeByLabel,
+      activeCodes,
     }}>
       {children}
     </NineteenContext.Provider>

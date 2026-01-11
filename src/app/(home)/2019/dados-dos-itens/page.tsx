@@ -2,7 +2,6 @@
 
 import styles from "./dados-dos-itens.module.css"
 import { TabsNavigation } from "../../../../components/tsx/tab_navigation";
-import { useState } from "react";
 import Card from "../../../../components/tsx/card";
 import ItensButtons from "../../../../components/tsx/itens_buttons";
 import ProbsTable from "./components/tables/prob";
@@ -19,35 +18,16 @@ const menuItems = [
   { id: 'MT', label: 'Matemática' },
 ];
 
-type ItemStatus = 'acerto' | 'erro';
-type ItemData = {
-  status: ItemStatus;
-  posicao: number;
-};
-type ItemSelection = Record<number, ItemData>;
-
 export default function DadosDoExame() {
-  // TUDO VEM DO CONTEXTO PAI AGORA
-  const { 
-    activeArea, 
-    deferredArea, 
-    chartLogic, 
-    handleTabChange, 
-    isUpdating 
-  } = useHomeData();
 
-  // Estados locais que são específicos desta página de "Itens" permanecem aqui
-  const [selectedItems, setSelectedItems] = useState<ItemSelection>({});
-  const [lastItemActivate, setLastItemActivate] = useState<number>(0);
-  const [activeCodes, setActiveCodes] = useState<number[]>([]);
+  const { deferredArea, handleTabChange } = useHomeData();
 
   return (
-    // Aplicamos a opacidade isUpdating para feedback visual de carregamento
-    <main className={styles.main} style={{ opacity: isUpdating ? 0.7 : 1, transition: 'opacity 0.1s' }}>   
+    <main className={styles.main}>   
       <nav className={styles.nav}>
         <TabsNavigation 
           items={menuItems} 
-          activeId={activeArea} 
+          activeId={deferredArea} 
           onTabChange={handleTabChange} 
         />
       </nav>  
@@ -55,39 +35,22 @@ export default function DadosDoExame() {
         <div className={styles.main_left}>
           <div className={styles.main_left1}>
             <Card>
-              <h3 className={styles.card_title}>Questões de {activeArea}</h3>
-              <ItensButtons 
-                logic={chartLogic} 
-                area={deferredArea} // Usamos deferredArea para evitar lag visual
-                selectedItems={selectedItems} 
-                setSelectedItems={setSelectedItems}
-                setLastItemActivate={setLastItemActivate}
-              />
+              <h3 className={styles.card_title}>Questões de {deferredArea}</h3>
+              <ItensButtons />
             </Card>
           </div>
           <div className={styles.main_left2}>
             <Card >
               <h3 className={styles.card_title}>Probabilidades</h3>
-              <ProbsTable 
-                itemSelection={selectedItems} 
-                logic={chartLogic}
-                activeCodes={activeCodes}
-                area={deferredArea}
-              />
+              <ProbsTable />
             </Card>
           </div>
         </div>
         <div className={styles.main_right}>
           <div className={styles.main_right_top}>
             <Card>
-              <ICCChart 
-                itemSelection={selectedItems} 
-                logic={chartLogic}
-                area={deferredArea}
-                lastItemActive={lastItemActivate}
-                onFilterChange={(filtered) => setActiveCodes(filtered)}
-              />
-            </Card> 
+              <ICCChart />
+            </Card>
           </div>
           <div className={styles.main_right_bottom}>
           </div>

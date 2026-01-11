@@ -76,7 +76,6 @@ export default function DadosDoExame() {
               </Suspense>
             </Card>
           </div>
-
           <div className={styles.main_right_bottom} style={{ minWidth: 0, minHeight: 0 }}>
             <Card className={styles.card_tcc}>
               <Suspense fallback={<Skeleton />}>

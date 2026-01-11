@@ -1,7 +1,6 @@
 'use client'
 
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
-import ItensData from "../../app/(home)/2019/json/itens_2019.json"
+import { useRef, useState } from "react";
 import styles from "./components.module.css"
 import { useChartTheme } from "../../hooks/use_chart_theme";
 import { useHomeData } from "../../context/home_context";

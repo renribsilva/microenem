@@ -56,6 +56,8 @@ export default function Presence() {
     getExpandedRowModel: getExpandedRowModel(),
   })
 
+  console.log(table)
+
   return (
     <div className={styles.table_container}>
       <table className={styles.table_body}>

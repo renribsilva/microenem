@@ -65,7 +65,6 @@ export default function Visao() {
         </div>
 
         <div className={styles.block1_second}>
-          {/* ADICIONADO STYLE INLINE PARA FORÇAR O ENCOLHIMENTO EM TELAS PEQUENAS */}
           <div className={styles.block1_second_left} style={{ minWidth: 0, minHeight: 0 }}>
             <Card className={styles.card_fxetaria}>
               <Suspense fallback={<p>...</p>}>

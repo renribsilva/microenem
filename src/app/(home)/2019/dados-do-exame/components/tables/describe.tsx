@@ -31,7 +31,7 @@ const TableRow = memo(({ row, selectedRowId, onRowClick }: any) => {
 TableRow.displayName = 'TableRow';
 
 export function DescribeTable() {
-  // 1. Pegamos selectedRowId (que é a string do ID) e a função para atualizá-lo
+  
   const { deferredArea, selectedRowId, setSelectedRowId } = useHomeData();
   
   // 2. Pegamos os dados já processados pelo NineteenProvider

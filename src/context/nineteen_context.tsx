@@ -1,11 +1,10 @@
 "use client";
 
-import { createContext, useContext, useMemo, ReactNode, useRef, useLayoutEffect, useState, useCallback } from "react";
+import { createContext, useContext, useMemo, ReactNode, useRef, useLayoutEffect, useState, useCallback, useEffect } from "react";
 import { useHomeData } from "./home_context";
 import { useDescribe } from "../hooks/use_describe_data"; 
 import ItensData from "../app/(home)/2019/json/itens_2019.json";
 import constantes from "../app/(home)/json/constantes.json";
-import probtraceData from "../app/(home)/2019/json/probtrace_2019.json";
 
 const NineteenContext = createContext<any>(null);
 
@@ -83,8 +82,38 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
   const d = constantes.d[areaIdx];
   const k = constantes.k[areaIdx];
   const [co_p_selected] = selectedLabel.split('_');
-  const probData = (probtraceData.datasets as any)[co_p_selected];
-  const probLabels = probtraceData.theta_labels
+  const [probData, setProbData] = useState<any>(null);
+  const [probLabels, setProbLabels] = useState<any>([]);
+
+  const probCache = useRef<{ label: string; dataset: any; labels: any } | null>(null);
+
+  useEffect(() => {
+    if (!co_p_selected) return;
+    if (probCache.current?.label === co_p_selected) {
+      setProbData(probCache.current.dataset);
+      setProbLabels(probCache.current.labels);
+      return;
+    }
+    async function fetchProbData() {
+      try {
+        const res = await fetch(`/api/probtrace?co_p=${String(co_p_selected)}`);
+        const json = await res.json();        
+        probCache.current = {
+          label: co_p_selected,
+          dataset: json.dataset,
+          labels: json.theta_labels
+        };
+        setProbData(json.dataset);
+        setProbLabels(json.theta_labels);
+      } catch (err) {
+        console.error("Erro ao carregar probtrace:", err);
+      } 
+    }
+
+    fetchProbData();
+  }, [co_p_selected]);
+
+  // console.log(probCache)
 
   //-----------------------------------------------------------------------
   //--------------------------ITENS SELECIONADOS---------------------------
@@ -93,6 +122,11 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
   const [selectedItems, setSelectedItems] = useState<Record<number, any>>({});
   const [lastItemActivate, setLastItemActivate] = useState<number>(0);
   const prevLabelRef = useRef(selectedLabel);
+  const previousLabel = prevLabelRef.current;
+
+  if (prevLabelRef.current !== selectedLabel) {
+    prevLabelRef.current = selectedLabel;
+  }
 
   // Função para traduzir Posição (ex: questão 95) em Código (ex: 11234)
   const getCodeByLabel = useCallback((num: number, label: string) => {
@@ -118,12 +152,10 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
     setSelectedItems(prev => {
       const nextMapping = { ...prev };
       const current = nextMapping[codeItem];
-
       if (isAbandoned) {
         current ? delete nextMapping[codeItem] : nextMapping[codeItem] = { status: 'acerto', posicao: num };
         return nextMapping;
       }
-
       if (!current) {
         nextMapping[codeItem] = { status: 'acerto', posicao: num };
       } else if (current.status === 'acerto') {
@@ -135,27 +167,29 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
     });
   }, [selectedLabel, getCodeByLabel]);
 
-  // Efeito de Remapeamento (Persistir seleção ao trocar de cor de prova)
   useLayoutEffect(() => {
-    if (prevLabelRef.current !== selectedLabel) {
-      const ranges: any = { "LC": [1,45], "CH": [46,90], "CN": [91,135], "MT": [136,180] };
-      const [start, end] = ranges[deferredArea] || [1, 45];
-      
-      setSelectedItems(prev => {
-        const newMapping = { ...prev };
-        for (let num = start; num <= end; num++) {
-          const oldCode = getCodeByLabel(num, prevLabelRef.current);
-          const newCode = getCodeByLabel(num, selectedLabel);
-          if (oldCode && prev[oldCode] && newCode && oldCode !== newCode) {
-            newMapping[newCode] = { ...prev[oldCode], posicao: num };
-            delete newMapping[oldCode];
-          }
+    // 3. Usamos a variável 'previousLabel' que capturamos no início do ciclo
+    if (previousLabel === selectedLabel) return;
+
+    const ranges: any = { "LC": [1,45], "CH": [46,90], "CN": [91,135], "MT": [136,180] };
+    const [start, end] = ranges[deferredArea] || [1, 45];      
+    
+    setSelectedItems(prev => {
+      const newMapping = { ...prev };
+      for (let num = start; num <= end; num++) {
+        // Usamos o previousLabel estável aqui
+        const oldCode = getCodeByLabel(num, previousLabel); 
+        const newCode = getCodeByLabel(num, selectedLabel);
+        
+        if (oldCode && prev[oldCode] && newCode && oldCode !== newCode) {
+          newMapping[newCode] = { ...prev[oldCode], posicao: num };
+          delete newMapping[oldCode];
         }
-        return newMapping;
-      });
-      prevLabelRef.current = selectedLabel;
-    }
-  }, [selectedLabel, deferredArea, getCodeByLabel]);
+      }
+      return newMapping;
+    });
+    // O ref já foi atualizado no corpo, então não precisamos atualizar aqui
+  }, [selectedLabel, deferredArea, getCodeByLabel, previousLabel]);
 
   const activeCodes = useMemo(() => {
     const codes = Object.keys(selectedItems).map(Number);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import Chart from "react-apexcharts";
 import probtraceData from "../../../json/probtrace_2019.json";
 import styles from "./graphs.module.css";
@@ -19,6 +19,7 @@ export default function ICCChart() {
     k, 
     d, 
     probData,
+    probLabels,
     selectedItems,
     lastItemActivate
   } = useNineteenData();
@@ -46,7 +47,7 @@ export default function ICCChart() {
           item: code,
           name: `Item ${code}`, // Nomeclatura para o motor do gráfico
           data: rawPoints.map((yValue, idx) => ({
-            x: transformTheta(probtraceData.theta_labels[idx]),
+            x: transformTheta(probLabels[idx]),
             y: parseFloat((status === 'erro' ? 1 - (yValue || 0) : (yValue || 0)).toFixed(3))
           })),
           color: colorIndex !== -1 ? FIXED_PALETTE[colorIndex % 45] : "#999",

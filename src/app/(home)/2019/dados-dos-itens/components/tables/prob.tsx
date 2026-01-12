@@ -78,7 +78,7 @@ export default function ProbsTable() {
         const color = status === "erro" ? "#ff4d4f" : "#52c41a";
         return (
           <span style={{ fontWeight: "bold", color }}>
-            {val !== null ? `${(val * 100).toFixed(1)}%` : "N/A"}
+            {val !== null ? `${(val * 100).toFixed(2)}%` : "N/A"}
           </span>
         );
       },
@@ -99,7 +99,6 @@ export default function ProbsTable() {
       </section>
     );
   } 
-
   return (
     <section className={styles.probtable_container}>
       <InputShell/>

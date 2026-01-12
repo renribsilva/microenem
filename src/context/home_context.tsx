@@ -1,8 +1,7 @@
 "use client";
 
-import { createContext, useContext, useState, useDeferredValue, useMemo, ReactNode, useEffect, act } from "react";
+import { createContext, useContext, useState, useDeferredValue, useMemo, ReactNode, useEffect, useRef } from "react";
 import dic from "../app/(home)/2019/json/dic_2019.json"; 
-import tccData from "../app/(home)/2019/json/tcc.json"; 
 import { useChartTheme } from '../hooks/use_chart_theme'; 
 
 const dicMap = new Map(
@@ -17,52 +16,61 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   const [selectedRowId, setSelectedRowId] = useState<string | null>("mean");
   const { colorMap } = useChartTheme();
 
-  // --- FALLBACK MESTRE ---
-  const backupLC = useMemo(() => {
-    return tccData.datasets.find(ds => ds.metadata?.area === "LC") || tccData.datasets[0];
-  }, []);
+  const [activeDatasets, setActiveDatasets] = useState<any[] | null>(null);
+  const [selectedLabel, setSelectedLabel] = useState<string>("511_0"); 
 
-  // --- LISTA DISPONÍVEL ---
-  const availableDatasets = useMemo(() => {
-    const filtered = tccData.datasets.filter(ds => ds.metadata?.area === deferredArea);
-    return filtered.length > 0 ? filtered : [backupLC];
-  }, [deferredArea, backupLC]);
+  const datasetsCache = useRef<{ area: string; data: any; } | null>(null);
 
-  // --- INICIALIZAÇÃO CORRETA: Nunca inicia null ---
-  const [internalSelectedLabel, setInternalSelectedLabel] = useState<string>(availableDatasets[0].label);
-
-  // --- SINCRONIZAÇÃO DE SEGURANÇA ---
-  // Se a área mudar e o label atual não existir na nova área, força o primeiro da lista
   useEffect(() => {
-    const exists = availableDatasets.some(d => d.label === internalSelectedLabel);
-    if (!exists) {
-      setInternalSelectedLabel(availableDatasets[0].label);
+    if (datasetsCache.current?.area === deferredArea) {
+      setActiveDatasets(datasetsCache.current.data);
+      return;
     }
-  }, [availableDatasets, internalSelectedLabel]);
+    async function loadData() {
+      try {
+        const res = await fetch(`/api/tcc?area=${deferredArea}`);
+        if (!res.ok) return;
+        const json = await res.json();        
+        datasetsCache.current = {
+          area: deferredArea,
+          data: json.datasets,
+        };
+        setActiveDatasets(json.datasets);
+      } catch (err) {
+        console.error("Erro ao buscar dataset:", err);
+      }
+    }
+    loadData();
+  }, [deferredArea]);
 
-  // selectedLabel agora é apenas um reflexo garantido do internal ou fallback
-  const selectedLabel = useMemo(() => {
-    const exists = availableDatasets.some(d => d.label === internalSelectedLabel);
-    return exists ? internalSelectedLabel : availableDatasets[0].label;
-  }, [internalSelectedLabel, availableDatasets]);
+  // 2. Sincronização de Label: Se a área mudar e o label não existir, reseta para o primeiro
+  useEffect(() => {
+    if (activeDatasets && activeDatasets.length > 0) {
+      const exists = activeDatasets.find(d => d.label === selectedLabel);
+      if (!exists) {
+        setSelectedLabel(activeDatasets[0].label);
+      }
+    }
+  }, [activeDatasets, selectedLabel]);
 
   const activeDataset = useMemo(() => {
-    return availableDatasets.find(d => d.label === selectedLabel) || availableDatasets[0];
-  }, [selectedLabel, availableDatasets]);
+    if (!activeDatasets || activeDatasets.length === 0) return null;
+    return activeDatasets.find(d => d.label === selectedLabel) || activeDatasets[0];
+  }, [activeDatasets, selectedLabel]);
 
-  // --- RESTANTE DA LÓGICA ---
   const [userPointIndex, setUserPointIndex] = useState<number | null>(null);
 
   const initialIndex = useMemo(() => {
-    if (!activeDataset.labels_x || activeDataset.labels_x.length === 0) return 0;
-    const target = activeDataset.metadata.b_medio_enem;
-    return activeDataset.labels_x.reduce((prev, curr, idx, arr) => 
+    if (!activeDataset?.labels_x || activeDataset.labels_x.length === 0) return 0;
+    const target = activeDataset.metadata?.b_medio_enem || 0;
+    return activeDataset.labels_x.reduce((prev: any, curr: any, idx: any, arr: any) => 
       Math.abs(curr - target) < Math.abs(arr[prev] - target) ? idx : prev, 0);
   }, [activeDataset]);
 
   const pointIndex = userPointIndex !== null ? userPointIndex : initialIndex;
 
   const currentInfo = useMemo(() => {
+    if (!activeDataset?.metadata) return { fullText: "Carregando...", corNome: "" };
     const { codigo, lingua } = activeDataset.metadata;
     const info = dicMap.get(codigo);
     if (!info) return { fullText: `Caderno ${codigo}`, corNome: "" };    
@@ -74,19 +82,18 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   }, [activeDataset, deferredArea]);
 
   const chartLogic = {
-    availableDatasets,
     selectedLabel,
-    setSelectedLabel: setInternalSelectedLabel,
+    setSelectedLabel,
     activeDataset,
     pointIndex,
     setPointIndex: setUserPointIndex,
     chartColor: colorMap[currentInfo.corNome] || "#3b82f6",
     currentInfo,
-    proficienciaAtual: activeDataset.labels_x?.[pointIndex] || 0,
-    resultadoAtual: activeDataset.data?.[pointIndex] || 0,
-    xMin: Math.floor((activeDataset.metadata?.min || 0) / 100) * 100,
-    xMax: Math.ceil((activeDataset.metadata?.max || 1000) / 100) * 100,
-    bMedio: activeDataset.metadata?.b_medio_enem || 0,
+    proficienciaAtual: activeDataset?.labels_x?.[pointIndex] || 0,
+    resultadoAtual: activeDataset?.data_teorico?.[pointIndex] || 0,
+    xMin: Math.floor((activeDataset?.metadata?.min || 0) / 100) * 100,
+    xMax: Math.ceil((activeDataset?.metadata?.max || 1000) / 100) * 100,
+    bMedio: activeDataset?.metadata?.b_medio_enem || 0,
     getInfoCaderno: (codigo: number, lingua?: any) => {
       const info = dicMap.get(codigo);
       if (!info) return { fullText: `Caderno ${codigo}`, corNome: "" };

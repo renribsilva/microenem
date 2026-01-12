@@ -31,20 +31,31 @@ export default function TCCChart() {
   } = chartLogic;
 
   // --- CONFIGURAÇÃO DE DADOS ---
-  const series = useMemo(() => [{
-    name: "Acertos esperados",
-    data: activeDataset?.data.map((val: number, i: number) => ({
-      x: activeDataset.labels_x[i],
-      y: Math.round(val * 10) / 10
-    })) || []
-  }], [activeDataset, currentInfo.fullText]);
+  const series = useMemo(() => [
+    {
+      name: "Acertos esperados", // Série 0 (Prioridade)
+      type: 'line',
+      data: activeDataset?.data_teorico.map((val, i) => ({
+        x: activeDataset.labels_x[i],
+        y: val !== null ? Math.round(val * 10) / 10 : null
+      })) || []
+    },
+    {
+      name: "Média observada", // Série 1
+      type: 'scatter',
+      data: activeDataset?.data_empirico?.map((val, i) => ({
+        x: activeDataset.labels_x[i],
+        y: val
+      })) || []
+    }
+  ], [activeDataset]);
 
   const yBMedio = useMemo(() => {
     if (!activeDataset || !bMedio) return 22.5;
     const closestIndex = activeDataset.labels_x.reduce((prev: number, curr: number, idx: number) => {
       return Math.abs(curr - bMedio) < Math.abs(activeDataset.labels_x[prev] - bMedio) ? idx : prev;
     }, 0);
-    return activeDataset.data[closestIndex];
+    return activeDataset.data_teorico[closestIndex];
   }, [activeDataset, bMedio]);
 
   // --- CONFIGURAÇÕES DO APEXCHARTS ---
@@ -66,18 +77,19 @@ export default function TCCChart() {
       } 
     },
     markers: {
-      size: 0,
-      colors: [chartColor],
+      size: [1, 1],
       strokeColors: '#fff',
       strokeWidth: 0,
       hover: {
         size: 6,
       }
     },
+    colors: [chartColor, '#94a3b8'],
     stroke: {
       curve: 'smooth',
-      width: 3,
-      colors: [chartColor]
+      width: [3, 0],
+      colors: [chartColor],
+      // connectNulls: true  
     },
     grid: { borderColor: gridColor },
     xaxis: {
@@ -106,14 +118,19 @@ export default function TCCChart() {
       theme: 'dark',
       followCursor: true,
       enabled: true,
-      marker: { show: false },
+      marker: { show: true },
       x: {
         show: true,
         formatter: (val) => "\u00A0\u00A0Proficiência: " + val
       },
       y: {
-        title: { formatter: () => "Acertos esperados: " },
-        formatter: (val) => val.toFixed(0)
+        formatter: (val) => {
+          // Se o valor for null, o tooltip mostrará "N/A" ou ficará vazio em vez de sumir
+          return (val !== null && val !== undefined) ? val.toFixed(0) : "N/A";
+        },
+        title: {
+          formatter: (seriesName) => seriesName + ": "
+        } 
       }
     },
     annotations: {
@@ -124,7 +141,7 @@ export default function TCCChart() {
           borderWidth: 2,
           strokeDashArray: 4,
           label: {
-            text: `Dificuldade Média: ${bMedio.toFixed(0)}`,
+            text: `Dificuldade Média: ${bMedio.toFixed(1)}`,
             style: { color: '#000000ff', background: chartColor, fontWeight: 'bold' },
             offsetY: 25,
             offsetX: -10,
@@ -178,7 +195,7 @@ export default function TCCChart() {
         <div className={styles.tcc_title}>
           <h3 className={styles.tcc_title_h3}>Curva característica do teste</h3>
           <p className={styles.tcc_subtitle_p}>
-            Modelo que descreve o comportamento esperado (teórico) da relação nota/acerto. Destaque para o ponto de inflexão que representa a dificuldade média da prova.
+            Comportamento esperado (teórico) e observado (empírico) da relação nota/acerto. Destaque para o ponto de inflexão que representa a dificuldade média da prova.
           </p>
         </div>
 
@@ -224,7 +241,7 @@ export default function TCCChart() {
           <Chart 
             options={options} 
             series={series} 
-            type="line" 
+            type="line"
             height='100%'
             width='100%'
           />

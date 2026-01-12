@@ -19,10 +19,10 @@ export default function InputShell() {
     resultadoAtual
   } = chartLogic
 
-  const [inputValue, setInputValue] = useState(proficienciaAtual.toFixed(0));
+  const [inputValue, setInputValue] = useState(proficienciaAtual.toFixed(1));
 
   useEffect(() => {
-    setInputValue(proficienciaAtual.toFixed(0));
+    setInputValue(proficienciaAtual.toFixed(1));
   }, [proficienciaAtual]);
 
   const applyValue = () => {
@@ -36,7 +36,7 @@ export default function InputShell() {
       }, 0);
       setPointIndex(closestIndex);
     } else {
-      setInputValue(proficienciaAtual.toFixed(0));
+      setInputValue(proficienciaAtual.toFixed(1));
     }
   };
 
@@ -44,6 +44,15 @@ export default function InputShell() {
     if (e.key === 'Enter') {
       applyValue();
       (e.target as HTMLInputElement).blur();
+    }
+  };
+  
+  const handleInputChange = (e) => {
+    let value = e.target.value.replace(',', '.');
+    if (value.length > 6) return;
+    const regex = /^\d{0,4}(\.\d{0,1})?$/;
+    if (regex.test(value)) {
+      setInputValue(value);
     }
   };
 
@@ -59,7 +68,7 @@ export default function InputShell() {
         <input 
           type="text"
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           onBlur={applyValue}
           className={styles.label_input}
@@ -85,7 +94,7 @@ export default function InputShell() {
             className={styles.custom_slider}
             style={{background: chartColor}}
             min="0"
-            max={activeDataset.data.length - 1} 
+            max={activeDataset.data_teorico.length - 1} 
             value={pointIndex}
             onChange={(e) => setPointIndex(Number(e.target.value))}
           />

@@ -92,7 +92,7 @@ export default function ICCChart() {
         max: xMax,
         labels: { 
           style: { colors: axisColor },
-          formatter: (val: any) => parseFloat(val).toFixed(0)
+          formatter: (val: any) => parseFloat(val).toFixed(1)
         },
         title: { text: `Notas do Enem (${deferredArea})`, style: { color: axisColor } },
         axisBorder: { show: false },
@@ -140,7 +140,7 @@ export default function ICCChart() {
             borderColor: chartColor || '#ff0000',
             strokeDashArray: 0,
             label: {
-              text: `Traço de prob. da nota ${Math.round(proficienciaAtual)}`,
+              text: `Traço de prob. da nota ${proficienciaAtual.toFixed(1)}`,
               style: { color: '#fff', background: chartColor || '#ff0000' },
               borderWidth: 0,
               orientation: 'horizontal',

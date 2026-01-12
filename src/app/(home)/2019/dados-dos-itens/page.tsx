@@ -32,30 +32,27 @@ export default function DadosDoExame() {
         />
       </nav>  
       <div className={styles.main_top}>
-        <div className={styles.main_left}>
-          <div className={styles.main_left1}>
-            <Card>
-              <h3 className={styles.card_title}>Questões de {deferredArea}</h3>
-              <ItensButtons />
-            </Card>
-          </div>
-          <div className={styles.main_left2}>
-            <Card >
-              <h3 className={styles.card_title}>Probabilidades</h3>
-              <ProbsTable />
-            </Card>
-          </div>
+        <div className={styles.main_top_left}>
+          <Card>
+            <h3 className={styles.card_title}>Questões de {deferredArea}</h3>
+            <ItensButtons />
+          </Card>
         </div>
-        <div className={styles.main_right}>
-          <div className={styles.main_right_top}>
-            <Card>
-              <ICCChart />
-            </Card>
-          </div>
-          <div className={styles.main_right_bottom}>
-          </div>
+        <div className={styles.main_top_right}>
+          <Card >
+            <h3 className={styles.card_title}>Tabela de informações do item</h3>
+            <p className={styles.card_subtitle_p}>
+              Probabilidade de erro ou acerto, segundo os parâmetros de chute, dificuldade e discriminação, e frequências de acerto e erro observadas em cada item.
+            </p>
+            <ProbsTable />
+          </Card>
         </div>
-      </div>   
+      </div>
+      <div className={styles.main_bottom}>
+        <Card>
+          <ICCChart />
+        </Card>
+      </div> 
     </main>
   );
 }

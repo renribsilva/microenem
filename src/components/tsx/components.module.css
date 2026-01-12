@@ -312,7 +312,7 @@
 
 /* Container Principal */
 .shell_container {
-  padding: 6px;
+  padding: 0px 15px;
   background: var(--tab-background); /* Ajustado para seu tema dark */
   border-radius: 12px;
   /* border: 1px solid var(--tab-border); */

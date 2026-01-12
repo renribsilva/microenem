@@ -5,6 +5,7 @@ import { useHomeData } from "./home_context";
 import { useDescribe } from "../hooks/use_describe_data"; 
 import ItensData from "../app/(home)/2019/json/itens_2019.json";
 import constantes from "../app/(home)/json/constantes.json";
+import scoreData from "../app/(home)/2019/dados-dos-itens/json/score_table.json"
 
 const NineteenContext = createContext<any>(null);
 
@@ -14,9 +15,9 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
   const { describeData } = useDescribe(deferredArea);
   const { selectedLabel } = chartLogic
 
-  //--------------------------------------------------------------------
-  //---------------------------DADOS DO EXAME---------------------------
-  //--------------------------------------------------------------------
+  //--------------------------------------------------------------------------
+  //---------------------------DIFICULDADE DO EXAME---------------------------
+  //--------------------------------------------------------------------------
 
   const labelMap: Record<string, string> = {
     mean: "Média", median: "Mediana", mode: "Moda", sd: "Desvio Padrão",
@@ -59,7 +60,7 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
   }, [tableData, selectedRowId]);
 
   //--------------------------------------------------------------------
-  //--------------------------DADOS DOS ITENS---------------------------
+  //--------------------------ERROS E ACERTOS---------------------------
   //--------------------------------------------------------------------
 
   const abandonadosCodes = useMemo(() => {
@@ -85,11 +86,11 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
   const [probData, setProbData] = useState<any>(null);
   const [probLabels, setProbLabels] = useState<any>([]);
 
-  const probCache = useRef<{ label: string; dataset: any; labels: any } | null>(null);
-
+  const probCache = useRef<{ co_p: string; dataset: any; labels: any } | null>(null);
+  
   useEffect(() => {
     if (!co_p_selected) return;
-    if (probCache.current?.label === co_p_selected) {
+    if (probCache.current?.co_p === co_p_selected) {
       setProbData(probCache.current.dataset);
       setProbLabels(probCache.current.labels);
       return;
@@ -99,7 +100,7 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
         const res = await fetch(`/api/2019/probtrace?co_p=${String(co_p_selected)}`);
         const json = await res.json();        
         probCache.current = {
-          label: co_p_selected,
+          co_p: co_p_selected,
           dataset: json.dataset,
           labels: json.theta_labels
         };
@@ -113,8 +114,6 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
     fetchProbData();
   }, [co_p_selected]);
 
-  // console.log(probCache)
-
   //-----------------------------------------------------------------------
   //--------------------------ITENS SELECIONADOS---------------------------
   //-----------------------------------------------------------------------
@@ -123,10 +122,6 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
   const [lastItemActivate, setLastItemActivate] = useState<number>(0);
   const prevLabelRef = useRef(selectedLabel);
   const previousLabel = prevLabelRef.current;
-
-  if (prevLabelRef.current !== selectedLabel) {
-    prevLabelRef.current = selectedLabel;
-  }
 
   // Função para traduzir Posição (ex: questão 95) em Código (ex: 11234)
   const getCodeByLabel = useCallback((num: number, label: string) => {
@@ -165,17 +160,16 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
       }      
       return nextMapping;
     });
-  }, [selectedLabel, getCodeByLabel]);
-
+  }, [selectedLabel, getCodeByLabel, selectedLabel]);
+  
   useLayoutEffect(() => {
-    // 3. Usamos a variável 'previousLabel' que capturamos no início do ciclo
     if (previousLabel === selectedLabel) return;
-
     const ranges: any = { "LC": [1,45], "CH": [46,90], "CN": [91,135], "MT": [136,180] };
     const [start, end] = ranges[deferredArea] || [1, 45];      
-    
+    console.log("chegou ")
     setSelectedItems(prev => {
       const newMapping = { ...prev };
+      console.log(newMapping)
       for (let num = start; num <= end; num++) {
         // Usamos o previousLabel estável aqui
         const oldCode = getCodeByLabel(num, previousLabel); 
@@ -195,7 +189,7 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
     const codes = Object.keys(selectedItems).map(Number);
     // Filtra apenas os que existem no probData e não são abandonados
     return codes.filter(code => 
-      String(code) in (probData || {}) && !abandonadosCodes.has(code)
+      String(code) in (probData || {})
     );
   }, [selectedItems, probData, abandonadosCodes]);
 
@@ -212,6 +206,7 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
       probLabels,
       selectedItems,
       lastItemActivate,
+      scoreData,
       handleToggle,
       getCodeByLabel,
       activeCodes,

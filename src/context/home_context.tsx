@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useDeferredValue, useMemo, ReactNode, useEffect, useRef } from "react";
 import dic from "../app/(home)/2019/json/dic_2019.json"; 
 import { useChartTheme } from '../hooks/use_chart_theme'; 
+import { init } from "next/dist/compiled/webpack/webpack";
 
 const dicMap = new Map(
   dic.codigo.map((cod, i) => [cod, { cor: dic.cor[i], aplicacao: dic.aplicacao[i] }])
@@ -38,6 +39,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
         };
         setActiveDataset(json.dataset);
         setAvailableDatasets(json.availableDatasets);
+        setSelectedLabel(json.label)
       } catch (err) {
         console.error("Erro ao buscar dataset:", err);
       }
@@ -45,16 +47,12 @@ export function HomeProvider({ children }: { children: ReactNode }) {
     loadData();
   }, [deferredArea, selectedLabel]);
 
-  console.log(activeDataset)
-
   const [userPointIndex, setUserPointIndex] = useState<number | null>(null);
 
   const initialIndex = useMemo(() => {
-    if (!activeDataset?.labels_x || activeDataset.labels_x.length === 0) return 0;
-    const target = activeDataset.metadata?.b_medio_enem || 0;
-    return activeDataset.labels_x.reduce((prev: any, curr: any, idx: any, arr: any) => 
-      Math.abs(curr - target) < Math.abs(arr[prev] - target) ? idx : prev, 0);
-  }, [activeDataset, selectedLabel]);
+    if (!activeDataset?.labels_x?.length) return 0;
+    return 0;
+  }, [activeDataset]);    
 
   const pointIndex = userPointIndex !== null ? userPointIndex : initialIndex;
 
@@ -95,8 +93,6 @@ export function HomeProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  console.log(activeDataset)
-
   return (
     <HomeContext.Provider value={{ 
       activeArea, 
@@ -106,7 +102,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
       chartLogic, 
       handleTabChange: (id: string) => {
         setActiveArea(id);
-        setUserPointIndex(null);
+        // setUserPointIndex(null);
       }, 
       isUpdating: activeArea !== deferredArea 
     }}>

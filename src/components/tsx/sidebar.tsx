@@ -62,7 +62,7 @@ const navItems: NavItem[] = [
     subItems: [
       { name: "Visão geral", path: "/2019/visao-geral" },
       { name: "Dificuldade do exame", path: "/2019/dados-do-exame" },
-      { name: "Probabilidades do item", path: "/2019/dados-dos-itens" },
+      { name: "Erros e acertos", path: "/2019/dados-dos-itens" },
       { name: "Desempenho por item", path: "/2019/notas-e-acertos" },
       { name: "Relação notas/acertos", path: "/2019/notas-e-acertos" },
       { name: "TRI em gráficos", path: "/2019/notas-e-acertos" },

@@ -12,7 +12,7 @@ export default function ICCChart() {
   
   const { chartLogic, deferredArea } = useHomeData();
   const { chartColor, proficienciaAtual, xMin, xMax } = chartLogic;
-  const { gridColor, axisColor } = useChartTheme();
+  const { gridColor, axisColor, textColor } = useChartTheme();
   const { 
     abandonadosCodes, 
     FIXED_PALETTE, 
@@ -92,9 +92,9 @@ export default function ICCChart() {
         max: xMax,
         labels: { 
           style: { colors: axisColor },
-          formatter: (val: any) => parseFloat(val).toFixed(1)
+          formatter: (val: any) => parseFloat(val).toFixed(0)
         },
-        title: { text: `Notas do Enem (${deferredArea})`, style: { color: axisColor } },
+        title: { text: `Notas na escala do Enem (${deferredArea})`, style: { color: axisColor } },
         axisBorder: { show: false },
         tooltip: {
           enabled: true,
@@ -133,6 +133,14 @@ export default function ICCChart() {
       },
       grid: { borderColor: gridColor },
       legend: { show: false },
+      title: {
+        text: 'Curva característica do item',
+        style: { color: textColor, fontSize: '16px', fontWeight: 'bold'},
+      },
+      subtitle: {
+        text: ['Modelagem da probabilidade de acerto em função da proficiência estimada.'] as any,
+        style: { color: textColor, fontSize: '13px' },
+      },
       annotations: {
         xaxis: [
           {
@@ -140,7 +148,7 @@ export default function ICCChart() {
             borderColor: chartColor || '#ff0000',
             strokeDashArray: 0,
             label: {
-              text: `Traço de prob. da nota ${proficienciaAtual.toFixed(1)}`,
+              text: `Traço de prob. da nota ${proficienciaAtual.toFixed(0)}`,
               style: { color: '#fff', background: chartColor || '#ff0000' },
               borderWidth: 0,
               orientation: 'horizontal',
@@ -148,22 +156,12 @@ export default function ICCChart() {
             }
           }
         ],
-        points: hasAbandonedItem
-          ? [{
-              x: (xMin + xMax) / 2,
-              y: 0.5,
-              label: {
-                text: '⚠️ Item abandonado na TRI (sem parâmetros)',
-                style: { color: '#fff', background: '#d32f2f' }
-              }
-            }] 
-          : []
       }
     };
   }, [series, xMin, xMax, hasAbandonedItem, deferredArea, selectedItems, probData, abandonadosCodes, lastItemActivate, FIXED_PALETTE, proficienciaAtual, chartColor, axisColor, gridColor]);
   
   return (
-    <div className={styles.icc_container}>
+    <div style={{minHeight: '350px'}}>
       <Chart 
         options={options} 
         series={series as any} 

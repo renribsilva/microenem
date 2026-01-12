@@ -5,7 +5,7 @@
 .probtable_fallback{
   /* background-color: aquamarine; */
   padding: 20px;
-  text-align: center;
+  /* text-align: center; */
   color: #666 
 }
 
@@ -19,21 +19,68 @@
 
 .probtable_table {
   /* background-color: aquamarine; */
-  min-width: 100%;
+  width: 100%;
   border-collapse: collapse;
   font-size: 0.875rem;
-  text-align: left;
+  /* Isso aqui é o que garante a largura fixa */
+  table-layout: fixed; 
 }
 
 
 .probtable_thead {
-  background-color:var(--tab-background);
-  text-transform: uppercase;
+  background-color: var(--tab-background);
+  /* text-transform: uppercase; */
   color:var(--tab-text);
 }
 
-.probtable_th {
-  padding: 10px;
-  border-bottom: 1px solid var(--grid);
+.probtable_tr {
+  /* background-color: aquamarine; */
+  transition: background-color 0.2s;
   font-weight: 300;
+}
+
+.probtable_th {
+  font-weight: 400;
+  position: relative;
+}
+
+/* Estilo apenas para a linha superior (os Grupos) */
+.probtable_group_th {
+  padding-bottom: 8px; 
+}
+
+.probtable_group_th::after {
+  content: "";
+  position: absolute;
+  bottom: 2px; 
+  left: 8px;   
+  right: 8px;  
+  height: 1px;
+  background-color: var(--tab-text);
+  opacity: 0.3;
+}
+
+.probtable_th_item {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Garante que tudo no header nasça centralizado por padrão */
+  padding: 10px 8px;
+  gap: 4px;
+}
+
+.probtable_td {
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--grid);
+  text-align: center; /* Centraliza o conteúdo das linhas */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.table_footer {
+  padding: 5px;
+  padding-top: 10px;
+  font-size: 0.75rem; /* 12px */
+  font-weight: 300;
+  color: #888;
 }

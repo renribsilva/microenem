@@ -16,13 +16,12 @@ export default function InputShell() {
     pointIndex,
     setPointIndex,
     chartColor,
-    resultadoAtual
   } = chartLogic
 
   const [inputValue, setInputValue] = useState(proficienciaAtual.toFixed(1));
 
   useEffect(() => {
-    setInputValue(proficienciaAtual.toFixed(1));
+    setInputValue(proficienciaAtual);
   }, [proficienciaAtual]);
 
   const applyValue = () => {
@@ -36,7 +35,7 @@ export default function InputShell() {
       }, 0);
       setPointIndex(closestIndex);
     } else {
-      setInputValue(proficienciaAtual.toFixed(1));
+      setInputValue(proficienciaAtual);
     }
   };
 
@@ -55,6 +54,8 @@ export default function InputShell() {
       setInputValue(value);
     }
   };
+
+  const progressPercent = (pointIndex / (activeDataset.data_teorico.length - 1)) * 100;
 
   return (
     <div className={styles.shell_container}>
@@ -92,7 +93,9 @@ export default function InputShell() {
           <input 
             type="range" 
             className={styles.custom_slider}
-            style={{background: chartColor}}
+            style={{
+              background: `linear-gradient(to right, ${chartColor} ${progressPercent}%, #ccc ${progressPercent}%)`
+            }}
             min="0"
             max={activeDataset.data_teorico.length - 1} 
             value={pointIndex}

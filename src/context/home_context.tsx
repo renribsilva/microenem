@@ -16,47 +16,36 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   const [selectedRowId, setSelectedRowId] = useState<string | null>("mean");
   const { colorMap } = useChartTheme();
 
-  const [activeDatasets, setActiveDatasets] = useState<any[] | null>(null);
+  const [activeDataset, setActiveDataset] = useState<any | null>(null);
   const [selectedLabel, setSelectedLabel] = useState<string>("511_0"); 
+  const [availableDatasets, setAvailableDatasets] = useState<any[]>([]);
 
-  const datasetsCache = useRef<{ area: string; data: any; } | null>(null);
+  const datasetsCache = useRef<{ label: string; data: any } | null>(null);
 
   useEffect(() => {
-    if (datasetsCache.current?.area === deferredArea) {
-      setActiveDatasets(datasetsCache.current.data);
+    if (datasetsCache.current?.label === selectedLabel) {
+      setActiveDataset(datasetsCache.current.data);
       return;
     }
     async function loadData() {
       try {
-        const res = await fetch(`/api/tcc?area=${deferredArea}`);
+        const res = await fetch(`/api/2019/tcc?area=${deferredArea}&co_p=${selectedLabel}`);
         if (!res.ok) return;
         const json = await res.json();        
         datasetsCache.current = {
-          area: deferredArea,
-          data: json.datasets,
+          label: deferredArea,
+          data: json.dataset,
         };
-        setActiveDatasets(json.datasets);
+        setActiveDataset(json.dataset);
+        setAvailableDatasets(json.availableDatasets);
       } catch (err) {
         console.error("Erro ao buscar dataset:", err);
       }
     }
     loadData();
-  }, [deferredArea]);
+  }, [deferredArea, selectedLabel]);
 
-  // 2. Sincronização de Label: Se a área mudar e o label não existir, reseta para o primeiro
-  useEffect(() => {
-    if (activeDatasets && activeDatasets.length > 0) {
-      const exists = activeDatasets.find(d => d.label === selectedLabel);
-      if (!exists) {
-        setSelectedLabel(activeDatasets[0].label);
-      }
-    }
-  }, [activeDatasets, selectedLabel]);
-
-  const activeDataset = useMemo(() => {
-    if (!activeDatasets || activeDatasets.length === 0) return null;
-    return activeDatasets.find(d => d.label === selectedLabel) || activeDatasets[0];
-  }, [activeDatasets, selectedLabel]);
+  console.log(activeDataset)
 
   const [userPointIndex, setUserPointIndex] = useState<number | null>(null);
 
@@ -65,7 +54,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
     const target = activeDataset.metadata?.b_medio_enem || 0;
     return activeDataset.labels_x.reduce((prev: any, curr: any, idx: any, arr: any) => 
       Math.abs(curr - target) < Math.abs(arr[prev] - target) ? idx : prev, 0);
-  }, [activeDataset]);
+  }, [activeDataset, selectedLabel]);
 
   const pointIndex = userPointIndex !== null ? userPointIndex : initialIndex;
 
@@ -79,7 +68,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
       textoBase += lingua === 0 ? " (Inglês)" : " (Espanhol)";
     }
     return { fullText: `${textoBase} - ${info.aplicacao}`, corNome: info.cor };
-  }, [activeDataset, deferredArea]);
+  }, [activeDataset, deferredArea, selectedLabel]);
 
   const chartLogic = {
     selectedLabel,
@@ -89,6 +78,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
     setPointIndex: setUserPointIndex,
     chartColor: colorMap[currentInfo.corNome] || "#3b82f6",
     currentInfo,
+    availableDatasets,
     proficienciaAtual: activeDataset?.labels_x?.[pointIndex] || 0,
     resultadoAtual: activeDataset?.data_teorico?.[pointIndex] || 0,
     xMin: Math.floor((activeDataset?.metadata?.min || 0) / 100) * 100,
@@ -104,6 +94,8 @@ export function HomeProvider({ children }: { children: ReactNode }) {
       return { fullText: `${textoBase} - ${info.aplicacao}`, corNome: info.cor };
     }
   };
+
+  console.log(activeDataset)
 
   return (
     <HomeContext.Provider value={{ 

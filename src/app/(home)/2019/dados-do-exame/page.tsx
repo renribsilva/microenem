@@ -30,7 +30,7 @@ const Skeleton = () => (
     alignItems: 'center',
     justifyContent: 'center'
   }}>
-    <span style={{ opacity: 0.5 }}>Carregando dados...</span>
+    <span style={{ opacity: 0.5 }}>Carregando gráfico...</span>
   </div>
 );
 

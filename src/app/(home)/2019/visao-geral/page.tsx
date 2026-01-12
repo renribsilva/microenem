@@ -67,14 +67,14 @@ export default function Visao() {
         <div className={styles.block1_second}>
           <div className={styles.block1_second_left} style={{ minWidth: 0, minHeight: 0 }}>
             <Card className={styles.card_fxetaria}>
-              <Suspense fallback={<p>...</p>}>
+              <Suspense fallback={<p>Carregando gráfico...</p>}>
                 <FX_ETARIA />
               </Suspense>
             </Card>
           </div>
           <div className={styles.block1_second_right} style={{ minWidth: 0, minHeight: 0 }}>
             <Card className={styles.card_sexo}>
-              <Suspense fallback={<p>...</p>}>
+              <Suspense fallback={<p>Carregando gráfico...</p>}>
                 <SEXO />
               </Suspense>
             </Card>
@@ -85,7 +85,7 @@ export default function Visao() {
       <div className={styles.block2} style={{ minWidth: 0, minHeight: 0 }}>
         <div className={styles.block_third} style={{ minWidth: 0, minHeight: 0 }}>
           <Card className={styles.card_racacor}>
-            <Suspense fallback={<p>...</p>}>
+            <Suspense fallback={<p>Carregando gráfico...</p>}>
               <COR_RACA />
             </Suspense>
           </Card>

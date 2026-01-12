@@ -96,7 +96,7 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
     }
     async function fetchProbData() {
       try {
-        const res = await fetch(`/api/probtrace?co_p=${String(co_p_selected)}`);
+        const res = await fetch(`/api/2019/probtrace?co_p=${String(co_p_selected)}`);
         const json = await res.json();        
         probCache.current = {
           label: co_p_selected,

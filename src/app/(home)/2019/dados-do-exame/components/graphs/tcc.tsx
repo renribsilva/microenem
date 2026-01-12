@@ -35,8 +35,8 @@ export default function TCCChart() {
     {
       name: "Acertos esperados", // Série 0 (Prioridade)
       type: 'line',
-      data: activeDataset?.data_teorico.map((val, i) => ({
-        x: activeDataset.labels_x[i],
+      data: activeDataset?.data_teorico?.map((val, i) => ({
+        x: activeDataset?.labels_x[i],
         y: val !== null ? Math.round(val * 10) / 10 : null
       })) || []
     },
@@ -44,7 +44,7 @@ export default function TCCChart() {
       name: "Média observada", // Série 1
       type: 'scatter',
       data: activeDataset?.data_empirico?.map((val, i) => ({
-        x: activeDataset.labels_x[i],
+        x: activeDataset?.labels_x[i],
         y: val
       })) || []
     }
@@ -212,7 +212,7 @@ export default function TCCChart() {
 
           {isOpen && (
             <div className={styles.dropdown_list} >
-              {availableDatasets.map((ds: any) => {
+              {availableDatasets?.map((ds: any) => {
                 const info = getInfoCaderno(ds.metadata.codigo, ds.metadata.lingua);
                 const isSelected = selectedLabel === ds.label;
                 return (

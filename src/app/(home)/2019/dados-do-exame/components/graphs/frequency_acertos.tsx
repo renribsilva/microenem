@@ -181,9 +181,9 @@ export default function FrequencyAcertosChart() {
     };
   }, [describeData, frequencyData, selectedRow, acertosColor, axisColor, gridColor, deferredArea, textColor]);
 
-  if (!describeData?.acertos || !frequencyData) {
-    return <div className={styles.loading}>Carregando...</div>;
-  }
+  // if (!describeData?.acertos || !frequencyData) {
+  //   return <div className={styles.loading}>Carregando gráfico...</div>;
+  // }
 
   return (
     <div style={{ flex: 1}}>

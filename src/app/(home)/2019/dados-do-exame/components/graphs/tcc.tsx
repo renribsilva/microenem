@@ -87,9 +87,9 @@ export default function TCCChart() {
     colors: [chartColor, '#94a3b8'],
     stroke: {
       curve: 'smooth',
-      width: [3, 0],
+      width: [1, 1],
       colors: [chartColor],
-      // connectNulls: true  
+      connectNulls: true  
     },
     grid: { borderColor: gridColor },
     xaxis: {
@@ -112,7 +112,7 @@ export default function TCCChart() {
         style: { colors: axisColor },
         formatter: (val) => val.toFixed(0) 
       },
-      title: { text: 'Acertos esperados', style: { color: axisColor, fontWeight: 'bold' } }
+      title: { text: 'Acertos', style: { color: axisColor, fontWeight: 'bold' } }
     },
     tooltip: {
       theme: 'dark',
@@ -124,13 +124,39 @@ export default function TCCChart() {
         formatter: (val) => "\u00A0\u00A0Proficiência: " + val
       },
       y: {
-        formatter: (val) => {
-          // Se o valor for null, o tooltip mostrará "N/A" ou ficará vazio em vez de sumir
-          return (val !== null && val !== undefined) ? val.toFixed(0) : "N/A";
+        formatter: function(val, { series, seriesIndex, dataPointIndex, w }) {
+          // Se o valor atual já existe, retorna ele
+          if (val !== null && val !== undefined) {
+            return val.toFixed(0);
+          }
+
+          // Se o valor for null, buscamos no array da série o valor mais próximo
+          const currentSeries = series[seriesIndex];
+          
+          // Busca para trás (valor anterior mais próximo)
+          let closestVal = null;
+          for (let i = dataPointIndex; i >= 0; i--) {
+            if (currentSeries[i] !== null && currentSeries[i] !== undefined) {
+              closestVal = currentSeries[i];
+              break;
+            }
+          }
+
+          // Se não achou para trás, busca para frente
+          if (closestVal === null) {
+            for (let i = dataPointIndex; i < currentSeries.length; i++) {
+              if (currentSeries[i] !== null && currentSeries[i] !== undefined) {
+                closestVal = currentSeries[i];
+                break;
+              }
+            }
+          }
+
+          return closestVal !== null ? `${closestVal.toFixed(0)}` : "N/A";
         },
         title: {
           formatter: (seriesName) => seriesName + ": "
-        } 
+        }
       }
     },
     annotations: {

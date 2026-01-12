@@ -154,9 +154,9 @@ export default function DensityNotasChart() {
     };
   }, [describeData, selectedRow, densidadeColor, textColor, gridColor, xMin, xMax, deferredArea, densityData]);
 
-  if (!describeData?.notas || !densityData) {
-    return <div className={styles.loading}>Carregando gráfico...</div>;
-  }
+  // if (!describeData?.notas || !densityData) {
+  //   return <div className={styles.loading}>Carregando gráfico...</div>;
+  // }
 
   return (
     <div style={{flex: 1}}>

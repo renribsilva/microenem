@@ -11,7 +11,7 @@ const NineteenContext = createContext<any>(null);
 
 export function NineteenProvider({ children }: { children: ReactNode }) {
 
-  const { deferredArea, selectedRowId, chartLogic } = useHomeData();
+  const { deferredArea, selectedRowId, chartLogic, setSelectedLabel} = useHomeData();
   const { describeData } = useDescribe(deferredArea);
   const { selectedLabel } = chartLogic
 
@@ -126,31 +126,49 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
   // Função para traduzir Posição (ex: questão 95) em Código (ex: 11234)
   const getCodeByLabel = useCallback((num: number, label: string) => {
     if (!label) return null;
-    const [co_p, ling] = label.split('_');
-    const p = ItensData as any;     
+    const parts = label.split('_');
+    const co_p = parts[0];
+    const ling = parts[1] || "0";
+    const p = ItensData as any;   
+    console.log(p)
     const idx = Object.keys(p.CO_POSICAO).find(i => {
-      const matchPos = Number(p.CO_POSICAO[i]) === num;
       const matchProva = Number(p.CO_PROVA[i]) === Number(co_p);
-      if (num > 5) return matchPos && matchProva;
-      return matchPos && matchProva && Number(p.TP_LINGUA[i]) === Number(ling);
-    });
+      const matchPos = Number(p.CO_POSICAO[i]) === num;
+      if (!matchProva || !matchPos) return false;
+      if (deferredArea === 'LC' && num <= 5 && ling !== undefined) {
+        return Number(p.TP_LINGUA[i]) === Number(ling);
+      }
+      return true;
+    })
     return idx ? Number(p.CO_ITEM[idx]) : null;
-  }, []);
+  }, [deferredArea]);
 
-  // Handler de Clique (Toggle)
   const handleToggle = useCallback((num: number, isAbandoned: boolean) => {
+    // Usamos o selectedLabel atual para descobrir qual o código do item no momento do clique
     const codeItem = getCodeByLabel(num, selectedLabel);
-    if (!codeItem) return;
+    
+    if (!codeItem) {
+      console.warn(`Não foi possível encontrar o código para a posição ${num} na prova ${selectedLabel}`);
+      return;
+    }
 
     setLastItemActivate(codeItem);
 
     setSelectedItems(prev => {
       const nextMapping = { ...prev };
       const current = nextMapping[codeItem];
+
       if (isAbandoned) {
-        current ? delete nextMapping[codeItem] : nextMapping[codeItem] = { status: 'acerto', posicao: num };
+        // Se for abandonado: Toggle simples entre selecionado (cinza) e nada
+        if (current) {
+          delete nextMapping[codeItem];
+        } else {
+          nextMapping[codeItem] = { status: 'acerto', posicao: num };
+        }
         return nextMapping;
       }
+
+      // Lógica de ciclo: Nada -> Acerto (verde) -> Erro (vermelho) -> Nada
       if (!current) {
         nextMapping[codeItem] = { status: 'acerto', posicao: num };
       } else if (current.status === 'acerto') {
@@ -160,34 +178,51 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
       }      
       return nextMapping;
     });
-  }, [selectedLabel, getCodeByLabel, selectedLabel]);
-  
+  }, [selectedLabel, getCodeByLabel]);
+
   useLayoutEffect(() => {
     if (previousLabel === selectedLabel) return;
-    const ranges: any = { "LC": [1,45], "CH": [46,90], "CN": [91,135], "MT": [136,180] };
-    const [start, end] = ranges[deferredArea] || [1, 45];      
-    console.log("chegou ")
+
+    const ranges: Record<string, { start: number; end: number }> = {
+      "LC": { start: 1, end: 45 },
+      "CH": { start: 46, end: 90 },
+      "CN": { start: 91, end: 135 },
+      "MT": { start: 136, end: 180 },
+    };
+
+    const { start, end } = ranges[deferredArea] || { start: 1, end: 45 };
+
     setSelectedItems(prev => {
-      const newMapping = { ...prev };
-      console.log(newMapping)
+      const currentlySelectedCodes = Object.keys(prev).map(Number);
+      if (currentlySelectedCodes.length === 0) return prev;
+      const nextMapping: Record<number, any> = {};      
+      const translationMap = new Map();
       for (let num = start; num <= end; num++) {
-        // Usamos o previousLabel estável aqui
-        const oldCode = getCodeByLabel(num, previousLabel); 
+        const oldCode = getCodeByLabel(num, previousLabel);
         const newCode = getCodeByLabel(num, selectedLabel);
         
-        if (oldCode && prev[oldCode] && newCode && oldCode !== newCode) {
-          newMapping[newCode] = { ...prev[oldCode], posicao: num };
-          delete newMapping[oldCode];
+        if (oldCode && newCode) {
+          translationMap.set(oldCode, { newCode, posicao: num });
         }
       }
-      return newMapping;
+      currentlySelectedCodes.forEach(oldCode => {
+        const translation = translationMap.get(oldCode);
+        if (translation) {
+          nextMapping[translation.newCode] = {
+            ...prev[oldCode],
+            posicao: translation.posicao
+          };
+        } else {
+          nextMapping[oldCode] = prev[oldCode];
+        }
+      });
+      return nextMapping;
     });
-    // O ref já foi atualizado no corpo, então não precisamos atualizar aqui
-  }, [selectedLabel, deferredArea, getCodeByLabel, previousLabel]);
+    prevLabelRef.current = selectedLabel;
+  }, [selectedLabel, getCodeByLabel, deferredArea]);
 
   const activeCodes = useMemo(() => {
     const codes = Object.keys(selectedItems).map(Number);
-    // Filtra apenas os que existem no probData e não são abandonados
     return codes.filter(code => 
       String(code) in (probData || {})
     );

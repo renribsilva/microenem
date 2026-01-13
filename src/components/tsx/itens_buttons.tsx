@@ -43,6 +43,7 @@ export default function ItensButtons() {
   
   const onButtonClick = (num: number, e: React.MouseEvent<HTMLButtonElement>) => {
     const codeItem = getCodeByLabel(num, selectedLabel);
+    console.log(num, selectedLabel)
     if (!codeItem) return;
 
     const isAbandoned = abandonadosCodes.has(codeItem);
@@ -60,7 +61,6 @@ export default function ItensButtons() {
     } else {
       setBackdropAlert(null);
     }
-
     handleToggle(num, isAbandoned);
   };
 

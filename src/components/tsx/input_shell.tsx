@@ -5,7 +5,6 @@ import styles from "./components.module.css"
 import { useHomeData } from "../../context/home_context";
 
 export default function InputShell() {
-
   const { chartLogic } = useHomeData();
 
   const { 
@@ -16,20 +15,28 @@ export default function InputShell() {
     pointIndex,
     setPointIndex,
     chartColor,
-  } = chartLogic
+  } = chartLogic;
 
-  const [inputValue, setInputValue] = useState(proficienciaAtual.toFixed(1));
+  // 1. Fallback para o tamanho dos dados: se não houver dataset, o range é 0 a 0
+  const maxRange = activeDataset?.data_teorico?.length 
+    ? activeDataset.data_teorico.length - 1 
+    : 0;
+
+  const [inputValue, setInputValue] = useState(proficienciaAtual?.toFixed(1) || "0.0");
 
   useEffect(() => {
-    setInputValue(proficienciaAtual);
+    // Garantia de que proficienciaAtual existe antes de formatar
+    setInputValue(proficienciaAtual !== undefined ? proficienciaAtual : 0);
   }, [proficienciaAtual]);
 
   const applyValue = () => {
-    let numericVal = parseFloat(inputValue);
-    if (!isNaN(numericVal)) {
+    let numericVal = parseFloat(inputValue as string);
+    if (!isNaN(numericVal) && activeDataset?.labels_x) {
       if (numericVal < xMin) numericVal = xMin;
       if (numericVal > xMax) numericVal = xMax;
+      
       setInputValue(numericVal.toString());
+      
       const closestIndex = activeDataset.labels_x.reduce((prev: number, curr: number, idx: number) => {
         return Math.abs(curr - numericVal) < Math.abs(activeDataset.labels_x[prev] - numericVal) ? idx : prev;
       }, 0);
@@ -46,7 +53,7 @@ export default function InputShell() {
     }
   };
   
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.replace(',', '.');
     if (value.length > 6) return;
     const regex = /^\d{0,4}(\.\d{0,1})?$/;
@@ -55,17 +62,15 @@ export default function InputShell() {
     }
   };
 
-  const progressPercent = (pointIndex / (activeDataset.data_teorico.length - 1)) * 100;
+  // 2. Proteção para o cálculo do progresso (evita divisão por zero ou NaN)
+  const progressPercent = maxRange > 0 ? (pointIndex / maxRange) * 100 : 0;
 
   return (
     <div className={styles.shell_container}>
-      {/* Bloco Superior */}
-      <div  className={styles.shell_superior}>
-        {/* Bloco Nota */}
+      <div className={styles.shell_superior}>
         <div className={styles.label_group1} style={{ textAlign: 'center' }}>
           <div className={styles.label_title}>PROFICIÊNCIA</div>
         </div>
-        {/* Bloco Acertos */}
         <input 
           type="text"
           value={inputValue}
@@ -75,20 +80,9 @@ export default function InputShell() {
           className={styles.label_input}
           style={{ borderBottom: `2px solid ${chartColor}`}}
         />
-        {/* <div className={styles.label_group2}>
-          <div className={styles.label_title}>ACERTOS</div>
-          <div style={{ 
-            fontSize: '1.3rem', width: '100%', justifyContent: "right", display: 'flex',
-            fontWeight: '600', color: chartColor, height: '100%',
-            alignItems: "flex-end", paddingBottom: '5px'
-          }}>
-            {resultadoAtual.toFixed(0)}
-          </div>
-        </div> */}
       </div>
-      {/* Bloco Inferior */}
-      <div  className={styles.shell_inferior}>
-        {/* Slider */}
+
+      <div className={styles.shell_inferior}>
         <div className={styles.slider_wrapper}>
           <input 
             type="range" 
@@ -97,8 +91,9 @@ export default function InputShell() {
               background: `linear-gradient(to right, ${chartColor} ${progressPercent}%, #ccc ${progressPercent}%)`
             }}
             min="0"
-            max={activeDataset.data_teorico.length - 1} 
-            value={pointIndex}
+            // 3. AQUI ESTAVA O ERRO: Agora usamos a variável blindada
+            max={maxRange} 
+            value={pointIndex || 0}
             onChange={(e) => setPointIndex(Number(e.target.value))}
           />
         </div>

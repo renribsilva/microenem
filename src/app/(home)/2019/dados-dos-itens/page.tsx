@@ -42,7 +42,7 @@ export default function DadosDoExame() {
           <Card >
             <h3 className={styles.card_title}>Tabela de informações do item</h3>
             <p className={styles.card_subtitle_p}>
-              Probabilidade de erro ou acerto, segundo os parâmetros de chute, dificuldade e discriminação, e frequências de acerto e erro observadas em cada item.
+              Probabilidades de erro ou acerto, segundo os parâmetros de chute, dificuldade e discriminação; e frequências de acerto e erro observadas em cada item.
             </p>
             <ProbsTable />
           </Card>

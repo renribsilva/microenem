@@ -116,17 +116,29 @@ export default function ProbsTable() {
       const itemKey = String(code);
       const status = selectedItems[code]?.status;
       const probBruta = probData?.[itemKey] ? probData[itemKey][closestIndex] : null;
-      const respondentesTotal = scoreData[code]["0"] + scoreData[code]["1"] + scoreData[code]["7"] + scoreData[code]["8"]
+      // Acessa os dados do item com segurança
+      const itemScores = scoreData[code] || {};
+      
+      // Garante que se a chave (0, 1, 7, 8, 9) não existir, o valor seja 0
+      const acertos   = Number(itemScores["1"] || 0);
+      const erros     = Number(itemScores["0"] || 0);
+      const marcDupla = Number(itemScores["7"] || 0);
+      const brancos   = Number(itemScores["8"] || 0);
+
+      const respondentesTotal = acertos + erros + marcDupla + brancos
+
+      const safeDiv = (valor) => respondentesTotal > 0 ? ((valor / respondentesTotal) * 100).toFixed(1) : "0.0";
+      
       return {
         id: code,
         posicao: selectedItems[code]?.posicao,
         estado: status,
         probabilidade: probBruta !== null ? (status === "erro" ? 1 - probBruta : probBruta) : null,
         respondentes: respondentesTotal,
-        freq_acerto: ((scoreData[code]["1"] / respondentesTotal)*100).toFixed(1),
-        freq_erro: ((scoreData[code]["0"] / respondentesTotal)*100).toFixed(1),
-        freq_branco: ((scoreData[code]["8"] / respondentesTotal)*100).toFixed(1),
-        freq_dupla_marcacao: ((scoreData[code]["7"] / respondentesTotal)*100).toFixed(1)
+        freq_acerto: safeDiv(acertos),
+        freq_erro: safeDiv(erros),
+        freq_branco: safeDiv(brancos),
+        freq_dupla_marcacao: safeDiv(marcDupla)
       };
     });
   }, [activeCodes, chartLogic, selectedItems, proficienciaAtual, k, d, probData, probLabels]);
@@ -195,7 +207,7 @@ export default function ProbsTable() {
         </tbody>
       </table>
       <div className={styles.table_footer}>
-        * A probabilidade corresponde à proficiência destacada. Digite um novo valor ou arraste
+        * Probabilidades aproximadas relacionadas à proficiência destacada. Digite um novo valor ou arraste
         o botão para obter um novo traço de probabilidades.
       </div>
     </section>

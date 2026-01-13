@@ -18,10 +18,20 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   const { colorMap } = useChartTheme();
 
   const [activeDataset, setActiveDataset] = useState<any | null>(null);
-  const [selectedLabel, setSelectedLabel] = useState<string>("511_0"); 
   const [availableDatasets, setAvailableDatasets] = useState<any[]>([]);
 
   const datasetsCache = useRef<{ label: string; data: any } | null>(null);
+
+  const [selectionsByArea, setSelectionsByArea] = useState<Record<string, string>>({
+    "LC": "511_0",
+    "CH": "507",
+    "CN": "503",
+    "MT": "515"
+  });
+  const selectedLabel = selectionsByArea[deferredArea];
+  const setSelectedLabel = (newLabel: string) => {
+    setSelectionsByArea(prev => ({ ...prev, [deferredArea]: newLabel }));
+  };
 
   useEffect(() => {
     if (datasetsCache.current?.label === selectedLabel) {
@@ -39,7 +49,9 @@ export function HomeProvider({ children }: { children: ReactNode }) {
         };
         setActiveDataset(json.dataset);
         setAvailableDatasets(json.availableDatasets);
-        setSelectedLabel(json.label)
+        if (json.label && json.label !== selectedLabel) {
+           setSelectionsByArea(prev => ({ ...prev, [deferredArea]: json.label }));
+        }
       } catch (err) {
         console.error("Erro ao buscar dataset:", err);
       }

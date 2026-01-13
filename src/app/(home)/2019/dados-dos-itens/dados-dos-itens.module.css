@@ -61,6 +61,10 @@
   }
 }
 
+.card_title {
+  /* margin-bottom: 10px; */
+}
+
 .card_subtitle_p {
   /* background-color: bisque; */
   margin: 0;

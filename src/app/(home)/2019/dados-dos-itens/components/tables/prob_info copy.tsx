@@ -27,7 +27,7 @@ type TableRow = {
   freq_dupla_marcacao: number;
 };
 
-export default function ProbsTable() {
+export default function ProbsInfoTable() {
 
   const { chartLogic } = useHomeData();
   const { proficienciaAtual } = chartLogic;

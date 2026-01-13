@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import styles from "./components.module.css"
 import { useHomeData } from "../../context/home_context";
+import { useChartTheme } from "../../hooks/use_chart_theme";
 
 export default function InputShell() {
   const { chartLogic } = useHomeData();
@@ -16,6 +17,8 @@ export default function InputShell() {
     setPointIndex,
     chartColor,
   } = chartLogic;
+
+  const { gridColor } = useChartTheme();
 
   // 1. Fallback para o tamanho dos dados: se não houver dataset, o range é 0 a 0
   const maxRange = activeDataset?.data_teorico?.length 
@@ -88,7 +91,7 @@ export default function InputShell() {
             type="range" 
             className={styles.custom_slider}
             style={{
-              background: `linear-gradient(to right, ${chartColor} ${progressPercent}%, #ccc ${progressPercent}%)`
+              background: `linear-gradient(to right, ${chartColor} ${progressPercent}%, ${gridColor} ${progressPercent}%)`
             }}
             min="0"
             // 3. AQUI ESTAVA O ERRO: Agora usamos a variável blindada

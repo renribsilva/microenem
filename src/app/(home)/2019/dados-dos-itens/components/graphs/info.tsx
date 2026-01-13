@@ -6,7 +6,7 @@ import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import { useNineteenData } from "../../../../../../context/nineteen_context";
 import { useHomeData } from "../../../../../../context/home_context";
 
-export default function ICCChart() {
+export default function InfoChart() {
   
   const { chartLogic, deferredArea } = useHomeData();
   const { chartColor, proficienciaAtual, xMin, xMax } = chartLogic;
@@ -16,8 +16,8 @@ export default function ICCChart() {
     FIXED_PALETTE, 
     k, 
     d, 
-    probData,
-    probLabels,
+    infoData,
+    infoLabels,
     selectedItems,  
     lastItemActivate
   } = useNineteenData();
@@ -25,10 +25,13 @@ export default function ICCChart() {
   const transformTheta = (theta: number) => ((theta * k) + d);
 
   // --- PROCESSAMENTO DE DADOS PARA APEXCHARTS ---
-  const { series, hasAbandonedItem } = useMemo(() => {
+  const { series, hasAbandonedItem, ymax } = useMemo(() => {
     let abandonedFound = false;
+    let currentMax = 0; // Inicializa o rastreador do valor máximo
+
     const codes = Object.keys(selectedItems).map(Number);
-    const allItemsInProva = Object.keys(probData || {});
+    const allItemsInProva = Object.keys(infoData || {});
+    
     const chartSeries = codes
       .map((code) => {
         const itemKey = String(code);
@@ -37,25 +40,46 @@ export default function ICCChart() {
           if (code === lastItemActivate) abandonedFound = true;
           return null;
         }
+        
         const status = selectedItems[code]?.status;
-        const rawPoints = probData?.[itemKey] as (number | null)[];
+        const rawPoints = infoData?.[itemKey] as (number | null)[];
         if (!rawPoints) return null;
+
         const colorIndex = allItemsInProva.indexOf(itemKey);
+        
+        const dataPoints = rawPoints.map((yValue, idx) => {
+          // Lógica de inversão se for erro (cuidado: na TRI a info do erro é a mesma do acerto, 
+          // mas mantive sua lógica de 1 - yValue se for requisito de UI)
+          const finalY = yValue || 0
+          
+          // Atualiza o valor máximo global da série
+          if (finalY > currentMax) currentMax = finalY;
+          
+          return {
+            x: transformTheta(infoLabels[idx]),
+            y: finalY
+          };
+        });
+
         return {
           item: code,
-          name: `Item ${code}`, // Nomeclatura para o motor do gráfico
-          data: rawPoints.map((yValue, idx) => ({
-            x: transformTheta(probLabels[idx]),
-            y: parseFloat((status === 'erro' ? 1 - (yValue || 0) : (yValue || 0)).toFixed(3))
-          })),
+          name: `Item ${code}`,
+          data: dataPoints,
           color: colorIndex !== -1 ? FIXED_PALETTE[colorIndex % 45] : "#999",
           strokeDashArray: status === 'erro' ? 4 : 0,
         };
       })
       .filter(Boolean);
 
-    return { series: chartSeries, hasAbandonedItem: abandonedFound};
-  }, [selectedItems, probData, deferredArea, abandonadosCodes, lastItemActivate]);
+    // Adiciona uma margem de segurança (ex: 10%) para a curva não encostar no topo
+    const safetyMax = currentMax === 0 ? 1 : currentMax * 1.1;
+
+    return { 
+      series: chartSeries, 
+      hasAbandonedItem: abandonedFound, 
+      ymax: safetyMax 
+    };
+  }, [selectedItems, infoData, deferredArea, abandonadosCodes, lastItemActivate]);
   
   // const xMin = Math.floor(transformTheta(-6) / 100) * 100;
   // const xMax = Math.ceil(transformTheta(6) / 100) * 100;
@@ -121,22 +145,22 @@ export default function ICCChart() {
       },
       yaxis: {
         min: 0,
-        max: 1,
+        max: ymax,
         tickAmount: 5,
         labels: { 
           style: { colors: axisColor },
           formatter: (val) => val.toFixed(1)
         },
-        title: { text: 'Probabilidade', style: { color: axisColor } }
+        title: { text: 'Informação', style: { color: axisColor } }
       },
       grid: { borderColor: gridColor },
       legend: { show: false },
       // title: {
-      //   text: 'Curva característica do item',
+      //   text: 'Função de informação do item',
       //   style: { color: textColor, fontSize: '16px', fontWeight: 'bold'},
       // },
       // subtitle: {
-      //   text: ['Modelagem da probabilidade de acerto em', 'função da proficiência estimada.'] as any,
+      //   text: 'Pontos da proficiência para os quais o item aprensenta maior capacidade de posicionar a nota na régua no ENEM.',
       //   style: { color: textColor, fontSize: '13px' },
       // },
       annotations: {
@@ -146,7 +170,7 @@ export default function ICCChart() {
             borderColor: chartColor || '#ff0000',
             strokeDashArray: 0,
             label: {
-              text: `Traço de prob. da nota ${proficienciaAtual.toFixed(0)}`,
+              text: `Traço de info. da nota ${proficienciaAtual.toFixed(0)}`,
               style: { color: '#fff', background: chartColor || '#ff0000' },
               borderWidth: 0,
               orientation: 'horizontal',
@@ -156,12 +180,12 @@ export default function ICCChart() {
         ],
       }
     };
-  }, [series, xMin, xMax, hasAbandonedItem, deferredArea, selectedItems, probData, abandonadosCodes, lastItemActivate, FIXED_PALETTE, proficienciaAtual, chartColor, axisColor, gridColor]);
+  }, [series, xMin, xMax, hasAbandonedItem, deferredArea, selectedItems, infoData, abandonadosCodes, lastItemActivate, FIXED_PALETTE, proficienciaAtual, chartColor, axisColor, gridColor]);
   
   return (
     <div style={{minHeight: '350px', minWidth: '0', flex: '1 1 50%'}}>
       <h3 style={{ fontSize: '16px', color: textColor, textAlign: 'left', margin: '0', padding: '10px'}}>
-        Curva característica do item
+        Modelagem da Probabilidade
       </h3>
       <p style={{ 
         fontSize: '13px', 
@@ -171,14 +195,14 @@ export default function ICCChart() {
         paddingLeft: '10px',
         margin: '0px auto' 
       }}>
-        Modelagem da probabilidade de acerto em função da proficiência estimada.
+        Pontos da proficiência para os quais o item apresenta maior capacidade de posicionar a nota na régua no ENEM.
       </p>
       <Chart 
         options={options} 
         series={series as any} 
         type="line" 
         height="100%" 
-        // width="100%" 
+        // width="100%"
       />
     </div>
   );

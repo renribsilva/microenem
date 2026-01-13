@@ -84,9 +84,12 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
   const k = constantes.k[areaIdx];
   const [co_p_selected] = selectedLabel.split('_');
   const [probData, setProbData] = useState<any>(null);
+  const [infoData, setInfoData] = useState<any>(null);
   const [probLabels, setProbLabels] = useState<any>([]);
+  const [infoLabels, setInfoLabels] = useState<any>([]);
 
   const probCache = useRef<{ co_p: string; dataset: any; labels: any } | null>(null);
+  const infoCache = useRef<{ co_p: string; dataset: any; labels: any } | null>(null);
   
   useEffect(() => {
     if (!co_p_selected) return;
@@ -111,7 +114,25 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
       } 
     }
 
+    async function fetchInfoData() {
+      try {
+        const res = await fetch(`/api/2019/info?co_p=${String(co_p_selected)}`);
+        const json = await res.json();        
+        infoCache.current = {
+          co_p: co_p_selected,
+          dataset: json.dataset,
+          labels: json.theta_labels
+        };
+        setInfoData(json.dataset);
+        setInfoLabels(json.theta_labels);
+      } catch (err) {
+        console.error("Erro ao carregar infotrace:", err);
+      } 
+    }
+
     fetchProbData();
+    fetchInfoData();
+
   }, [co_p_selected]);
 
   //-----------------------------------------------------------------------
@@ -130,7 +151,6 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
     const co_p = parts[0];
     const ling = parts[1] || "0";
     const p = ItensData as any;   
-    console.log(p)
     const idx = Object.keys(p.CO_POSICAO).find(i => {
       const matchProva = Number(p.CO_PROVA[i]) === Number(co_p);
       const matchPos = Number(p.CO_POSICAO[i]) === num;
@@ -239,6 +259,8 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
       k,
       probData,
       probLabels,
+      infoData,
+      infoLabels,
       selectedItems,
       lastItemActivate,
       scoreData,

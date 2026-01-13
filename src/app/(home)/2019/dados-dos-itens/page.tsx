@@ -4,12 +4,13 @@ import styles from "./dados-dos-itens.module.css"
 import { TabsNavigation } from "../../../../components/tsx/tab_navigation";
 import Card from "../../../../components/tsx/card";
 import ItensButtons from "../../../../components/tsx/itens_buttons";
-import ProbsTable from "./components/tables/prob";
 import dynamic from "next/dynamic";
 import { useHomeData } from "../../../../context/home_context";
 
 // Imports dinâmicos
 const ICCChart = dynamic(() => import("./components/graphs/icc"), { ssr: false })
+const InfoChart = dynamic(() => import("./components/graphs/info"), { ssr: false })
+const ProbsInfoTable = dynamic(() => import("./components/tables/prob_info"), { ssr: false })
 
 const menuItems = [
   { id: 'LC', label: 'Linguagens' },
@@ -44,13 +45,16 @@ export default function DadosDoExame() {
             <p className={styles.card_subtitle_p}>
               Probabilidades de erro ou acerto, segundo os parâmetros de chute, dificuldade e discriminação; e frequências de acerto e erro observadas em cada item.
             </p>
-            <ProbsTable />
+            <ProbsInfoTable />
           </Card>
         </div>
       </div>
       <div className={styles.main_bottom}>
         <Card>
           <ICCChart />
+        </Card>
+        <Card>
+          <InfoChart />
         </Card>
       </div> 
     </main>

@@ -2,8 +2,6 @@
 
 import { useMemo } from "react";
 import Chart from "react-apexcharts";
-import probtraceData from "../../../json/probtrace_2019.json";
-import styles from "./graphs.module.css";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import { useNineteenData } from "../../../../../../context/nineteen_context";
 import { useHomeData } from "../../../../../../context/home_context";

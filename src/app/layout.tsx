@@ -13,12 +13,12 @@ export const metadata: Metadata = {
   title: 'ENEMmicro',
   description: 'Análise estatística dos microdados do ENEM',
   twitter: {
-    card: 'summary_large_image', 
+    card: 'summary', // Alterado para o formato simples (sem imagem grande)
     title: 'ENEMmicro',
     description: 'Análise estatística dos microdados do ENEM',
     siteId: '1467726470533754880',
     creator: '@renribsilva',
-    images: ['https://seusite.com/og-image.png'], 
+    // Imagem removida conforme solicitado
   },
 }
 

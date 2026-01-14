@@ -10,11 +10,11 @@ const roboto = Ubuntu({
 });
 
 export const metadata: Metadata = {
-  title: 'Microenem',
+  title: 'ENEMmicro',
   description: 'Análise estatística dos microdados do ENEM',
   twitter: {
     card: 'summary_large_image', 
-    title: 'Microenem',
+    title: 'ENEMmicro',
     description: 'Análise estatística dos microdados do ENEM',
     siteId: '1467726470533754880',
     creator: '@renribsilva',

@@ -77,10 +77,53 @@
   white-space: nowrap;
 }
 
+.probtable_cabecalho {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Linha padrão */
+.probtable_tr {
+  background-color: transparent; /* Movemos do inline para cá */
+  transition: background-color 0.2s;
+  font-weight: 300;
+  cursor: pointer;
+}
+
+/* Hover padrão */
+.probtable_tr:hover {
+  background-color: rgba(0, 0, 0, 0.03) !important; 
+}
+
+/* Linha abandonada */
+.row_abandonado {
+  background-color: rgba(255, 75, 75, 0.05) !important;
+}
+
+/* Hover na linha abandonada */
+.row_abandonado:hover {
+  background-color: rgba(255, 75, 75, 0.12) !important;
+}
+
 .table_footer {
   padding: 5px;
   padding-top: 10px;
   font-size: 0.75rem; /* 12px */
   font-weight: 300;
   color: #888;
+}
+
+.card_title {
+  margin-bottom: 10px;
+  margin-top: 0;
+}
+
+.card_subtitle_p {
+  /* background-color: bisque; */
+  margin: 0;
+  font-size: 14px;
+  color: var(--foreground);
+  line-height: 1.2;
+  margin-right: 15px;
+  margin-bottom: 15px;
 }

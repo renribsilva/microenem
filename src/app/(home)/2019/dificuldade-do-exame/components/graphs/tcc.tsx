@@ -1,32 +1,26 @@
 'use client'
 
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useMemo } from 'react';
 import Chart from 'react-apexcharts';
 import { useChartTheme } from '../../../../../../hooks/use_chart_theme';
 // import InputShell from '../../../../../../components/tsx/input_shell';
 import styles from "./graphs.module.css"
 import { useHomeData } from '../../../../../../context/home_context';
+import Dropdown from '../../../../../../components/tsx/dropdown';
 
 export default function TCCChart() {
 
   const { chartLogic } = useHomeData();
-  const { gridColor, axisColor, colorMap, tickColor } = useChartTheme();
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { gridColor, axisColor } = useChartTheme();
 
   const { 
-    chartColor, 
-    availableDatasets, 
-    currentInfo, 
-    setSelectedLabel, 
-    selectedLabel, 
+    chartColor,
     xMin, 
     xMax, 
     bMedio, 
     activeDataset, 
     proficienciaAtual,
     resultadoAtual,
-    getInfoCaderno,
     setPointIndex
   } = chartLogic;
 
@@ -206,15 +200,6 @@ export default function TCCChart() {
     }
   }), [chartColor, gridColor, axisColor, xMin, xMax, bMedio, proficienciaAtual, resultadoAtual, setPointIndex]);
 
-  // Fechar dropdown ao clicar fora
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) setIsOpen(false);
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
   return (
     <div className={styles.tcc_container}>    
       <div className={styles.tcc_cabecalho}>      
@@ -224,41 +209,7 @@ export default function TCCChart() {
             Comportamento esperado (teórico) e observado (empírico) da relação nota/acerto. Destaque para o ponto de inflexão que representa a dificuldade média da prova.
           </p>
         </div>
-
-        <div className={styles.dropdown_container} ref={dropdownRef}>
-          <button 
-            onClick={() => setIsOpen(!isOpen)}
-            className={styles.dropdown_button}
-          >
-            <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              Prova: <span style={{ color: chartColor }}>{currentInfo.fullText}</span>
-            </span>
-            <span style={{ transform: isOpen ? 'rotate(180deg)' : 'none', transition: '0.2s' }}>▼</span>
-          </button> 
-
-          {isOpen && (
-            <div className={styles.dropdown_list} >
-              {availableDatasets?.map((ds: any) => {
-                const info = getInfoCaderno(ds.metadata.codigo, ds.metadata.lingua);
-                const isSelected = selectedLabel === ds.label;
-                return (
-                  <div
-                    key={ds.label}
-                    onClick={() => { setSelectedLabel(ds.label); setIsOpen(false); }}
-                    style={{
-                      padding: '10px 14px', cursor: 'pointer', fontSize: '0.8rem',
-                      backgroundColor: isSelected ? gridColor : 'transparent',
-                      color: isSelected ? (colorMap[info.corNome] || '#475569') : tickColor,
-                      borderLeft: `4px solid ${isSelected ? (colorMap[info.corNome] || '#475569') : 'transparent'}`,
-                    }}
-                  >
-                    {info.fullText}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+        <Dropdown />
       </div>
 
       <div className={styles.tcc_graph_container}>

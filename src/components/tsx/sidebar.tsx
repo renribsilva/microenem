@@ -60,13 +60,12 @@ const navItems: NavItem[] = [
     name: "2019",
     subItems: [
       { name: "Visão geral", path: "/2019/visao-geral" },
-      { name: "Dificuldade do exame", path: "/2019/dados-do-exame" },
-      { name: "Probabilidade e Info", path: "/2019/dados-dos-itens" },
-      { name: "Desempenho por item", path: "/2019/notas-e-acertos" },
+      { name: "Dificuldade do exame", path: "/2019/dificuldade-do-exame" },
+      { name: "Probabilidade e Info", path: "/2019/probabilidade-e-info" },
+      { name: "Resposta ao item", path: "/2019/resposta-ao-item" },
       { name: "Relação notas/acertos", path: "/2019/notas-e-acertos" },
-      { name: "TRI em gráficos", path: "/2019/notas-e-acertos" },
-      { name: "Redação", path: "/2019/notas-e-acertos" },
-      { name: "Ranking", path: "/2019/notas-e-acertos" }
+      { name: "Redação", path: "/2019/redacao" },
+      { name: "TRI", path: "/2019/tri" },
     ],
   }
 ];
@@ -101,8 +100,6 @@ const AppSidebar: React.FC = () => {
       toggleMobileSidebar();
     }
   };
-  
-  // console.log(isActive(pathname))
 
   const renderMenuItems = (
     navItems: NavItem[]
@@ -223,14 +220,17 @@ const AppSidebar: React.FC = () => {
 
   return (
     <aside className={sidebarClass}>
-      <h2 className={styles.navbar_title}>EDIÇÕES</h2>
       <div className={styles.appsidebar_topper}>
+        <h2 className={styles.navbar_title}>EDIÇÕES</h2>
         <div className={styles.appsidebar_navbar}>
           {renderMenuItems(navItems)}
         </div>
-      </div>
-      <div className={styles.appsidebar_footer}>
-        <Footer />
+        <div className={styles.appsidebar_hr_box}>
+          <hr className={styles.appsidebar_hr} />
+        </div>
+        <div className={styles.appsidebar_footer}>
+          <Footer />
+        </div>
       </div>
     </aside>
   )

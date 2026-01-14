@@ -24,7 +24,6 @@
   /* background-color: aquamarine; */
   display: flex;
   gap: 10px;
-  min-height: 300px;
 }
 
 .main_top1 {
@@ -40,8 +39,4 @@
     flex-direction: column;
     /* min-height: 350px; */
   }
-}
-
-.card_top {
-  min-height: 300px;
 }

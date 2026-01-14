@@ -1,0 +1,100 @@
+.probtable_container {
+  /* background-color: aquamarine; */
+}
+
+.probtable_fallback{
+  /* background-color: aquamarine; */
+  padding: 20px;
+  /* text-align: center; */
+  color: #666 
+}
+
+.probtable_proef {
+  /* background-color: aquamarine; */
+  font-size: 20px;
+  margin-bottom: 15px;
+  font-weight: 300;
+  padding: 7
+}
+
+.probtable_table {
+  /* background-color: aquamarine; */
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  /* Isso aqui é o que garante a largura fixa */
+  table-layout: fixed; 
+}
+
+
+.probtable_thead {
+  background-color: var(--tab-background);
+  /* text-transform: uppercase; */
+  color:var(--tab-text);
+}
+
+.probtable_tr {
+  /* background-color: aquamarine; */
+  transition: background-color 0.2s;
+  font-weight: 300;
+}
+
+.probtable_th {
+  font-weight: 400;
+  position: relative;
+}
+
+/* Estilo apenas para a linha superior (os Grupos) */
+.probtable_group_th {
+  padding-bottom: 8px; 
+}
+
+.probtable_group_th::after {
+  content: "";
+  position: absolute;
+  bottom: 2px; 
+  left: 8px;   
+  right: 8px;  
+  height: 1px;
+  background-color: var(--tab-text);
+  opacity: 0.3;
+}
+
+.probtable_th_item {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Garante que tudo no header nasça centralizado por padrão */
+  padding: 10px 8px;
+  gap: 4px;
+}
+
+.probtable_td {
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--grid);
+  text-align: center; /* Centraliza o conteúdo das linhas */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.table_footer {
+  padding: 5px;
+  padding-top: 10px;
+  font-size: 0.75rem; /* 12px */
+  font-weight: 300;
+  color: #888;
+}
+
+.card_title {
+  /* margin-bottom: 10px; */
+}
+
+.card_subtitle_p {
+  /* background-color: bisque; */
+  margin: 0;
+  font-size: 12px;
+  color: var(--foreground);
+  line-height: 1.2;
+  margin-right: 15px;
+  margin-bottom: 15px;
+}

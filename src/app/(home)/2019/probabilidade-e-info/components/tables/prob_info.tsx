@@ -18,20 +18,26 @@ import { useNineteenData } from "../../../../../../context/nineteen_context";
 type TableRow = {
   id: number;
   posicao: number;
+  isAbandonado: boolean;
   estado: "acerto" | "erro";
   probabilidade: number | null;
-  respondentes: number;
-  freq_acerto: number;
-  freq_erro: number;
-  freq_branco: number;
-  freq_dupla_marcacao: number;
+  informacao: number | null;
 };
 
 export default function ProbsInfoTable() {
 
   const { chartLogic } = useHomeData();
   const { proficienciaAtual } = chartLogic;
-  const { k, d, probData, probLabels, selectedItems, activeCodes, scoreData } = useNineteenData();
+  const { 
+    k, 
+    d, 
+    probData, 
+    probLabels,
+    infoData,
+    selectedItems, 
+    activeCodes, 
+    abandonadosCodes
+  } = useNineteenData();
   
   const [sorting, setSorting] = useState<SortingState>([{ id: "posicao", desc: false }]);
 
@@ -63,10 +69,13 @@ export default function ProbsInfoTable() {
           cell: (info) => <span style={{ fontSize: "0.8rem", color: "#888" }}>{info.getValue()?.toUpperCase()}</span>,
         }),
         columnHelper.accessor("probabilidade", {
-          header: "Prob*",
+          header: "Prob¹",
           cell: (info) => {
             const val = info.getValue();
-            const color = info.row.original.estado === "erro" ? "#ff4d4f" : "#52c41a";
+            const { estado, isAbandonado } = info.row.original;
+            const color = isAbandonado 
+              ? "#888" 
+              : (estado === "erro" ? "#ff4d4f" : "#52c41a");
             return (
               <span style={{ fontWeight: "350", color }}>
                 {val !== null ? `${(val * 100).toFixed(1)}%` : "N/A"}
@@ -78,28 +87,19 @@ export default function ProbsInfoTable() {
     }),
     // GRUPO 3: APENAS RÓTULO
     columnHelper.group({
-      id: 'score_grupo',
-      header: 'Erros e acertos',
+      id: 'informacao_grupo',
+      header: 'Informação',
       columns: [
-        columnHelper.accessor("respondentes", {
-          header: "n",
-          cell: (info) => <span style={{ fontSize: "0.8rem", color: "#888" }}>{info.getValue()}</span>,
-        }),
-        columnHelper.accessor("freq_acerto", {
-          header: "Acertaram",
-          cell: (info) => <span style={{ fontSize: "0.8rem", color: "#888" }}>{info.getValue()}%</span>,
-        }),
-        columnHelper.accessor("freq_erro", {
-          header: "Erraram",
-          cell: (info) => <span style={{ fontSize: "0.8rem", color: "#888" }}>{info.getValue()}%</span>,
-        }),
-        columnHelper.accessor("freq_branco", {
-          header: "Em branco",
-          cell: (info) => <span style={{ fontSize: "0.8rem", color: "#888" }}>{info.getValue()}%</span>,
-        }),
-        columnHelper.accessor("freq_dupla_marcacao", {
-          header: "Dupla marcação",
-          cell: (info) => <span style={{ fontSize: "0.8rem", color: "#888" }}>{info.getValue()}%</span>,
+        columnHelper.accessor("informacao", {
+          header: "Valor²",
+          cell: (info) => {
+            const val = info.getValue();
+            return (
+              <span style={{ fontWeight: "350", color: "#888"  }}>
+                {val !== null ? val : "N/A"}
+              </span>
+            );
+          },
         }),
       ]
     })
@@ -116,29 +116,16 @@ export default function ProbsInfoTable() {
       const itemKey = String(code);
       const status = selectedItems[code]?.status;
       const probBruta = probData?.[itemKey] ? probData[itemKey][closestIndex] : null;
-      // Acessa os dados do item com segurança
-      const itemScores = scoreData[code] || {};
-      
-      // Garante que se a chave (0, 1, 7, 8, 9) não existir, o valor seja 0
-      const acertos   = Number(itemScores["1"] || 0);
-      const erros     = Number(itemScores["0"] || 0);
-      const marcDupla = Number(itemScores["7"] || 0);
-      const brancos   = Number(itemScores["8"] || 0);
-
-      const respondentesTotal = acertos + erros + marcDupla + brancos
-
-      const safeDiv = (valor) => respondentesTotal > 0 ? ((valor / respondentesTotal) * 100).toFixed(1) : "0.0";
+      const infoBruta = infoData?.[itemKey] ? infoData[itemKey][closestIndex] : null;
+      const isAbandonado = abandonadosCodes?.has(code);
       
       return {
         id: code,
         posicao: selectedItems[code]?.posicao,
         estado: status,
+        isAbandonado: isAbandonado,
         probabilidade: probBruta !== null ? (status === "erro" ? 1 - probBruta : probBruta) : null,
-        respondentes: respondentesTotal,
-        freq_acerto: safeDiv(acertos),
-        freq_erro: safeDiv(erros),
-        freq_branco: safeDiv(brancos),
-        freq_dupla_marcacao: safeDiv(marcDupla)
+        informacao: infoBruta !== null ? infoBruta.toFixed(2) : null,
       };
     });
   }, [activeCodes, chartLogic, selectedItems, proficienciaAtual, k, d, probData, probLabels]);
@@ -156,6 +143,10 @@ export default function ProbsInfoTable() {
 
   return (
     <section className={styles.probtable_container}>
+      <h3 className={styles.card_title}>Tabela de probabilidade e informação do item</h3>
+      <p className={styles.card_subtitle_p}>
+        Probabilidade¹ e informação do item², segundo os parâmetros de chute, dificuldade e discriminação.
+      </p>
       <InputShell/>
       <table className={styles.probtable_table}>
         <thead className={styles.probtable_thead}>
@@ -207,8 +198,8 @@ export default function ProbsInfoTable() {
         </tbody>
       </table>
       <div className={styles.table_footer}>
-        * Probabilidades aproximadas relacionadas à proficiência destacada. Digite um novo valor ou arraste
-        o botão para obter um novo traço de probabilidades.
+        ¹ <strong>Probabilidade:</strong> Chance estimada de acerto. No ENEM, errar itens para os quais se tem alta probabilidade de acerto tende a reduzir a nota devido à inconsistência pedagógica. <br/>
+        ² <strong>Informação:</strong> O "fiel da balança": indica itens que podem definir com mais força a posição da proficiência destacada na régua do ENEM.
       </div>
     </section>
   );

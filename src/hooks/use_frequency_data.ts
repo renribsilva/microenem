@@ -14,16 +14,16 @@ export function useFrequency(area: string) {
         // O Next.js separa cada um desses arquivos em um "chunk" diferente
         switch (area) {
           case 'CH':
-            data = await import("../app/(home)/2019/dados-do-exame/json/CH/frequency_acertos.json");
+            data = await import("../app/(home)/2019/dificuldade-do-exame/json/CH/frequency_acertos.json");
             break;
           case 'CN':
-            data = await import("../app/(home)/2019/dados-do-exame/json/CN/frequency_acertos.json");
+            data = await import("../app/(home)/2019/dificuldade-do-exame/json/CN/frequency_acertos.json");
             break;
           case 'MT':
-            data = await import("../app/(home)/2019/dados-do-exame/json/MT/frequency_acertos.json");
+            data = await import("../app/(home)/2019/dificuldade-do-exame/json/MT/frequency_acertos.json");
             break;
           default:
-            data = await import("../app/(home)/2019/dados-do-exame/json/LC/frequency_acertos.json");
+            data = await import("../app/(home)/2019/dificuldade-do-exame/json/LC/frequency_acertos.json");
         }
 
         if (isMounted) {

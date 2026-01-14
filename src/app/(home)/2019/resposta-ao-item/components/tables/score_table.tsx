@@ -1,0 +1,258 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import {
+  useReactTable,
+  getCoreRowModel,
+  getSortedRowModel,
+  SortingState,
+  flexRender,
+  createColumnHelper,
+} from "@tanstack/react-table";
+
+import styles from "./tables.module.css";
+import { useHomeData } from "../../../../../../context/home_context";
+import { useNineteenData } from "../../../../../../context/nineteen_context";
+import Dropdown from "../../../../../../components/tsx/dropdown";
+
+type TableRow = {
+  id: number;
+  posicao: number;
+  respondentes: number;
+  freq_acerto: string;
+  freq_erro: string;
+  freq_branco: string;
+  freq_dupla_marcacao: string;
+  abandonado: boolean;
+};
+
+export default function ScoreTable() {
+  const { chartLogic, deferredArea } = useHomeData();
+  const { selectedLabel } = chartLogic;
+  const { 
+    scoreData, 
+    getCodeByLabel, 
+    abandonadosCodes, 
+    lastItemActivate,
+    setLastItemActivate,
+    setLastItemActivateNum
+  } = useNineteenData();
+  
+  const [sorting, setSorting] = useState<SortingState>([{ id: "posicao", desc: false }]);
+  const columnHelper = createColumnHelper<TableRow>();
+
+  const columns = useMemo(() => [
+    columnHelper.group({
+      id: 'identificacao_grupo',
+      header: 'Identificação',
+      columns: [
+        columnHelper.accessor("posicao", {
+          header: "Item",
+          cell: (info) => <strong>{info.getValue()}</strong>,
+        }),
+        columnHelper.accessor("id", {
+          header: "Código",
+          cell: (info) => <span style={{ fontSize: "0.85rem", color: "#888" }}>{info.getValue() || "—"}</span>,
+        }),
+        columnHelper.accessor("abandonado", {
+          header: "Aband?",
+          cell: (info) => {
+            const val = info.getValue()
+            return (
+              <span style={{ fontSize: "0.85rem", color: val ? "#ff4b4b" : "#888" }}>
+                {val ? "Sim" : "Não"}
+              </span>
+            )
+          },
+        }),
+      ]
+    }),
+    columnHelper.group({
+      id: 'score_grupo',
+      header: 'Frequência de Respostas',
+      columns: [
+        columnHelper.accessor("respondentes", {
+          header: "n",
+          cell: (info) => <span style={{ fontSize: "0.8rem", color: "#888" }}>{info.getValue().toLocaleString()}</span>,
+        }),
+        columnHelper.accessor("freq_acerto", {
+          header: "Acerto",
+          cell: (info) => (
+            <span style={{ fontSize: "0.85rem", color: "#52c41a", fontWeight: "500" }}>
+              {info.getValue()}%
+            </span>
+          ),
+        }),
+        columnHelper.accessor("freq_erro", { 
+          header: "Erro", 
+          cell: (info) => (
+            <span style={{ fontSize: "0.85rem", color: "#ff4b4b", fontWeight: "500" }}>
+              {info.getValue()}%
+            </span>
+          )
+        }),
+        columnHelper.accessor("freq_branco", { header: "Branco", cell: (info) => <span style={{ color: "#888" }}>{info.getValue()}%</span> }),
+        columnHelper.accessor("freq_dupla_marcacao", { header: "Dupla", cell: (info) => <span style={{ color: "#888" }}>{info.getValue()}%</span> }),
+      ]
+    })
+  ], [columnHelper]);
+
+  const data = useMemo(() => {
+
+    const ranges: Record<string, { start: number; end: number }> = {
+      "LC": { start: 1, end: 45 },
+      "CH": { start: 46, end: 90 },
+      "CN": { start: 91, end: 135 },
+      "MT": { start: 136, end: 180 },
+    };
+
+    const { start, end } = ranges[deferredArea] || { start: 1, end: 45 };
+    
+    // Gera o range e mapeia os dados
+    return Array.from({ length: end - start + 1 }, (_, i) => {
+      const num = start + i;
+      const code = getCodeByLabel(num, selectedLabel);
+      const itemScores = scoreData?.[code].counts || {};
+      
+      const v1 = Number(itemScores["1"] || 0);
+      const v0 = Number(itemScores["0"] || 0);
+      const v7 = Number(itemScores["7"] || 0);
+      const v8 = Number(itemScores["8"] || 0);
+
+      const total = v1 + v0 + v7 + v8;
+      const safeDiv = (v: number) => total > 0 ? ((v / total) * 100).toFixed(1) : "0.0";
+      
+      return {
+        id: code,
+        posicao: num,
+        abandonado: abandonadosCodes?.has(code) || false,
+        respondentes: total,
+        freq_acerto: safeDiv(v1),
+        freq_erro: safeDiv(v0),
+        freq_branco: safeDiv(v8),
+        freq_dupla_marcacao: safeDiv(v7)
+      };
+    });
+  }, [scoreData, deferredArea, selectedLabel, getCodeByLabel, abandonadosCodes]);
+
+  useEffect(() => {
+    if (data.length > 0) {
+      setLastItemActivate(data[0].id);
+      setLastItemActivateNum(data[0].posicao);
+    }
+  }, [deferredArea, selectedLabel]);
+
+  const table = useReactTable({
+    data,
+    columns,
+    state: { sorting },
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+  });
+
+  // --- LÓGICA PARA INICIAR COM O PRIMEIRO ATIVO ---
+  useEffect(() => {
+    if (data.length > 0 && !lastItemActivate) {
+      setLastItemActivate(data[0].id);
+      setLastItemActivateNum(1);
+    }
+  }, [data, lastItemActivate, setLastItemActivate, setLastItemActivateNum]);
+
+  // if (activeCodes.length === 0) return <section className={styles.probtable_fallback}>Selecione itens na tabela para vizualizar suas probabilidades e desempenho.</section>;
+  
+  return (
+    <section className={styles.probtable_container}>
+      <div className={styles.probtable_cabecalho}>
+        <div>
+          <h3 className={styles.card_title}>Tabela de frequência de respostas</h3>
+          <p className={styles.card_subtitle_p}>
+            subtitle
+          </p>
+        </div>
+        <Dropdown />
+      </div>
+      <table className={styles.probtable_table}>
+        <thead className={styles.probtable_thead}>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr 
+              key={headerGroup.id} 
+              className={styles.probtable_tr}
+            >
+              {headerGroup.headers.map((header) => {
+                // É um grupo se tiver colunas filhas
+                const isGroup = header.column.columns.length > 0;
+                const canSort = header.column.getCanSort() && !isGroup;
+
+                return (
+                  <th
+                    key={header.id}
+                    colSpan={header.colSpan}
+                    /* Aplica a classe da linha apenas se for grupo */
+                    className={`${styles.probtable_th} ${isGroup ? styles.probtable_group_th : ""}`}
+                    onClick={canSort ? header.column.getToggleSortingHandler() : undefined}
+                  >
+                    <div 
+                      className={styles.probtable_th_item} 
+                      style={{ 
+                        cursor: canSort ? 'pointer' : 'default',
+                      }}
+                    >
+                      {!header.isPlaceholder && flexRender(header.column.columnDef.header, header.getContext())}
+
+                      {canSort && (
+                        <span style={{ fontSize: '10px' }}>
+                          {{ asc: " 🔼", desc: " 🔽" }[header.column.getIsSorted() as string] ?? null}
+                        </span>
+                      )}
+                    </div>
+                  </th>
+                );
+              })}
+            </tr>
+          ))}
+        </thead>
+        <tbody>
+          {table.getRowModel().rows.map((row, index) => {
+            const isAbandonado = row.original.abandonado;
+            const itemId = row.original.id; 
+            
+            // VERIFICA SE É O ITEM ATIVO
+            const isActive = lastItemActivate === itemId;
+
+            return (
+              <tr 
+                key={row.id} 
+                className={`
+                  ${styles.probtable_tr} 
+                  ${isAbandonado ? styles.row_abandonado : ""} 
+                  ${isActive ? styles.row_active : ""}
+                `}
+                onClick={() => {
+                  setLastItemActivate(itemId);
+                  setLastItemActivateNum(row.original.posicao); 
+                }}
+                style={{ 
+                  backgroundColor: isActive 
+                    ? "rgba(0, 227, 150, 0.1)"
+                    : isAbandonado ? "rgba(255, 75, 75, 0.05)" : "transparent",
+                  borderLeft: isActive
+                    ? "4px solid #00E396" 
+                    : isAbandonado ? "4px solid #ff4b4b" : "4px solid transparent",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease" 
+                }}
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id} className={styles.probtable_td}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </section>
+  );
+}

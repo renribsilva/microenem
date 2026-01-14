@@ -1,11 +1,12 @@
 "use client";
 
-import styles from "./notas-e-acertos.module.css"
+import styles from "./resposta-ao-item.module.css"
 import { TabsNavigation } from "../../../../components/tsx/tab_navigation";
 import Card from "../../../../components/tsx/card";
+import ScoreTable from "./components/tables/score_table";
 import AcertosChart from "./components/graphs/acertos";
+import ViolinBinsChart from "./components/graphs/violin";
 import { useHomeData } from "../../../../context/home_context";
-import AcertosTable from "./components/tables/acertos_table";
 
 const menuItems = [
   { id: 'LC', label: 'Linguagens' },
@@ -28,13 +29,20 @@ export default function QuestoesPage() {
         />
       </nav>
       <div className={styles.main_top}>
-        <Card className={styles.card_top}>
-          <AcertosChart />
-        </Card>
+        <div className={styles.main_top1}>
+          <Card>
+            <AcertosChart />
+          </Card>
+        </div>
+        <div className={styles.main_top2}>
+          <Card>
+            <ViolinBinsChart />
+          </Card>
+        </div>
       </div>
       <div className={styles.main_bottom}>
         <Card>
-          <AcertosTable />
+          <ScoreTable />
         </Card>
       </div>    
     </main>

@@ -37,7 +37,7 @@ const Skeleton = () => (
 export default function DadosDoExame() {
   
   const { 
-    activeArea,
+    deferredArea,
     handleTabChange, 
     isUpdating 
   } = useHomeData();
@@ -50,7 +50,7 @@ export default function DadosDoExame() {
       <nav className={styles.nav}>
         <TabsNavigation 
           items={menuItems} 
-          activeId={activeArea} 
+          activeId={deferredArea} 
           onTabChange={handleTabChange} 
         />
       </nav>
@@ -58,7 +58,7 @@ export default function DadosDoExame() {
         <div className={styles.main_left}>
           <Card className={styles.card_describe}>
             <h3 className={styles.card_describe_title}>
-              Descrição estatística de {activeArea}
+              Descrição estatística de {deferredArea}
             </h3>
             <DescribeTable/>
           </Card>

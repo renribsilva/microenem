@@ -15,16 +15,16 @@ export function useDescribe(area: string) {
         // O import dinâmico faz o Next.js separar esses JSONs em arquivos diferentes
         switch (area) {
           case 'CH':
-            data = await import("../app/(home)/2019/dados-do-exame/json/CH/describe.json");
+            data = await import("../app/(home)/2019/dificuldade-do-exame/json/CH/describe.json");
             break;
           case 'CN':
-            data = await import("../app/(home)/2019/dados-do-exame/json/CN/describe.json");
+            data = await import("../app/(home)/2019/dificuldade-do-exame/json/CN/describe.json");
             break;
           case 'MT':
-            data = await import("../app/(home)/2019/dados-do-exame/json/MT/describe.json");
+            data = await import("../app/(home)/2019/dificuldade-do-exame/json/MT/describe.json");
             break;
           default:
-            data = await import("../app/(home)/2019/dados-do-exame/json/LC/describe.json");
+            data = await import("../app/(home)/2019/dificuldade-do-exame/json/LC/describe.json");
         }
 
         if (isMounted) {

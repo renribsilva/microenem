@@ -86,7 +86,6 @@ export default function COR_RACA() {
     tooltip: {
       theme: 'dark',
       custom: function({ seriesIndex, dataPointIndex, w }: any) {
-        console.log(w.config.series)
         const data = w.config.series[seriesIndex].data[dataPointIndex];
         const label = data.x;
         const value = data.y;

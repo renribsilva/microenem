@@ -41,10 +41,6 @@ export default function DadosDoExame() {
         </div>
         <div className={styles.main_top_right}>
           <Card >
-            <h3 className={styles.card_title}>Tabela de probabilidade e informação do item</h3>
-            <p className={styles.card_subtitle_p}>
-              Probabilidade¹ e informação do item², segundo os parâmetros de chute, dificuldade e discriminação.
-            </p>
             <ProbsInfoTable />
           </Card>
         </div>

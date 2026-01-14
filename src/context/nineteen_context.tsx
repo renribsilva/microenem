@@ -5,13 +5,13 @@ import { useHomeData } from "./home_context";
 import { useDescribe } from "../hooks/use_describe_data"; 
 import ItensData from "../app/(home)/2019/json/itens_2019.json";
 import constantes from "../app/(home)/json/constantes.json";
-import scoreData from "../app/(home)/2019/dados-dos-itens/json/score_table.json"
+import scoreData from "../app/(home)/2019/resposta-ao-item/json/score_table.json"
 
 const NineteenContext = createContext<any>(null);
 
 export function NineteenProvider({ children }: { children: ReactNode }) {
 
-  const { deferredArea, selectedRowId, chartLogic, setSelectedLabel} = useHomeData();
+  const { deferredArea, selectedRowId, chartLogic } = useHomeData();
   const { describeData } = useDescribe(deferredArea);
   const { selectedLabel } = chartLogic
 
@@ -59,9 +59,9 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
     return tableData.find(row => row.id === selectedRowId) || null;
   }, [tableData, selectedRowId]);
 
-  //--------------------------------------------------------------------
-  //--------------------------ERROS E ACERTOS---------------------------
-  //--------------------------------------------------------------------
+  //------------------------------------------------------------------------
+  //--------------------------PROBABILIDADE E INFO--------------------------
+  //------------------------------------------------------------------------
 
   const abandonadosCodes = useMemo(() => {
     const codes = new Set<number>();
@@ -135,12 +135,9 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
 
   }, [co_p_selected]);
 
-  //-----------------------------------------------------------------------
-  //--------------------------ITENS SELECIONADOS---------------------------
-  //-----------------------------------------------------------------------
-
   const [selectedItems, setSelectedItems] = useState<Record<number, any>>({});
   const [lastItemActivate, setLastItemActivate] = useState<number>(0);
+  const [lastItemActivateNum, setLastItemActivateNum] = useState<number>(0);
   const prevLabelRef = useRef(selectedLabel);
   const previousLabel = prevLabelRef.current;
 
@@ -248,6 +245,45 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
     );
   }, [selectedItems, probData, abandonadosCodes]);
 
+  //---------------------------------------------------------------------
+  //--------------------------RESPOSTA AO ITEM---------------------------
+  //---------------------------------------------------------------------
+
+  //--------------------------------------------------------------------
+  //--------------------------NOTAS E ACERTOS---------------------------
+  //--------------------------------------------------------------------
+
+  const [acertosNum, setAcertosNum] = useState<number | null>(null);
+  const [acertosData, setAcertosData] = useState<any>(null); 
+  const acertosCache = useRef<{ area: string; dataset: any } | null>(null);
+
+  useEffect(() => {
+    if (acertosCache.current?.area === deferredArea) {
+      setAcertosData(acertosCache.current.dataset);
+      return;
+    }
+
+    async function fetchAcertosData() {
+      try {
+        const targetArea = deferredArea || 'LC';
+        const res = await fetch(`/api/2019/acertos?area=${String(targetArea)}`);
+        const json = await res.json();   
+        
+        if (json.dataset) {
+          acertosCache.current = {
+            area: String(targetArea),
+            dataset: json.dataset,
+          };
+          setAcertosData(json.dataset);
+        }
+      } catch (err) {
+        console.error("Erro ao carregar item_score:", err);
+      } 
+    }
+
+    fetchAcertosData();
+  }, [deferredArea]);
+  
   return (
     <NineteenContext.Provider value={{ 
       describeRowData, 
@@ -263,10 +299,16 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
       infoLabels,
       selectedItems,
       lastItemActivate,
+      setLastItemActivate,
+      lastItemActivateNum,
+      setLastItemActivateNum,
       scoreData,
       handleToggle,
       getCodeByLabel,
       activeCodes,
+      acertosData,
+      acertosNum,
+      setAcertosNum
     }}>
       {children}
     </NineteenContext.Provider>

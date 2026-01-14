@@ -185,7 +185,7 @@ export default function InfoChart() {
   return (
     <div style={{minHeight: '350px', minWidth: '0', flex: '1 1 50%'}}>
       <h3 style={{ fontSize: '16px', color: textColor, textAlign: 'left', margin: '0', padding: '10px'}}>
-        Modelagem da Probabilidade
+        Curva de informação do item
       </h3>
       <p style={{ 
         fontSize: '13px', 

@@ -60,17 +60,3 @@
     flex-direction: column;
   }
 }
-
-.card_title {
-  /* margin-bottom: 10px; */
-}
-
-.card_subtitle_p {
-  /* background-color: bisque; */
-  margin: 0;
-  font-size: 12px;
-  color: var(--foreground);
-  line-height: 1.2;
-  margin-right: 15px;
-  margin-bottom: 10px;
-}

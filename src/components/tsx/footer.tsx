@@ -6,7 +6,7 @@ export default function Footer() {
   return (
     <footer className={styles.footer}>
       <div>GPLv3 © {currentYear}</div>
-      <div><i>No bullshit, just data.</i></div>  
+      <div>No bullshit, just data.</div>  
     </footer>
   );
 }

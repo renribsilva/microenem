@@ -149,7 +149,7 @@ export default function ProbsInfoTable() {
     <section className={styles.probtable_container}>
       <h3 className={styles.card_title}>Tabela de probabilidade e informação do item</h3>
       <p className={styles.card_subtitle_p}>
-        Probabilidade¹ e informação² estimadas do item por proficiência, segundo os parâmetros de chute, dificuldade e discriminação.
+        {`Probabilidade¹ e informação² estimadas do item para a proficiência ${proficienciaAtual}, segundo os parâmetros de chute, dificuldade e discriminação.`}
       </p>
       <InputShell/>
       <table className={styles.probtable_table}>
@@ -203,7 +203,7 @@ export default function ProbsInfoTable() {
       </table>
       <div className={styles.table_footer}>
         ¹ <strong>Probabilidade:</strong> Chance estimada de acerto. No ENEM, errar itens para os quais se tem alta probabilidade de acerto tende a reduzir a nota devido à inconsistência pedagógica. <br/>
-        ² <strong>Informação:</strong> O "fiel da balança": indica itens que podem definir com mais força a posição da proficiência destacada na régua do ENEM.
+        ² <strong>Informação:</strong> O "fiel da balança": indica itens que podem definir com mais força a posição da proficiência na régua do ENEM.
       </div>
     </section>
   );

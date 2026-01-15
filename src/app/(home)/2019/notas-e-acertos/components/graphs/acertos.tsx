@@ -20,7 +20,6 @@ export default function DensityNotasChart() {
   const chartData = useMemo(() => {
     if (!acertosData || acertosNum === null) return null;
     const current = acertosData[String(acertosNum)];
-    console.log(current)
     if (!current?.density) return null;
 
     // Normaliza os dados: se for número, transforma em array de um elemento

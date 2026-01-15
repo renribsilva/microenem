@@ -20,18 +20,26 @@ export default function DensityNotasChart() {
   const chartData = useMemo(() => {
     if (!acertosData || acertosNum === null) return null;
     const current = acertosData[String(acertosNum)];
+    console.log(current)
     if (!current?.density) return null;
 
-    return {
-      densityPoints: current.density.x.map((xVal: number, i: number) => ({ 
-        x: xVal, 
-        y: current.density.y[i] 
-      })),
-      minX: current.density.x[0],
-      maxX: current.density.x[current.density.x.length - 1],
-      mean: current.mean
-    };
-  }, [acertosData, acertosNum]);
+    // Normaliza os dados: se for número, transforma em array de um elemento
+  const xRaw = current.density.x;
+  const yRaw = current.density.y; 
+  
+  const xArray = Array.isArray(xRaw) ? xRaw : [xRaw];
+  const yArray = Array.isArray(yRaw) ? yRaw : [yRaw];
+
+  return {
+    densityPoints: xArray.map((xVal: number, i: number) => ({ 
+      x: xVal, 
+      y: yArray[i] 
+    })),
+    minX: xArray[0],
+    maxX: xArray[xArray.length - 1],
+    mean: current.mean
+  };
+}, [acertosData, acertosNum]);
 
   const series = useMemo(() => [{
     name: 'Densidade',
@@ -49,7 +57,7 @@ export default function DensityNotasChart() {
         animations: { enabled: true, speed: 400 },
         zoom: {
           enabled: false
-        }
+        }   
       },
       // Paleta: Azul Turquesa / Ciano
       colors: ['#00B5AD'], 
@@ -66,7 +74,7 @@ export default function DensityNotasChart() {
         tickAmount: isMobile ? 5 : 10,
         min: chartData.minX,
         max: chartData.maxX,
-        labels: { style: { colors: axisColor }, formatter: (v) => Number(v).toFixed(0)},
+        labels: { style: { colors: axisColor }, formatter: (v) => Number(v).toFixed(1)},
         title: { text: "Notas na escala do ENEM", style: { color: axisColor } }
       },
       yaxis: {

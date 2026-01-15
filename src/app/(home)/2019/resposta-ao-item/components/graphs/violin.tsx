@@ -4,12 +4,15 @@ import { useEffect, useMemo, useState } from 'react';
 import Chart from 'react-apexcharts';
 import { useNineteenData } from '../../../../../../context/nineteen_context';
 import { useChartTheme } from '../../../../../../hooks/use_chart_theme';
+import { useHomeData } from '../../../../../../context/home_context';
 
 export default function ViolinBinsChart() {
 
   const { scoreData, lastItemActivate, lastItemActivateNum } = useNineteenData();
   const { textColor, axisColor, gridColor } = useChartTheme();
+  const { chartLogic } = useHomeData();
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 800 : false);
+  const { currentInfo } = chartLogic
     
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 800);
@@ -118,10 +121,13 @@ export default function ViolinBinsChart() {
       style: { color: textColor, fontSize: '16px', fontWeight: 'bold'},
     },
     subtitle: {
-      text: [`Frequência absoluta de acertos e erros por faixa`, `de proficiência (cod: ${lastItemActivate}).`] as any,
+      text: [
+        `Frequência absoluta de acertos e erros por faixa`, 
+        `de proficiência (cod: ${lastItemActivate}; p: ${currentInfo?.corNome}).`
+      ] as any,
       style: { color: textColor, fontSize: '13px' },
     },
-  }), [binsData, maxAbsValue, textColor, axisColor, lastItemActivateNum, gridColor]);
+  }), [binsData, currentInfo, maxAbsValue, textColor, axisColor, lastItemActivateNum, gridColor]);
 
   return (
     <div style={{minHeight: '350px'}}>

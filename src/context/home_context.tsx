@@ -69,7 +69,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   const pointIndex = userPointIndex !== null ? userPointIndex : initialIndex;
 
   const currentInfo = useMemo(() => {
-    if (!activeDataset?.metadata) return { fullText: "Carregando...", corNome: "" };
+    if (!activeDataset?.metadata) return { fullText: "Carregando...", corNome: "..." };
     const { codigo, lingua } = activeDataset.metadata;
     const info = dicMap.get(codigo);
     if (!info) return { fullText: `Caderno ${codigo}`, corNome: "" };    

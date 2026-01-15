@@ -48,7 +48,8 @@ export default function AcertosChart() {
   const { 
     chartColor,
     xMin, 
-    xMax,   
+    xMax,
+    currentInfo
   } = chartLogic;
   const transformTheta = (theta: number) => ((theta * k) + d);
 
@@ -162,14 +163,17 @@ export default function AcertosChart() {
       style: { color: textColor, fontSize: '16px', fontWeight: 'bold'},
     },
     subtitle: {
-      text: [`Frequência relativa de acertos observados nos`, `microdados do ENEM (cod: ${lastItemActivate}).`] as any,
+      text: [
+        `Frequência relativa de acertos observados nos`, 
+        `microdados do ENEM (cod: ${lastItemActivate}; p: ${currentInfo?.corNome}).`
+      ] as any,
       style: { color: textColor, fontSize: '13px' },
     },
     legend: { 
       position: 'bottom',
       labels: { colors: textColor},
     },
-  }), [chartColor, gridColor, axisColor, xMin, xMax, lastItemActivate, lastItemActivateNum]);
+  }), [chartColor, currentInfo, gridColor, axisColor, xMin, xMax, lastItemActivate, lastItemActivateNum]);
 
   return (
     <div style={{minHeight: '350px'}}>

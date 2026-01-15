@@ -149,7 +149,7 @@ export default function ProbsInfoTable() {
     <section className={styles.probtable_container}>
       <h3 className={styles.card_title}>Tabela de probabilidade e informação do item</h3>
       <p className={styles.card_subtitle_p}>
-        Probabilidade¹ e informação² do item, segundo os parâmetros de chute, dificuldade e discriminação.
+        Probabilidade¹ e informação² estimadas do item por proficiência, segundo os parâmetros de chute, dificuldade e discriminação.
       </p>
       <InputShell/>
       <table className={styles.probtable_table}>

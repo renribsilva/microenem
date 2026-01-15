@@ -103,8 +103,8 @@ export default function AcertosChart() {
       }
     },
     stroke: {
-      curve: 'straight', // Mude de smooth para straight
-      width: [0, 1],     // 0 para o scatter (invisibiliza linhas órfãs) e 2 para a CCI
+      curve: 'straight', 
+      width: [0, 1],     
       // colors: [chartColor, chartColor] 
     },
     grid: { borderColor: gridColor },

@@ -1,13 +1,21 @@
 'use client'
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Chart from 'react-apexcharts';
 import { useChartTheme } from '../../../../../../hooks/use_chart_theme';
 import { useNineteenData } from '../../../../../../context/nineteen_context';
 
 export default function DensityNotasChart() {
+
   const { acertosData, acertosNum } = useNineteenData();
   const { gridColor, textColor, axisColor } = useChartTheme();
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 800 : false);
+    
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 800);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const chartData = useMemo(() => {
     if (!acertosData || acertosNum === null) return null;
@@ -55,6 +63,7 @@ export default function DensityNotasChart() {
       },
       xaxis: {
         type: 'numeric',
+        tickAmount: isMobile ? 5 : 10,
         min: chartData.minX,
         max: chartData.maxX,
         labels: { style: { colors: axisColor }, formatter: (v) => Number(v).toFixed(0)},

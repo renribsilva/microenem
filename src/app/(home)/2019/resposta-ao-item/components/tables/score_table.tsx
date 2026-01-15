@@ -214,7 +214,7 @@ export default function ScoreTable() {
         <div>
           <h3 className={styles.card_title}>Tabela de frequência de respostas</h3>
           <p className={styles.card_subtitle_p}>
-            Frequência relativa de acertos e erros observada para cada item dos exames.
+            Frequência relativa de acertos e erros observada em cada item dos exames.
           </p>
         </div>
         <Dropdown />

@@ -122,6 +122,16 @@ export default function DensityNotasChart() {
       grid: { borderColor: gridColor },
       legend: { show: false },
       dataLabels: { enabled: false },
+      tooltip: {
+        enabled: true,       
+        shared: true,        
+        custom: function() { 
+          return ''; 
+        },
+        marker: {
+          show: false
+        }
+      },
       annotations: {
         xaxis: (selectedRow && !isShape) ? [
           {

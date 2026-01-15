@@ -142,7 +142,7 @@ export default function FrequencyAcertosChart() {
           const valorAbsoluto = frequencyData?.datasets?.[0]?.data?.[dataPointIndex]?.y || 0;
           return customTooltip({ 
             label: `Acertos ${acertosReal}`, 
-            value: porcentagem, 
+            value: porcentagem.toFixed(1), 
             absolute: valorAbsoluto 
           });
         }

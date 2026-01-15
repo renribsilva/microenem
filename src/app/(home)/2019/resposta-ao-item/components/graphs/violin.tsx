@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Chart from 'react-apexcharts';
 import { useNineteenData } from '../../../../../../context/nineteen_context';
 import { useChartTheme } from '../../../../../../hooks/use_chart_theme';
@@ -9,6 +9,13 @@ export default function ViolinBinsChart() {
 
   const { scoreData, lastItemActivate, lastItemActivateNum } = useNineteenData();
   const { textColor, axisColor, gridColor } = useChartTheme();
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 800 : false);
+    
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 800);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const binsData = useMemo(() => {
     if (!scoreData || !lastItemActivate || !scoreData[lastItemActivate]) return null;
@@ -90,7 +97,7 @@ export default function ViolinBinsChart() {
       categories: binsData?.labels || [],
       min: -maxAbsValue,
       max: maxAbsValue,
-      tickAmount: 4,
+      tickAmount: isMobile? 2 : 4,
       title: {
         text: 'Quantidade de Alunos',
         style: { color: axisColor }
@@ -107,7 +114,7 @@ export default function ViolinBinsChart() {
       labels: { colors: textColor},
     },
     title: {
-      text: [`Frequência de acertos e erros do item ${lastItemActivateNum}`] as any,
+      text: [`Frequência de resposta ao item ${lastItemActivateNum}`] as any,
       style: { color: textColor, fontSize: '16px', fontWeight: 'bold'},
     },
     subtitle: {

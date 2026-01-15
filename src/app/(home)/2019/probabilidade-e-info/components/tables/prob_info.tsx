@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -40,8 +40,14 @@ export default function ProbsInfoTable() {
   } = useNineteenData();
   
   const [sorting, setSorting] = useState<SortingState>([{ id: "posicao", desc: false }]);
-
   const columnHelper = createColumnHelper<TableRow>();
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 800 : false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 800);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const columns = useMemo(() => [
     // GRUPO 1: APENAS RÓTULO
@@ -88,7 +94,7 @@ export default function ProbsInfoTable() {
     // GRUPO 3: APENAS RÓTULO
     columnHelper.group({
       id: 'informacao_grupo',
-      header: 'Informação',
+      header: isMobile ? 'Info' : 'Informação',
       columns: [
         columnHelper.accessor("informacao", {
           header: "Valor²",
@@ -138,8 +144,6 @@ export default function ProbsInfoTable() {
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
-
-  // if (activeCodes.length === 0) return <section className={styles.probtable_fallback}>Selecione itens na tabela para vizualizar suas probabilidades e desempenho.</section>;
 
   return (
     <section className={styles.probtable_container}>

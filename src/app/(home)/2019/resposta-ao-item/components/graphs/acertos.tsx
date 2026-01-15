@@ -15,6 +15,13 @@ export default function AcertosChart() {
   const itemCache = useRef<{ code: string; dataset: any } | null>(null);
   
   const [itemData, setItemData] = useState<any>(null);
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 800 : false);
+  
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 800);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   
   useEffect(() => {
     if (! lastItemActivate) return;
@@ -41,9 +48,8 @@ export default function AcertosChart() {
   const { 
     chartColor,
     xMin, 
-    xMax, 
+    xMax,   
   } = chartLogic;
-
   const transformTheta = (theta: number) => ((theta * k) + d);
 
   // --- CONFIGURAÇÃO DE DADOS ---
@@ -51,7 +57,7 @@ export default function AcertosChart() {
     if (!itemData || !Array.isArray(itemData.x)) return [];
     return [
       {
-        name: "Proporção de acertos",
+        name: "Frequência de acertos",
         type: 'scatter',
         data: itemData.x.map((valorX, index) => ({
           x: valorX,
@@ -105,7 +111,7 @@ export default function AcertosChart() {
       type: 'numeric',
       min: xMin,
       max: xMax,
-      tickAmount: 10,
+      tickAmount: isMobile ? 5: 10,
       labels: { 
         style: { colors: axisColor },
         // Proteção aqui:
@@ -125,7 +131,7 @@ export default function AcertosChart() {
           formatter: (val) => val !== undefined && val !== null ? Number(val).toFixed(1) : "0.0"
         },
         title: { 
-          text: 'Proporção de acertos', 
+          text: 'Frequência de acertos', 
           style: { color: axisColor, fontWeight: 'bold' } 
         }
       },
@@ -152,11 +158,11 @@ export default function AcertosChart() {
       },
     },
     title: {
-      text: `Proporção de acertos do item ${lastItemActivateNum}`,
+      text: `Frequência de acertos do item ${lastItemActivateNum}`,
       style: { color: textColor, fontSize: '16px', fontWeight: 'bold'},
     },
     subtitle: {
-      text: [`Proporção de acertos observados nos`, `microdados do ENEM (cod: ${lastItemActivate}).`] as any,
+      text: [`Frequência de acertos observados nos`, `microdados do ENEM (cod: ${lastItemActivate}).`] as any,
       style: { color: textColor, fontSize: '13px' },
     },
     legend: { 

@@ -40,62 +40,109 @@ export default function ScoreTable() {
   
   const [sorting, setSorting] = useState<SortingState>([{ id: "posicao", desc: false }]);
   const columnHelper = createColumnHelper<TableRow>();
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 800 : false);
+  
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 800);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-  const columns = useMemo(() => [
-    columnHelper.group({
-      id: 'identificacao_grupo',
-      header: 'Identificação',
-      columns: [
-        columnHelper.accessor("posicao", {
-          header: "Item",
-          cell: (info) => <strong>{info.getValue()}</strong>,
-        }),
+  const columns = useMemo(() => {
+    // Definimos as sub-colunas de Identificação
+    const idCols = [
+      columnHelper.accessor("posicao", {
+        header: "Item",
+        cell: (info) => <strong>{info.getValue()}</strong>,
+      }),
+      // Só inclui Código se não for mobile
+      ...(!isMobile ? [
         columnHelper.accessor("id", {
           header: "Código",
           cell: (info) => <span style={{ fontSize: "0.85rem", color: "#888" }}>{info.getValue() || "—"}</span>,
-        }),
+        })
+      ] : []),
+      // Só inclui Abandonado se não for mobile
+      ...(!isMobile ? [
         columnHelper.accessor("abandonado", {
           header: "Aband?",
           cell: (info) => {
-            const val = info.getValue()
+            const val = info.getValue();
             return (
               <span style={{ fontSize: "0.85rem", color: val ? "#ff4b4b" : "#888" }}>
                 {val ? "Sim" : "Não"}
               </span>
-            )
+            );
           },
-        }),
-      ]
-    }),
-    columnHelper.group({
-      id: 'score_grupo',
-      header: 'Frequência de Respostas',
-      columns: [
-        columnHelper.accessor("respondentes", {
-          header: "n",
-          cell: (info) => <span style={{ fontSize: "0.8rem", color: "#888" }}>{info.getValue().toLocaleString()}</span>,
-        }),
-        columnHelper.accessor("freq_acerto", {
-          header: "Acerto",
-          cell: (info) => (
-            <span style={{ fontSize: "0.85rem", color: "#52c41a", fontWeight: "500" }}>
-              {info.getValue()}%
+        })
+      ] : []),
+    ];
+
+    // Definimos as sub-colunas de Score
+    const scoreCols = [
+      columnHelper.accessor("respondentes", {
+        header: "n",
+        cell: (info) => {
+          const val = info.getValue();
+
+          // Formatador para números compactos (ex: 1,5 mi)
+          const compactFormatter = new Intl.NumberFormat('pt-BR', {
+            notation: "compact",
+            compactDisplay: "short",
+            maximumFractionDigits: 1
+          });
+
+          return (
+            <span style={{ fontSize: "0.8rem", color: "#888" }}>
+              {isMobile 
+                ? compactFormatter.format(val).toLowerCase() 
+                : val.toLocaleString('pt-BR')}
             </span>
-          ),
+          );
+        },
+      }),
+      columnHelper.accessor("freq_acerto", {
+        header: "Acerto",
+        cell: (info) => (
+          <span style={{ fontSize: "0.85rem", color: "#52c41a", fontWeight: "500" }}>
+            {info.getValue()}%
+          </span>
+        ),
+      }),
+      columnHelper.accessor("freq_erro", { 
+        header: "Erro", 
+        cell: (info) => (
+          <span style={{ fontSize: "0.85rem", color: "#ff4b4b", fontWeight: "500" }}>
+            {info.getValue()}%
+          </span>
+        )
+      }),
+      // Só inclui Branco e Dupla se não for mobile
+      ...(!isMobile ? [
+        columnHelper.accessor("freq_branco", { 
+          header: "Branco", 
+          cell: (info) => <span style={{ color: "#888" }}>{info.getValue()}%</span> 
         }),
-        columnHelper.accessor("freq_erro", { 
-          header: "Erro", 
-          cell: (info) => (
-            <span style={{ fontSize: "0.85rem", color: "#ff4b4b", fontWeight: "500" }}>
-              {info.getValue()}%
-            </span>
-          )
+        columnHelper.accessor("freq_dupla_marcacao", { 
+          header: "Dupla", 
+          cell: (info) => <span style={{ color: "#888" }}>{info.getValue()}%</span> 
         }),
-        columnHelper.accessor("freq_branco", { header: "Branco", cell: (info) => <span style={{ color: "#888" }}>{info.getValue()}%</span> }),
-        columnHelper.accessor("freq_dupla_marcacao", { header: "Dupla", cell: (info) => <span style={{ color: "#888" }}>{info.getValue()}%</span> }),
-      ]
-    })
-  ], [columnHelper]);
+      ] : []),
+    ];
+
+    return [
+      columnHelper.group({
+        id: 'identificacao_grupo',
+        header: isMobile ? 'Item' : 'Identificação',
+        columns: idCols,
+      }),
+      columnHelper.group({
+        id: 'score_grupo',
+        header: isMobile ? 'Frequência' : 'Frequência de Respostas',
+        columns: scoreCols,
+      })
+    ];
+  }, [columnHelper, isMobile]); // Importante incluir isMobile aqui
 
   const data = useMemo(() => {
 
@@ -167,7 +214,7 @@ export default function ScoreTable() {
         <div>
           <h3 className={styles.card_title}>Tabela de frequência de respostas</h3>
           <p className={styles.card_subtitle_p}>
-            subtitle
+            Frequência relativa de acertos e erros observada para cada item dos exames.
           </p>
         </div>
         <Dropdown />

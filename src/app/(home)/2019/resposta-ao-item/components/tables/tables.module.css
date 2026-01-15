@@ -82,6 +82,14 @@
   justify-content: space-between;
 }
 
+@media (max-width: 800px) {
+  .probtable_cabecalho   {
+    flex-direction: column;
+    margin-bottom: 10px;
+    /* min-height: 350px; */
+  }
+}
+
 /* Linha padrão */
 .probtable_tr {
   background-color: transparent; /* Movemos do inline para cá */

@@ -195,7 +195,7 @@ export default function InfoChart() {
         paddingLeft: '10px',
         margin: '0px auto' 
       }}>
-        Pontos da proficiência para os quais o item apresenta maior capacidade de posicionar a nota na régua no ENEM.
+        Pontos da proficiência para os quais o item apresenta maior influência sobre o posicionamento da nota na régua no ENEM.
       </p>
       <Chart 
         options={options} 

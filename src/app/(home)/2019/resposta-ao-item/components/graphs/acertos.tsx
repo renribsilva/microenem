@@ -162,7 +162,7 @@ export default function AcertosChart() {
       style: { color: textColor, fontSize: '16px', fontWeight: 'bold'},
     },
     subtitle: {
-      text: [`Frequência de acertos observados nos`, `microdados do ENEM (cod: ${lastItemActivate}).`] as any,
+      text: [`Frequência relativa de acertos observados nos`, `microdados do ENEM (cod: ${lastItemActivate}).`] as any,
       style: { color: textColor, fontSize: '13px' },
     },
     legend: { 

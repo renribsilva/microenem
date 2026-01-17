@@ -14,7 +14,7 @@ export default function NineteenLayout({
         {children}
       </main>
       <div className={styles.table_footer}>
-        * Aviso: a análise dos microdados do ENEM aqui apresentada está circunscrita aos dados dos que participaram de ao menos um dia do exame e que não são treineiros, com exceção de 'inscritos', 'abtenção' e 'presença' da aba Visão Geral.
+        * Aviso: a análise dos microdados do ENEM aqui apresentada está circunscrita aos dados dos que participaram de ao menos um dia do exame (incluindo treineiros), com exceção de 'inscritos', 'abtenção' e 'presença' da aba Visão Geral.
       </div>
     </NineteenProvider>
   )

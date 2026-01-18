@@ -10,6 +10,7 @@ const roboto = Ubuntu({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://microenem.vercel.app'),
   title: 'ENEMmicro',
   description: 'Vizualização gráfica dos microdados do ENEM',
   twitter: {

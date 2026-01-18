@@ -6,16 +6,7 @@ import { useDescribe } from "../hooks/use_describe_data";
 import { useParams } from "next/navigation";
 import constantes from "../app/(home)/JSON/constantes.json";
 
-// Importação de JSON
-
 import scoreData from "../app/(home)/2019/resposta-ao-item/json/score_table.json"
-import Inscritos from "../app/(home)/JSON/2019/visao-geral/overview/inscritos.json"
-import Abstencao_dia1 from "../app/(home)/JSON/2019/visao-geral/overview/presenca_dia1.json"
-import Abstencao_dia2 from "../app/(home)/JSON/2019/visao-geral/overview/presenca_dia2.json"
-import presence_data from "../app/(home)/JSON/2019/visao-geral/overview/presenca.json"
-import cor_raca_data from "../app/(home)/JSON/2019/visao-geral/socials/cor_raca.json";
-import sexo_data from "../app/(home)/JSON/2019/visao-geral/socials/sexo.json";
-import fx_etaria_data from "../app/(home)/JSON/2019/visao-geral/socials/faixa_etaria.json";
 
 const NineteenContext = createContext<any>(null);
 
@@ -42,17 +33,47 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
 
   // 2019 DATA
   const [itensData, setItensData] = useState<any>(null);
+  const [Inscritos, setInscritos] = useState<any>(null);
+  const [Abstencao_dia1, setAbstencao_dia1] = useState<any>(null);
+  const [Abstencao_dia2, setAbstencao_dia2] = useState<any>(null);
+  const [presence_data, setPresence_data] = useState<any>(null);
+  const [cor_raca_data, setCor_raca_data] = useState<any>(null);
+  const [sexo_data, setSexo_data] = useState<any>(null);
+  const [fx_etaria_data, setFx_etaria_data] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadYearlyData() {
       setLoading(true);
       try {
-        const [itens] = await Promise.all([
+        const [
+          itens, 
+          inscritos, 
+          abstencao1,
+          abstencao2,
+          presence,
+          cor_raca,
+          sexo,
+          fx_etaria
+        ] = await Promise.all([
           // 2019 data
           import(`../app/(home)/JSON/${currentYear}/itens_${currentYear}.json`),
+          import(`../app/(home)/JSON/${currentYear}/visao-geral/overview/inscritos.json`),
+          import(`../app/(home)/JSON/${currentYear}/visao-geral/overview/presenca_dia1.json`),
+          import(`../app/(home)/JSON/${currentYear}/visao-geral/overview/presenca_dia2.json`),
+          import(`../app/(home)/JSON/${currentYear}/visao-geral/overview/presenca.json`),
+          import(`../app/(home)/JSON/${currentYear}/visao-geral/socials/cor_raca.json`),
+          import(`../app/(home)/JSON/${currentYear}/visao-geral/socials/sexo.json`),
+          import(`../app/(home)/JSON/${currentYear}/visao-geral/socials/faixa_etaria.json`),
         ]);
         setItensData(itens.default);
+        setInscritos(inscritos.default)
+        setAbstencao_dia1(abstencao1.default)
+        setAbstencao_dia2(abstencao2.default)
+        setPresence_data(presence.default)
+        setCor_raca_data(cor_raca.default)
+        setSexo_data(sexo.default)
+        setFx_etaria_data(fx_etaria.default)
       } catch (err) {
         console.error(`Erro ao carregar dados do ano ${currentYear}:`, err);
       } finally {
@@ -338,6 +359,10 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
 
     fetchAcertosData();
   }, [deferredArea]);
+
+  if (loading) {
+    return null; 
+  }
   
   return (
     <NineteenContext.Provider value={{ 

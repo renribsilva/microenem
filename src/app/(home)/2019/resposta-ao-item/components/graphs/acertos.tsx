@@ -14,13 +14,33 @@ export default function AcertosChart() {
   const { lastItemActivate, lastItemActivateNum, probData, probLabels, k, d} = useNineteenData();
   const itemCache = useRef<{ code: string; dataset: any } | null>(null);
   
+  // Refs e Estados para controle de renderização por tamanho
+  const parentRef = useRef<HTMLDivElement>(null);
+  const [dimensionsReady, setDimensionsReady] = useState(false);
   const [itemData, setItemData] = useState<any>(null);
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 800 : false);
   
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 800);
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+
+    // Observer para garantir que o gráfico só renderize com largura definida
+    const observer = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        if (entry.contentRect.width > 0) {
+          setDimensionsReady(true);
+        }
+      }
+    });
+
+    if (parentRef.current) {
+      observer.observe(parentRef.current);
+    }
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      observer.disconnect();
+    };
   }, []);
   
   useEffect(() => {
@@ -183,17 +203,19 @@ export default function AcertosChart() {
       position: 'bottom',
       labels: { colors: textColor},
     },
-  }), [chartColor, currentInfo, gridColor, axisColor, xMin, xMax, lastItemActivate, lastItemActivateNum]);
+  }), [chartColor, currentInfo, gridColor, axisColor, xMin, xMax, lastItemActivate, lastItemActivateNum, isMobile, textColor]);
 
   return (
-    <div style={{height: '350px'}}>
-      <Chart 
-        options={options} 
-        series={series} 
-        type="line"
-        height='100%'
-        width='100%'
-      />
+    <div ref={parentRef} style={{height: '350px', width: '100%'}}>
+      {dimensionsReady && (
+        <Chart 
+          options={options} 
+          series={series} 
+          type="line"
+          height='100%'
+          width='100%'
+        />
+      )}
     </div>
   );
 }

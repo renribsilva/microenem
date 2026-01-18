@@ -82,7 +82,7 @@ export default function NotasRedacaoChart() {
       },
       dataLabels: {
         enabled: true,
-        formatter: (val: number) => val >= 1000 ? `${(val / 1000).toFixed(1)}k` : val.toLocaleString('pt-BR'),
+        formatter: (val: number) => val >= 1000 ? `${(val / 1000).toFixed(0)}k` : val.toLocaleString('pt-BR'),
         offsetX: 35,
         style: { fontSize: '10px', colors: [textColor] }
       },

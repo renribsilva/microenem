@@ -194,8 +194,13 @@ export default function NotasRedacaoChart() {
     { key: "NU_NOTA_COMP5", label: "C5" },
   ];
 
+  const baseHeight = 1200;
+  const isCompetencia = selectedNota.includes('COMP');
+  const calculatedHeight = isCompetencia ? Math.floor(baseHeight * 0.25) : baseHeight;
+
   return (
     <div style={{ width: '100%' }}>
+      {/* Container dos botões */}
       <div style={{ display: 'flex', gap: '5px', marginBottom: '15px', flexWrap: 'wrap' }}>
         {selectOptions.map((opt) => (
           <button
@@ -217,8 +222,15 @@ export default function NotasRedacaoChart() {
         ))}
       </div>
 
-      <div style={{ minHeight: '800px' }}>
-        <Chart options={options} series={series} type="bar" height="1200px" width="100%" />
+      {/* Container do Gráfico com altura dinâmica */}
+      <div style={{ minHeight: `${calculatedHeight}px`, transition: 'min-height 0.3s ease' }}>
+        <Chart 
+          options={options} 
+          series={series} 
+          type="bar" 
+          height={calculatedHeight} 
+          width="100%" 
+        />
       </div>
     </div>
   );

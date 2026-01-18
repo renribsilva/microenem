@@ -1,11 +1,11 @@
 [
   {
-    "grupo": "Presentes na prova",
+    "grupo": "Presentes na prova*",
     "total": 3931471,
     "freq": 100,
     "subRows": [
       {
-        "grupo": "Não treineiros*",
+        "grupo": "Não treineiros",
         "total": 3365184,
         "freq": 85.6
       },

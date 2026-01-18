@@ -82,7 +82,12 @@ export default function NotasRedacaoChart() {
       },
       dataLabels: {
         enabled: true,
-        formatter: (val: number) => val >= 1000 ? `${(val / 1000).toFixed(0)}k` : val.toLocaleString('pt-BR'),
+        formatter: (val: number) => {
+          if (val >= 1000) {
+            return `${(val / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}k`;
+          }
+          return val.toLocaleString('pt-BR');
+        },
         offsetX: 35,
         style: { fontSize: '10px', colors: [textColor] }
       },
@@ -90,7 +95,16 @@ export default function NotasRedacaoChart() {
         tickAmount: 5,
         labels: {
           style: { colors: textColor, fontSize: '10px' },
-          formatter: (val: number) => val >= 1000 ? `${(val / 1000).toFixed(0)}k` : val.toString(),
+          formatter: (val: number) => {
+            if (val >= 1000 || val <= -1000) {
+              const formatted = (val / 1000).toLocaleString('pt-BR', {
+                minimumFractionDigits: val % 1000 === 0 ? 0 : 1,
+                maximumFractionDigits: 1
+              });
+              return `${formatted}k`;
+            }
+            return val.toLocaleString('pt-BR');
+          }
         },
       },
       yaxis: {
@@ -126,7 +140,7 @@ export default function NotasRedacaoChart() {
 
   const baseHeight = 1200;
   const isCompetencia = selectedNota.includes('COMP');
-  const calculatedHeight = isCompetencia ? 400 : baseHeight;
+  const calculatedHeight = isCompetencia ? 310 : baseHeight;
 
   return (
     <div style={{ width: '100%' }}>

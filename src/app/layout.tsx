@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   title: 'ENEMmicro',
   description: 'Vizualização gráfica dos microdados do ENEM',
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: 'ENEMmicro',
     description: 'Vizualização gráfica dos microdados do ENEM',
     siteId: '1467726470533754880',

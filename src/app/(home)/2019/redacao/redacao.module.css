@@ -1,0 +1,28 @@
+/*********************************/
+/**************PAGE***************/
+/*********************************/
+
+.redacao_main {
+  /* background-color: rgb(86, 211, 211); */
+  padding: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+@media (max-width: 1000px) {
+  .redacao_main {
+    flex-direction: column-reverse;
+  }
+}
+
+.redacao_right {
+  background-color: aquamarine;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.card_redacao_title {
+  margin: 0;
+}

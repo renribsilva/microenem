@@ -3,12 +3,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Chart from 'react-apexcharts';
 import { useChartTheme } from '../../../../../../hooks/use_chart_theme';
-// import InputShell from '../../../../../../components/tsx/input_shell';
 import { useHomeData } from '../../../../../../context/home_context';
 import { useNineteenData } from '../../../../../../context/nineteen_context';
 
 export default function AcertosChart() {
-
   const { chartLogic } = useHomeData();
   const { gridColor, axisColor, textColor } = useChartTheme();
   const { lastItemActivate, lastItemActivateNum, probData, probLabels, k, d} = useNineteenData();
@@ -24,7 +22,7 @@ export default function AcertosChart() {
   }, []);
   
   useEffect(() => {
-    if (! lastItemActivate) return;
+    if (!lastItemActivate) return;
     if (itemCache.current?.code === lastItemActivate) {
       setItemData(itemCache.current.dataset);
       return;
@@ -45,15 +43,9 @@ export default function AcertosChart() {
     fetchItemData();
   }, [lastItemActivate]);
 
-  const { 
-    chartColor,
-    xMin, 
-    xMax,
-    currentInfo
-  } = chartLogic;
+  const { chartColor, xMin, xMax, currentInfo } = chartLogic;
   const transformTheta = (theta: number) => ((theta * k) + d);
 
-  // --- CONFIGURAÇÃO DE DADOS ---
   const series = useMemo(() => {
     if (!itemData || !Array.isArray(itemData.x)) return [];
     return [
@@ -61,128 +53,105 @@ export default function AcertosChart() {
         name: "Frequência de acertos",
         type: 'scatter',
         data: itemData.x.map((valorX, index) => ({
-          x: valorX,
-          y: itemData.y[index] // Pega o y correspondente pelo índice
+          x: Number(valorX),
+          y: Number(itemData.y[index])
         }))
       },
       {
         name: "Curva característica do item",
         type: 'line',
         data: probData[lastItemActivate]?.map((yValue, idx) => ({
-        x: transformTheta(probLabels[idx]),
-        y: Number(yValue),
-        tooltip: { enabled: false },
-      })),
+          x: transformTheta(probLabels[idx]),
+          y: Number(yValue),
+        })) || [],
       },
     ];
-  }, [itemData, lastItemActivate, probData]);
+  }, [itemData, lastItemActivate, probData, k, d, probLabels]);
 
-  // --- CONFIGURAÇÕES DO APEXCHARTS ---
   const options: ApexCharts.ApexOptions = useMemo(() => ({
     chart: {
       id: 'tcc-chart',
-      type: 'line',
-      toolbar: {
-        offsetX: -5,
-        offsetY: 0,
-        show: true,
-      },
+      type: 'line', // Mantido line para suportar combos
+      toolbar: { show: true, offsetX: -5 },
       zoom: { enabled: false },
+      // REMOÇÃO TOTAL DE ANIMAÇÕES
       animations: {
-        enabled: false, 
-        dynamicAnimation: {
-          enabled: false 
-        }
+        enabled: false,
+        dynamicAnimation: { enabled: false },
+        animateGradually: { enabled: false }
       } 
     },
+    // Markers configurados por série: [Série 1 (scatter), Série 2 (line)]
     markers: {
-      size: [1, 0],
+      size: [5, 0], 
       strokeWidth: 0,
-      hover: {
-        size: 6,
-      }
+      hover: { sizeOffset: 2 }
     },
     stroke: {
       curve: 'straight', 
-      width: [0, 1],     
-      // colors: [chartColor, chartColor] 
+      width: [0, 2], // 0 para o scatter não ligar pontos, 2 para a linha da CCI
     },
     grid: { borderColor: gridColor },
     xaxis: {
       type: 'numeric',
       min: xMin,
       max: xMax,
-      tickAmount: isMobile ? 5: 10,
+      tickAmount: isMobile ? 5 : 10,
       labels: { 
         style: { colors: axisColor },
-        // Proteção aqui:
-        formatter: (val) => val !== undefined && val !== null ? Number(val).toFixed(0) : ""
+        formatter: (val) => val !== undefined ? Number(val).toFixed(0) : ""
       },
-      tooltip: { enabled: false },
       title: { text: 'Notas na escala do ENEM', style: { color: axisColor, fontWeight: 'bold' } }
     },
     yaxis: [
       {
         min: 0,
         max: 1,
-        tickAmount: 10,
+        tickAmount: 5,
         labels: { 
           style: { colors: axisColor },
-          // Proteção aqui:
-          formatter: (val) => val !== undefined && val !== null ? Number(val).toFixed(1) : "0.0"
+          formatter: (val) => Number(val).toFixed(1)
         },
-        title: { 
-          text: 'Frequência de acertos', 
-          style: { color: axisColor, fontWeight: 'bold' } 
-        }
+        title: { text: 'Frequência de acertos', style: { color: axisColor } }
       },
       {
         opposite: true,
         min: 0,
         max: 1,
-        tickAmount: 10,
+        tickAmount: 5,
         labels: { 
           style: { colors: axisColor },
-          // Proteção aqui:
-          formatter: (val) => val !== undefined && val !== null ? Number(val).toFixed(1) : "0.0"
+          formatter: (val) => Number(val).toFixed(1)
         },
-        title: { 
-          text: 'Probabilidade de acerto', 
-          style: { color: axisColor, fontWeight: 'bold' } 
-        }
+        title: { text: 'Probabilidade de acerto', style: { color: axisColor } }
       }
     ],
     tooltip: {
       theme: 'dark',
-      x: {
-        formatter: (val) => `Proficiência: ${Number(val).toFixed(0)}`
-      },
+      shared: true,
+      x: { formatter: (val) => `Proficiência: ${Number(val).toFixed(0)}` },
     },
     title: {
       text: `Frequência de acertos do item ${lastItemActivateNum}`,
       style: { color: textColor, fontSize: '16px', fontWeight: 'bold'},
     },
     subtitle: {
-      text: [
-        `Frequência relativa de acertos observados nos`, 
-        `microdados do ENEM (cod: ${lastItemActivate}; p: ${currentInfo?.corNome}).`
-      ] as any,
+      text: `Frequência relativa observada (cod: ${lastItemActivate}; p: ${currentInfo?.corNome}).`,
       style: { color: textColor, fontSize: '13px' },
     },
     legend: { 
       position: 'bottom',
-      labels: { colors: textColor},
+      labels: { colors: textColor },
     },
-  }), [chartColor, currentInfo, gridColor, axisColor, xMin, xMax, lastItemActivate, lastItemActivateNum]);
+  }), [gridColor, axisColor, xMin, xMax, isMobile, lastItemActivate, lastItemActivateNum, textColor, currentInfo]);
 
   return (
-    <div style={{minHeight: '350px'}}>
+    <div style={{ minHeight: '350px', width: '100%' }}>
       <Chart 
         options={options} 
         series={series} 
         type="line"
-        height='100%'
-        width='100%'
+        height={350}
       />
     </div>
   );

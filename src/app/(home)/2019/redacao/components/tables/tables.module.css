@@ -1,0 +1,38 @@
+.table_container {
+  /* background-color: aqua; */
+}
+
+.table_body {
+  /* background-color: aqua; */
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table_footer {
+  padding: 5px;
+  font-size: 0.75rem; /* 12px */
+  font-weight: 300;
+  color: #888;
+}
+
+.table_body tr {
+  border-bottom: none; 
+  white-space: nowrap;
+}
+
+.table_body thead tr {
+  border-bottom: 1px solid var(--grid);
+}
+
+.table_body tbody tr:last-child {
+  border-bottom: 1px solid var(--grid);
+}
+.table_body th {
+  text-align: left;
+  padding: 10px
+}
+
+.table_body td {
+  padding: 5px;
+  font-weight: 300;
+}

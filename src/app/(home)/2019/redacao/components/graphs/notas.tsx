@@ -196,7 +196,7 @@ export default function NotasRedacaoChart() {
 
   const baseHeight = 1200;
   const isCompetencia = selectedNota.includes('COMP');
-  const calculatedHeight = isCompetencia ? Math.floor(baseHeight * 0.25) : baseHeight;
+  const calculatedHeight = isCompetencia ? Math.floor(baseHeight * 0.28) : baseHeight;
 
   return (
     <div style={{ width: '100%' }}>

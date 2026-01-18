@@ -59,6 +59,8 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
     return tableData.find(row => row.id === selectedRowId) || null;
   }, [tableData, selectedRowId]);
 
+  console.log(selectedRowId)
+
   //------------------------------------------------------------------------
   //--------------------------PROBABILIDADE E INFO--------------------------
   //------------------------------------------------------------------------

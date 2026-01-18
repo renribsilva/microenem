@@ -13,12 +13,18 @@ export const metadata: Metadata = {
   title: 'ENEMmicro',
   description: 'Vizualização gráfica dos microdados do ENEM',
   twitter: {
-    card: 'summary', // Alterado para o formato simples (sem imagem grande)
+    card: 'summary', // CARD PEQUENO COM IMAGEM AO LADO
     title: 'ENEMmicro',
     description: 'Vizualização gráfica dos microdados do ENEM',
     siteId: '1467726470533754880',
     creator: '@renribsilva',
-    // Imagem removida conforme solicitado
+    // O Next.js injeta automaticamente a imagem gerada pelo arquivo acima
+  },
+  // Opcional: Adicione openGraph para funcionar no WhatsApp/LinkedIn também
+  openGraph: {
+    title: 'ENEMmicro',
+    description: 'Vizualização gráfica dos microdados do ENEM',
+    type: 'website',
   },
 }
 

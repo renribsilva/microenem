@@ -2,7 +2,6 @@
 
 import { useMemo } from 'react';
 import Chart from 'react-apexcharts';
-import styles from "./graphs.module.css";
 import { useFrequency } from '../../../../../../hooks/use_frequency_data';
 import { useChartTheme } from '../../../../../../hooks/use_chart_theme';
 import customTooltip from '../../../../../../components/tsx/customTooltip';

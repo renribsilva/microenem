@@ -11,7 +11,6 @@ import {
 import statusData from "../../json/status_redacao.json"
 import styles from './tables.module.css'
 
-// Definindo a interface para o dado da linha
 interface StatusRow {
   grupo: string;
   total: number;
@@ -23,29 +22,26 @@ const statusMap: Record<string, string> = {
   "1": "Sem problemas*",
   "2": "Anulada",
   "3": "Cópia do Texto Motivador",
-  "4": "Texto Insuficiente",
+  "4": "Em branco",
   "6": "Fuga ao Tema",
-  "7": "Não Atendimento ao Tipo Textual",
-  "8": "Texto em Branco",
-  "9": "Outros problemas"
+  "7": "Fuga ao Tipo Textual",
+  "8": "Texto insuficiente",
+  "9": "Parte desconectada"
 };
 
 export default function StatusRedacaoTable() {
 
   const tableData = useMemo<StatusRow[]>(() => {
     const nTotal = statusData?.datasets[0]?.n_total || 0;
-    
     const firstRow: StatusRow = {
       grupo: "Total de Registros (n)",
       total: nTotal,
       freq: "100.00",
       isTotal: true
     };
-
     const rows: StatusRow[] = statusData.labels.map((label, index) => {
       const total = statusData.datasets[0].data[index];
       const freq = ((total / nTotal) * 100).toFixed(2);
-      
       return {
         grupo: statusMap[label] || `Status ${label}`,
         total: total,
@@ -53,23 +49,28 @@ export default function StatusRedacaoTable() {
         isTotal: false
       }
     });
-
     return [firstRow, ...rows];
   }, []);
 
-  // Ajustado para usar ColumnDef<StatusRow> em vez de any
   const columns = useMemo<ColumnDef<StatusRow>[]>(() => [
     {
       accessorKey: 'grupo',
       header: '',
       cell: ({ row, getValue }) => {
-        const isTotal = row.original.isTotal;
-        const val = getValue() as string; // Cast de unknown para string
+        const val = getValue() as string; 
         return (
-          <div style={{ 
-            paddingLeft: `${row.depth * 2}rem`, 
-            fontWeight: '300' 
-          }}>
+          <div 
+            title={val} // Mostra o texto completo ao pairar o mouse
+            style={{ 
+              paddingLeft: `${row.depth * 2}rem`, 
+              fontWeight: '300',
+              // Estilo para Ellipsis:
+              maxWidth: '180px', // Limita a largura no mobile
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap'
+            }}
+          >
             {val}
           </div>
         )
@@ -79,7 +80,7 @@ export default function StatusRedacaoTable() {
       accessorKey: 'total',
       header: 'Total',
       cell: ({ getValue }) => {
-        const val = getValue() as number; // Cast de unknown para number
+        const val = getValue() as number;
         return (
           <span style={{ fontWeight: '300' }}>
             {val?.toLocaleString('pt-BR')}
@@ -90,8 +91,8 @@ export default function StatusRedacaoTable() {
     {
       accessorKey: 'freq',
       header: '(%)',
-      cell: ({ row, getValue }) => {
-        const val = getValue() as string; // Cast de unknown para string
+      cell: ({ getValue }) => {
+        const val = getValue() as string;
         return (
           <span style={{ fontWeight: '300' }}>
             {val}%
@@ -110,12 +111,15 @@ export default function StatusRedacaoTable() {
 
   return (
     <div className={styles.table_container}>
-      <table className={styles.table_body}>
+      <table className={styles.table_body} style={{ tableLayout: 'fixed', width: '100%' }}>
         <thead>
           {table.getHeaderGroups().map(headerGroup => (
             <tr key={headerGroup.id}>
-              {headerGroup.headers.map(header => (
-                <th key={header.id}>
+              {headerGroup.headers.map((header, i) => (
+                <th 
+                  key={header.id} 
+                  style={{ width: i === 0 ? '50%' : '25%' }} // Dá mais espaço para a primeira coluna
+                >
                   {flexRender(header.column.columnDef.header, header.getContext())}
                 </th>
               ))}
@@ -124,10 +128,7 @@ export default function StatusRedacaoTable() {
         </thead>
         <tbody>
           {table.getRowModel().rows.map(row => (
-            <tr 
-              key={row.id} 
-              style={{ backgroundColor: 'transparent' }}
-            >
+            <tr key={row.id}>
               {row.getVisibleCells().map(cell => (
                 <td key={cell.id}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -139,7 +140,7 @@ export default function StatusRedacaoTable() {
       </table>
       
       <div className={styles.table_footer}>
-        * Recorte de análise dos gráficos.
+        * Recorte de análise do gráfico e tabela de competências.
       </div>
     </div>
   )

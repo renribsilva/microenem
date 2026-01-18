@@ -6,22 +6,31 @@
   /* background-color: rgb(86, 211, 211); */
   padding: 10px;
   display: flex;
-  gap: 10px;
-}
-
-@media (max-width: 1000px) {
-  .redacao_main {
-    flex-direction: column-reverse;
-  }
-}
-
-.redacao_right {
-  background-color: aquamarine;
-  flex: 1;
-  display: flex;
   flex-direction: column;
   gap: 10px;
 }
+
+.redacao_top {
+  /* background-color: aquamarine; */
+  flex: 1;
+  display: flex;
+  gap: 10px;
+}
+
+@media (max-width: 1200px) {
+  .redacao_top {
+    flex-direction: column;
+  }
+}
+
+.redacao_top_left {
+  flex: 1 1 40%;
+}
+
+.redacao_top_right {
+  flex: 1 1 60%;
+}
+
 
 .card_redacao_title {
   margin: 0;

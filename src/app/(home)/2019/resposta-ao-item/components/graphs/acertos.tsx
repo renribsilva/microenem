@@ -9,9 +9,8 @@ import { useNineteenData } from '../../../../../../context/nineteen_context';
 export default function AcertosChart() {
   const { chartLogic } = useHomeData();
   const { gridColor, axisColor, textColor } = useChartTheme();
-  const { lastItemActivate, lastItemActivateNum, probData, probLabels, k, d} = useNineteenData();
+  const { lastItemActivate, lastItemActivateNum, probData, probLabels, k, d } = useNineteenData();
   const itemCache = useRef<{ code: string; dataset: any } | null>(null);
-  
   const [itemData, setItemData] = useState<any>(null);
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 800 : false);
   
@@ -43,7 +42,7 @@ export default function AcertosChart() {
     fetchItemData();
   }, [lastItemActivate]);
 
-  const { chartColor, xMin, xMax, currentInfo } = chartLogic;
+  const { xMin, xMax, currentInfo } = chartLogic;
   const transformTheta = (theta: number) => ((theta * k) + d);
 
   const series = useMemo(() => {

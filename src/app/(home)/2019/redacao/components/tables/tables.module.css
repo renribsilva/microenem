@@ -1,3 +1,7 @@
+/**********************************************/
+/*******************STATUS*********************/
+/**********************************************/
+
 .table_container {
   /* background-color: aqua; */
 }
@@ -35,4 +39,70 @@
 .table_body td {
   padding: 5px;
   font-weight: 300;
+}
+
+/************************************************/
+/*******************DESCRIBE*********************/
+/************************************************/
+
+.describe_container {
+  /* background-color: aquamarine; */
+}
+
+.describe_table {
+  /* background-color: aquamarine; */
+  min-width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  text-align: left;
+}
+
+.describe_thead {
+  background-color:var(--tab-background);
+  text-transform: uppercase;
+  color:var(--tab-text);
+}
+
+.describe_th {
+  padding: 10px;
+  border-bottom: 1px solid var(--grid);
+  font-weight: 300;
+}
+
+.describe_tr {
+  transition: background-color 0.2s;
+  font-weight: 300;
+}
+
+.describe_tr:hover {
+  background-color:var(--background);
+}
+
+.describe_tr.row_selected {
+  background-color: var(--background);
+  /* Adicional: você pode colocar um border-left ou negrito para destacar mais */
+  font-weight: 600;
+}
+
+.describe_td {
+  padding: 8px;
+  border-bottom: 1px solid var(--grid);
+}
+
+.describe_metricLabel {
+  /* font-weight: 600; */
+  /* color: #374151; */
+}
+
+.describe_valueText {
+  /* font-family: monospace; */
+}
+
+.describe_footer {
+  padding-top: 15px;
+  padding-left: 10px;
+  font-weight: 300;
+  font-size: 15px;
+  display: flex;
+  justify-content: left;
 }

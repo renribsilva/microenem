@@ -151,7 +151,8 @@ export default function NotasRedacaoChart() {
         }
       },
       yaxis: {
-        labels: { style: { colors: textColor, fontSize: '9px' } }
+        labels: { style: { colors: textColor, fontSize: '9px' } },
+        title: "Pontos"
       },
       grid: {
         borderColor: gridColor,

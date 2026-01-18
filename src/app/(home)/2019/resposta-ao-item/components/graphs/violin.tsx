@@ -77,12 +77,11 @@ export default function ViolinBinsChart() {
     },
     dataLabels: { enabled: false },
     grid: { show: false },
-      yaxis: {
-        // Removido stepSize manual que pode conflitar com categorias
-        labels: {
-          style: { colors: axisColor },
-        }
-      },
+    yaxis: {
+      labels: {
+        style: { colors: axisColor },
+      }
+    },
     tooltip: {
       theme: "dark",  
       shared: true,
@@ -103,17 +102,26 @@ export default function ViolinBinsChart() {
       tickAmount: isMobile? 2 : 4,
       title: {
         text: 'Quantidade de Alunos',
-        style: { color: axisColor }
+        style: { color: axisColor },
       },
       labels: {
         style: { colors: axisColor },
         formatter: function (val): string {
-          return Math.abs(Math.round(Number(val))).toLocaleString();
-        }
+          const absoluteVal = Math.abs(Number(val));
+          
+          if (absoluteVal >= 1000) {
+            // Divide por 1000 e fixa 1 casa decimal se não for inteiro (ex: 1.5k)
+            const formatted = (absoluteVal / 1000).toLocaleString('pt-BR', {
+              maximumFractionDigits: 1
+            });
+            return `${formatted}k`;
+          }
+          
+          return absoluteVal.toString();
+        },
       }
     },
     legend: { 
-      position: 'bottom',
       labels: { colors: textColor},
     },
     title: {
@@ -130,12 +138,12 @@ export default function ViolinBinsChart() {
   }), [binsData, currentInfo, maxAbsValue, textColor, axisColor, lastItemActivateNum, gridColor]);
 
   return (
-    <div style={{minHeight: '350px'}}>
+    <div style={{height: '350px'}}>
       <Chart 
         options={options} 
         series={series} 
         type="bar" 
-        height="100%" 
+        height="100%"  
         width="100%"
       />
     </div>

@@ -2,7 +2,6 @@
 
 import { useMemo } from 'react';
 import Chart from 'react-apexcharts';
-import styles from "./graphs.module.css";
 import { useDensity } from '../../../../../../hooks/use_density_data';
 import { useChartTheme } from '../../../../../../hooks/use_chart_theme';
 import { useHomeData } from '../../../../../../context/home_context';

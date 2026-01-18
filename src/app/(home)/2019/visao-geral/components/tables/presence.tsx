@@ -8,8 +8,8 @@ import {
   flexRender,
   ColumnDef
 } from '@tanstack/react-table'
-import presence_data from "../../json/overview/presenca.json"
 import styles from "./tables.module.css"
+import { useNineteenData } from '../../../../../../context/nineteen_context'
 
 export interface InscritoData {
   grupo: string
@@ -18,9 +18,10 @@ export interface InscritoData {
   subRows?: InscritoData[]
 }
 
-const data = presence_data as InscritoData[]
-
 export default function Presence() {
+
+  const { presence_data } =useNineteenData();
+  const data = presence_data as InscritoData[]
 
   // 2. Tipagem das colunas
   const columns = useMemo<ColumnDef<InscritoData>[]>(() => [

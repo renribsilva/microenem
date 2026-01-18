@@ -3,13 +3,52 @@
 import { createContext, useContext, useMemo, ReactNode, useRef, useLayoutEffect, useState, useCallback, useEffect } from "react";
 import { useHomeData } from "./home_context";
 import { useDescribe } from "../hooks/use_describe_data"; 
-import ItensData from "../app/(home)/2019/json/itens_2019.json";
-import constantes from "../app/(home)/json/constantes.json";
+import { useParams } from "next/navigation";
+import constantes from "../app/(home)/JSON/constantes.json";
+
+// Importação de JSON
+
 import scoreData from "../app/(home)/2019/resposta-ao-item/json/score_table.json"
+import Inscritos from "../app/(home)/JSON/2019/visao-geral/overview/inscritos.json"
+import Abstencao_dia1 from "../app/(home)/JSON/2019/visao-geral/overview/presenca_dia1.json"
+import Abstencao_dia2 from "../app/(home)/JSON/2019/visao-geral/overview/presenca_dia2.json"
+import presence_data from "../app/(home)/JSON/2019/visao-geral/overview/presenca.json"
+import cor_raca_data from "../app/(home)/JSON/2019/visao-geral/socials/cor_raca.json";
+import sexo_data from "../app/(home)/JSON/2019/visao-geral/socials/sexo.json";
+import fx_etaria_data from "../app/(home)/JSON/2019/visao-geral/socials/faixa_etaria.json";
 
 const NineteenContext = createContext<any>(null);
 
 export function NineteenProvider({ children }: { children: ReactNode }) {
+
+  const params = useParams();
+  const currentYear = Array.isArray(params.year) ? params.year[0] : params.year || "2019";
+  
+  // ---------------------------------------------------------------
+  // ---------------- CARGA DINÂMICA DE JSON POR ANO ---------------
+  // ---------------------------------------------------------------
+
+  // 2019 DATA
+  const [itensData, setItensData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadYearlyData() {
+      setLoading(true);
+      try {
+        const [itens] = await Promise.all([
+          // 2019 data
+          import(`../app/(home)/JSON/${currentYear}/itens_${currentYear}.json`),
+        ]);
+        setItensData(itens.default);
+      } catch (err) {
+        console.error(`Erro ao carregar dados do ano ${currentYear}:`, err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadYearlyData();
+  }, [currentYear]);
 
   const { deferredArea, selectedRowId, chartLogic } = useHomeData();
   const { describeData } = useDescribe(deferredArea);
@@ -65,14 +104,18 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
 
   const abandonadosCodes = useMemo(() => {
     const codes = new Set<number>();
-    const data = ItensData as any;
-    if (data?.CO_ITEM && data?.IN_ITEM_ABAN) {
-      data.CO_ITEM.forEach((code: number, index: number) => {
-        if (data.IN_ITEM_ABAN[index] === 1) codes.add(code);
-      });
-    }
+    const data = itensData; 
+    
+    // Se o dado ainda não carregou, retorna o set vazio sem quebrar
+    if (!data || !data.CO_ITEM) return codes;
+
+    data.CO_ITEM.forEach((code: number, index: number) => {
+      if (data.IN_ITEM_ABAN && data.IN_ITEM_ABAN[index] === 1) {
+        codes.add(code);
+      }
+    });
     return codes;
-  }, []);
+  }, [itensData]);
 
   // Paleta fixa para os 45 itens
   const FIXED_PALETTE = useMemo(() => 
@@ -143,11 +186,11 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
 
   // Função para traduzir Posição (ex: questão 95) em Código (ex: 11234)
   const getCodeByLabel = useCallback((num: number, label: string) => {
-    if (!label) return null;
+    if (!label || !itensData || !itensData.CO_POSICAO) return null; // Check de segurança
     const parts = label.split('_');
     const co_p = parts[0];
     const ling = parts[1] || "0";
-    const p = ItensData as any;   
+    const p = itensData;   
     const idx = Object.keys(p.CO_POSICAO).find(i => {
       const matchProva = Number(p.CO_PROVA[i]) === Number(co_p);
       const matchPos = Number(p.CO_POSICAO[i]) === num;
@@ -156,9 +199,9 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
         return Number(p.TP_LINGUA[i]) === Number(ling);
       }
       return true;
-    })
+    });
     return idx ? Number(p.CO_ITEM[idx]) : null;
-  }, [deferredArea]);
+  }, [deferredArea, itensData]);
 
   const handleToggle = useCallback((num: number, isAbandoned: boolean) => {
     // Usamos o selectedLabel atual para descobrir qual o código do item no momento do clique
@@ -286,6 +329,13 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
   
   return (
     <NineteenContext.Provider value={{ 
+      Inscritos,
+      Abstencao_dia1,
+      Abstencao_dia2,
+      presence_data,
+      cor_raca_data,
+      sexo_data,
+      fx_etaria_data,
       describeRowData, 
       activeSelectedRow,
       describeData,

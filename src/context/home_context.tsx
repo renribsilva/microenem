@@ -1,17 +1,49 @@
 "use client";
 
 import { createContext, useContext, useState, useDeferredValue, useMemo, ReactNode, useEffect, useRef } from "react";
-import dic from "../app/(home)/2019/json/dic_2019.json"; 
-import { useChartTheme } from '../hooks/use_chart_theme'; 
-import { init } from "next/dist/compiled/webpack/webpack";
-
-const dicMap = new Map(
-  dic.codigo.map((cod, i) => [cod, { cor: dic.cor[i], aplicacao: dic.aplicacao[i] }])
-);
+import { useChartTheme } from '../hooks/use_chart_theme';
+import { useParams } from "next/navigation";
 
 const HomeContext = createContext<any>(null);
 
 export function HomeProvider({ children }: { children: ReactNode }) {
+  const params = useParams();
+  const currentYear = Array.isArray(params.year) ? params.year[0] : params.year || "2019";
+
+  // ---------------------------------------------------------------
+  // ---------------- CARGA DINÂMICA DE JSON POR ANO ---------------
+  // ---------------------------------------------------------------
+  const [dicData, setDicData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadYearlyData() {
+      setLoading(true);
+      try {
+        // Importação dinâmica baseada no ano da URL
+        const itens = await import(`../app/(home)/JSON/${currentYear}/dic_${currentYear}.json`);
+        setDicData(itens.default);
+      } catch (err) {
+        console.error(`Erro ao carregar dados do ano ${currentYear}:`, err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadYearlyData();
+  }, [currentYear]);
+
+  // CORREÇÃO: Memoização do dicMap com check de segurança para dicData
+  const dicMap = useMemo(() => {
+    if (!dicData || !dicData.codigo) return new Map();
+    
+    return new Map(
+      dicData.codigo.map((cod: any, i: number) => [
+        cod, 
+        { cor: dicData.cor[i], aplicacao: dicData.aplicacao[i] }
+      ])
+    );
+  }, [dicData]);
+
   const [activeArea, setActiveArea] = useState("LC");
   const deferredArea = useDeferredValue(activeArea);
   const [selectedRowId, setSelectedRowId] = useState<string | null>("mean");
@@ -19,7 +51,6 @@ export function HomeProvider({ children }: { children: ReactNode }) {
 
   const [activeDataset, setActiveDataset] = useState<any | null>(null);
   const [availableDatasets, setAvailableDatasets] = useState<any[]>([]);
-
   const datasetsCache = useRef<{ label: string; data: any } | null>(null);
 
   const [selectionsByArea, setSelectionsByArea] = useState<Record<string, string>>({
@@ -28,6 +59,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
     "CN": "503",
     "MT": "515"
   });
+
   const selectedLabel = selectionsByArea[deferredArea];
   const setSelectedLabel = (newLabel: string) => {
     setSelectionsByArea(prev => ({ ...prev, [deferredArea]: newLabel }));
@@ -44,7 +76,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
         if (!res.ok) return;
         const json = await res.json();        
         datasetsCache.current = {
-          label: deferredArea,
+          label: selectedLabel,
           data: json.dataset,
         };
         setActiveDataset(json.dataset);
@@ -68,17 +100,22 @@ export function HomeProvider({ children }: { children: ReactNode }) {
 
   const pointIndex = userPointIndex !== null ? userPointIndex : initialIndex;
 
+  // CORREÇÃO: Dependência do dicMap adicionada e check de segurança
   const currentInfo = useMemo(() => {
-    if (!activeDataset?.metadata) return { fullText: "Carregando...", corNome: "..." };
+    if (!activeDataset?.metadata || dicMap.size === 0) {
+      return { fullText: "Carregando...", corNome: "..." };
+    }
     const { codigo, lingua } = activeDataset.metadata;
     const info = dicMap.get(codigo);
+    
     if (!info) return { fullText: `Caderno ${codigo}`, corNome: "" };    
+    
     let textoBase = info.cor;    
     if (deferredArea === 'LC' && (lingua === 0 || lingua === 1)) {
       textoBase += lingua === 0 ? " (Inglês)" : " (Espanhol)";
     }
     return { fullText: `${textoBase} - ${info.aplicacao}`, corNome: info.cor };
-  }, [activeDataset, deferredArea, selectedLabel]);
+  }, [activeDataset, deferredArea, dicMap]);
 
   const chartLogic = {
     selectedLabel,
@@ -114,9 +151,8 @@ export function HomeProvider({ children }: { children: ReactNode }) {
       chartLogic, 
       handleTabChange: (id: string) => {
         setActiveArea(id);
-        // setUserPointIndex(null);
       }, 
-      isUpdating: activeArea !== deferredArea 
+      isUpdating: activeArea !== deferredArea || loading
     }}>
       {children}
     </HomeContext.Provider>

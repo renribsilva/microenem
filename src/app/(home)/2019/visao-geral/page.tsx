@@ -8,11 +8,7 @@ import Group from "../../../../components/svg/group"
 import PersonCheck from "../../../../components/svg/person_check"
 import PersonCancel from "../../../../components/svg/person_cancel"
 import Presence from "./components/tables/presence"
-
-// JSON Data
-import Inscritos from "../visao-geral/json/overview/inscritos.json"
-import Abstencao_dia1 from "../visao-geral/json/overview/presenca_dia1.json"
-import Abstencao_dia2 from "../visao-geral/json/overview/presenca_dia2.json"
+import { useNineteenData } from "../../../../context/nineteen_context"
 
 // Imports dinâmicos
 const FX_ETARIA = dynamic(() => import("./components/graphs/fx_etaria"), { ssr: false })
@@ -20,6 +16,8 @@ const SEXO = dynamic(() => import("./components/graphs/sexo"), { ssr: false })
 const COR_RACA = dynamic(() => import("./components/graphs/cor_raca"), { ssr: false })
 
 export default function Visao() {
+
+  const { Inscritos, Abstencao_dia1, Abstencao_dia2 } = useNineteenData();
 
   const total_inscritos = Inscritos[0].total.toLocaleString('pt-BR');
   const abstencao_dia1 = Abstencao_dia1[0].abst.toLocaleString('pt-BR', {

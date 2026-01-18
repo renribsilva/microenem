@@ -2,14 +2,14 @@
 
 import { useMemo } from 'react';
 import Chart from 'react-apexcharts';
-import sexo_data from "../../json/socials/sexo.json";
-import presence_data from "../../json/overview/presenca.json";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import customTooltip from '../../../../../../components/tsx/customTooltip';
+import { useNineteenData } from '../../../../../../context/nineteen_context';
 
 export default function SEXO() {
 
   const { textColor, panelColor } = useChartTheme();
+  const { presence_data, sexo_data } = useNineteenData();
 
   const doughnutColors = ["rgba(60, 245, 188, 0.7)", "rgba(245, 99, 59, 0.7)"];
   const n = (presence_data[0].subRows[0].total).toLocaleString('pt-BR');

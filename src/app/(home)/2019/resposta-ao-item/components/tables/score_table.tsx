@@ -159,12 +159,12 @@ export default function ScoreTable() {
     return Array.from({ length: end - start + 1 }, (_, i) => {
       const num = start + i;
       const code = getCodeByLabel(num, selectedLabel);
-      const itemScores = scoreData?.[code].counts || {};
+      const itemScores = scoreData?.[code]?.counts || {};
       
-      const v1 = Number(itemScores["1"] || 0);
-      const v0 = Number(itemScores["0"] || 0);
-      const v7 = Number(itemScores["7"] || 0);
-      const v8 = Number(itemScores["8"] || 0);
+      const v1 = Number(itemScores["1"] ?? 0);
+      const v0 = Number(itemScores["0"] ?? 0);
+      const v7 = Number(itemScores["7"] ?? 0);
+      const v8 = Number(itemScores["8"] ?? 0);
 
       const total = v1 + v0 + v7 + v8;
       const safeDiv = (v: number) => total > 0 ? ((v / total) * 100).toFixed(1) : "0.0";

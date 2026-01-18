@@ -1,15 +1,15 @@
 'use client'
 
 import Chart from 'react-apexcharts';
-import fx_etaria_data from "../../json/socials/faixa_etaria.json";
-import presence_data from "../../json/overview/presenca.json";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import { useMemo } from 'react';
 import customTooltip from '../../../../../../components/tsx/customTooltip';
+import { useNineteenData } from '../../../../../../context/nineteen_context';
 
 export default function FX_ETARIA() {
 
   const { textColor, gridColor } = useChartTheme();
+  const { presence_data, fx_etaria_data } = useNineteenData();
 
   const barColor = "rgba(255, 208, 53, 1)";
   const n = (presence_data[0].subRows[0].total).toLocaleString('pt-BR');

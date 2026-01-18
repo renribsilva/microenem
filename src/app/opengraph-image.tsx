@@ -29,9 +29,6 @@ export default async function Image() {
       >
         {/* Texto Principal */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '40px' }}>
-          <p style={{ fontSize: 90, margin: 0, fontWeight: '900', letterSpacing: '-0.05em' }}>
-            No bullshit,
-          </p>
           <p style={{ fontSize: 90, margin: 0, fontWeight: '900', letterSpacing: '-0.05em', color: '#3b82f6' }}>
             just data.
           </p>
@@ -41,7 +38,7 @@ export default async function Image() {
         <div
           style={{
             display: 'flex',
-            background: 'white',
+            background: 'rgb(31, 28, 28)',
             color: 'black',
             padding: '15px 40px',
             borderRadius: '10px',
@@ -50,13 +47,8 @@ export default async function Image() {
             marginTop: '20px',
           }}
         >
-          EXPLORAR MICRODADOS →
-        </div>
-
-        {/* URL no rodapé para reforçar a marca */}
-        <p style={{ fontSize: 24, marginTop: '40px', opacity: 0.5 }}>
           microenem.vercel.app
-        </p>
+        </div>
       </div>
     ),
     { ...size }

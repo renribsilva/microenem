@@ -7,12 +7,38 @@ import { useParams } from "next/navigation";
 const HomeContext = createContext<any>(null);
 
 export function HomeProvider({ children }: { children: ReactNode }) {
+
+  // ----------------------------------------------------
+  // ---------------- DEFINIÇÕES INICIAIS ---------------
+  // ----------------------------------------------------
+
+  const [activeArea, setActiveArea] = useState("LC");
+  const deferredArea = useDeferredValue(activeArea);
+  const [selectedRowId, setSelectedRowId] = useState<string | null>("mean");
+  const { colorMap } = useChartTheme();
+
+  const [activeDataset, setActiveDataset] = useState<any | null>(null);
+  const [availableDatasets, setAvailableDatasets] = useState<any[]>([]);
+  const datasetsCache = useRef<{ label: string; data: any } | null>(null);
+
+  const [selectionsByArea, setSelectionsByArea] = useState<Record<string, string>>({
+    "LC": "511_0",
+    "CH": "507",
+    "CN": "503",
+    "MT": "515"
+  });
+
+  // ---------------------------------------------------------------
+  // ---------------- PARÂMETROS PARA CARGA DINÂMICA ---------------
+  // ---------------------------------------------------------------
+
   const params = useParams();
   const currentYear = Array.isArray(params.year) ? params.year[0] : params.year || "2019";
 
-  // ---------------------------------------------------------------
-  // ---------------- CARGA DINÂMICA DE JSON POR ANO ---------------
-  // ---------------------------------------------------------------
+  // --------------------------------------------------------------------------------
+  // ---------------- CARGA DINÂMICA DE JSON POR ANO (BUNDLE INICIAL) ---------------
+  // --------------------------------------------------------------------------------
+
   const [dicData, setDicData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -32,10 +58,8 @@ export function HomeProvider({ children }: { children: ReactNode }) {
     loadYearlyData();
   }, [currentYear]);
 
-  // CORREÇÃO: Memoização do dicMap com check de segurança para dicData
   const dicMap = useMemo(() => {
-    if (!dicData || !dicData.codigo) return new Map();
-    
+    if (!dicData || !dicData.codigo) return new Map();    
     return new Map(
       dicData.codigo.map((cod: any, i: number) => [
         cod, 
@@ -44,21 +68,9 @@ export function HomeProvider({ children }: { children: ReactNode }) {
     );
   }, [dicData]);
 
-  const [activeArea, setActiveArea] = useState("LC");
-  const deferredArea = useDeferredValue(activeArea);
-  const [selectedRowId, setSelectedRowId] = useState<string | null>("mean");
-  const { colorMap } = useChartTheme();
-
-  const [activeDataset, setActiveDataset] = useState<any | null>(null);
-  const [availableDatasets, setAvailableDatasets] = useState<any[]>([]);
-  const datasetsCache = useRef<{ label: string; data: any } | null>(null);
-
-  const [selectionsByArea, setSelectionsByArea] = useState<Record<string, string>>({
-    "LC": "511_0",
-    "CH": "507",
-    "CN": "503",
-    "MT": "515"
-  });
+  // ---------------------------------------------------------------------
+  // ---------------- CARGA DINÂMICA DE JSON POR ANO (API) ---------------
+  // ---------------------------------------------------------------------
 
   const selectedLabel = selectionsByArea[deferredArea];
   const setSelectedLabel = (newLabel: string) => {
@@ -72,7 +84,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
     }
     async function loadData() {
       try {
-        const res = await fetch(`/api/2019/tcc?area=${deferredArea}&co_p=${selectedLabel}`);
+        const res = await fetch(`/api/2019/tcc?area=${deferredArea}&co_p=${selectedLabel}&year=${currentYear}`);
         if (!res.ok) return;
         const json = await res.json();        
         datasetsCache.current = {
@@ -90,6 +102,10 @@ export function HomeProvider({ children }: { children: ReactNode }) {
     }
     loadData();
   }, [deferredArea, selectedLabel]);
+
+  // ------------------------------------------------------
+  // ---------------- OUTROS PROCESSAMENTOS ---------------
+  // ------------------------------------------------------
 
   const [userPointIndex, setUserPointIndex] = useState<number | null>(null);
 
@@ -149,9 +165,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
       selectedRowId,    
       setSelectedRowId,
       chartLogic, 
-      handleTabChange: (id: string) => {
-        setActiveArea(id);
-      }, 
+      handleTabChange: (id: string) => { setActiveArea(id) }, 
       isUpdating: activeArea !== deferredArea || loading
     }}>
       {children}

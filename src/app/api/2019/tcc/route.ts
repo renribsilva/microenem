@@ -6,13 +6,14 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const area = searchParams.get('area');
   const label = searchParams.get('co_p'); // Código da prova, ex: "501"
+  const year = searchParams.get('year')
 
   if (!area) {
     return NextResponse.json({ error: "Área é obrigatória" }, { status: 400 });
   }
 
   try {
-    const filePath = path.join(process.cwd(), 'src', 'app', '(home)', '2019', 'json', `tcc_2019.json`);
+    const filePath = path.join(process.cwd(), `src/app/(home)/JSON/${year}/tcc_${year}.json`);
     
     if (!fs.existsSync(filePath)) {
       return NextResponse.json({ error: `Arquivo não encontrado` }, { status: 404 });

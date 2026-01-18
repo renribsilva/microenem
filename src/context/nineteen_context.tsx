@@ -21,12 +21,24 @@ const NineteenContext = createContext<any>(null);
 
 export function NineteenProvider({ children }: { children: ReactNode }) {
 
+  // ---------------------------------------------------------------
+  // ---------------- PARÂMETROS PARA CARGA DINÂMICA ---------------
+  // ---------------------------------------------------------------
+
   const params = useParams();
   const currentYear = Array.isArray(params.year) ? params.year[0] : params.year || "2019";
-  
-  // ---------------------------------------------------------------
-  // ---------------- CARGA DINÂMICA DE JSON POR ANO ---------------
-  // ---------------------------------------------------------------
+
+  // ------------------------------------------------------
+  // ---------------- CONTEXTOS NECESSÁRIOS ---------------
+  // ------------------------------------------------------
+
+  const { deferredArea, selectedRowId, chartLogic } = useHomeData();
+  const { describeData } = useDescribe(deferredArea);
+  const { selectedLabel } = chartLogic
+
+  // --------------------------------------------------------------------------------
+  // ---------------- CARGA DINÂMICA DE JSON POR ANO (BUNDLE INICIAL) ---------------
+  // --------------------------------------------------------------------------------
 
   // 2019 DATA
   const [itensData, setItensData] = useState<any>(null);
@@ -50,9 +62,61 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
     loadYearlyData();
   }, [currentYear]);
 
-  const { deferredArea, selectedRowId, chartLogic } = useHomeData();
-  const { describeData } = useDescribe(deferredArea);
-  const { selectedLabel } = chartLogic
+  // ---------------------------------------------------------------------
+  // ---------------- CARGA DINÂMICA DE JSON POR ANO (API) ---------------
+  // ---------------------------------------------------------------------
+
+  const [infoData, setInfoData] = useState<any>(null);
+  const [co_p_selected] = selectedLabel.split('_');
+  const [probData, setProbData] = useState<any>(null);
+  const [probLabels, setProbLabels] = useState<any>([]);
+  const [infoLabels, setInfoLabels] = useState<any>([]);
+
+  const probCache = useRef<{ co_p: string; dataset: any; labels: any } | null>(null);
+  const infoCache = useRef<{ co_p: string; dataset: any; labels: any } | null>(null);
+  
+  useEffect(() => {
+    if (!co_p_selected) return;
+    if (probCache.current?.co_p === co_p_selected) {
+      setProbData(probCache.current.dataset);
+      setProbLabels(probCache.current.labels);
+      return;
+    }
+    async function fetchProbData() {
+      try {
+        const res = await fetch(`/api/2019/probtrace?co_p=${String(co_p_selected)}&year=${currentYear}`);
+        const json = await res.json();        
+        probCache.current = {
+          co_p: co_p_selected,
+          dataset: json.dataset,
+          labels: json.theta_labels
+        };
+        setProbData(json.dataset);
+        setProbLabels(json.theta_labels);
+      } catch (err) {
+        console.error("Erro ao carregar probtrace:", err);
+      } 
+    }
+    async function fetchInfoData() {
+      try {
+        const res = await fetch(`/api/2019/info?co_p=${String(co_p_selected)}&year=${currentYear}`);
+        const json = await res.json();        
+        infoCache.current = {
+          co_p: co_p_selected,
+          dataset: json.dataset,
+          labels: json.theta_labels
+        };
+        setInfoData(json.dataset);
+        setInfoLabels(json.theta_labels);
+      } catch (err) {
+        console.error("Erro ao carregar infotrace:", err);
+      } 
+    }
+
+    fetchProbData();
+    fetchInfoData();
+
+  }, [co_p_selected]);
 
   //--------------------------------------------------------------------------
   //---------------------------DIFICULDADE DO EXAME---------------------------
@@ -125,58 +189,6 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
   const areaIdx = constantes.area.indexOf(deferredArea || "LC");
   const d = constantes.d[areaIdx];
   const k = constantes.k[areaIdx];
-  const [co_p_selected] = selectedLabel.split('_');
-  const [probData, setProbData] = useState<any>(null);
-  const [infoData, setInfoData] = useState<any>(null);
-  const [probLabels, setProbLabels] = useState<any>([]);
-  const [infoLabels, setInfoLabels] = useState<any>([]);
-
-  const probCache = useRef<{ co_p: string; dataset: any; labels: any } | null>(null);
-  const infoCache = useRef<{ co_p: string; dataset: any; labels: any } | null>(null);
-  
-  useEffect(() => {
-    if (!co_p_selected) return;
-    if (probCache.current?.co_p === co_p_selected) {
-      setProbData(probCache.current.dataset);
-      setProbLabels(probCache.current.labels);
-      return;
-    }
-    async function fetchProbData() {
-      try {
-        const res = await fetch(`/api/2019/probtrace?co_p=${String(co_p_selected)}`);
-        const json = await res.json();        
-        probCache.current = {
-          co_p: co_p_selected,
-          dataset: json.dataset,
-          labels: json.theta_labels
-        };
-        setProbData(json.dataset);
-        setProbLabels(json.theta_labels);
-      } catch (err) {
-        console.error("Erro ao carregar probtrace:", err);
-      } 
-    }
-
-    async function fetchInfoData() {
-      try {
-        const res = await fetch(`/api/2019/info?co_p=${String(co_p_selected)}`);
-        const json = await res.json();        
-        infoCache.current = {
-          co_p: co_p_selected,
-          dataset: json.dataset,
-          labels: json.theta_labels
-        };
-        setInfoData(json.dataset);
-        setInfoLabels(json.theta_labels);
-      } catch (err) {
-        console.error("Erro ao carregar infotrace:", err);
-      } 
-    }
-
-    fetchProbData();
-    fetchInfoData();
-
-  }, [co_p_selected]);
 
   const [selectedItems, setSelectedItems] = useState<Record<number, any>>({});
   const [lastItemActivate, setLastItemActivate] = useState<number>(0);

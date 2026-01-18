@@ -117,6 +117,8 @@ export default function NotasRedacaoChart() {
       },
       tooltip: {
         theme: 'dark',
+        intersect: false,
+        followCursor: true,
         custom: function({ seriesIndex, dataPointIndex, w }: any) {
           const dataConfig = w.config.series[seriesIndex].data[dataPointIndex];       
           return customTooltip({ 

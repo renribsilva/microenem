@@ -10,12 +10,12 @@ import { useHomeData } from '../../../../../../context/home_context';
 type NotaKey = "NU_NOTA_COMP1" | "NU_NOTA_COMP2" | "NU_NOTA_COMP3" | "NU_NOTA_COMP4" | "NU_NOTA_COMP5" | "NU_NOTA_REDACAO";
 
 export default function NotasRedacaoChart() {
-  const { textColor, gridColor } = useChartTheme();
+  const { textColor, gridColor,isDark } = useChartTheme();
   // selectedRowId vindo do contexto (inicialmente 'media')
   const { selectedRowId } = useHomeData(); 
   const [selectedNota, setSelectedNota] = useState<NotaKey>("NU_NOTA_REDACAO");
 
-  const barColor = "rgba(255, 208, 53, 1)";
+  const barColor = isDark ? "rgb(245, 188, 0)" : "rgba(255, 208, 53, 1)";
   const accentColor = "#00E396"; 
   
   const currentData = (notasData as any)[selectedNota];
@@ -148,11 +148,18 @@ export default function NotasRedacaoChart() {
             if (num >= 1000) return `${(num / 1000).toFixed(0)}k`;
             return num.toString();
           }
-        }
+        },
+        title: {
+          text: "Quantidade de Participantes",
+          style: { color: textColor, fontSize: '12px', fontWeight: 600 }
+        },
       },
       yaxis: {
-        labels: { style: { colors: textColor, fontSize: '9px' } },
-        title: "Pontos"
+        labels: { style: { colors: textColor, fontSize: '9px' }},
+        title: {
+          text: "Pontuação",
+          style: { color: textColor, fontSize: '12px', fontWeight: 600 }
+        },
       },
       grid: {
         borderColor: gridColor,

@@ -10,12 +10,12 @@ import { useHomeData } from '../../../../../../context/home_context';
 type NotaKey = "NU_NOTA_COMP1" | "NU_NOTA_COMP2" | "NU_NOTA_COMP3" | "NU_NOTA_COMP4" | "NU_NOTA_COMP5" | "NU_NOTA_REDACAO";
 
 export default function NotasRedacaoChart() {
-  const { textColor, gridColor,isDark } = useChartTheme();
+  const { textColor, gridColor } = useChartTheme();
   // selectedRowId vindo do contexto (inicialmente 'media')
   const { selectedRowId } = useHomeData(); 
   const [selectedNota, setSelectedNota] = useState<NotaKey>("NU_NOTA_REDACAO");
 
-  const barColor = isDark ? "rgb(245, 188, 0)" : "rgba(255, 208, 53, 1)";
+  const barColor = "rgba(255, 208, 53, 1)";
   const accentColor = "#00E396"; 
   
   const currentData = (notasData as any)[selectedNota];
@@ -219,7 +219,7 @@ export default function NotasRedacaoChart() {
               borderRadius: '15px',
               border: 'none',
               cursor: 'pointer',
-              fontSize: '11px',
+              fontSize: '12px',
               backgroundColor: selectedNota === opt.key ? barColor : '#333',
               color: selectedNota === opt.key ? '#000' : '#fff',
               transition: '0.2s'

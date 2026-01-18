@@ -33,22 +33,6 @@ export default async function Image() {
             just data.
           </p>
         </div>
-
-        {/* Call to Action (Botão Simulado) */}
-        <div
-          style={{
-            display: 'flex',
-            background: 'rgb(189, 189, 189)',
-            color: '',
-            padding: '15px 40px',
-            borderRadius: '10px',
-            fontSize: 32,
-            fontWeight: 'bold',
-            marginTop: '20px',
-          }}
-        >
-          microenem.vercel.app
-        </div>
       </div>
     ),
     { ...size }

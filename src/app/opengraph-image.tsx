@@ -30,7 +30,6 @@ export default async function Image() {
           fontWeight: 'bold',
         }}
       >
-        <p style={{ margin: 0 }}>No bullshit,</p>
         <p style={{ margin: 0 }}>just data.</p>
       </div>
     ),

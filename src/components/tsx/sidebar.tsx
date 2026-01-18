@@ -25,49 +25,25 @@ const icons = {
   arrow_up: ArrowUp
 }
 
+// Função auxiliar para gerar sub-itens com base no ano
+const generateSubItems = (year: string) => [
+  { name: "Visão geral", path: `/${year}/visao-geral` },
+  { name: "Dificuldade do exame", path: `/${year}/dificuldade-do-exame` },
+  { name: "Probabilidade e Info", path: `/${year}/probabilidade-e-info` },
+  { name: "Resposta ao item", path: `/${year}/resposta-ao-item` },
+  { name: "Relação notas/acertos", path: `/${year}/notas-e-acertos` },
+  { name: "Redação", path: `/${year}/redacao` },
+  { name: "TRI", path: `/${year}/tri` },
+];
+
 const navItems: NavItem[] = [
-  // {
-  //   icon: <CalenderIcon />,
-  //   name: "Calendar",
-  //   path: "/calendar",
-  // },
-  {
-    // icon: <PlugInIcon />,
-    name: "2025",
-  },
-  {
-    // icon: <PlugInIcon />,
-    name: "2024",
-  },
-  {
-    // icon: <PlugInIcon />,
-    name: "2023",
-  },
-  {
-    // icon: <PlugInIcon />,
-    name: "2022",
-  },
-  {
-    // icon: <PlugInIcon />,
-    name: "2021",
-  },
-  {
-    // icon: <PlugInIcon />,
-    name: "2020",
-  },
-  {
-    // icon: <PlugInIcon />,
-    name: "2019",
-    subItems: [
-      { name: "Visão geral", path: "/2019/visao-geral" },
-      { name: "Dificuldade do exame", path: "/2019/dificuldade-do-exame" },
-      { name: "Probabilidade e Info", path: "/2019/probabilidade-e-info" },
-      { name: "Resposta ao item", path: "/2019/resposta-ao-item" },
-      { name: "Relação notas/acertos", path: "/2019/notas-e-acertos" },
-      { name: "Redação", path: "/2019/redacao" },
-      { name: "TRI", path: "/2019/tri" },
-    ],
-  }
+  { name: "2025", subItems: generateSubItems("2025") },
+  { name: "2024", subItems: generateSubItems("2024") },
+  { name: "2023", subItems: generateSubItems("2023") },
+  { name: "2022", subItems: generateSubItems("2022") },
+  { name: "2021", subItems: generateSubItems("2021") },
+  { name: "2020", subItems: generateSubItems("2020") },
+  { name: "2019", subItems: generateSubItems("2019") },
 ];
 
 const AppSidebar: React.FC = () => {

@@ -14,7 +14,11 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
   // ---------------------------------------------------------------
 
   const params = useParams();
-  const currentYear = Array.isArray(params.year) ? params.year[0] : params.year || "2019";
+  const yearFromUrl = params.year as string || "2019";
+  const currentYear = useMemo(() => {
+    const anosComDados = ["2019"]; 
+    return anosComDados.includes(yearFromUrl) ? yearFromUrl : "2019";
+  }, [yearFromUrl]);
 
   // ------------------------------------------------------
   // ---------------- CONTEXTOS NECESSÁRIOS ---------------

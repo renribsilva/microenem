@@ -35,9 +35,9 @@ export default function AcertosChart() {
         const json = await res.json();        
         itemCache.current = {
           code: lastItemActivate,
-          dataset: json.dataset,
+          dataset: json?.dataset,
         };
-        setItemData(json.dataset);
+        setItemData(json?.dataset);
       } catch (err) {
         console.error("Erro ao carregar item_score:", err);
       } 
@@ -71,7 +71,7 @@ export default function AcertosChart() {
         data: probData[lastItemActivate]?.map((yValue, idx) => ({
         x: transformTheta(probLabels[idx]),
         y: Number(yValue),
-        tooltip: { enabled: false },
+        // tooltip: { enabled: false },
       })),
       },
     ];
@@ -153,10 +153,20 @@ export default function AcertosChart() {
       }
     ],
     tooltip: {
+      enabled: true,
+      shared: true,      
+      intersect: false,   
       theme: 'dark',
+      fixed: {
+        enabled: false,   
+      },
       x: {
+        show: true,
         formatter: (val) => `Proficiência: ${Number(val).toFixed(0)}`
       },
+      y: {
+        formatter: (val) => val !== undefined ? val.toFixed(2) : ""
+      }
     },
     title: {
       text: `Frequência de acertos do item ${lastItemActivateNum}`,
@@ -176,7 +186,7 @@ export default function AcertosChart() {
   }), [chartColor, currentInfo, gridColor, axisColor, xMin, xMax, lastItemActivate, lastItemActivateNum]);
 
   return (
-    <div style={{minHeight: '350px'}}>
+    <div style={{height: '350px'}}>
       <Chart 
         options={options} 
         series={series} 

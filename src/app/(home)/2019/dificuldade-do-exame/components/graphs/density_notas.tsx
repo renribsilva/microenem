@@ -2,7 +2,6 @@
 
 import { useMemo } from 'react';
 import Chart from 'react-apexcharts';
-import { useDensity } from '../../../../../../hooks/use_density_data';
 import { useChartTheme } from '../../../../../../hooks/use_chart_theme';
 import { useHomeData } from '../../../../../../context/home_context';
 import { useNineteenData } from '../../../../../../context/nineteen_context';
@@ -10,19 +9,18 @@ import { useNineteenData } from '../../../../../../context/nineteen_context';
 export default function DensityNotasChart() {
   
   const { deferredArea } = useHomeData();
-  const { activeSelectedRow, describeData } = useNineteenData();
-  const { densityData } = useDensity(deferredArea);
+  const { activeSelectedRow, describeDifData, densityDifData } = useNineteenData();
   const { densidadeColor, gridColor, textColor, axisColor } = useChartTheme();
   
   const selectedRow = activeSelectedRow;
 
   const { xMin, xMax } = useMemo(() => {
-    if (!describeData?.notas) return { xMin: 0, xMax: 1000 };
+    if (!describeDifData?.notas) return { xMin: 0, xMax: 1000 };
     return {
-      xMin: Math.floor(describeData.notas.min / 100) * 100,
-      xMax: Math.ceil(describeData.notas.max / 100) * 100
+      xMin: Math.floor(describeDifData.notas.min / 100) * 100,
+      xMax: Math.ceil(describeDifData.notas.max / 100) * 100
     };
-  }, [describeData]);
+  }, [describeDifData]);
 
   const getStatDescription = (id: string, valStr: string) => {
     if (!valStr) return "";
@@ -41,14 +39,14 @@ export default function DensityNotasChart() {
   };
 
   const series = useMemo(() => {
-    if (!densityData) return [];
-    const mainDs = densityData.datasets?.find((ds: any) => ds.id === 'main-density');
+    if (!densityDifData) return [];
+    const mainDs = densityDifData.datasets?.find((ds: any) => ds.id === 'main-density');
     const sortedData = [...(mainDs?.data || [])].sort((a, b) => a.x - b.x).map((p: any) => [p.x, p.y * 100]);
     const datasets = [{ name: `Densidade ${deferredArea}`, data: sortedData }];
 
     const fillIds = ['sd', 'q1', 'q3', 'p99'];
-    if (selectedRow && fillIds.includes(selectedRow.id) && describeData?.notas) {
-        const n = describeData.notas;
+    if (selectedRow && fillIds.includes(selectedRow.id) && describeDifData?.notas) {
+        const n = describeDifData.notas;
         let start = 0, end = 0;
         if (selectedRow.id === 'sd') { start = n.mean - n.sd; end = n.mean + n.sd; }
         else if (selectedRow.id === 'q1') { start = n.q1; end = n.max; }
@@ -59,7 +57,7 @@ export default function DensityNotasChart() {
         datasets.push({ name: `Destaque`, data: filtered });
     }
     return datasets;
-  }, [densityData, deferredArea, selectedRow, describeData]);
+  }, [densityDifData, deferredArea, selectedRow, describeDifData]);
 
   const options: ApexCharts.ApexOptions = useMemo(() => {
     const isShape = selectedRow ? ['skew', 'kurtosis'].includes(selectedRow.id) : false;
@@ -67,14 +65,14 @@ export default function DensityNotasChart() {
     
     const centerPoint = (xMax + xMin) / 2;
     
-    // Pegamos o valor numérico bruto do describeData para posicionar o eixo X
+    // Pegamos o valor numérico bruto do describeDifData para posicionar o eixo X
     const valX = isShape ? centerPoint : (
                  selectedRow?.id === 'mean' || selectedRow?.id === 'sd' 
-                 ? (describeData?.notas?.mean || 0) 
+                 ? (describeDifData?.notas?.mean || 0) 
                  : parseFloat(selectedRow?.nota?.replace(/\./g, '').replace(',', '.') || '0')
     );
 
-    const mainDs = densityData?.datasets?.find((ds: any) => ds.id === 'main-density');
+    const mainDs = densityDifData?.datasets?.find((ds: any) => ds.id === 'main-density');
     const yMax = mainDs?.data 
       ? Math.max(...mainDs.data.map((p: any) => p.y * 100)) 
       : 0;
@@ -141,7 +139,7 @@ export default function DensityNotasChart() {
               text: `${selectedRow.metric}: ${selectedRow.nota}`,
               style: { color: '#000', background: densidadeColor["line"], fontWeight: 'bold' },
               orientation: 'horizontal',
-              offsetX: valX < describeData?.notas?.q1 ? 40 : (valX > describeData?.notas?.q3 ? -40 : 0)
+              offsetX: valX < describeDifData?.notas?.q1 ? 40 : (valX > describeDifData?.notas?.q3 ? -40 : 0)
             },
           }
         ] : [],
@@ -161,9 +159,9 @@ export default function DensityNotasChart() {
         ] : []
       }
     };
-  }, [describeData, selectedRow, densidadeColor, textColor, gridColor, xMin, xMax, deferredArea, densityData]);
+  }, [describeDifData, selectedRow, densidadeColor, textColor, gridColor, xMin, xMax, deferredArea, densityDifData]);
 
-  // if (!describeData?.notas || !densityData) {
+  // if (!describeDifData?.notas || !densityDifData) {
   //   return <div className={styles.loading}>Carregando gráfico...</div>;
   // }
 

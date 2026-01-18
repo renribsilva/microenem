@@ -2,11 +2,8 @@
 
 import { createContext, useContext, useMemo, ReactNode, useRef, useLayoutEffect, useState, useCallback, useEffect } from "react";
 import { useHomeData } from "./home_context";
-import { useDescribe } from "../hooks/use_describe_data"; 
 import { useParams } from "next/navigation";
 import constantes from "../app/(home)/JSON/constantes.json";
-
-import scoreData from "../app/(home)/2019/resposta-ao-item/json/score_table.json"
 
 const NineteenContext = createContext<any>(null);
 
@@ -24,8 +21,8 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
   // ------------------------------------------------------
 
   const { deferredArea, selectedRowId, chartLogic } = useHomeData();
-  const { describeData } = useDescribe(deferredArea);
   const { selectedLabel } = chartLogic
+  const [lastItemActivate, setLastItemActivate] = useState<number>(0);
 
   // --------------------------------------------------------------------------------
   // ---------------- CARGA DINÂMICA DE JSON POR ANO (BUNDLE INICIAL) ---------------
@@ -40,6 +37,9 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
   const [cor_raca_data, setCor_raca_data] = useState<any>(null);
   const [sexo_data, setSexo_data] = useState<any>(null);
   const [fx_etaria_data, setFx_etaria_data] = useState<any>(null);
+  const [scoreData, setScoreData] = useState<any>(null);
+  const [competenciaRowData, setCompetenciaRowData] = useState<any>(null);
+  const [statusData, setStatusData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -54,7 +54,10 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
           presence,
           cor_raca,
           sexo,
-          fx_etaria
+          fx_etaria,
+          score,
+          competencia,
+          status
         ] = await Promise.all([
           // 2019 data
           import(`../app/(home)/JSON/${currentYear}/itens_${currentYear}.json`),
@@ -65,6 +68,9 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
           import(`../app/(home)/JSON/${currentYear}/visao-geral/socials/cor_raca.json`),
           import(`../app/(home)/JSON/${currentYear}/visao-geral/socials/sexo.json`),
           import(`../app/(home)/JSON/${currentYear}/visao-geral/socials/faixa_etaria.json`),
+          import(`../app/(home)/JSON/${currentYear}/resposta-ao-item/score_table.json`),
+          import(`../app/(home)/JSON/${currentYear}/redacao/estatisticas_redacao_completa.json`),
+          import(`../app/(home)/JSON/${currentYear}/redacao/status_redacao.json`),
         ]);
         setItensData(itens.default);
         setInscritos(inscritos.default)
@@ -74,6 +80,9 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
         setCor_raca_data(cor_raca.default)
         setSexo_data(sexo.default)
         setFx_etaria_data(fx_etaria.default)
+        setScoreData(score.default)
+        setCompetenciaRowData(competencia.default)
+        setStatusData(status.default)
       } catch (err) {
         console.error(`Erro ao carregar dados do ano ${currentYear}:`, err);
       } finally {
@@ -82,6 +91,43 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
     }
     loadYearlyData();
   }, [currentYear]);
+
+  const [densityDifData, setDensityDifData] = useState<any>(null);
+  const [describeDifData, setDescribeDifData] = useState<any>(null);
+  const [frequencyDifData, setFrequencyDifData] = useState<any>(null);
+
+  useEffect(() => {
+    const loadData = async () => {
+      let density;
+      let describe;
+      let frequency;
+      switch (deferredArea) {
+        case 'CH':
+          density = await import(`../app/(home)/JSON/${currentYear}/dificuldade-do-exame/CH/density.json`);
+          describe = await import(`../app/(home)/JSON/${currentYear}/dificuldade-do-exame/CH/describe.json`);
+          frequency = await import(`../app/(home)/JSON/${currentYear}/dificuldade-do-exame/CH/frequency_acertos.json`);
+          break;
+        case 'CN':
+          density = await import(`../app/(home)/JSON/${currentYear}/dificuldade-do-exame/CN/density.json`);
+          describe = await import(`../app/(home)/JSON/${currentYear}/dificuldade-do-exame/CN/describe.json`);
+          frequency = await import(`../app/(home)/JSON/${currentYear}/dificuldade-do-exame/CN/frequency_acertos.json`);
+          break;
+        case 'MT':
+          density = await import(`../app/(home)/JSON/${currentYear}/dificuldade-do-exame/MT/density.json`);
+          describe = await import(`../app/(home)/JSON/${currentYear}/dificuldade-do-exame/MT/describe.json`);
+          frequency = await import(`../app/(home)/JSON/${currentYear}/dificuldade-do-exame/MT/frequency_acertos.json`);
+          break;
+        default:
+          density = await import(`../app/(home)/JSON/${currentYear}/dificuldade-do-exame/LC/density.json`);
+          describe = await import(`../app/(home)/JSON/${currentYear}/dificuldade-do-exame/LC/describe.json`);
+          frequency = await import(`../app/(home)/JSON/${currentYear}/dificuldade-do-exame/LC/frequency_acertos.json`);
+      }
+      setDensityDifData(density.default);
+      setDescribeDifData(describe.default);
+      setFrequencyDifData(frequency.default)
+    };
+    loadData();
+  }, [deferredArea]);
 
   // ---------------------------------------------------------------------
   // ---------------- CARGA DINÂMICA DE JSON POR ANO (API) ---------------
@@ -139,6 +185,62 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
 
   }, [co_p_selected]);
 
+  const [itemGraphData, setItemGraphData] = useState<any>(null);
+  const itemGraphCache = useRef<{ code: number; dataset: any } | null>(null);
+  
+  useEffect(() => {
+    if (! lastItemActivate) return;
+    if (itemGraphCache.current?.code === lastItemActivate) {
+      setItemGraphData(itemGraphCache.current.dataset);
+      return;
+    }
+    async function fetchItemData() {
+      try {
+        const res = await fetch(`/api/2019/score_graph?code=${String(lastItemActivate)}&year=${currentYear}`);
+        const json = await res.json();        
+        itemGraphCache.current = {
+          code: lastItemActivate,
+          dataset: json?.dataset,
+        };
+        setItemGraphData(json?.dataset);
+      } catch (err) {
+        console.error("Erro ao carregar item_score:", err);
+      } 
+    }
+    fetchItemData();
+  }, [lastItemActivate]);
+
+  const [acertosNum, setAcertosNum] = useState<number | null>(null);
+  const [acertosData, setAcertosData] = useState<any>(null); 
+  const acertosCache = useRef<{ area: string; dataset: any } | null>(null);
+
+  useEffect(() => {
+    if (acertosCache.current?.area === deferredArea) {
+      setAcertosData(acertosCache.current.dataset);
+      return;
+    }
+
+    async function fetchAcertosData() {
+      try {
+        const targetArea = deferredArea || 'LC';
+        const res = await fetch(`/api/2019/acertos?area=${String(targetArea)}&year=${currentYear}`);
+        const json = await res.json();   
+        
+        if (json.dataset) {
+          acertosCache.current = {
+            area: String(targetArea),
+            dataset: json.dataset,
+          };
+          setAcertosData(json.dataset);
+        }
+      } catch (err) {
+        console.error("Erro ao carregar item_score:", err);
+      } 
+    }
+
+    fetchAcertosData();
+  }, [deferredArea]);
+
   //--------------------------------------------------------------------------
   //---------------------------DIFICULDADE DO EXAME---------------------------
   //--------------------------------------------------------------------------
@@ -161,22 +263,22 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
   };
 
   const tableData = useMemo(() => {
-    if (!describeData?.notas) return [];
+    if (!describeDifData?.notas) return [];
     return rowOrder
-      .filter(key => describeData.notas[key] !== undefined)
+      .filter(key => describeDifData.notas[key] !== undefined)
       .map((key) => ({
         id: key, 
         metric: labelMap[key] || key,
-        nota: formatValue(key, describeData.notas[key], 'nota'),
-        acerto: formatValue(key, describeData.acertos?.[key], 'acerto')
+        nota: formatValue(key, describeDifData.notas[key], 'nota'),
+        acerto: formatValue(key, describeDifData.acertos?.[key], 'acerto')
       }));
-  }, [describeData, deferredArea]);
+  }, [describeDifData, deferredArea]);
 
   const describeRowData = useMemo(() => ({
     data: tableData,
-    n: describeData?.notas?.n || 0,
-    raw: describeData 
-  }), [tableData, describeData]);
+    n: describeDifData?.notas?.n || 0,
+    raw: describeDifData 
+  }), [tableData, describeDifData]);
 
   
   const activeSelectedRow = useMemo(() => {
@@ -212,7 +314,6 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
   const k = constantes.k[areaIdx];
 
   const [selectedItems, setSelectedItems] = useState<Record<number, any>>({});
-  const [lastItemActivate, setLastItemActivate] = useState<number>(0);
   const [lastItemActivateNum, setLastItemActivateNum] = useState<number>(0);
   const prevLabelRef = useRef(selectedLabel);
   const previousLabel = prevLabelRef.current;
@@ -325,41 +426,6 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
   //--------------------------RESPOSTA AO ITEM---------------------------
   //---------------------------------------------------------------------
 
-  //--------------------------------------------------------------------
-  //--------------------------NOTAS E ACERTOS---------------------------
-  //--------------------------------------------------------------------
-
-  const [acertosNum, setAcertosNum] = useState<number | null>(null);
-  const [acertosData, setAcertosData] = useState<any>(null); 
-  const acertosCache = useRef<{ area: string; dataset: any } | null>(null);
-
-  useEffect(() => {
-    if (acertosCache.current?.area === deferredArea) {
-      setAcertosData(acertosCache.current.dataset);
-      return;
-    }
-
-    async function fetchAcertosData() {
-      try {
-        const targetArea = deferredArea || 'LC';
-        const res = await fetch(`/api/2019/acertos?area=${String(targetArea)}`);
-        const json = await res.json();   
-        
-        if (json.dataset) {
-          acertosCache.current = {
-            area: String(targetArea),
-            dataset: json.dataset,
-          };
-          setAcertosData(json.dataset);
-        }
-      } catch (err) {
-        console.error("Erro ao carregar item_score:", err);
-      } 
-    }
-
-    fetchAcertosData();
-  }, [deferredArea]);
-
   if (loading) {
     return null; 
   }
@@ -375,7 +441,6 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
       fx_etaria_data,
       describeRowData, 
       activeSelectedRow,
-      describeData,
       abandonadosCodes,
       FIXED_PALETTE,
       d,
@@ -395,7 +460,13 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
       activeCodes,
       acertosData,
       acertosNum,
-      setAcertosNum
+      setAcertosNum,
+      itemGraphData,
+      densityDifData,
+      describeDifData,
+      frequencyDifData,
+      competenciaRowData,
+      statusData
     }}>
       {children}
     </NineteenContext.Provider>

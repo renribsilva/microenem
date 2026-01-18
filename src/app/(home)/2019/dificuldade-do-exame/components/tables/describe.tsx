@@ -9,7 +9,7 @@ import { useNineteenData } from '../../../../../../context/nineteen_context';
 const columnHelper = createColumnHelper<any>();
 
 const TableRow = memo(({ row, selectedRowId, onRowClick }: any) => {
-  // A comparação agora é entre IDs (strings)
+  
   const isSelected = selectedRowId === row.original.id;  
   
   return (
@@ -33,8 +33,6 @@ TableRow.displayName = 'TableRow';
 export function DescribeTable() {
   
   const { deferredArea, selectedRowId, setSelectedRowId } = useHomeData();
-  
-  // 2. Pegamos os dados já processados pelo NineteenProvider
   const { describeRowData } = useNineteenData();
 
   const columns = useMemo(() => [

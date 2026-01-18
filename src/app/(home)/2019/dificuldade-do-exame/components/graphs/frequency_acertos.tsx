@@ -2,7 +2,6 @@
 
 import { useMemo } from 'react';
 import Chart from 'react-apexcharts';
-import { useFrequency } from '../../../../../../hooks/use_frequency_data';
 import { useChartTheme } from '../../../../../../hooks/use_chart_theme';
 import customTooltip from '../../../../../../components/tsx/customTooltip';
 import { useHomeData } from '../../../../../../context/home_context';
@@ -11,8 +10,7 @@ import { useNineteenData } from '../../../../../../context/nineteen_context';
 export default function FrequencyAcertosChart() {
   
   const { deferredArea } = useHomeData();
-  const { describeData, activeSelectedRow } = useNineteenData();
-  const { frequencyData } = useFrequency(deferredArea);
+  const { describeDifData, activeSelectedRow, frequencyDifData } = useNineteenData();
   const { acertosColor, gridColor, axisColor, textColor } = useChartTheme();
 
   const selectedRow = activeSelectedRow;
@@ -37,14 +35,14 @@ export default function FrequencyAcertosChart() {
   };
 
   const series = useMemo(() => {
-    if (!frequencyData) return [];
-    const rawData = frequencyData.datasets?.[1]?.data || [];
+    if (!frequencyDifData) return [];
+    const rawData = frequencyDifData.datasets?.[1]?.data || [];
     const fillIds = ['sd', 'q1', 'q3', 'p99']; 
     
     const dataWithColors = rawData.map((p: any) => {
       let pointColor = acertosColor["bar"]; 
-      if (selectedRow && fillIds.includes(selectedRow.id) && describeData?.acertos) {
-        const n = describeData.acertos;
+      if (selectedRow && fillIds.includes(selectedRow.id) && describeDifData?.acertos) {
+        const n = describeDifData.acertos;
         let start = 0, end = 0;
         
         // Lógica de destaque baseada nos acertos da área atual
@@ -72,18 +70,18 @@ export default function FrequencyAcertosChart() {
       name: `Frequência ${deferredArea}`,
       data: dataWithColors
     }];
-  }, [frequencyData, deferredArea, selectedRow, describeData, acertosColor]);
+  }, [frequencyDifData, deferredArea, selectedRow, describeDifData, acertosColor]);
 
   const options: ApexCharts.ApexOptions = useMemo(() => {
     const isShape = selectedRow ? ['skew', 'kurtosis'].includes(selectedRow.id) : false;
-    const mean = describeData?.acertos?.mean || 0;
+    const mean = describeDifData?.acertos?.mean || 0;
     
     // Posição da linha vertical recalculada para a área atual
     const valX = (isShape || selectedRow?.id === 'sd' || selectedRow?.id === 'mean')
       ? Math.round(mean) 
       : Math.round(parseFloat(selectedRow?.acerto?.replace(/\./g, '').replace(',', '.') || "0"));
 
-    const rawDataY = frequencyData?.datasets?.[1]?.data || [];
+    const rawDataY = frequencyDifData?.datasets?.[1]?.data || [];
     const yMax = rawDataY.length > 0 
       ? Math.max(...rawDataY.map((p: any) => p.y)) 
       : 0;
@@ -138,7 +136,7 @@ export default function FrequencyAcertosChart() {
           const configPonto = w.config.series[seriesIndex].data[dataPointIndex];
           const acertosReal = configPonto.x;
           const porcentagem = configPonto.y;
-          const valorAbsoluto = frequencyData?.datasets?.[0]?.data?.[dataPointIndex]?.y || 0;
+          const valorAbsoluto = frequencyDifData?.datasets?.[0]?.data?.[dataPointIndex]?.y || 0;
           return customTooltip({ 
             label: `Acertos ${acertosReal}`, 
             value: porcentagem.toFixed(1), 
@@ -156,9 +154,9 @@ export default function FrequencyAcertosChart() {
               text: `${selectedRow.metric}: ${selectedRow.acerto}`,
               style: { color: '#000', background: acertosColor["line"], fontWeight: 'bold' },
               orientation: 'horizontal',
-              offsetX: valX < Math.round(describeData?.acertos?.q1) 
+              offsetX: valX < Math.round(describeDifData?.acertos?.q1) 
                 ? 35 
-                : (valX > Math.round(describeData?.acertos?.q3) ? -35 : 0)
+                : (valX > Math.round(describeDifData?.acertos?.q3) ? -35 : 0)
             },
           }
         ] : [],
@@ -178,9 +176,9 @@ export default function FrequencyAcertosChart() {
         ] : []
       }
     };
-  }, [describeData, frequencyData, selectedRow, acertosColor, axisColor, gridColor, deferredArea, textColor]);
+  }, [describeDifData, frequencyDifData, selectedRow, acertosColor, axisColor, gridColor, deferredArea, textColor]);
 
-  // if (!describeData?.acertos || !frequencyData) {
+  // if (!describeDifData?.acertos || !frequencyDifData) {
   //   return <div className={styles.loading}>Carregando gráfico...</div>;
   // }
 

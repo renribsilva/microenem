@@ -5,13 +5,14 @@ import path from 'path';
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const area = searchParams.get('area') || 'LC';
+  const year = searchParams.get('year');
 
   if (!area) {
     return NextResponse.json({ error: "Área é obrigatória" }, { status: 400 });
   }
 
   try {
-    const filePath = path.join(process.cwd(), 'src/app/(home)/2019/notas-e-acertos/json/score_describe.json');
+    const filePath = path.join(process.cwd(), `src/app/(home)/JSON/${year}/notas-e-acertos/score_describe.json`);
     
     if (!fs.existsSync(filePath)) {
       return NextResponse.json({ error: `Arquivo não encontrado` }, { status: 404 });

@@ -8,8 +8,8 @@ import {
   flexRender,
   ColumnDef
 } from '@tanstack/react-table'
-import statusData from "../../json/status_redacao.json"
 import styles from './tables.module.css'
+import { useNineteenData } from '../../../../../../context/nineteen_context';
 
 interface StatusRow {
   grupo: string;
@@ -30,6 +30,8 @@ const statusMap: Record<string, string> = {
 };
 
 export default function StatusRedacaoTable() {
+
+  const { statusData } = useNineteenData();
 
   const tableData = useMemo<StatusRow[]>(() => {
     const nTotal = statusData?.datasets[0]?.n_total || 0;

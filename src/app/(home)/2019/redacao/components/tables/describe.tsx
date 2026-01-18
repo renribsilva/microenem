@@ -4,7 +4,7 @@ import { useMemo, memo, useState, useEffect } from 'react';
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import styles from "./tables.module.css";
 import { useHomeData } from '../../../../../../context/home_context';
-import competenciaRowData from '../../../redacao/json/estatisticas_redacao_completa.json';
+import { useNineteenData } from '../../../../../../context/nineteen_context';
 
 const columnHelper = createColumnHelper<any>();
 
@@ -30,10 +30,11 @@ const TableRow = memo(({ row, selectedRowId, onRowClick }: any) => {
 TableRow.displayName = 'TableRow';
 
 export default function NotasRedacaoTable() {
+
+  const { competenciaRowData } = useNineteenData();
   const { deferredArea, selectedRowId, setSelectedRowId } = useHomeData();
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 800 : false);
   
-  // CORREÇÃO AQUI: Se o contexto vier como 'mean' ou vazio, força para 'media'
   useEffect(() => {
     if (!selectedRowId || selectedRowId === 'mean') {
       setSelectedRowId('media');

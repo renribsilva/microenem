@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Chart from 'react-apexcharts';
 import { useChartTheme } from '../../../../../../hooks/use_chart_theme';
-// import InputShell from '../../../../../../components/tsx/input_shell';
 import { useHomeData } from '../../../../../../context/home_context';
 import { useNineteenData } from '../../../../../../context/nineteen_context';
 
@@ -11,20 +10,19 @@ export default function AcertosChart() {
 
   const { chartLogic } = useHomeData();
   const { gridColor, axisColor, textColor } = useChartTheme();
-  const { lastItemActivate, lastItemActivateNum, probData, probLabels, k, d} = useNineteenData();
-  const itemCache = useRef<{ code: string; dataset: any } | null>(null);
+  const { lastItemActivate, lastItemActivateNum, probData, probLabels, k, d, itemGraphData} = useNineteenData();
   
   // Refs e Estados para controle de renderização por tamanho
   const parentRef = useRef<HTMLDivElement>(null);
   const [dimensionsReady, setDimensionsReady] = useState(false);
-  const [itemData, setItemData] = useState<any>(null);
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 800 : false);
   
+  // Estado para disparar a segunda renderização
+  const [refreshKey, setRefreshKey] = useState(0);
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 800);
     window.addEventListener('resize', handleResize);
-
-    // Observer para garantir que o gráfico só renderize com largura definida
     const observer = new ResizeObserver((entries) => {
       for (let entry of entries) {
         if (entry.contentRect.width > 0) {
@@ -32,38 +30,19 @@ export default function AcertosChart() {
         }
       }
     });
-
     if (parentRef.current) {
       observer.observe(parentRef.current);
     }
+    const timer = setTimeout(() => {
+      setRefreshKey(prev => prev + 1);
+    }, 500);
 
     return () => {
       window.removeEventListener('resize', handleResize);
       observer.disconnect();
+      clearTimeout(timer);
     };
   }, []);
-  
-  useEffect(() => {
-    if (! lastItemActivate) return;
-    if (itemCache.current?.code === lastItemActivate) {
-      setItemData(itemCache.current.dataset);
-      return;
-    }
-    async function fetchItemData() {
-      try {
-        const res = await fetch(`/api/2019/score_graph?code=${String(lastItemActivate)}`);
-        const json = await res.json();        
-        itemCache.current = {
-          code: lastItemActivate,
-          dataset: json?.dataset,
-        };
-        setItemData(json?.dataset);
-      } catch (err) {
-        console.error("Erro ao carregar item_score:", err);
-      } 
-    }
-    fetchItemData();
-  }, [lastItemActivate]);
 
   const { 
     chartColor,
@@ -75,14 +54,14 @@ export default function AcertosChart() {
 
   // --- CONFIGURAÇÃO DE DADOS ---
   const series = useMemo(() => {
-    if (!itemData || !Array.isArray(itemData.x)) return [];
+    if (!itemGraphData || !Array.isArray(itemGraphData.x)) return [];
     return [
       {
         name: "Frequência de acertos",
         type: 'scatter',
-        data: itemData.x.map((valorX, index) => ({
+        data: itemGraphData.x.map((valorX, index) => ({
           x: valorX,
-          y: itemData.y[index] // Pega o y correspondente pelo índice
+          y: itemGraphData.y[index] // Pega o y correspondente pelo índice
         }))
       },
       {
@@ -95,7 +74,7 @@ export default function AcertosChart() {
       })),
       },
     ];
-  }, [itemData, lastItemActivate, probData]);
+  }, [itemGraphData, lastItemActivate, probData]);
 
   // --- CONFIGURAÇÕES DO APEXCHARTS ---
   const options: ApexCharts.ApexOptions = useMemo(() => ({
@@ -209,6 +188,7 @@ export default function AcertosChart() {
     <div ref={parentRef} style={{height: '350px', width: '100%'}}>
       {dimensionsReady && (
         <Chart 
+          key={refreshKey}
           options={options} 
           series={series} 
           type="line"

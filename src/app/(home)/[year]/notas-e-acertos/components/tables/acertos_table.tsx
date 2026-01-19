@@ -87,7 +87,7 @@ export default function AcertosTable() {
           header: "Média",
           cell: (info) => {
             const val = info.getValue();
-            return <span style={{ fontWeight: "600" }}>{val !== 0 ? val.toFixed(2) : "—"}</span>;
+            return <span style={{ fontWeight: "600" }}>{val !== 0 ? val.toFixed(1) : "—"}</span>;
           },
         }),
         columnHelper.accessor("max", { 
@@ -98,7 +98,7 @@ export default function AcertosTable() {
           header: "D.P.",
           cell: (info) => {
             const val = info.getValue();
-            return <span style={{ color: "#888" }}>{val !== 0 ? val.toFixed(2) : "—"}</span>;
+            return <span style={{ color: "#888" }}>{val !== 0 ? val.toFixed(1) : "—"}</span>;
           },
         }),
         columnHelper.accessor("skew", { 

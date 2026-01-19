@@ -341,6 +341,25 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
     return idx ? Number(p.CO_ITEM[idx]) : null;
   }, [deferredArea, itensData]);
 
+  // Função para traduzir Posição (ex: questão 95) em Código (ex: 11234)
+  const getParamByLabel = useCallback((num: number, label: string) => {
+    if (!label || !itensData || !itensData.CO_POSICAO) return null; 
+    const parts = label.split('_');
+    const co_p = parts[0];
+    const ling = parts[1] || "0";
+    const p = itensData;   
+    const idx = Object.keys(p.CO_POSICAO).find(i => {
+      const matchProva = Number(p.CO_PROVA[i]) === Number(co_p);
+      const matchPos = Number(p.CO_POSICAO[i]) === num;
+      if (!matchProva || !matchPos) return false;
+      if (deferredArea === 'LC' && num <= 5 && ling !== undefined) {
+        return Number(p.TP_LINGUA[i]) === Number(ling);
+      }
+      return true;
+    });
+    return idx ? Number(p.NU_PARAM_B[idx]) : null;
+  }, [deferredArea, itensData]);
+
   const handleToggle = useCallback((num: number, isAbandoned: boolean) => {
     // Usamos o selectedLabel atual para descobrir qual o código do item no momento do clique
     const codeItem = getCodeByLabel(num, selectedLabel);
@@ -461,6 +480,7 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
       scoreData,
       handleToggle,
       getCodeByLabel,
+      getParamByLabel,
       activeCodes,
       acertosData,
       acertosNum,

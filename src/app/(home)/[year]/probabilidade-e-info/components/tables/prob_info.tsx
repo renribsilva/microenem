@@ -203,7 +203,7 @@ export default function ProbsInfoTable() {
       </table>
       <div className={styles.table_footer}>
         ¹ <strong>Probabilidade:</strong> Chance estimada de acerto. No ENEM, errar itens para os quais se tem alta probabilidade de acerto tende a reduzir a nota devido à inconsistência pedagógica. <br/>
-        ² <strong>Informação:</strong> Quanto mais informação um item fornece, menor é a incerteza sobre a nota estimada. Em geral, essa incerteza é maior nas extremidados da régua do ENEM.
+        ² <strong>Informação:</strong> Quanto mais informação um item fornece, menos incerteza se tem sobre a nota estimada. Em geral, essa incerteza é maior nas extremidados da régua do ENEM.
       </div>
     </section>
   );

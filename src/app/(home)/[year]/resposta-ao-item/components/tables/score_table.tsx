@@ -24,6 +24,7 @@ type TableRow = {
   freq_branco: string;
   freq_dupla_marcacao: string;
   abandonado: boolean;
+  param_b: number
 };
 
 export default function ScoreTable() {
@@ -32,6 +33,7 @@ export default function ScoreTable() {
   const { 
     scoreData, 
     getCodeByLabel, 
+    getParamByLabel,
     abandonadosCodes, 
     lastItemActivate,
     setLastItemActivate,
@@ -130,6 +132,16 @@ export default function ScoreTable() {
       ] : []),
     ];
 
+    const paramCols = [
+      // Só inclui Código se não for mobile
+      ...(!isMobile ? [
+        columnHelper.accessor("param_b", {
+          header: "b*",
+          cell: (info) => <span style={{ fontSize: "0.85rem", color: "#888" }}>{info.getValue() || "—"}</span>,
+        })
+      ] : []),
+    ];
+
     return [
       columnHelper.group({
         id: 'identificacao_grupo',
@@ -140,7 +152,14 @@ export default function ScoreTable() {
         id: 'score_grupo',
         header: isMobile ? 'Frequência' : 'Frequência de Respostas',
         columns: scoreCols,
-      })
+      }),
+      ...(!isMobile ? [
+        columnHelper.group({
+        id: 'param_grupo',
+        header: isMobile ? 'Param' : 'Parâmetro',
+        columns: paramCols,
+        })] : []
+      )
     ];
   }, [columnHelper, isMobile]); // Importante incluir isMobile aqui
 
@@ -159,6 +178,7 @@ export default function ScoreTable() {
     return Array.from({ length: end - start + 1 }, (_, i) => {
       const num = start + i;
       const code = getCodeByLabel(num, selectedLabel);
+      const param = getParamByLabel(num, selectedLabel);
       const itemScores = scoreData?.[code]?.counts || {};
       
       const v1 = Number(itemScores["1"] ?? 0);
@@ -177,7 +197,8 @@ export default function ScoreTable() {
         freq_acerto: safeDiv(v1),
         freq_erro: safeDiv(v0),
         freq_branco: safeDiv(v8),
-        freq_dupla_marcacao: safeDiv(v7)
+        freq_dupla_marcacao: safeDiv(v7),
+        param_b: param
       };
     });
   }, [scoreData, deferredArea, selectedLabel, getCodeByLabel, abandonadosCodes]);
@@ -300,6 +321,9 @@ export default function ScoreTable() {
           })}
         </tbody>
       </table>
+      <div className={styles.table_footer}>
+        * Parâmetro de dificuldade: associado à dificuldade do item, sendo que quanto maior seu valor, mais difícil é o item.
+      </div>
     </section>
   );
 }

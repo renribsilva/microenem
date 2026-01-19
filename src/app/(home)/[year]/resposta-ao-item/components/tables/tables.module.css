@@ -135,3 +135,11 @@
   margin-right: 15px;
   margin-bottom: 15px;
 }
+
+.table_footer {
+  padding: 5px;
+  padding-top: 10px;
+  font-size: 0.75rem; /* 12px */
+  font-weight: 300;
+  color: #888;
+}

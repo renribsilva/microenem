@@ -12,7 +12,7 @@ type NotaKey = "NU_NOTA_COMP1" | "NU_NOTA_COMP2" | "NU_NOTA_COMP3" | "NU_NOTA_CO
 export default function NotasRedacaoChart() {
 
   const { competenciaRowData } = useNineteenData();
-  const { textColor, gridColor } = useChartTheme();
+  const { textColor, gridColor, axisColor } = useChartTheme();
   const { selectedRowId } = useHomeData(); 
   const [selectedNota, setSelectedNota] = useState<NotaKey>("NU_NOTA_REDACAO");
   
@@ -91,12 +91,12 @@ export default function NotasRedacaoChart() {
           return val.toLocaleString('pt-BR');
         },
         offsetX: 35,
-        style: { fontSize: '10px', colors: [textColor] }
+        style: { fontSize: '10px', colors: [axisColor] }
       },
       xaxis: {
         tickAmount: 5,
         labels: {
-          style: { colors: textColor, fontSize: '10px' },
+          style: { colors: axisColor, fontSize: '10px' },
           formatter: (val: number) => {
             if (val >= 1000 || val <= -1000) {
               const formatted = (val / 1000).toLocaleString('pt-BR', {
@@ -108,9 +108,11 @@ export default function NotasRedacaoChart() {
             return val.toLocaleString('pt-BR');
           }
         },
+        title: { text: "Quantidade de alunos", style: { color: axisColor } }
       },
       yaxis: {
-        labels: { style: { colors: textColor, fontSize: '9px' }},
+        labels: { style: { colors: axisColor, fontSize: '9px' }},
+        title: { text: "Pontuação", style: { color: axisColor } }
       },
       grid: {
         borderColor: gridColor,

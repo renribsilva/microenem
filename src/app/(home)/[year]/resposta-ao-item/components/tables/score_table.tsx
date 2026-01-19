@@ -148,18 +148,18 @@ export default function ScoreTable() {
         header: isMobile ? 'Item' : 'Identificação',
         columns: idCols,
       }),
-      columnHelper.group({
-        id: 'score_grupo',
-        header: isMobile ? 'Frequência' : 'Frequência de Respostas',
-        columns: scoreCols,
-      }),
       ...(!isMobile ? [
         columnHelper.group({
         id: 'param_grupo',
         header: isMobile ? 'Param' : 'Parâmetro',
         columns: paramCols,
         })] : []
-      )
+      ),
+      columnHelper.group({
+        id: 'score_grupo',
+        header: isMobile ? 'Frequência' : 'Frequência de Respostas',
+        columns: scoreCols,
+      })
     ];
   }, [columnHelper, isMobile]); // Importante incluir isMobile aqui
 

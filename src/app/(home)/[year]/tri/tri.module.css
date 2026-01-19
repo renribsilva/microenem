@@ -1,0 +1,21 @@
+/****************************************/
+/***************CONTAINERS***************/
+/****************************************/
+
+.main_container {
+  /* background-color: aquamarine; */
+  padding: 10px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nav_container {
+  /* background-color: aliceblue; */
+  width: 100%;
+}
+
+/**************************************/
+/***************MAIN TOP***************/
+/**************************************/

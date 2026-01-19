@@ -173,8 +173,8 @@ export default function AcertosChart() {
     },
     subtitle: {
       text: [
-        `Frequência relativa de acertos observados nos`, 
-        `microdados do ENEM (cod: ${lastItemActivate}; p: ${currentInfo?.corNome}).`
+        `Frequência relativa de acertos observados em cada`, 
+        `faixa de proficiência (cod: ${lastItemActivate}; p: ${currentInfo?.corNome}).`
       ] as any,
       style: { color: textColor, fontSize: '13px' },
     },

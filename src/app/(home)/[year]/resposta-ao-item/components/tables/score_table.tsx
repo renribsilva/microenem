@@ -161,7 +161,7 @@ export default function ScoreTable() {
         columns: scoreCols,
       })
     ];
-  }, [columnHelper, isMobile]); // Importante incluir isMobile aqui
+  }, [columnHelper, isMobile]);
 
   const data = useMemo(() => {
 

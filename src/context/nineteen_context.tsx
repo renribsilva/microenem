@@ -518,7 +518,8 @@
         EAPData,
         sampleEAP,
         setSampleEAP,
-        setUpdateTrigger
+        setUpdateTrigger,
+        updateTrigger
       }}>
         {children}
       </NineteenContext.Provider>

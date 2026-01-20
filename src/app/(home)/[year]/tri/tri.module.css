@@ -36,6 +36,11 @@
   flex-direction: column;
   gap: 10px;
   width: 100%;
+  flex:1 1 60%
+}
+
+.tri_right {
+  flex:1 1 40%
 }
 
 .tri_bottom {

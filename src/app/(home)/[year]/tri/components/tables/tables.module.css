@@ -15,11 +15,15 @@
 }
 
 .tcc_cabecalho {
-  /* background-color: aquamarine; */
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
-  margin-right: 60px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.tcc_impacto {
+  
 }
 
 @media (max-width: 800px) {
@@ -118,4 +122,35 @@
 .margin_td {
   padding: 5px 8px;
   color: var(--tab-text);
+}
+
+.update_button {
+  /* display: inline-flex; */
+  /* align-items: center; */
+  /* justify-content: center; */
+  margin-top: 10px;
+  padding: 6px 14px;
+  background-color: #3b82f6; /* Azul moderno */
+  color: #ffffff;
+  border: none;
+  /* border-radius: 6px; */
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  /* letter-spacing: 0.5px; */
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+  /* margin-top: 8px; */
+}
+
+.update_button:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+}
+
+.update_button:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(59, 130, 246, 0.2);
 }

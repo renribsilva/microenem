@@ -268,7 +268,7 @@
         } 
       }
       if (Object.entries(selectedItems).length !== 0) fetchEAPData();
-    }, [deferredArea, selectedLabel, updateTrigger]);
+    }, [updateTrigger]);
 
     //--------------------------------------------------------------------------
     //---------------------------DIFICULDADE DO EXAME---------------------------
@@ -470,6 +470,37 @@
     }, [selectedItems, probData, abandonadosCodes]);
 
     //--------------------------------------------------------
+    //--------------------------EAP---------------------------
+    //--------------------------------------------------------
+    
+    const intervalData = useMemo(() => {
+      const ranges = {
+        "LC": { start: 1, end: 45 }, 
+        "CH": { start: 46, end: 90 },
+        "CN": { start: 91, end: 135 }, 
+        "MT": { start: 136, end: 180 },
+      };    
+      
+      const { start, end } = ranges[deferredArea as keyof typeof ranges] || { start: 1, end: 45 };
+      const updatedInterval = Array(45).fill('0'); 
+
+      activeCodes.forEach((codigo: number) => {
+        const itemMarcado = selectedItems[codigo];
+        if (itemMarcado && itemMarcado.status === "acerto") {
+          const pos = itemMarcado.posicao;
+          if (pos >= start && pos <= end) {
+            const index = pos - start;
+            if (index >= 0 && index < 45) {
+              updatedInterval[index] = '1';
+            }
+          }
+        }
+      });
+
+      return updatedInterval.join('');
+    }, [deferredArea, activeCodes, selectedItems ]);
+
+    //--------------------------------------------------------
     //--------------------------FIM---------------------------
     //--------------------------------------------------------
 
@@ -519,7 +550,8 @@
         sampleEAP,
         setSampleEAP,
         setUpdateTrigger,
-        updateTrigger
+        updateTrigger,
+        intervalData
       }}>
         {children}
       </NineteenContext.Provider>

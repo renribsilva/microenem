@@ -35,6 +35,7 @@ const generateSubItems = (year: string) => [
   { name: "Resposta ao item", path: `/${year}/resposta-ao-item` },
   { name: "Relação notas/acertos", path: `/${year}/notas-e-acertos` },
   { name: "Redação", path: `/${year}/redacao` },
+  { name: "Médias simples", path: `/${year}/media-simples` },
   { name: "TRI", path: `/${year}/tri` },
 ];
 

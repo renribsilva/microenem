@@ -6,6 +6,7 @@ import Card from "../../../../components/tsx/card";
 import { useHomeData } from "../../../../context/home_context";
 import ItensButtons from "../../../../components/tsx/itens_buttons";
 import ProdProbChart from "./components/graphs/prod_prob";
+import MarginImpactTable from "./components/tables/margin_impact";
 
 const menuItems = [
   { id: 'LC', label: 'Linguagens' },
@@ -27,16 +28,25 @@ export default function RedacaoPage() {
           onTabChange={handleTabChange} 
         />
       </nav>
-      <div>
-        <Card>
-          <h3 className={styles.card_title}>Sequência de erros e acertos de {deferredArea}</h3>
-          <ItensButtons />
-        </Card>
-      </div>
-      <div>
-        <Card>
-          <ProdProbChart />
-        </Card>
+      <div className={styles.tri_container}>
+        <div className={styles.tri_left}>
+          <div className={styles.tri_top}>
+            <Card>
+              <h3 className={styles.card_title}>Sequência de erros e acertos de {deferredArea}</h3>
+              <ItensButtons />
+            </Card>
+          </div>
+          <div className={styles.tri_bottom}>
+            <Card>
+              <ProdProbChart />
+            </Card>
+          </div>
+        </div>
+        <div className={styles.tri_right}>
+          <Card>
+            <MarginImpactTable />
+          </Card> 
+        </div>
       </div>
     </main>
   );

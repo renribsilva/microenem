@@ -16,6 +16,30 @@
   width: 100%;
 }
 
-/**************************************/
-/***************MAIN TOP***************/
-/**************************************/
+/*********************************/
+/***************TRI***************/
+/*********************************/
+
+.tri_container {
+  display: flex;
+  gap: 10px;
+}
+
+@media (max-width: 1000px) {
+  .tri_container {
+    flex-direction: column;
+  }
+}
+
+.tri_left {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.tri_bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}

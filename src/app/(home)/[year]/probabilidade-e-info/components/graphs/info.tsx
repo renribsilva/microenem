@@ -5,6 +5,7 @@ import Chart from "react-apexcharts";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import { useNineteenData } from "../../../../../../context/nineteen_context";
 import { useHomeData } from "../../../../../../context/home_context";
+import styles from './graphs.module.css'
 
 export default function InfoChart() {
   
@@ -90,7 +91,7 @@ export default function InfoChart() {
       chart: {
         id: "icc-chart",
         type: 'line',
-        toolbar: { show: true },
+        toolbar: { show: true, offsetX: 0, offsetY: 0 },
         zoom: {
           enabled: false
         },
@@ -184,19 +185,14 @@ export default function InfoChart() {
   
   return (
     <div style={{minHeight: '350px', minWidth: '0', flex: '1 1 50%'}}>
-      <h3 style={{ fontSize: '16px', color: textColor, textAlign: 'left', margin: '0', padding: '10px'}}>
-        Curva de informação do item
-      </h3>
-      <p style={{ 
-        fontSize: '13px', 
-        color: textColor, 
-        textAlign: 'left', 
-        opacity: 0.8,
-        paddingLeft: '10px',
-        margin: '0px auto' 
-      }}>
-        Pontos da proficiência para os quais o item apresenta maior precisão para distinguir quem domina de quem não domina a habilidade avalidada.
-      </p>
+      <div className={styles.tcc_cabecalho}>      
+        <div className={styles.tcc_title}>
+          <h3 className={styles.tcc_title_h3}>Curva de informação do item</h3>
+          <p className={styles.tcc_subtitle_p}>
+            Pontos da proficiência para os quais o item apresenta maior precisão para distinguir quem domina de quem não domina a habilidade avalidada.
+          </p>
+        </div>
+      </div>
       <Chart 
         options={options} 
         series={series as any} 

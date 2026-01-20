@@ -6,6 +6,7 @@ import { useChartTheme } from '../../../../../../hooks/use_chart_theme';
 import customTooltip from '../../../../../../components/tsx/customTooltip';
 import { useHomeData } from '../../../../../../context/home_context';
 import { useNineteenData } from '../../../../../../context/nineteen_context';
+import styles from "./graphs.module.css"
 
 export default function FrequencyAcertosChart() {
   
@@ -94,14 +95,14 @@ export default function FrequencyAcertosChart() {
         zoom: { enabled: false },
         animations: { enabled: false } 
       },
-      title: {
-        text: 'Frequência relativa dos acertos',
-        style: { color: textColor, fontSize: '16px', fontWeight: 'bold' }
-      },
-      subtitle: {
-        text: ['Distribuição da frequência de acertos.'] as any,
-        style: { color: textColor, fontSize: '13px' }
-      },
+      // title: {
+      //   text: 'Frequência relativa dos acertos',
+      //   style: { color: textColor, fontSize: '16px', fontWeight: 'bold' }
+      // },
+      // subtitle: {
+      //   text: ['Distribuição da frequência de acertos.'] as any,
+      //   style: { color: textColor, fontSize: '13px' }
+      // },
       plotOptions: {
         bar: {
           columnWidth: '95%',
@@ -184,6 +185,14 @@ export default function FrequencyAcertosChart() {
 
   return (
     <div style={{ flex: 1}}>
+      <div className={styles.tcc_cabecalho}>      
+        <div className={styles.tcc_title}>
+          <h3 className={styles.tcc_title_h3}>Frequência relativa dos acertos</h3>
+          <p className={styles.tcc_subtitle_p}>
+            Distribuição da frequência de acertos.  
+          </p>
+        </div>
+      </div>
       <Chart options={options} series={series} type="bar" height="100%" width="100%" />
     </div>
   );

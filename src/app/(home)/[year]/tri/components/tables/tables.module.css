@@ -2,6 +2,11 @@
 /*******************TCC*********************/
 /*******************************************/
 
+.impact_container {
+
+  /* style={{ display: 'flex', flexDirection: 'column', height: '100%' }} */
+}
+
 .tcc_container {
   /* background-color: blueviolet; */
   display: flex;
@@ -66,4 +71,51 @@
 .tcc_graph_wrapper {
   /* height: 100%; */
   flex: 1;
+}
+
+.margin_initial {
+  display: flex;
+  text-align: center;
+  align-items: center;
+  min-height: 150px;
+  color: var(--tick);
+}
+
+.margin_container {
+  overflow-y: auto;
+  flex: 1;
+  margin-top: 20px; 
+  display: flex;
+  flex-direction: column;
+}
+
+.margin_table {
+  /* width: 100%; */
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  table-layout: fixed; 
+}
+
+.margin_thead {
+  background-color: var(--tab-background);
+  /* text-transform: uppercase; */
+  color:var(--tab-text);
+}
+
+.margin_tr {
+  transition: background-color 0.2s;
+  font-weight: 300;
+  text-align: left;
+  border-bottom:  1px solid var(--tab-background);
+}
+
+.margin_th {
+  font-weight: 400;
+  position: relative;
+  padding: 12px 8px;
+}
+
+.margin_td {
+  padding: 5px 8px;
+  color: var(--tab-text);
 }

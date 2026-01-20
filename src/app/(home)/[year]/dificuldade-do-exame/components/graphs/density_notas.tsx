@@ -5,6 +5,7 @@ import Chart from 'react-apexcharts';
 import { useChartTheme } from '../../../../../../hooks/use_chart_theme';
 import { useHomeData } from '../../../../../../context/home_context';
 import { useNineteenData } from '../../../../../../context/nineteen_context';
+import styles from './graphs.module.css'
 
 export default function DensityNotasChart() {
   
@@ -93,14 +94,14 @@ export default function DensityNotasChart() {
       colors: chartColors,
       stroke: { curve: 'smooth', width: strokeWidths },
       fill: { type: 'solid', opacity: fillOpacity },
-      title: {
-        text: 'Curva de densidade das notas',
-        style: { color: textColor, fontSize: '16px', fontWeight: 'bold'},
-      },
-      subtitle: {
-        text: ['Pontos da proficiência onde as', 'notas se concentram mais.'] as any,
-        style: { color: textColor, fontSize: '13px' },
-      },
+      // title: {
+      //   text: 'Curva de densidade das notas',
+      //   style: { color: textColor, fontSize: '16px', fontWeight: 'bold'},
+      // },
+      // subtitle: {
+      //   text: ['Pontos da proficiência onde as', 'notas se concentram mais.'] as any,
+      //   style: { color: textColor, fontSize: '13px' },
+      // },
       xaxis: {
         type: 'numeric',
         min: xMin,
@@ -167,6 +168,14 @@ export default function DensityNotasChart() {
 
   return (
     <div style={{flex: 1}}>
+      <div className={styles.tcc_cabecalho}>      
+        <div className={styles.tcc_title}>
+          <h3 className={styles.tcc_title_h3}>Curva de densidade das notas</h3>
+          <p className={styles.tcc_subtitle_p}>
+            Pontos da proficiência onde as notas se concentram mais.  
+          </p>
+        </div>
+      </div>
       <Chart options={options} series={series} type="area" height="100%" width="100%" />
     </div>
   );

@@ -58,7 +58,7 @@ export default function TCCChart() {
       id: 'tcc-chart',
       type: 'line',
       toolbar: {
-        offsetX: -5,
+        offsetX: 0,
         offsetY: 0,
         show: true,
       },
@@ -211,7 +211,6 @@ export default function TCCChart() {
         </div>
         <Dropdown />
       </div>
-
       <div className={styles.tcc_graph_container}>
         {/* <InputShell logic={logic}/> */}
         <div className={styles.tcc_graph_wrapper}>

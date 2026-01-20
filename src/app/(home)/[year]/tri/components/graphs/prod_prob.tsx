@@ -1,10 +1,11 @@
-  'use client'
+'use client'
 
   import { useMemo, useState, useEffect, act } from 'react';
   import { useNineteenData } from '../../../../../../context/nineteen_context';
   import { useHomeData } from '../../../../../../context/home_context';
   import Chart from 'react-apexcharts';
   import { useChartTheme } from '../../../../../../hooks/use_chart_theme';
+  import styles from "./graphs.module.css"
 
   export default function ProdProbChart() {
 
@@ -14,7 +15,6 @@
     const [showRenderWarning, setShowRenderWarning] = useState(false);
     const { axisColor, textColor } = useChartTheme();
 
-    // Verifica se é Matemática para travar a escala
     const isMath = deferredArea === "MT";
 
     useEffect(() => {
@@ -65,7 +65,6 @@
     });
 
     return updatedInterval.join('');
-    // Adicionado selectedItems como dependência pois se o usuário marcar, a string muda
   }, [deferredArea, activeCodes, selectedItems ]);
 
   const handleUpdateChart = () => {
@@ -75,12 +74,10 @@
     setUpdateTrigger((prev: any) => !prev);
   };
 
-  // --- 3. TRANSFORMAÇÃO CONDICIONAL ---
   const series = useMemo(() => {
     if (!EAPData?.theta || !EAPData?.posterior || !k || !d) return [];    
     
     const chartPoints = EAPData.theta.map((t: number, i: number) => [
-      // Se for MT, mantém escala theta (t), se não, transforma para ENEM (t * k + d)
       isMath ? Number(t.toFixed(2)) : Number((t * k + d).toFixed(1)),           
       Number(EAPData.posterior[i].toFixed(4))   
     ]);
@@ -117,7 +114,6 @@
         text: isMath ? `Proficiência (Theta) - ${deferredArea}` : `Notas na escala do ENEM - ${deferredArea}`, 
         style: { color: axisColor, fontWeight: 600 } 
       },
-      // Limites: -4 a 4 para MT, ou escala ENEM para os outros
       min: isMath ? -4 : Math.round(-4 * k + d),
       max: isMath ? 4 : Math.round(4 * k + d),
       labels: { 
@@ -125,20 +121,17 @@
         style: { colors: axisColor} 
       },
       tickAmount: 6,
-      axisBorder: { show: false },
-      axisTicks: { show: false }
     },
     yaxis: {
       show: true,
       title: { text: 'Log-Likelihood', style: { color: axisColor, fontWeight: 600 } },
       labels: { formatter: (val) => Math.floor(val).toString(), style: { colors: axisColor } }
     },
-    // --- ANOTAÇÃO CONDICIONAL ---
     annotations: {
       xaxis: isMath 
         ? [
             {
-              x: 0, // Posição central na escala -4 a 4
+              x: 0,
               borderColor: 'transparent',
               label: {
                 borderColor: '#cbd5e0',
@@ -169,24 +162,23 @@
             }
           ]
     },
-    title: {
-      text: `Curva de probabilidade posteriori (TRI)`,
-      align: 'left',
-      style: { fontSize: '18px', color: textColor, fontWeight: 700 }
-    },
-    subtitle: {
-      text: ['Função de probabilidade a posteriori da', 'sequência de acertos e erros determinada.'] as any,
-      style: { color: textColor, fontSize: '13px' },
-    },
+    // title: {
+    //   text: `Curva de probabilidade a posteriori`,
+    //   align: 'left',
+    //   style: { fontSize: '18px', color: textColor, fontWeight: 700 }
+    // },
+    // subtitle: {
+    //   text: ['Função de probabilidade a posteriori da', 'sequência de acertos e erros determinada.'] as any,
+    //   style: { color: textColor, fontSize: '13px' },
+    // },
     tooltip: { enabled: true, shared: true, custom: () => '', marker: { show: false } },
     grid: { xaxis: { lines: { show: false } }, yaxis: { lines: { show: false } } },
     colors: ['#6366f1']
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', width: '100%' }}>
-      
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+    <div className={styles.eap_container}>      
+      <div className={styles.eap_button_container}>
         <button 
           onClick={handleUpdateChart}
           disabled={isUpdating}
@@ -204,30 +196,35 @@
           }}
         >
           {isUpdating ? '⏳ PROCESSANDO...' : '🚀 CALCULAR DESEMPENHO TRI'}
-        </button>
-        
+        </button>       
         {showRenderWarning && (
           <p style={{ color: '#f43f5e', fontSize: '12px', fontWeight: '600', animation: 'pulse 2s infinite' }}>
             ⚠️ O servidor está acordando no Render, aguarde cerca de 30s...
           </p>
         )}
       </div>
-
-      <div style={{ height: '380px' }}>
-        {series.length > 0 && EAPData ? (
-          <Chart options={options} series={series} type="area" height={350} />
-        ) : (
-          <div style={{ 
-            display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', 
-            height: '350px', color: '#94a3b8', textAlign: 'center', background: '#f8fafc', 
-            borderRadius: '16px', border: '2px dashed #e2e8f0' 
-          }}>
-            <p style={{ fontSize: '16px', fontWeight: 500 }}>
-              {isUpdating ? 'Iniciando cálculos...' : 'Marque as respostas e clique no botão para calcular.'}
-            </p>
+      {series.length > 0 && EAPData ? (
+        <>
+          <div className={styles.tcc_cabecalho}>      
+            <div className={styles.tcc_title}>
+              <h3 className={styles.tcc_title_h3}>Curva de probabilidade a posteriori</h3>
+              <p className={styles.tcc_subtitle_p}>
+                Função de probabilidade a posteriori da sequência de acertos e erros determinada.
+              </p>
+            </div>
           </div>
-        )}
-      </div>
+          <Chart options={options} series={series} type="area" height={350} />
+          <div style={{ fontSize: '0.75rem', fontWeight: '300', color: '#888'}}>
+            A nota mais provável é a média ponderada de todas as proficiências sob a curva, tendo como peso as probabilidades a posteriori (ajustadas à normal N(0,1))
+          </div>
+        </>
+      ) : (
+        <div className={styles.eap_initial} >
+          <p style={{ fontSize: '16px', fontWeight: 500 }}>
+            {isUpdating && activeCodes.lenght === 0 ? 'Iniciando cálculos...' : 'Marque as respostas e clique no botão para calcular.'}
+          </p>
+        </div>
+      )}
     </div>
   );
 }

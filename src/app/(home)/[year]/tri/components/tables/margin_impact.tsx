@@ -37,7 +37,7 @@ export default function MarginImpactTable() {
         <div className={styles.tcc_title}>
           <h3 className={styles.tcc_title_h3} style={{ color: textColor }}>Impacto virtual do item</h3>
           <p className={styles.tcc_subtitle_p}>
-            Qual seria o impacto na nota final se a questão x o seu status invertido? 
+            Qual seria o impacto na nota final se um item tivesse o seu status invertido, mantidos os outros status? 
           </p>
         </div>
       </div>

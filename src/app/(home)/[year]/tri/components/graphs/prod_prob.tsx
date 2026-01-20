@@ -192,7 +192,7 @@
           </div>
           <Chart options={options} series={series} type="area" height={350} />
           <div style={{ fontSize: '0.75rem', fontWeight: '300', color: '#888'}}>
-            A nota mais provável é a média ponderada de todas as proficiências sob a curva, tendo como peso as probabilidades a posteriori (ajustadas à normal N(0,1))
+            A nota mais provável é a média ponderada de todas as proficiências sob a curva, tendo como peso as probabilidades a posteriori ajustadas à normal N(0,1).
           </div>
         </>
       ) : (

@@ -15,8 +15,8 @@
 
     const params = useParams();
     const yearFromUrl = params.year as string || "2019";
+    const anosComDados = ["2019"]; 
     const currentYear = useMemo(() => {
-      const anosComDados = ["2019"]; 
       return anosComDados.includes(yearFromUrl) ? yearFromUrl : "2019";
     }, [yearFromUrl]);
 
@@ -248,6 +248,7 @@
 
     const [EAPData, setEAPData] = useState<any>(null);
     const [sampleEAP, setSampleEAP] = useState<string>("000000000000000000000000000000000000000000000");
+    const [updateTrigger, setUpdateTrigger] = useState(false);
 
     useEffect(() => {
       if (!selectedLabel) return null
@@ -267,7 +268,7 @@
         } 
       }
       if (Object.entries(selectedItems).length !== 0) fetchEAPData();
-    }, [deferredArea, selectedLabel, sampleEAP]);
+    }, [deferredArea, selectedLabel, updateTrigger]);
 
     //--------------------------------------------------------------------------
     //---------------------------DIFICULDADE DO EXAME---------------------------
@@ -516,7 +517,8 @@
         statusData,
         EAPData,
         sampleEAP,
-        setSampleEAP
+        setSampleEAP,
+        setUpdateTrigger
       }}>
         {children}
       </NineteenContext.Provider>

@@ -25,6 +25,8 @@ const icons = {
   arrow_up: ArrowUp
 }
 
+const anosPermitidos = ["2019"];
+
 // Função auxiliar para gerar sub-itens com base no ano
 const generateSubItems = (year: string) => [
   { name: "Visão geral", path: `/${year}/visao-geral` },
@@ -100,7 +102,7 @@ const AppSidebar: React.FC = () => {
                   </span>
                 </div>
                 <div className={styles.navbar_button_2}>
-                  {nav.subItems ? (
+                  {nav.subItems && anosPermitidos.includes(nav.name) ? (
                     <>
                       {openSubmenu === index ? (
                         <icons.arrow_up width='20px' height="20px" />
@@ -125,7 +127,7 @@ const AppSidebar: React.FC = () => {
                 </Link>
               )
             )}
-            {nav.subItems && (
+            {nav.subItems && anosPermitidos.includes(nav.name) && (
               <div
                 ref={(el) => {
                   subMenuRefs.current[`${index}`] = el;

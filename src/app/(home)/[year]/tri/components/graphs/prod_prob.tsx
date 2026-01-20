@@ -1,18 +1,18 @@
 'use client'
 
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
 import { useNineteenData } from '../../../../../../context/nineteen_context';
 import { useHomeData } from '../../../../../../context/home_context';
 import Chart from 'react-apexcharts';
+import { useChartTheme } from '../../../../../../hooks/use_chart_theme';
 
 export default function ProdProbChart() {
-  const { selectedItems, setSampleEAP, EAPData, k, d } = useNineteenData();
-  const { deferredArea } = useHomeData();
-  
-  // Estado para controlar o loading do botão e da API
-  const [isUpdating, setIsUpdating] = useState(false);
 
-  // Destrava o botão quando novos dados chegam da API
+  const { selectedItems, setSampleEAP, EAPData, k, d, setUpdateTrigger } = useNineteenData();
+  const { deferredArea } = useHomeData();
+  const [isUpdating, setIsUpdating] = useState(false);
+  const { axisColor, textColor } = useChartTheme();
+
   useEffect(() => {
     setIsUpdating(false);
   }, [EAPData]);
@@ -24,46 +24,35 @@ export default function ProdProbChart() {
       "CH": { start: 46, end: 90 },
       "CN": { start: 91, end: 135 }, 
       "MT": { start: 136, end: 180 },
-    };
-    
+    };    
     const { start, end } = ranges[deferredArea as keyof typeof ranges] || { start: 1, end: 45 };
-    const updatedInterval = Array(end - start + 1).fill('0');
-
+    const updatedInterval = Array(45).fill('0'); 
     Object.values(selectedItems).forEach((item: any) => {
       const pos = item.posicao;
       if (pos >= start && pos <= end && item.status === "acerto") {
-        updatedInterval[pos - start] = '1';
+        const index = pos - start;
+        if (index >= 0 && index < 45) {
+          updatedInterval[index] = '1';
+        }
       }
     });
-
-    return { start, end, updatedInterval };
+    return updatedInterval.join('');
   }, [deferredArea, selectedItems]);
 
-  // --- 2. FUNÇÃO DISPARADA PELO BOTÃO ---
   const handleUpdateChart = () => {
-    if (!intervalData) return;
-    setIsUpdating(true); // Trava o botão e sinaliza processamento
-    
-    const { start, end, updatedInterval } = intervalData;
-    
-    setSampleEAP(prev => {
-      const arr = prev.split('');
-      for (let i = start - 1; i < end; i++) {
-        arr[i] = updatedInterval[i - (start - 1)];
-      }
-      return arr.join('');
-    });
-  };
+    if (Object.entries(selectedItems).length === 0) return;
+    setIsUpdating(true);    
+    setSampleEAP(intervalData);
+    setUpdateTrigger(prev => !prev);
+};
 
   // --- 3. TRANSFORMAÇÃO DE DADOS (EIXO X: Theta -> Escala ENEM) ---
   const series = useMemo(() => {
-    if (!EAPData?.theta || !EAPData?.posterior || !k || !d) return [];
-    
+    if (!EAPData?.theta || !EAPData?.posterior || !k || !d) return [];    
     const chartPoints = EAPData.theta.map((t: number, i: number) => [
-      Number((t * k + d).toFixed(1)),           // X transformado para 0-1000
-      Number(EAPData.posterior[i].toFixed(4))    // Y (Log-Likelihood)
+      Number((t * k + d).toFixed(1)),           
+      Number(EAPData.posterior[i].toFixed(4))   
     ]);
-
     return [{
       name: 'Log-Likelihood',
       data: chartPoints
@@ -77,79 +66,125 @@ export default function ProdProbChart() {
       height: 350,
       zoom: { enabled: false },
       toolbar: { show: false },
-      animations: { enabled: true, speed: 800 }
+      animations: { enabled: true, speed: 800 },
+      // foreColor: '#64748b'
     },
     dataLabels: { enabled: false },
-    stroke: { curve: 'smooth', width: 3, colors: ['#2E93fA'] },
+    stroke: { curve: 'smooth', width: 3, colors: ['#6366f1'] }, 
     fill: {
       type: 'gradient',
       gradient: {
         shadeIntensity: 1,
-        opacityFrom: 0.5,
-        opacityTo: 0.1,
-        stops: [0, 90, 100]
+        opacityFrom: 0.45,
+        opacityTo: 0.05,
+        stops: [20, 100],
+        colorStops: [
+          {
+            offset: 0,
+            color: '#6366f1',
+            opacity: 0.4
+          },
+          {
+            offset: 100,
+            color: '#6366f1',
+            opacity: 0.05
+          }
+        ]
       }
     },
     xaxis: {
       type: 'numeric',
-      title: { text: `Nota Estimada - ${deferredArea}` },
-      // Define os limites do gráfico baseados na escala ENEM da área
+      title: { 
+        text: `Notas na escala do ENEM - ${deferredArea}`,
+        style: { color: axisColor, fontWeight: 600 } 
+      },
       min: Math.round(-4 * k + d),
       max: Math.round(4 * k + d),
-      labels: { formatter: (val) => Math.round(Number(val)).toString() },
-      tickAmount: 6
+      labels: { 
+        formatter: (val) => Math.round(Number(val)).toString(),
+        style: { colors: axisColor}
+      },
+      tickAmount: 6,
+      axisBorder: { show: false },
+      axisTicks: { show: false }
     },
     yaxis: {
       show: true,
-      title: { text: 'Log-Likelihood' },
-      labels: { formatter: (val) => Math.floor(val).toString() }
+      title: { 
+        text: 'Log-Likelihood',
+        style: { color: axisColor, fontWeight: 600 } 
+      },
+      labels: { 
+        formatter: (val) => Math.floor(val).toString(),
+        style: { colors: axisColor }
+      }
     },
     annotations: {
       xaxis: [{
-        x: EAPData?.eap || 0, // Nota final já transformada vinda do R
-        borderColor: '#FF4560',
+        x: EAPData?.eap || 0,
+        borderColor: '#f43f5e', // Rose 500
         strokeDashArray: 4,
         label: {
-          borderColor: '#FF4560',
-          style: { color: '#fff', background: '#FF4560', fontWeight: 'bold' },
-          text: `Nota Final: ${EAPData?.eap || 0}`,
+          borderColor: '#f43f5e',
+          style: { color: '#fff', background: '#f43f5e', fontWeight: 'bold', padding: { left: 8, right: 8, top: 4, bottom: 4 } },
+          text: [`Nota mais provável`,
+            `${EAPData?.eap || 0}`] as any,
+          orientation: 'horizontal',
+          offsetY: 50
         }
       }]
     },
     title: {
       text: `Curva de Verossimilhança (TRI)`,
-      align: 'center',
-      style: { fontSize: '16px', color: '#4A5568' }
+      align: 'left',
+      style: { fontSize: '18px', color: textColor, fontWeight: 700 }
+    },
+    subtitle: {
+      text: ['Função de probabilidade a posteriori da', 
+        'sequência de acertos e erros determinada.'] as any,
+      style: { color: textColor, fontSize: '13px' },
     },
     tooltip: {
-      x: { show: true, formatter: (val) => `Proficiência: ${Math.round(Number(val))}` },
-      y: { title: { formatter: () => 'Log-L:' } }
+      enabled: true,       
+      shared: true,        
+      custom: function() { 
+        return ''; 
+      },
+      marker: {
+        show: false
+      }
     },
-    grid: { borderColor: '#EDF2F7' }
+    grid: { 
+      // borderColor: '#f1f5f9',
+      // strokeDashArray: 4,
+      xaxis: { lines: { show: false } },
+      yaxis: { lines: { show: false } }
+    },
+    colors: ['#6366f1']
   };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', width: '100%' }}>
       
-      {/* Botão para evitar sobrecarga no Render Free */}
       <button 
         onClick={handleUpdateChart}
         disabled={isUpdating}
         style={{
           alignSelf: 'center',
-          padding: '12px 24px',
-          backgroundColor: isUpdating ? '#CBD5E0' : '#3182CE',
-          color: 'white',
+          padding: '12px 28px',
+          backgroundColor: isUpdating ? '#e2e8f0' : '#4f46e5', // Indigo 600
+          color: isUpdating ? '#94a3b8' : 'white',
           border: 'none',
-          borderRadius: '10px',
+          borderRadius: '12px',
           cursor: isUpdating ? 'not-allowed' : 'pointer',
           fontWeight: '700',
           fontSize: '14px',
-          boxShadow: '0 4px 14px 0 rgba(49, 130, 206, 0.39)',
-          transition: 'all 0.2s ease'
+          boxShadow: isUpdating ? 'none' : '0 10px 15px -3px rgba(79, 70, 229, 0.3)',
+          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+          letterSpacing: '0.025em'
         }}
       >
-        {isUpdating ? '⏳ CALCULANDO...' : '🚀 ATUALIZAR NOTA TRI'}
+        {isUpdating ? '⏳ PROCESSANDO...' : '🚀 CALCULAR DESEMPENHO TRI'}
       </button>
 
       <div style={{ height: '350px' }}>
@@ -167,11 +202,14 @@ export default function ProdProbChart() {
             justifyContent: 'center', 
             alignItems: 'center', 
             height: '350px', 
-            color: '#A0AEC0',
-            textAlign: 'center'
+            color: '#94a3b8',
+            textAlign: 'center',
+            background: '#f8fafc',
+            borderRadius: '16px',
+            border: '2px dashed #e2e8f0'
           }}>
-            <p style={{ fontSize: '16px' }}>
-              Selecione as questões e clique no botão acima <br/> para gerar a estimativa de nota.
+            <p style={{ fontSize: '16px', fontWeight: 500 }}>
+              Marque as respostas e clique no botão <br/> para visualizar a curva de proficiência.
             </p>
           </div>
         )}

@@ -483,7 +483,6 @@
 
 .dropdown_list {
   position: absolute;
-  top: 110%;
   right: 0;
   width: 250px;
   background-color: var(--tab-background);

@@ -1,6 +1,6 @@
 export default function MediaSimples () {
   return (
-    <section>
+    <section style={{padding: '10px'}}>
       Sorry. Working on it.
     </section>
   )

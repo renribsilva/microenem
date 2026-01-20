@@ -179,7 +179,7 @@ export default function ScoreTable() {
       const num = start + i;
       const code = getCodeByLabel(num, selectedLabel);
       const param = getParamByLabel(num, selectedLabel);
-      const itemScores = scoreData?.[code]?.counts || {};
+      const itemScores = (scoreData && code) ? (scoreData[code]?.counts || {}) : {};
       
       const v1 = Number(itemScores["1"] ?? 0);
       const v0 = Number(itemScores["0"] ?? 0);

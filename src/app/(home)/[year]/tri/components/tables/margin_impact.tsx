@@ -131,6 +131,13 @@ export default function MarginImpactTable() {
             })}
           </tbody>
         </table>
+        {!EAPData && (
+          <div className={styles.eap_initial} >
+            <p style={{ fontSize: '16px', fontWeight: 500 }}>
+              {'Calcule o desempenho TRI pra ver o impacto virtual de cada item.'}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

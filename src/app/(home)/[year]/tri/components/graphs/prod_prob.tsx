@@ -1,47 +1,56 @@
 'use client'
 
-  import { useMemo, useState, useEffect, act } from 'react';
-  import { useNineteenData } from '../../../../../../context/nineteen_context';
-  import { useHomeData } from '../../../../../../context/home_context';
-  import Chart from 'react-apexcharts';
-  import { useChartTheme } from '../../../../../../hooks/use_chart_theme';
-  import styles from "./graphs.module.css"
+import { useMemo, useState, useEffect } from 'react';
+import { useNineteenData } from '../../../../../../context/nineteen_context';
+import { useHomeData } from '../../../../../../context/home_context';
+import Chart from 'react-apexcharts';
+import { useChartTheme } from '../../../../../../hooks/use_chart_theme';
+import styles from "./graphs.module.css"
 
-  export default function ProdProbChart() {
+export default function ProdProbChart() {
 
-    const { 
-      selectedItems, 
-      setSampleEAP, 
-      EAPData, 
-      k, 
-      d, 
-      setUpdateTrigger, 
-      activeCodes, 
-      intervalData 
-    } = useNineteenData();
-    const { deferredArea } = useHomeData();
-    const [isUpdating, setIsUpdating] = useState(false);
-    const [showRenderWarning, setShowRenderWarning] = useState(false);
-    const { axisColor, textColor } = useChartTheme();
+  const { 
+    selectedItems, 
+    setSampleEAP, 
+    EAPData, 
+    k, 
+    d, 
+    setUpdateTrigger, 
+    activeCodes, 
+    intervalData 
+  } = useNineteenData();
+  const { deferredArea, chartLogic} = useHomeData();
+  const { selectedLabel } = chartLogic;
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [showRenderWarning, setShowRenderWarning] = useState(false);
+  const { axisColor, textColor } = useChartTheme();
+  const [EAPDesatualizado, setEAPDesatualizado] = useState<boolean>(false);
 
-    const isMath = deferredArea === "MT";
+  const isMath = deferredArea === "MT";
 
-    useEffect(() => {
-      setIsUpdating(false);
+  useEffect(() => {
+    setIsUpdating(false);
+    setShowRenderWarning(false);
+    setEAPDesatualizado(false)
+  }, [EAPData]);
+
+  useEffect(() => {
+    if (Object.keys(selectedItems || {}).length > 0) {
+      setEAPDesatualizado(true);
+    }
+  }, [selectedItems, deferredArea || '', selectedLabel]);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isUpdating) {
+      timer = setTimeout(() => {
+        setShowRenderWarning(true);
+      }, 3000);
+    } else {
       setShowRenderWarning(false);
-    }, [EAPData]);
-
-    useEffect(() => {
-      let timer: NodeJS.Timeout;
-      if (isUpdating) {
-        timer = setTimeout(() => {
-          setShowRenderWarning(true);
-        }, 3000);
-      } else {
-        setShowRenderWarning(false);
-      }
-      return () => clearTimeout(timer);
-    }, [isUpdating]);
+    }
+    return () => clearTimeout(timer);
+  }, [isUpdating]);
 
   const handleUpdateChart = () => {
     if (Object.entries(selectedItems).length === 0) return;
@@ -172,7 +181,7 @@
             transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
           }}
         >
-          {isUpdating ? '⏳ PROCESSANDO...' : '🚀 CALCULAR DESEMPENHO TRI'}
+          {isUpdating ? '⏳ PROCESSANDO...' : (EAPDesatualizado ? '🔄 RECALCULAR DESEMPENHO TRI' : '🚀 CALCULAR DESEMPENHO TRI')}
         </button>       
         {showRenderWarning && (
           <p style={{ color: '#f43f5e', fontSize: '12px', fontWeight: '600', animation: 'pulse 2s infinite' }}>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./tables.module.css";
 import { useNineteenData } from "../../../../../../context/nineteen_context";
 import { useHomeData } from "../../../../../../context/home_context";
@@ -9,6 +9,13 @@ export default function CandidateFullDetail() {
   const { dicData } = useHomeData();
   const { candidateData, itensData } = useNineteenData();
   const [activeTab, setActiveTab] = useState<"geral" | "scores">("geral");
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 800 : false);
+    
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 800);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   
   const getProvaInfo = (codProva: number) => {
     if (!dicData || !dicData.codigo) return { cor: "#333", nome: "---" };
@@ -58,10 +65,10 @@ export default function CandidateFullDetail() {
   if (!candidateData) return <div className={styles.fallback}>Aguarde...</div>;
 
   const areas = [
-    { label: "Linguagens", key: "LC", nota: candidateData.NU_NOTA_LC, score: candidateData.SCORE_LC, cod: candidateData.CO_PROVA_LC },
-    { label: "Humanas", key: "CH", nota: candidateData.NU_NOTA_CH, score: candidateData.SCORE_CH, cod: candidateData.CO_PROVA_CH },
-    { label: "Natureza", key: "CN", nota: candidateData.NU_NOTA_CN, score: candidateData.SCORE_CN, cod: candidateData.CO_PROVA_CN },
-    { label: "Matemática", key: "MT", nota: candidateData.NU_NOTA_MT, score: candidateData.SCORE_MT, cod: candidateData.CO_PROVA_MT },
+    { label: isMobile ? "LC" : "Linguagens", key: "LC", nota: candidateData.NU_NOTA_LC, score: candidateData.SCORE_LC, cod: candidateData.CO_PROVA_LC },
+    { label: isMobile ? "CH" : "Humanas", key: "CH", nota: candidateData.NU_NOTA_CH, score: candidateData.SCORE_CH, cod: candidateData.CO_PROVA_CH },
+    { label: isMobile ? "CN" : "Natureza", key: "CN", nota: candidateData.NU_NOTA_CN, score: candidateData.SCORE_CN, cod: candidateData.CO_PROVA_CN },
+    { label: isMobile ? "MT" : "Matemática", key: "MT", nota: candidateData.NU_NOTA_MT, score: candidateData.SCORE_MT, cod: candidateData.CO_PROVA_MT },
   ];
 
   return (

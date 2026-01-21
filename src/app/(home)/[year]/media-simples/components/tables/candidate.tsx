@@ -38,7 +38,7 @@ export default function CandidateFullDetail() {
     if (index === -1) return { cor: "#333", nome: `Cód: ${codProva}` };
     const nomeCorOriginal = dicData.cor[index];
     const colorMap: { [key: string]: string } = {
-      "Azul": "#0070f3", "Amarela": "#ffd700", "Rosa": "#ff2d55",
+      "Azul": "#0070f3", "Amarela": "#d4a522", "Rosa": "#ff2ddc",
       "Branca": "#ffffff", "Cinza": "#808080", "Laranja": "#ff8c00", "Verde": "#28a745"
     };
     const hex = colorMap[nomeCorOriginal.split(" ")[0]] || "#333";
@@ -136,7 +136,7 @@ export default function CandidateFullDetail() {
                       <td className={styles.static_td}>{acertos}/{validos}</td>
                       <td className={styles.static_td}>
                         <div className={styles.prova_color_cell}>
-                          <span className={styles.color_circle} style={{ backgroundColor: info.cor, border: info.cor === "#ffffff" ? "1px solid #ddd" : "none" }} />
+                          <span className={styles.color_circle} style={{ backgroundColor: info.cor }} />
                           <span style={{ color: info.cor === "#ffffff" ? "#999" : info.cor }}>{info.nome}</span>
                         </div>
                       </td>

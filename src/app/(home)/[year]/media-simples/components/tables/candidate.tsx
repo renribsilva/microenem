@@ -79,8 +79,10 @@ export default function CandidateFullDetail() {
 
   if (!candidateData) return <div className={styles.fallback}>Aguarde...</div>;
 
+  const linguaEstrangeira = candidateData.TP_LINGUA === 0 ? "Inglês" : "Espanhol";
+
   const areas = [
-    { label: isMobile ? "LC" : "Linguagens", key: "LC", nota: candidateData.NU_NOTA_LC, score: candidateData.SCORE_LC, cod: candidateData.CO_PROVA_LC },
+    { label: isMobile ? `LC (${linguaEstrangeira.slice(0,3)})` : `Linguagens (${linguaEstrangeira})`, key: "LC", nota: candidateData.NU_NOTA_LC, score: candidateData.SCORE_LC, cod: candidateData.CO_PROVA_LC },
     { label: isMobile ? "CH" : "Humanas", key: "CH", nota: candidateData.NU_NOTA_CH, score: candidateData.SCORE_CH, cod: candidateData.CO_PROVA_CH },
     { label: isMobile ? "CN" : "Natureza", key: "CN", nota: candidateData.NU_NOTA_CN, score: candidateData.SCORE_CN, cod: candidateData.CO_PROVA_CN },
     { label: isMobile ? "MT" : "Matemática", key: "MT", nota: candidateData.NU_NOTA_MT, score: candidateData.SCORE_MT, cod: candidateData.CO_PROVA_MT },
@@ -118,7 +120,7 @@ export default function CandidateFullDetail() {
                   <th className={styles.static_th}>Área</th>
                   <th className={styles.static_th}>Nota</th>
                   <th className={styles.static_th}>Acertos</th>
-                  <th className={styles.static_th}>Cor da Prova</th>
+                  <th className={styles.static_th}>Prova</th>
                 </tr>
               </thead>
               <tbody className={styles.static_body}>

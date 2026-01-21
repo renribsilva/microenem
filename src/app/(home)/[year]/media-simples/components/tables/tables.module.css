@@ -158,7 +158,7 @@
   border-collapse: collapse;
   font-size: 0.875rem;
   /* Isso aqui é o que garante a largura fixa */
-  table-layout: fixed; 
+  /* table-layout: fixed;  */
 }
 
 .static_thead {

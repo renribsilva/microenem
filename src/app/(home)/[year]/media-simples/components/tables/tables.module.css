@@ -298,3 +298,18 @@
   justify-content: center;
   align-items: center;
 }
+
+.custom_tooltip {
+  position: fixed;
+  background: rgba(0, 0, 0, 0.9);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  pointer-events: none; /* ESSENCIAL para não tremer */
+  z-index: 9999;
+  white-space: nowrap;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.1);
+}

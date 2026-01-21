@@ -10,12 +10,27 @@ export default function CandidateFullDetail() {
   const { candidateData, itensData } = useNineteenData();
   const [activeTab, setActiveTab] = useState<"geral" | "scores">("geral");
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 800 : false);
+  const [tooltip, setTooltip] = useState<{ text: string, x: number, y: number, visible: boolean }>({
+    text: "", x: 0, y: 0, visible: false
+  });
     
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 800);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  const handleMouseMove = (e: React.MouseEvent, text: string) => {
+    const isRightSide = e.clientX > window.innerWidth / 2;
+    setTooltip({
+      text,
+      // Se estiver na direita, subtrai o offset (aparece na esquerda)
+      // Se estiver na esquerda, soma o offset (aparece na direita)
+      x: isRightSide ? e.clientX - 160 : e.clientX + 15, 
+      y: e.clientY - 10,
+      visible: true
+    });
+  };
   
   const getProvaInfo = (codProva: number) => {
     if (!dicData || !dicData.codigo) return { cor: "#333", nome: "---" };
@@ -73,6 +88,15 @@ export default function CandidateFullDetail() {
 
   return (
     <section className={styles.candidate_container}>
+      {/* TOOLTIP FLUTUANTE */}
+      {tooltip.visible && (
+        <div 
+          className={styles.custom_tooltip} 
+          style={{ left: tooltip.x + 15, top: tooltip.y - 10 }}
+        >
+          {tooltip.text}
+        </div>
+      )}
       <div className={styles.full_header}>
         <div className={styles.main_info}>
           <span className={styles.rank_badge}>#{candidateData.RANKING}°</span>
@@ -164,9 +188,20 @@ export default function CandidateFullDetail() {
                 <div key={area.key} className={styles.score_block}>
                   <h4 className={styles.score_h4}>{area.label}</h4>
                   <div className={styles.score_dots_grid}>
-                    {map.map((item, idx) => (
-                      <div key={idx} className={`${styles.dot} ${styles[item.status]}`} title={`Q${item.pos}`} />
-                    ))}
+                    {map.map((item, idx) => {
+                      // Definindo o texto do tooltip baseado no status
+                      const statusText = item.status === "correct" ? "Acerto" : item.status === "wrong" ? "Erro" : "Anulada";
+                      const tooltipContent = `Questão ${item.pos}: ${statusText}`;
+
+                      return (
+                        <div 
+                          key={idx} 
+                          className={`${styles.dot} ${styles[item.status]}`}
+                          onMouseMove={(e) => handleMouseMove(e, tooltipContent)}
+                          onMouseLeave={() => setTooltip({ ...tooltip, visible: false })}
+                        />
+                      );
+                    })}
                   </div>
                 </div>
               );

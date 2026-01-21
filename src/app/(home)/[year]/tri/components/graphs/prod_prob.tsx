@@ -23,7 +23,7 @@ export default function ProdProbChart() {
   const { selectedLabel } = chartLogic;
   const [isUpdating, setIsUpdating] = useState(false);
   const [showRenderWarning, setShowRenderWarning] = useState(false);
-  const { axisColor, textColor } = useChartTheme();
+  const { axisColor, textColor, gridColor } = useChartTheme();
   const [EAPDesatualizado, setEAPDesatualizado] = useState<boolean>(false);
 
   const isMath = deferredArea === "MT";
@@ -119,10 +119,10 @@ export default function ProdProbChart() {
               x: 0,
               borderColor: 'transparent',
               label: {
-                borderColor: '#cbd5e0',
+                // borderColor: '#cbd5e0',
                 style: {
                   color: textColor,
-                  background: '#edf2f7',
+                  background: gridColor,
                   fontWeight: 'bold',
                   padding: { left: 10, right: 10, top: 10, bottom: 10 }
                 },

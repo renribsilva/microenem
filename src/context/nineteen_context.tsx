@@ -1,8 +1,8 @@
   "use client";
 
-  import { createContext, useContext, useMemo, ReactNode, useRef, useLayoutEffect, useState, useCallback, useEffect } from "react";
+  import { createContext, useContext, useMemo, ReactNode, useRef, useLayoutEffect, useState, useCallback, useEffect, useEffectEvent } from "react";
   import { useHomeData } from "./home_context";
-  import { useParams } from "next/navigation";
+  import { useParams, usePathname } from "next/navigation";
   import constantes from "../app/(home)/JSON/constantes.json";
 
   const NineteenContext = createContext<any>(null);
@@ -500,6 +500,45 @@
       return updatedInterval.join('');
     }, [deferredArea, activeCodes, selectedItems ]);
 
+    //---------------------------------------------------------
+    //--------------------------MEAN---------------------------
+    //---------------------------------------------------------
+
+    const [activeRanking, setActiveRanking] = useState<number | null>(1); 
+    const [top2000Data, setTop2000Data] = useState<any>();
+    const [candidateData, setCandidateData] = useState<any>();
+    const pathname = usePathname();
+
+    useEffect(() => {
+      const isMediaSimplesPage = pathname?.endsWith('/media-simples');
+      async function fetchTop2000Data() {
+        if (!isMediaSimplesPage || !currentYear) return;
+        try {
+          const res = await fetch(`/api/2019/mean?year=${currentYear}`);
+          const json = await res.json();
+          setTop2000Data(json)
+        } catch (err) {
+          console.error("Erro ao carregar probtrace:", err);
+        } 
+      }
+      fetchTop2000Data();
+    }, [pathname, currentYear])
+
+    useEffect(() => {
+      const isMediaSimplesPage = pathname?.endsWith('/media-simples');
+      async function fetchCandidateData() {
+        if (!isMediaSimplesPage || !currentYear) return;
+        try {
+          const res = await fetch(`/api/2019/candidate?year=${currentYear}&rank=${activeRanking}`);
+          const json = await res.json();
+          setCandidateData(json)
+        } catch (err) {
+          console.error("Erro ao carregar probtrace:", err);
+        } 
+      }
+      fetchCandidateData();
+    }, [pathname, currentYear, activeRanking])
+
     //--------------------------------------------------------
     //--------------------------FIM---------------------------
     //--------------------------------------------------------
@@ -551,7 +590,12 @@
         setSampleEAP,
         setUpdateTrigger,
         updateTrigger,
-        intervalData
+        intervalData,
+        top2000Data,
+        activeRanking,
+        setActiveRanking,
+        candidateData,
+        itensData
       }}>
         {children}
       </NineteenContext.Provider>

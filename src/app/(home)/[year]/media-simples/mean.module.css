@@ -1,0 +1,25 @@
+/****************************************/
+/***************CONTAINERS***************/
+/****************************************/
+
+.main_container {
+  /* background-color: aquamarine; */
+  padding: 10px;
+  box-sizing: border-box;
+  display: flex;
+  gap: 10px;
+}
+
+@media (max-width: 1000px) {
+  .main_container {
+    flex-direction: column;
+  }
+}
+
+.main_left {
+  flex: 1 1 40%
+}
+
+.main_right {
+  flex: 1 1 60%
+}

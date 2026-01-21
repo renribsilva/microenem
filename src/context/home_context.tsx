@@ -166,7 +166,8 @@ export function HomeProvider({ children }: { children: ReactNode }) {
       setSelectedRowId,
       chartLogic, 
       handleTabChange: (id: string) => { setActiveArea(id) }, 
-      isUpdating: activeArea !== deferredArea || loading
+      isUpdating: activeArea !== deferredArea || loading,
+      dicData
     }}>
       {children}
     </HomeContext.Provider>

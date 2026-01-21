@@ -1,7 +1,24 @@
-export default function MediaSimples () {
+"use client";
+
+import Card from "../../../../components/tsx/card";
+import CandidateDetailTable from "./components/tables/candidate";
+import RankingTable from "./components/tables/mean_table";
+import styles from "./mean.module.css"
+
+export default function RedacaoPage() {
+
   return (
-    <section style={{padding: '10px'}}>
-      Sorry. Working on it.
-    </section>
-  )
+    <main className={styles.main_container}>
+      <div className={styles.main_left}>
+        <Card>
+          <RankingTable />
+        </Card>
+      </div>
+      <div className={styles.main_right}>
+        <Card>
+          <CandidateDetailTable />
+        </Card>
+      </div>
+    </main>
+  );
 }

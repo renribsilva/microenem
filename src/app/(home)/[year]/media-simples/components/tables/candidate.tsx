@@ -136,6 +136,21 @@ export default function CandidateFullDetail() {
           </div>
         ) : (
           <div className={styles.scores_content}>
+            {/* Adicione este bloco da legenda aqui */}
+            <div className={styles.legend_container}>
+              <div className={styles.legend_item}>
+                <span className={`${styles.dot} ${styles.correct}`}></span>
+                <span>Acerto</span>
+              </div>
+              <div className={styles.legend_item}>
+                <span className={`${styles.dot} ${styles.wrong}`}></span>
+                <span>Erro</span>
+              </div>
+              <div className={styles.legend_item}>
+                <span className={`${styles.dot} ${styles.abandoned}`}></span>
+                <span>Anulada</span>
+              </div>
+            </div>
             {areas.map(area => {
               const map = getAreaMap(area.cod, candidateData.TP_LINGUA, area.score)
               return (

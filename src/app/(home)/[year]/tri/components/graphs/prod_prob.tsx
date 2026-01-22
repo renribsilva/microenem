@@ -126,8 +126,8 @@ export default function ProdProbChart() {
                   fontWeight: 'bold',
                   padding: { left: 10, right: 10, top: 10, bottom: 10 }
                 },
-                text: ['O código-fonte do Inep apresentou divergência', 
-                  'na transformação da escala da nota de MT.'] as any,
+                text: ['O método (não oficial) de transformação da escala', 
+                  'apresentou divergência na nota de MT.'] as any,
                 orientation: 'horizontal',
                 offsetY: 80
               }

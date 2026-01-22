@@ -1,2 +1,0 @@
-const el = document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2);console.log("Elemento no centro:", el); 
-el.style.border = "5px solid red"; 

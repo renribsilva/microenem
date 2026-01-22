@@ -84,7 +84,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
     }
     async function loadData() {
       try {
-        const res = await fetch(`/api/2019/tcc?area=${deferredArea}&co_p=${selectedLabel}&year=${currentYear}`);
+        const res = await fetch(`/api/tcc?area=${deferredArea}&co_p=${selectedLabel}&year=${currentYear}`);
         if (!res.ok) return;
         const json = await res.json();        
         datasetsCache.current = {

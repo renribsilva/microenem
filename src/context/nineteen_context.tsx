@@ -156,7 +156,7 @@
       }
       async function fetchProbData() {
         try {
-          const res = await fetch(`/api/2019/probtrace?co_p=${String(co_p_selected)}&year=${currentYear}`);
+          const res = await fetch(`/api/probtrace?co_p=${String(co_p_selected)}&year=${currentYear}`);
           const json = await res.json();        
           probCache.current = {
             co_p: co_p_selected,
@@ -171,7 +171,7 @@
       }
       async function fetchInfoData() {
         try {
-          const res = await fetch(`/api/2019/info?co_p=${String(co_p_selected)}&year=${currentYear}`);
+          const res = await fetch(`/api/info?co_p=${String(co_p_selected)}&year=${currentYear}`);
           const json = await res.json();        
           infoCache.current = {
             co_p: co_p_selected,
@@ -201,7 +201,7 @@
       }
       async function fetchItemData() {
         try {
-          const res = await fetch(`/api/2019/score_graph?code=${String(lastItemActivate)}&year=${currentYear}`);
+          const res = await fetch(`/api/score_graph?code=${String(lastItemActivate)}&year=${currentYear}`);
           const json = await res.json();        
           itemGraphCache.current = {
             code: lastItemActivate,
@@ -228,7 +228,7 @@
       async function fetchAcertosData() {
         try {
           const targetArea = deferredArea || 'LC';
-          const res = await fetch(`/api/2019/acertos?area=${String(targetArea)}&year=${currentYear}`);
+          const res = await fetch(`/api/acertos?area=${String(targetArea)}&year=${currentYear}`);
           const json = await res.json();   
           
           if (json.dataset) {
@@ -257,7 +257,7 @@
       const lingua = partes[1];
       async function fetchEAPData() {
         try {
-          const res = await fetch(`/api/2019/eap?sample=${sampleEAP}&area=${deferredArea}&ano=${currentYear}&codigo=${codigo}&lingua=${lingua}`);
+          const res = await fetch(`/api/eap?sample=${sampleEAP}&area=${deferredArea}&ano=${currentYear}&codigo=${codigo}&lingua=${lingua}`);
           if (!res.ok) throw new Error("Erro na rota interna");
           const json = await res.json();  
           if (json) {
@@ -514,7 +514,7 @@
       async function fetchTop2000Data() {
         if (!isMediaSimplesPage || !currentYear) return;
         try {
-          const res = await fetch(`/api/2019/mean?year=${currentYear}`);
+          const res = await fetch(`/api/mean?year=${currentYear}`);
           const json = await res.json();
           setTop2000Data(json)
         } catch (err) {
@@ -529,7 +529,7 @@
       async function fetchCandidateData() {
         if (!isMediaSimplesPage || !currentYear) return;
         try {
-          const res = await fetch(`/api/2019/candidate?year=${currentYear}&rank=${activeRanking}`);
+          const res = await fetch(`/api/candidate?year=${currentYear}&rank=${activeRanking}`);
           const json = await res.json();
           setCandidateData(json)
         } catch (err) {

@@ -22,10 +22,10 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   const datasetsCache = useRef<{ label: string; data: any } | null>(null);
 
   const [selectionsByArea, setSelectionsByArea] = useState<Record<string, string>>({
-    "LC": "511_0",
-    "CH": "507",
-    "CN": "503",
-    "MT": "515"
+    "LC": "511_0_X",
+    "CH": "507_X_X",
+    "CN": "503_X_X",
+    "MT": "515_X_X"
   });
 
   // ---------------------------------------------------------------

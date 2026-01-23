@@ -252,9 +252,7 @@
 
     useEffect(() => {
       if (!selectedLabel) return null
-      const partes = selectedLabel.split('_');
-      const codigo = partes[0];
-      const lingua = partes[1];
+      const [codigo, lingua] = selectedLabel.split('_');
       async function fetchEAPData() {
         try {
           const res = await fetch(`/api/eap?sample=${sampleEAP}&area=${deferredArea}&ano=${currentYear}&codigo=${codigo}&lingua=${lingua}`);
@@ -349,9 +347,7 @@
     // Função para traduzir Posição (ex: questão 95) em Código (ex: 11234)
     const getCodeByLabel = useCallback((num: number, label: string) => {
       if (!label || !itensData || !itensData.CO_POSICAO) return null; // Check de segurança
-      const parts = label.split('_');
-      const co_p = parts[0];
-      const ling = parts[1] || "0";
+      const [co_p, ling, vers] = label.split('_');
       const p = itensData;   
       const idx = Object.keys(p.CO_POSICAO).find(i => {
         const matchProva = Number(p.CO_PROVA[i]) === Number(co_p);
@@ -359,6 +355,9 @@
         if (!matchProva || !matchPos) return false;
         if (deferredArea === 'LC' && num <= 5 && ling !== undefined) {
           return Number(p.TP_LINGUA[i]) === Number(ling);
+        }
+        if (vers !== "X" && p.TP_VERSAO_DIGITAL) {
+          if (Number(vers) !== p.TP_VERSAO_DIGITAL[i]) return false;
         }
         return true;
       });
@@ -368,9 +367,7 @@
     // Função para traduzir Posição (ex: questão 95) em Código (ex: 11234)
     const getParamByLabel = useCallback((num: number, label: string) => {
       if (!label || !itensData || !itensData.CO_POSICAO) return null; 
-      const parts = label.split('_');
-      const co_p = parts[0];
-      const ling = parts[1] || "0";
+      const [co_p, ling, vers] = label.split('_');
       const p = itensData;   
       const idx = Object.keys(p.CO_POSICAO).find(i => {
         const matchProva = Number(p.CO_PROVA[i]) === Number(co_p);
@@ -378,6 +375,9 @@
         if (!matchProva || !matchPos) return false;
         if (deferredArea === 'LC' && num <= 5 && ling !== undefined) {
           return Number(p.TP_LINGUA[i]) === Number(ling);
+        }
+        if (vers !== "X" && p.TP_VERSAO_DIGITAL) {
+          if (Number(vers) !== p.TP_VERSAO_DIGITAL[i]) return false;
         }
         return true;
       });
@@ -539,6 +539,51 @@
       fetchCandidateData();
     }, [pathname, currentYear, activeRanking])
 
+    //---------------------------------------------------------
+    //--------------------------MEAN---------------------------
+    //---------------------------------------------------------
+
+    const getAreaMap = (codProva: number, tpLingua: number, score: string) => {
+      
+      const bits = score.split("");
+      const result = [];
+      let pointer = 0;
+
+      if (!itensData || !score) return [];
+
+      const temVersaoDigital = 'TP_VERSAO_DIGITAL' in itensData;
+
+      const indices = Array.from(
+        { length: itensData.CO_PROVA.length },
+        (_, i) => i
+      );  
+
+      indices.sort((a, b) => itensData.CO_POSICAO[a] - itensData.CO_POSICAO[b]);
+
+      // 3. Iterar sobre os índices ordenados
+      for (const i of indices) {
+        if (itensData.CO_PROVA[i] === codProva) {
+          // Filtro de Língua
+          if (itensData.TP_LINGUA[i] !== null 
+            && itensData.TP_LINGUA[i] !== tpLingua) continue;
+          // Filtro de versão digital
+          if (temVersaoDigital 
+            && itensData.TP_VERSAO_DIGITAL[i] !== null 
+            && itensData.TP_VERSAO_DIGITAL[i] !== tpLingua) continue
+          result.push({
+            status: itensData.IN_ITEM_ABAN[i] === 1 ? "abandoned" : (bits[pointer] === "1" ? "correct" : "wrong"),
+            pos: itensData.CO_POSICAO[i]
+          });
+          
+          // Só incrementa o pointer se o item for da língua certa (válido para o score)
+          pointer++;
+        }
+      }
+      
+      // O array já sai ordenado por CO_POSICAO devido ao indices.sort
+      return result;
+    };
+
     //--------------------------------------------------------
     //--------------------------FIM---------------------------
     //--------------------------------------------------------
@@ -595,7 +640,8 @@
         activeRanking,
         setActiveRanking,
         candidateData,
-        itensData
+        itensData,
+        getAreaMap
       }}>
         {children}
       </NineteenContext.Provider>

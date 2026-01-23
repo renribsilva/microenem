@@ -7,7 +7,7 @@ import { useHomeData } from "../../../../../../context/home_context";
 
 export default function CandidateFullDetail() {
   const { dicData } = useHomeData();
-  const { candidateData, itensData } = useNineteenData();
+  const { candidateData, getAreaMap } = useNineteenData();
   const [activeTab, setActiveTab] = useState<"geral" | "scores">("geral");
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 800 : false);
   const [tooltip, setTooltip] = useState<{ text: string, x: number, y: number, visible: boolean }>({
@@ -43,38 +43,6 @@ export default function CandidateFullDetail() {
     };
     const hex = colorMap[nomeCorOriginal.split(" ")[0]] || "#333";
     return { cor: hex, nome: nomeCorOriginal };
-  };
-
-  const getAreaMap = (codProva: number, tpLingua: number, score: string) => {
-    if (!itensData?.CO_PROVA || !score) return [];
-    const bits = score.split("");
-    const result = [];
-    let pointer = 0;
-
-    // 1. Criar array de índices para poder ordenar dados colunares
-    const indices = Array.from({ length: itensData.CO_PROVA.length }, (_, i) => i);
-
-    // 2. Ordenar os índices com base na CO_POSICAO
-    indices.sort((a, b) => itensData.CO_POSICAO[a] - itensData.CO_POSICAO[b]);
-
-    // 3. Iterar sobre os índices ordenados
-    for (const i of indices) {
-      if (itensData.CO_PROVA[i] === codProva) {
-        // Filtro de Língua
-        if (itensData.TP_LINGUA[i] !== null && itensData.TP_LINGUA[i] !== tpLingua) continue;
-
-        result.push({
-          status: itensData.IN_ITEM_ABAN[i] === 1 ? "abandoned" : (bits[pointer] === "1" ? "correct" : "wrong"),
-          pos: itensData.CO_POSICAO[i]
-        });
-        
-        // Só incrementa o pointer se o item for da língua certa (válido para o score)
-        pointer++;
-      }
-    }
-    
-    // O array já sai ordenado por CO_POSICAO devido ao indices.sort
-    return result;
   };
 
   if (!candidateData) return <div className={styles.fallback}>Aguarde...</div>;

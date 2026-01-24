@@ -43,6 +43,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!currentYear) return;
     async function loadYearlyData() {
       setLoading(true);
       try {

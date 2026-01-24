@@ -18,7 +18,6 @@ const COR_RACA = dynamic(() => import("./components/graphs/cor_raca"), { ssr: fa
 export default function Visao() {
 
   const { Inscritos, Abstencao_dia1, Abstencao_dia2 } = useNineteenData();
-
   const total_inscritos = Inscritos[0].total.toLocaleString('pt-BR');
   const abstencao_dia1 = Abstencao_dia1[0].abst.toLocaleString('pt-BR', {
     minimumFractionDigits: 1, maximumFractionDigits: 1

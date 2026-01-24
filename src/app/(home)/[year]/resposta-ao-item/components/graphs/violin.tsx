@@ -38,9 +38,11 @@ export default function ViolinBinsChart() {
   }, [scoreData, lastItemActivate]);
 
   const maxAbsValue = useMemo(() => {
-    if (!binsData) return 100000;
-    const rawMax = Math.max(...binsData["1"], ...binsData["0"]);
-    return Math.ceil(rawMax / 100000) * 100000 || 100000;
+    if (!binsData) return 100;    
+    const maxVal = Math.max(...binsData["1"], ...binsData["0"]);
+    if (maxVal === 0) return 100;
+    const withBuffer = maxVal * 1.1;
+    return Math.ceil(withBuffer);
   }, [binsData]);
 
   const series = useMemo(() => {

@@ -19,7 +19,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
 
   const [activeDataset, setActiveDataset] = useState<any | null>(null);
   const [availableDatasets, setAvailableDatasets] = useState<any[]>([]);
-  const datasetsCache = useRef<{ label: string; data: any } | null>(null);
+  const datasetsCache = useRef<{ label: string; data: any, year: any } | null>(null);
 
   const [selectionsByArea, setSelectionsByArea] = useState<Record<string, string>>({
     "LC": "511_0_X",
@@ -33,7 +33,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   // ---------------------------------------------------------------
 
   const params = useParams();
-  const currentYear = Array.isArray(params.year) ? params.year[0] : params.year || "2019";
+  const currentYear = params.year 
 
   // --------------------------------------------------------------------------------
   // ---------------- CARGA DINÂMICA DE JSON POR ANO (BUNDLE INICIAL) ---------------
@@ -78,7 +78,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    if (datasetsCache.current?.label === selectedLabel) {
+    if (datasetsCache.current?.label === selectedLabel && datasetsCache.current?.year === currentYear) {
       setActiveDataset(datasetsCache.current.data);
       return;
     }
@@ -90,6 +90,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
         datasetsCache.current = {
           label: selectedLabel,
           data: json.dataset,
+          year: currentYear
         };
         setActiveDataset(json.dataset);
         setAvailableDatasets(json.availableDatasets);
@@ -101,7 +102,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
       }
     }
     loadData();
-  }, [deferredArea, selectedLabel]);
+  }, [deferredArea, selectedLabel, currentYear]);
 
   // ------------------------------------------------------
   // ---------------- OUTROS PROCESSAMENTOS ---------------

@@ -14,11 +14,7 @@
     // ---------------------------------------------------------------
 
     const params = useParams();
-    const yearFromUrl = params.year as string || "2019";
-    const anosComDados = ["2019"]; 
-    const currentYear = useMemo(() => {
-      return anosComDados.includes(yearFromUrl) ? yearFromUrl : "2019";
-    }, [yearFromUrl]);
+    const currentYear = params.year;
 
     // ------------------------------------------------------
     // ---------------- CONTEXTOS NECESSÁRIOS ---------------
@@ -544,44 +540,51 @@
     //---------------------------------------------------------
 
     const getAreaMap = (codProva: number, tpLingua: number, score: string) => {
-      
-      const bits = score.split("");
-      const result = [];
-      let pointer = 0;
-
       if (!itensData || !score) return [];
 
+      const bits = score.split("");
       const temVersaoDigital = 'TP_VERSAO_DIGITAL' in itensData;
 
-      const indices = Array.from(
-        { length: itensData.CO_PROVA.length },
-        (_, i) => i
-      );  
-
-      indices.sort((a, b) => itensData.CO_POSICAO[a] - itensData.CO_POSICAO[b]);
-
-      // 3. Iterar sobre os índices ordenados
-      for (const i of indices) {
-        if (itensData.CO_PROVA[i] === codProva) {
-          // Filtro de Língua
-          if (itensData.TP_LINGUA[i] !== null 
-            && itensData.TP_LINGUA[i] !== tpLingua) continue;
-          // Filtro de versão digital
-          if (temVersaoDigital 
-            && itensData.TP_VERSAO_DIGITAL[i] !== null 
-            && itensData.TP_VERSAO_DIGITAL[i] !== tpLingua) continue
-          result.push({
-            status: itensData.IN_ITEM_ABAN[i] === 1 ? "abandoned" : (bits[pointer] === "1" ? "correct" : "wrong"),
-            pos: itensData.CO_POSICAO[i]
-          });
+      // 1. Coletar todos os índices válidos para esta prova e língua
+      const indicesFiltrados = Object.keys(itensData.CO_PROVA)
+        .map(Number)
+        .filter((i) => {
+          const matchProva = itensData.CO_PROVA[i] === codProva;
           
-          // Só incrementa o pointer se o item for da língua certa (válido para o score)
-          pointer++;
-        }
+          // Filtro de Língua (obrigatório para LC, ignorado nas outras se for null)
+          const matchLingua = itensData.TP_LINGUA[i] === null || itensData.TP_LINGUA[i] === tpLingua;
+          
+          let matchDigital = true;
+          if (temVersaoDigital && itensData.TP_VERSAO_DIGITAL[i] !== null) {
+              matchDigital = itensData.TP_VERSAO_DIGITAL[i] === tpLingua;
+          }
+
+          return matchProva && matchLingua && matchDigital;
+        });
+
+      // 2. ORDENAÇÃO por posição (essencial para parear com a string do score)
+      indicesFiltrados.sort((a, b) => itensData.CO_POSICAO[a] - itensData.CO_POSICAO[b]);
+
+      // 3. VALIDAÇÃO DE INTEGRIDADE
+      // Se não encontrar exatamente 45 itens, a estrutura do caderno está errada 
+      // e o score não pode ser mapeado com segurança.
+      if (indicesFiltrados.length !== 45) {
+        console.error(
+          `Erro de integridade: Esperados 45 itens, encontrados ${indicesFiltrados.length} para a prova ${codProva}.`
+        );
+        return []; // Ou throw new Error(...) dependendo da sua preferência
       }
-      
-      // O array já sai ordenado por CO_POSICAO devido ao indices.sort
-      return result;
+
+      // 4. MAPEAMENTO FINAL
+      return indicesFiltrados.map((i, pointer) => {
+        return {
+          pos: itensData.CO_POSICAO[i],
+          status: itensData.IN_ITEM_ABAN[i] === 1 
+            ? "abandoned" 
+            : (bits[pointer] === "1" ? "correct" : "wrong"),
+          co_item: itensData.CO_ITEM[i]
+        };
+      });
     };
 
     //--------------------------------------------------------

@@ -54,27 +54,36 @@ export default function AcertosChart() {
 
   // --- CONFIGURAÇÃO DE DADOS ---
   const series = useMemo(() => {
-    if (!itemGraphData || !Array.isArray(itemGraphData.x)) return [];
+    // ✅ PROTEÇÃO: Se probData for null, ou não houver item selecionado,
+    // ou o item selecionado não existir dentro do probData, retorne vazio.
+    if (!probData || !lastItemActivate || !probData[lastItemActivate]) {
+      return [];
+    }
+
+    // ✅ PROTEÇÃO: Garanta que itemGraphData também está pronto
+    if (!itemGraphData || !Array.isArray(itemGraphData.x)) {
+      return [];
+    }
+
     return [
       {
         name: "Frequência de acertos",
         type: 'scatter',
         data: itemGraphData.x.map((valorX, index) => ({
           x: valorX,
-          y: itemGraphData.y[index] // Pega o y correspondente pelo índice
+          y: itemGraphData.y[index]
         }))
       },
       {
         name: "Curva característica do item",
         type: 'line',
-        data: probData[lastItemActivate]?.map((yValue, idx) => ({
-        x: transformTheta(probLabels[idx]),
-        y: Number(yValue),
-        // tooltip: { enabled: false },
-      })),
+        data: probData[lastItemActivate].map((yValue, idx) => ({
+          x: transformTheta(probLabels[idx]),
+          y: Number(yValue),
+        })),
       },
     ];
-  }, [itemGraphData, lastItemActivate, probData]);
+  }, [itemGraphData, lastItemActivate, probData, probLabels]);
 
   // --- CONFIGURAÇÕES DO APEXCHARTS ---
   const options: ApexCharts.ApexOptions = useMemo(() => ({

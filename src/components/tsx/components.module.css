@@ -493,3 +493,7 @@
   overflow-y: auto;
   z-index: 101
 }
+
+.link_source {
+  color: var(--foreground);
+}

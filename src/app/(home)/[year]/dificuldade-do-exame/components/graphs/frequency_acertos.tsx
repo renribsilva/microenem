@@ -133,6 +133,7 @@ export default function FrequencyAcertosChart() {
       legend: { show: false },
       tooltip: {
         theme: 'dark',
+        intersect: false,
         custom: function({ seriesIndex, dataPointIndex, w }: any) {
           const configPonto = w.config.series[seriesIndex].data[dataPointIndex];
           const acertosReal = configPonto.x;

@@ -1,0 +1,10 @@
+{
+  "labels": ["Feminino", "Masculino"],
+  "datasets": [
+    {
+      "data": [61.81, 38.19],
+      "abs_values": [1427176, 881900],
+      "n": 2309076
+    }
+  ]
+}

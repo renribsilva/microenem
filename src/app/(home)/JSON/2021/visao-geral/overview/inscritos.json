@@ -1,0 +1,19 @@
+[
+  {
+    "grupo": "Inscritos",
+    "total": 3389832,
+    "freq": 100,
+    "subRows": [
+      {
+        "grupo": "Não treineiros",
+        "total": 2952642,
+        "freq": 87.1
+      },
+      {
+        "grupo": "Treineiros",
+        "total": 437190,
+        "freq": 12.9
+      }
+    ]
+  }
+]

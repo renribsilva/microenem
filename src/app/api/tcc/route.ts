@@ -17,7 +17,7 @@ export async function GET(request: Request) {
   }
 
   if (!label || label === 'undefined') {
-    return NextResponse.json({ error: "Ano é obrigatório" }, { status: 400 });
+    return NextResponse.json({ error: "co_p é obrigatório" }, { status: 400 });
   }
 
   try {

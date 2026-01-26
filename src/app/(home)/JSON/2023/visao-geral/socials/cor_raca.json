@@ -1,0 +1,43 @@
+{
+  "datasets": [
+    {
+      "tree": [
+        {
+          "label": "Não declarado",
+          "value": 1.24,
+          "abs": 35259
+        },
+        {
+          "label": "Branca",
+          "value": 42.85,
+          "abs": 1213474
+        },
+        {
+          "label": "Preta",
+          "value": 11.92,
+          "abs": 337657
+        },
+        {
+          "label": "Parda",
+          "value": 41.83,
+          "abs": 1184745
+        },
+        {
+          "label": "Amarela",
+          "value": 1.6,
+          "abs": 45376
+        },
+        {
+          "label": "Indígena",
+          "value": 0.55,
+          "abs": 15656
+        }
+      ],
+      "key": "value",
+      "groups": [
+        "label"
+      ],
+      "n": 2832167
+    }
+  ]
+}

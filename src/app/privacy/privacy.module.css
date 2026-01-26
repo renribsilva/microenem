@@ -5,9 +5,9 @@
 .layout_container {
   background-color: var(--background);
   display: flex;
-  height: 100svh;
+  /* height: 100svh; */
   width: 100svw;
-  overflow: hidden;
+  /* overflow: hidden; */
 } 
 
 .layout_sidebar {
@@ -43,6 +43,8 @@
   margin-left: 250px;
   width: calc(100% - 250px);
   min-height: calc(100svh - 60px);
+  padding: 10px;
+  font-weight: 300;
 }
 
 @media (max-width: 800px) {
@@ -74,6 +76,5 @@
   visibility: visible;
 }
 
-.privacy {
-  height: fit-content;
+.card_privacy {
 }

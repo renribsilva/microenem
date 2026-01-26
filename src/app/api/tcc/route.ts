@@ -13,7 +13,8 @@ export async function GET(request: Request) {
   }
 
   try {
-    const filePath = path.join(process.cwd(), `src/app/(home)/JSON/${year}/tcc_${year}.json`);
+    // Tente construir o caminho de forma mais robusta
+    const filePath = path.join(process.cwd(), 'src', 'app', '(home)', 'JSON', year, `tcc_${year}.json`);
     
     if (!fs.existsSync(filePath)) {
       return NextResponse.json({ error: `Arquivo não encontrado` }, { status: 404 });

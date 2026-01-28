@@ -644,7 +644,8 @@
         setActiveRanking,
         candidateData,
         itensData,
-        getAreaMap
+        getAreaMap,
+        currentYear
       }}>
         {children}
       </NineteenContext.Provider>

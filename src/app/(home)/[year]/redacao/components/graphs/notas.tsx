@@ -6,6 +6,7 @@ import { useChartTheme } from '../../../../../../hooks/use_chart_theme';
 import customTooltip from '../../../../../../components/tsx/customTooltip';
 import { useHomeData } from '../../../../../../context/home_context';
 import { useNineteenData } from '../../../../../../context/nineteen_context';
+import styles from './graphs.module.css'
 
 type NotaKey = "NU_NOTA_COMP1" | "NU_NOTA_COMP2" | "NU_NOTA_COMP3" | "NU_NOTA_COMP4" | "NU_NOTA_COMP5" | "NU_NOTA_REDACAO";
 
@@ -182,6 +183,9 @@ export default function NotasRedacaoChart() {
 
       <div style={{ minHeight: `${calculatedHeight}px` }}>
         <Chart options={options} series={series} type="bar" height={calculatedHeight} width="100%" />
+        <div className={styles.table_footer}>
+          Aviso: não inclui redações de reaplicações (o que explica o ano de 2020 ter, nesta análise, 27 redações nota mil e não 28 como divulgado pelo Inep)
+        </div>
       </div>
     </div>
   );

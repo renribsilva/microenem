@@ -17,7 +17,8 @@ export default function ProdProbChart() {
     d, 
     setUpdateTrigger, 
     activeCodes, 
-    intervalData 
+    intervalData,
+    currentYear
   } = useNineteenData();
   const { deferredArea, chartLogic} = useHomeData();
   const { selectedLabel } = chartLogic;
@@ -26,7 +27,7 @@ export default function ProdProbChart() {
   const { axisColor, textColor, gridColor } = useChartTheme();
   const [EAPDesatualizado, setEAPDesatualizado] = useState<boolean>(false);
 
-  const isMath = deferredArea === "MT";
+  const isMath = (deferredArea === "MT" && currentYear === 2019);
 
   useEffect(() => {
     setIsUpdating(false);

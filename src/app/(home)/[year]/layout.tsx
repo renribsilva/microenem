@@ -14,7 +14,7 @@ export default function NineteenLayout({
         {children}
       </main>
       <div className={styles.table_footer}>
-        Aviso: a análise dos microdados do ENEM aqui apresentada está circunscrita aos dados dos que participaram de ao menos um dia da aplicação regular do exame (incluindo treineiros) – não inclui reaplicações.
+        Aviso: a análise dos microdados do ENEM aqui apresentada está circunscrita aos dados dos que participaram de ao menos um dia da aplicação regular do exame (incluindo treineiros) – não inclui reaplicações. O motivo da exclusão é o de que alguns microdados apresentam essas informações e outros não, de modo que excluí-los estabelece uma normalização para possíveis comparações.
       </div>
     </NineteenProvider>
   )

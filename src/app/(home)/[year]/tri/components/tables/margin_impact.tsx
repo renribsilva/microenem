@@ -15,7 +15,8 @@ export default function MarginImpactTable() {
     selectedItems, 
     setSampleEAP, 
     intervalData, 
-    setUpdateTrigger 
+    setUpdateTrigger,
+    currentYear
   } = useNineteenData();
   const { textColor, isDark } = useChartTheme();
   const [impactoDesatualizado, setImpactoDesatualizado] = useState(false);
@@ -114,13 +115,13 @@ export default function MarginImpactTable() {
                   </td>
                   <td style={{ 
                     padding: '8px', textAlign: 'right', fontWeight: '500', 
-                    color: (isAnulado || impactoDesatualizado || deferredArea === "MT") ? '#64748b' : (valNum > 0 ? '#10b981' : '#f43f5e'),
+                    color: (isAnulado || impactoDesatualizado || (deferredArea === "MT" && currentYear === 2019)) ? '#64748b' : (valNum > 0 ? '#10b981' : '#f43f5e'),
                     fontFamily: 'monospace', fontSize: '13px'
                   }}>
                     {/* AQUI DESATIVA A COLUNA */}
                     {impactoDesatualizado ? '---' : (
                       isAnulado ? 'N/A' : (
-                        deferredArea === "MT" ? '---' : (
+                        (deferredArea === "MT" && currentYear === 2019) ? '---' : (
                           valNum > 0 ? `+${valNum.toFixed(1)}` : `${valNum.toFixed(1)}`
                         )
                       )

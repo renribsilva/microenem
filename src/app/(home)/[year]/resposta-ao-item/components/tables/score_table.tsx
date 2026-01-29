@@ -85,9 +85,9 @@ export default function ScoreTable() {
       columnHelper.accessor("respondentes", {
         header: "n",
         cell: (info) => {
+          if (info.row.original.abandonado) return <span style={{ color: "#ccc" }}>—</span>;
+          
           const val = info.getValue();
-
-          // Formatador para números compactos (ex: 1,5 mi)
           const compactFormatter = new Intl.NumberFormat('pt-BR', {
             notation: "compact",
             compactDisplay: "short",
@@ -105,29 +105,28 @@ export default function ScoreTable() {
       }),
       columnHelper.accessor("freq_acerto", {
         header: "Acerto",
-        cell: (info) => (
-          <span style={{ fontSize: "0.85rem", color: "#52c41a", fontWeight: "500" }}>
-            {info.getValue()}%
-          </span>
-        ),
+        cell: (info) => info.row.original.abandonado 
+          ? <span style={{ color: "#ccc" }}>—</span> 
+          : <span style={{ fontSize: "0.85rem", color: "#52c41a", fontWeight: "500" }}>{info.getValue()}%</span>,
       }),
       columnHelper.accessor("freq_erro", { 
         header: "Erro", 
-        cell: (info) => (
-          <span style={{ fontSize: "0.85rem", color: "#ff4b4b", fontWeight: "500" }}>
-            {info.getValue()}%
-          </span>
-        )
+        cell: (info) => info.row.original.abandonado 
+          ? <span style={{ color: "#ccc" }}>—</span> 
+          : <span style={{ fontSize: "0.85rem", color: "#ff4b4b", fontWeight: "500" }}>{info.getValue()}%</span>
       }),
-      // Só inclui Branco e Dupla se não for mobile
       ...(!isMobile ? [
         columnHelper.accessor("freq_branco", { 
           header: "Branco", 
-          cell: (info) => <span style={{ color: "#888" }}>{info.getValue()}%</span> 
+          cell: (info) => info.row.original.abandonado 
+            ? <span style={{ color: "#ccc" }}>—</span> 
+            : <span style={{ color: "#888" }}>{info.getValue()}%</span> 
         }),
         columnHelper.accessor("freq_dupla_marcacao", { 
           header: "Dupla", 
-          cell: (info) => <span style={{ color: "#888" }}>{info.getValue()}%</span> 
+          cell: (info) => info.row.original.abandonado 
+            ? <span style={{ color: "#ccc" }}>—</span> 
+            : <span style={{ color: "#888" }}>{info.getValue()}%</span> 
         }),
       ] : []),
     ];
@@ -219,7 +218,7 @@ export default function ScoreTable() {
     getSortedRowModel: getSortedRowModel(),
   });
 
-  // --- LÓGICA PARA INICIAR COM O PRIMEIRO ATIVO ---
+  // — LÓGICA PARA INICIAR COM O PRIMEIRO ATIVO —
   useEffect(() => {
     if (data.length > 0 && !lastItemActivate) {
       setLastItemActivate(data[0].id);
@@ -281,11 +280,9 @@ export default function ScoreTable() {
           ))}
         </thead>
         <tbody>
-          {table.getRowModel().rows.map((row, index) => {
+          {table.getRowModel().rows.map((row) => {
             const isAbandonado = row.original.abandonado;
             const itemId = row.original.id; 
-            
-            // VERIFICA SE É O ITEM ATIVO
             const isActive = lastItemActivate === itemId;
 
             return (
@@ -296,9 +293,12 @@ export default function ScoreTable() {
                   ${isAbandonado ? styles.row_abandonado : ""} 
                   ${isActive ? styles.row_active : ""}
                 `}
+                // 1. CONDICIONAL NO CLICK: Só executa se NÃO for abandonado
                 onClick={() => {
-                  setLastItemActivate(itemId);
-                  setLastItemActivateNum(row.original.posicao); 
+                  if (!isAbandonado) {
+                    setLastItemActivate(itemId);
+                    setLastItemActivateNum(row.original.posicao);
+                  }
                 }}
                 style={{ 
                   backgroundColor: isActive 
@@ -307,8 +307,11 @@ export default function ScoreTable() {
                   borderLeft: isActive
                     ? "4px solid #00E396" 
                     : isAbandonado ? "4px solid #ff4b4b" : "4px solid transparent",
-                  cursor: "pointer",
-                  transition: "all 0.2s ease" 
+                  // 2. CURSOR CONDICIONAL: 'default' ou 'not-allowed' para abandonados
+                  cursor: isAbandonado ? "not-allowed" : "pointer",
+                  transition: "all 0.2s ease",
+                  // 3. OPACIDADE (Opcional): ajuda visualmente a indicar que está desativado
+                  opacity: isAbandonado ? 0.7 : 1
                 }}
               >
                 {row.getVisibleCells().map((cell) => (

@@ -121,7 +121,7 @@ export default function MarginImpactTable() {
                     {/* AQUI DESATIVA A COLUNA */}
                     {impactoDesatualizado ? '---' : (
                       isAnulado ? 'N/A' : (
-                        (deferredArea === "MT" && currentYear === 2019) ? '---' : (
+                        (deferredArea === "MT" && currentYear === "2019") ? '---' : (
                           valNum > 0 ? `+${valNum.toFixed(1)}` : `${valNum.toFixed(1)}`
                         )
                       )

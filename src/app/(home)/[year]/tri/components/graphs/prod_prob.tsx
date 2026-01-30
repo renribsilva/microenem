@@ -6,6 +6,7 @@ import { useHomeData } from '../../../../../../context/home_context';
 import Chart from 'react-apexcharts';
 import { useChartTheme } from '../../../../../../hooks/use_chart_theme';
 import styles from "./graphs.module.css"
+import { defaultConfig } from 'next/dist/server/config-shared';
 
 export default function ProdProbChart() {
 
@@ -27,7 +28,7 @@ export default function ProdProbChart() {
   const { axisColor, textColor, gridColor } = useChartTheme();
   const [EAPDesatualizado, setEAPDesatualizado] = useState<boolean>(false);
 
-  const isMath = (deferredArea === "MT" && currentYear === 2019);
+  const isMath = (deferredArea === "MT" && currentYear === "2019");
 
   useEffect(() => {
     setIsUpdating(false);

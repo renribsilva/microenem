@@ -83,6 +83,9 @@ export function HomeProvider({ children }: { children: ReactNode }) {
       setActiveDataset(datasetsCache.current.data);
       return;
     }
+
+    if (!currentYear || !selectedLabel || !deferredArea) return
+    
     async function loadData() {
       try {
         const res = await fetch(`/api/tcc?area=${deferredArea}&co_p=${selectedLabel}&year=${currentYear}`);

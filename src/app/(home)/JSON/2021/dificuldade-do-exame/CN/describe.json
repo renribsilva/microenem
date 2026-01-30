@@ -16,7 +16,11 @@
     "mode": 456.2622,
     "q1": 430.9,
     "q3": 546.4,
-    "p99": 702
+    "p99": 702,
+    "cor_min": "Laranja - Adaptada Ledor",
+    "cor_max": "Cinza",
+    "cod_min": 916,
+    "cod_max": 911
   },
   "acertos": {
     "vars": 1,

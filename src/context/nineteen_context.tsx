@@ -270,7 +270,7 @@
 
     const labelMap: Record<string, string> = {
       mean: "Média", median: "Mediana", mode: "Moda", sd: "Desvio Padrão",
-      min: "Mínima", max: "Máxima", skew: "Assimetria", kurtosis: "Curtose",
+      min: "Mínima¹", max: "Máxima²", skew: "Assimetria", kurtosis: "Curtose",
       q1: "1º quartil", q3: "3º quartil", p99: "Percentil 99"
     };
 
@@ -300,7 +300,11 @@
     const describeRowData = useMemo(() => ({
       data: tableData,
       n: describeDifData?.notas?.n || 0,
-      raw: describeDifData 
+      raw: describeDifData,
+      cod_min_ref: describeDifData?.notas?.cod_min,
+      cod_max_ref: describeDifData?.notas?.cod_max,
+      cor_min_ref: describeDifData?.notas?.cor_min,
+      cor_max_ref: describeDifData?.notas?.cor_max
     }), [tableData, describeDifData]);
 
     

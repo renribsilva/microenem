@@ -88,8 +88,15 @@ export function DescribeTable() {
           </tbody>
         </table>
         <div className={styles.describe_footer}>
-          {/* O valor de 'n' também vem direto do describeRowData */}
-          n = {describeRowData.n.toLocaleString('pt-BR')}
+          <div>
+            n = {describeRowData.n.toLocaleString('pt-BR')}
+          </div>
+          <div>
+            ¹ Prova de referência: {describeRowData.cor_min_ref} (cod: {describeRowData.cod_min_ref})
+          </div>
+          <div>
+            ² Prova de referência: {describeRowData.cor_max_ref} (cod: {describeRowData.cod_max_ref})
+          </div>
         </div>
       </div>
     </div>

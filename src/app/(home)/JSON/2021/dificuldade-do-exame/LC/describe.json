@@ -16,7 +16,11 @@
     "mode": 519.3221,
     "q1": 447.8,
     "q3": 559.4,
-    "p99": 671.7
+    "p99": 671.7,
+    "cor_min": "Branca",
+    "cor_max": "Amarela",
+    "cod_min": 892,
+    "cod_max": 890
   },
   "acertos": {
     "vars": 1,

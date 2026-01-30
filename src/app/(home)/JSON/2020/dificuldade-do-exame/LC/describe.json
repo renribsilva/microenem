@@ -16,7 +16,11 @@
     "mode": 542.1265,
     "q1": 478.9,
     "q3": 577,
-    "p99": 671.2
+    "p99": 671.2,
+    "cor_min": "Branca",
+    "cor_max": "Branca",
+    "cod_min": 580,
+    "cod_max": 580
   },
   "acertos": {
     "vars": 1,

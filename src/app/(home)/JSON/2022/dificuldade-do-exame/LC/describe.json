@@ -16,7 +16,11 @@
     "mode": 544.5484,
     "q1": 468.5,
     "q3": 573.3,
-    "p99": 668
+    "p99": 668,
+    "cor_min": "Verde - Videoprova - Libras",
+    "cor_max": "Azul",
+    "cod_min": 1073,
+    "cod_max": 1065
   },
   "acertos": {
     "vars": 1,

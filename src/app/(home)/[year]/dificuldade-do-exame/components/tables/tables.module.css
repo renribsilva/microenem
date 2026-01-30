@@ -56,10 +56,9 @@
 }
 
 .describe_footer {
-  padding-top: 15px;
-  padding-left: 10px;
+  padding: 5px;
+  padding-top: 10px;
+  font-size: 0.75rem; /* 12px */
   font-weight: 300;
-  font-size: 15px;
-  display: flex;
-  justify-content: left;
+  color: #888;
 }

@@ -16,7 +16,11 @@
     "mode": 454.6715,
     "q1": 449,
     "q3": 622.4,
-    "p99": 843.6
+    "p99": 843.6,
+    "cor_min": "Azul",
+    "cor_max": "Cinza",
+    "cod_min": 1075,
+    "cod_max": 1078
   },
   "acertos": {
     "vars": 1,

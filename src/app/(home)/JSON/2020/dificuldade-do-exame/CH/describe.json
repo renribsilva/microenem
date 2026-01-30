@@ -16,7 +16,11 @@
     "mode": 534.3024,
     "q1": 435.9,
     "q3": 581.2,
-    "p99": 724.1
+    "p99": 724.1,
+    "cor_min": "Amarela (Digital)",
+    "cor_max": "Rosa",
+    "cod_min": 688,
+    "cod_max": 570
   },
   "acertos": {
     "vars": 1,

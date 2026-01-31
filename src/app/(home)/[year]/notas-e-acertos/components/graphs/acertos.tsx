@@ -124,7 +124,7 @@ export default function DensityNotasChart() {
     <div style={{ flex: 1, minHeight: '350px', width: '100%' }}>
       <Chart options={options} series={series} type="area" height="100%" width="100%" />
       <div className={styles.table_footer}>
-        Observação: zero e 45 acertos são casos de sequências de respostas idênticas e, à primeira vista, deveriam apresentar valores iguais para max, min e média. No entando, alguns cadernos da mesma área podem conter um pool de itens distintos, como é o caso da área de Linguagens que tem tanto questões de Inglês quanto de Espanhol. Essa diferença reflete na nota final do exame, mesmo que a sequência de respostas seja idêntica.
+        Observação: 0/x e x/x acertos são casos de sequências de respostas idênticas e, à primeira vista, deveriam apresentar valores iguais para max, min e média. No entando, alguns cadernos da mesma área podem conter um pool de itens distintos, como é o caso da área de Linguagens que tem tanto questões de Inglês quanto de Espanhol. Essa diferença reflete na nota final do exame, mesmo que a sequência de respostas seja idêntica.
       </div>
     </div>
   );

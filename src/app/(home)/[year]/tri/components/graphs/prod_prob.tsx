@@ -6,7 +6,6 @@ import { useHomeData } from '../../../../../../context/home_context';
 import Chart from 'react-apexcharts';
 import { useChartTheme } from '../../../../../../hooks/use_chart_theme';
 import styles from "./graphs.module.css"
-import { defaultConfig } from 'next/dist/server/config-shared';
 
 export default function ProdProbChart() {
 
@@ -28,7 +27,8 @@ export default function ProdProbChart() {
   const { axisColor, textColor, gridColor } = useChartTheme();
   const [EAPDesatualizado, setEAPDesatualizado] = useState<boolean>(false);
 
-  const isMath = (deferredArea === "MT" && currentYear === "2019");
+  const isMath = ((deferredArea === "MT" && currentYear === "2019") || 
+    (deferredArea === "CN" && currentYear === "2021"));
 
   useEffect(() => {
     setIsUpdating(false);
@@ -129,7 +129,7 @@ export default function ProdProbChart() {
                   padding: { left: 10, right: 10, top: 10, bottom: 10 }
                 },
                 text: ['O método (não oficial) de transformação da escala', 
-                  'apresentou divergência na nota de MT.'] as any,
+                  `apresentou divergência na nota de ${deferredArea}.`] as any,
                 orientation: 'horizontal',
                 offsetY: 80
               }

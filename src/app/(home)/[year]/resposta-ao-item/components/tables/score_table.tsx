@@ -177,7 +177,7 @@ export default function ScoreTable() {
     return Array.from({ length: end - start + 1 }, (_, i) => {
       const num = start + i;
       const code = getCodeByLabel(num, selectedLabel);
-      const param = getParamByLabel(num, selectedLabel);
+      const param = getParamByLabel(num, selectedLabel, "b");
       const itemScores = (scoreData && code) ? (scoreData[code]?.counts || {}) : {};
       
       const v1 = Number(itemScores["1"] ?? 0);
@@ -242,34 +242,31 @@ export default function ScoreTable() {
       <table className={styles.probtable_table}>
         <thead className={styles.probtable_thead}>
           {table.getHeaderGroups().map((headerGroup) => (
-            <tr 
-              key={headerGroup.id} 
-              className={styles.probtable_tr}
-            >
+            <tr key={headerGroup.id} className={styles.probtable_tr}>
               {headerGroup.headers.map((header) => {
-                // É um grupo se tiver colunas filhas
                 const isGroup = header.column.columns.length > 0;
                 const canSort = header.column.getCanSort() && !isGroup;
+                const sortedState = header.column.getIsSorted();
 
                 return (
                   <th
                     key={header.id}
                     colSpan={header.colSpan}
-                    /* Aplica a classe da linha apenas se for grupo */
                     className={`${styles.probtable_th} ${isGroup ? styles.probtable_group_th : ""}`}
                     onClick={canSort ? header.column.getToggleSortingHandler() : undefined}
                   >
                     <div 
                       className={styles.probtable_th_item} 
-                      style={{ 
-                        cursor: canSort ? 'pointer' : 'default',
-                      }}
+                      style={{ cursor: canSort ? 'pointer' : 'default' }}
                     >
                       {!header.isPlaceholder && flexRender(header.column.columnDef.header, header.getContext())}
 
                       {canSort && (
-                        <span style={{ fontSize: '10px' }}>
-                          {{ asc: " 🔼", desc: " 🔽" }[header.column.getIsSorted() as string] ?? null}
+                        <span style={{ fontSize: '10px', marginLeft: '4px', opacity: sortedState ? 1 : 0.5 }}>
+                          {{
+                            asc: " 🔼",
+                            desc: " 🔽",
+                          }[sortedState as string] ?? " ↕️"}
                         </span>
                       )}
                     </div>

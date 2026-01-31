@@ -36,7 +36,7 @@ const generateSubItems = (year: string) => [
   { name: "Relação notas/acertos", path: `/${year}/notas-e-acertos` },
   { name: "Redação", path: `/${year}/redacao` },
   { name: "Médias simples", path: `/${year}/media-simples` },
-  { name: "TRI", path: `/${year}/tri` },
+  // { name: "TRI", path: `/${year}/tri` },
 ];
 
 const navItems: NavItem[] = [

@@ -365,7 +365,7 @@
     }, [deferredArea, itensData]);
 
     // Função para traduzir Posição (ex: questão 95) em Código (ex: 11234)
-    const getParamByLabel = useCallback((num: number, label: string) => {
+    const getParamByLabel = useCallback((num: number, label: string, type: string) => {
       if (!label || !itensData || !itensData.CO_POSICAO) return null; 
       const [co_p, ling, vers] = label.split('_');
       const p = itensData;   
@@ -381,7 +381,14 @@
         }
         return true;
       });
-      return idx ? Number(p.NU_PARAM_B[idx]) : null;
+      const map = {
+        a: p.NU_PARAM_A?.[idx],
+        b: p.NU_PARAM_B?.[idx],
+        c: p.NU_PARAM_C?.[idx]
+      };
+
+      const val = map[type];
+      return idx ? Number(val) : null;
     }, [deferredArea, itensData]);
 
     const handleToggle = useCallback((num: number, isAbandoned: boolean) => {

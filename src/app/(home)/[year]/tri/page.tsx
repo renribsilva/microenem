@@ -29,14 +29,14 @@ export default function RedacaoPage() {
         />
       </nav>
       <div className={styles.tri_container}>
-        <div className={styles.tri_left}>
-          <div className={styles.tri_top}>
+        <div className={styles.tri_top}>
+          <div className={styles.tri_top_left}>
             <Card>
               <h3 className={styles.card_title}>Sequência de erros e acertos de {deferredArea}</h3>
               <ItensButtons />
             </Card>
           </div>
-          <div className={styles.tri_bottom}>
+          <div className={styles.tri_top_right}> 
             <Card>
               <ProdProbChart />
             </Card>
@@ -45,7 +45,7 @@ export default function RedacaoPage() {
         <div className={styles.tri_right}>
           <Card>
             <MarginImpactTable />
-          </Card> 
+          </Card>
         </div>
       </div>
     </main>

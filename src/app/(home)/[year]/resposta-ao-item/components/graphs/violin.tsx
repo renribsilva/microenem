@@ -23,7 +23,9 @@ export default function ViolinBinsChart() {
   const binsData = useMemo(() => {
     if (!scoreData || !lastItemActivate || !scoreData[lastItemActivate]) return null;
     const rawBins = scoreData[lastItemActivate].bins;
-    if (!rawBins) return null;
+    if (!rawBins || !Array.isArray(rawBins["0"]) || !Array.isArray(rawBins["1"]) || !Array.isArray(rawBins.labels)) {
+      return null;
+    }
     const v0 = rawBins["0"];
     const v1 = rawBins["1"];
     const labels = rawBins.labels;

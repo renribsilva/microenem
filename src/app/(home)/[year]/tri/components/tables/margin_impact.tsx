@@ -1,25 +1,64 @@
 'use client'
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useHomeData } from '../../../../../../context/home_context';
 import { useNineteenData } from '../../../../../../context/nineteen_context';
 import { useChartTheme } from '../../../../../../hooks/use_chart_theme';
 import styles from "./tables.module.css"
 
 export default function MarginImpactTable() {
-
   const { deferredArea, chartLogic } = useHomeData();
-  const { selectedLabel } = chartLogic
+  const { selectedLabel } = chartLogic;
   const { 
     EAPData, 
     selectedItems, 
     setSampleEAP, 
     intervalData, 
     setUpdateTrigger,
-    currentYear
+    currentYear,
+    getParamByLabel,
+    getCodeByLabel
   } = useNineteenData();
+  
   const { textColor, isDark } = useChartTheme();
   const [impactoDesatualizado, setImpactoDesatualizado] = useState(false);
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 800 : false);
+    
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 800);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Estado para o Sort
+  const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' | null }>({
+    key: 'posicao',
+    direction: 'asc'
+  });
+
+  const paramsPorCodigo = useMemo(() => {  
+    const ranges = {
+      "LC": { start: 1, end: 45 },
+      "CH": { start: 46, end: 90 },
+      "CN": { start: 91, end: 135 },
+      "MT": { start: 136, end: 180 },
+    };
+
+    const { start, end } = ranges[deferredArea] || { start: 1, end: 45 };
+    const map: Record<string, { a: number; b: number; c: number }> = {};
+
+    for (let i = start; i <= end; i++) {
+      const code = getCodeByLabel(i, selectedLabel);
+      if (code) {
+        map[code] = {
+          a: getParamByLabel(i, selectedLabel, "a"),
+          b: getParamByLabel(i, selectedLabel, "b"),
+          c: getParamByLabel(i, selectedLabel, "c"),
+        };
+      }
+    }
+    return map;
+  }, [deferredArea, selectedLabel, getCodeByLabel, getParamByLabel]);
 
   const handleUpdateChart = () => {
     if (Object.entries(selectedItems).length === 0) return;
@@ -27,35 +66,85 @@ export default function MarginImpactTable() {
     setUpdateTrigger((prev: any) => !prev);
   };
 
-  // Invalida ao mudar itens ou área
   useEffect(() => {
     if (Object.keys(selectedItems || {}).length > 0) {
       setImpactoDesatualizado(true);
     }
-  }, [selectedItems, deferredArea || '', selectedLabel]);
+  }, [selectedItems, deferredArea, selectedLabel]);
 
-  // Revalida quando o EAPData novo chegar
   useEffect(() => {
     setImpactoDesatualizado(false);
   }, [EAPData]);
 
-  const impactosArray = EAPData?.impacto_individual 
-    ? Object.entries(EAPData.impacto_individual)
-        .map(([codigo, info]: [string, any]) => ({
-          codigo,
-          ...info
-        }))
-        .sort((a, b) => a.posicao - b.posicao)
-    : [];
+  // Lógica de ordenação REVISADA
+  const impactosArray = useMemo(() => {
+    if (!EAPData?.impacto_individual) return [];
+
+    const baseArray = Object.entries(EAPData.impacto_individual).map(([codigo, info]: [string, any]) => {
+      const params = paramsPorCodigo[codigo];
+      const valRaw = info.valor;
+      const valNum = (valRaw === null || (Array.isArray(valRaw) && valRaw[0] === null)) 
+        ? -999 
+        : Number(Array.isArray(valRaw) ? valRaw[0] : valRaw);
+
+      return {
+        codigo,
+        ...info,
+        a: params?.a ?? 0,
+        b: params?.b ?? 0,
+        c: params?.c ?? 0,
+        valorNum: valNum
+      };
+    });
+
+    if (sortConfig.direction) {
+      baseArray.sort((a, b) => {
+        let valA: any = a[sortConfig.key as keyof typeof a];
+        let valB: any = b[sortConfig.key as keyof typeof b];
+
+        // Força ordenação numérica para chaves conhecidas
+        if (['posicao', 'a', 'b', 'c'].includes(sortConfig.key)) {
+          valA = Number(valA);
+          valB = Number(valB);
+        }
+
+        if (sortConfig.key === 'impacto') {
+          valA = a.valorNum;
+          valB = b.valorNum;
+        }
+
+        if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
+        if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+
+    return baseArray;
+  }, [EAPData, paramsPorCodigo, sortConfig]);
+
+  const requestSort = (key: string) => {
+    let direction: 'asc' | 'desc' | null = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    } else if (sortConfig.key === key && sortConfig.direction === 'desc') {
+      direction = null;
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const renderSortIcon = (key: string) => {
+    const sortedState = sortConfig.key === key ? sortConfig.direction : null;
+    return (
+      <span style={{ fontSize: '10px', marginLeft: '4px', opacity: sortedState ? 1 : 0.5 }}>
+        {{
+          asc: " 🔼",
+          desc: " 🔽",
+        }[sortedState as string] ?? " ↕️"}
+      </span>
+    );
+  };
 
   const temImpacto = impactosArray.length > 0;
-  const statusPorCodigo: Record<string, string> = {};
-
-  if (selectedItems) {
-    Object.entries(selectedItems).forEach(([codigo, dados]: [string, any]) => {
-      if (codigo) statusPorCodigo[codigo] = dados.status;
-    });
-  }
 
   return (
     <div className={styles.impact_container}>
@@ -74,28 +163,33 @@ export default function MarginImpactTable() {
           )}
         </div>
       </div>      
+
       <div className={styles.margin_container}>
         <table className={styles.margin_table}>
           <thead className={styles.margin_thead}>
             <tr className={styles.margin_tr}>
-              <th className={styles.margin_th}>ITEM</th>
-              <th className={styles.margin_th}>CÓDIGO</th>
+              <th className={styles.margin_th} onClick={() => requestSort('posicao')} style={{ cursor: 'pointer' }}>ITEM {renderSortIcon('posicao')}</th>
+              {!isMobile && (<th className={styles.margin_th} onClick={() => requestSort('codigo')} style={{ cursor: 'pointer' }}>CÓDIGO {renderSortIcon('codigo')}</th>)}
               <th className={styles.margin_th}>STATUS</th>
-              <th className={styles.margin_th} style={{textAlign: 'right'}}>IMPACTO</th>
+              <th className={styles.margin_th} onClick={() => requestSort('a')} style={{ cursor: 'pointer' }}>A¹ {renderSortIcon('a')}</th>
+              {!isMobile && (<th className={styles.margin_th} onClick={() => requestSort('b')} style={{ cursor: 'pointer' }}>B² {renderSortIcon('b')}</th>)}
+              {!isMobile && (<th className={styles.margin_th} onClick={() => requestSort('c')} style={{ cursor: 'pointer' }}>C³ {renderSortIcon('c')}</th>)}
+              <th className={styles.margin_th} onClick={() => requestSort('impacto')} style={{ cursor: 'pointer', textAlign: 'right' }}>IMPACTO {renderSortIcon('impacto')}</th>
             </tr>
           </thead>
           <tbody>
             {temImpacto && impactosArray.map((itemData: any) => {
-              const codigoDoItem = itemData.codigo;
+              const codigoItem = itemData.codigo;
+              const params = paramsPorCodigo[codigoItem];
               const valRaw = itemData.valor;
               const isAnulado = valRaw === null || (Array.isArray(valRaw) && valRaw[0] === null);
               const valNum = isAnulado ? 0 : Number(Array.isArray(valRaw) ? valRaw[0] : valRaw);
-
-              const statusOriginal = statusPorCodigo[codigoDoItem] || "erro";
+              const statusOriginal = selectedItems[codigoItem]?.status || "erro";
               const labelStatus = isAnulado ? "anulado" : statusOriginal;
 
               let bgColor = isDark ? '#452727' : '#fef2f2'; 
               let fontColor = isDark? '#f89393' : '#dc2626';
+              
               if (labelStatus === 'anulado') {
                 bgColor = isDark ? '#1e293b' : '#f1f5f9';
                 fontColor = isDark ? '#94a3b8' : '#64748b';
@@ -105,40 +199,48 @@ export default function MarginImpactTable() {
               }
 
               return (
-                <tr key={codigoDoItem} className={styles.margin_tr}>
-                  <td className={styles.margin_td} style={{ color: '#94a3b8', fontSize: '11px' }}>{itemData.posicao}</td>
-                  <td className={styles.margin_td} style={{ fontFamily: 'monospace', fontSize: '12px' }}>{codigoDoItem}</td>
+                <tr key={codigoItem} className={styles.margin_tr}>
+                  <td className={styles.margin_td}>{itemData.posicao}</td>
+                  {!isMobile && (<td className={styles.margin_td}>{codigoItem}</td>)}
                   <td className={styles.margin_td}>
                     <span style={{ padding: '4px 8px', fontSize: '11px', textTransform: 'uppercase', fontWeight: '600', background: bgColor, color: fontColor, borderRadius: '4px' }}>
                       {labelStatus}
                     </span>
                   </td>
+                  <td className={styles.margin_td}>{params?.a?.toFixed(3) ?? '—'}</td>
+                  {!isMobile && (<td className={styles.margin_td}>{params?.b?.toFixed(3) ?? '—'}</td>)}
+                  {!isMobile && (<td className={styles.margin_td}>{params?.c?.toFixed(3) ?? '—'}</td>)}
                   <td style={{ 
                     padding: '8px', textAlign: 'right', fontWeight: '500', 
-                    color: (isAnulado || impactoDesatualizado || (deferredArea === "MT" && currentYear === 2019)) ? '#64748b' : (valNum > 0 ? '#10b981' : '#f43f5e'),
+                    color: (isAnulado || impactoDesatualizado || 
+                      ((deferredArea === "MT" && currentYear === 2019) || 
+                        (deferredArea === "CN" && currentYear === 2021))) ? '#64748b' : (valNum > 0 ? '#10b981' : '#f43f5e'),
                     fontFamily: 'monospace', fontSize: '13px'
                   }}>
-                    {/* AQUI DESATIVA A COLUNA */}
-                    {impactoDesatualizado ? '---' : (
-                      isAnulado ? 'N/A' : (
-                        (deferredArea === "MT" && currentYear === "2019") ? '---' : (
-                          valNum > 0 ? `+${valNum.toFixed(1)}` : `${valNum.toFixed(1)}`
-                        )
-                      )
-                    )}
+                    {impactoDesatualizado ? '---' : (isAnulado ? 'N/A' : (((deferredArea === "MT" && currentYear === "2019") || (deferredArea === "CN" && currentYear === "2021")) ? '---' : (valNum > 0 ? `+${valNum.toFixed(1)}` : `${valNum.toFixed(1)}`)))}
                   </td>
                 </tr>
               )
             })}
           </tbody>
         </table>
+
         {!EAPData && (
           <div className={styles.eap_initial} >
-            <p style={{ fontSize: '16px', fontWeight: 500 }}>
-              {'Calcule o desempenho TRI pra ver o impacto virtual de cada item.'}
-            </p>
+            <p style={{ fontSize: '16px', fontWeight: 500 }}>Calcule o desempenho TRI para ver o impacto virtual de cada item.</p>
           </div>
         )}
+      </div>
+      <div className={styles.table_footer}>
+        <div>
+          ¹ Parâmetro de discriminação: é o poder de discriminação do item para diferenciar os participantes que dominam dos participantes que não dominam a habilidade avaliada.
+        </div>
+        <div>
+          ² Parâmetro de dificuldade: associado à dificuldade do item, sendo que quanto maior seu valor, mais difícil é o item.
+        </div>
+        <div>
+          ³ Parâmetro de acerto ao acaso: é a probabilidade de um participante acertar o item não dominando a habilidade exigida.
+        </div>
       </div>
     </div>
   );

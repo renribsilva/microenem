@@ -122,8 +122,17 @@
   /* background-color: bisque; */
   margin: 0;
   font-size: 14px;
+  font-weight: 300;
   color: var(--foreground);
   line-height: 1.2;
   margin-right: 15px;
   margin-bottom: 15px;
+}
+
+.table_footer {
+  padding: 5px;
+  padding-top: 10px;
+  font-size: 0.75rem; /* 12px */
+  font-weight: 300;
+  color: #888;
 }

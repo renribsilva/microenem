@@ -163,6 +163,13 @@ export function HomeProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const hasDigital = useMemo(() => {
+    if (!availableDatasets || availableDatasets.length === 0) return false;
+    return availableDatasets.some(
+      item => item.metadata?.versao_digital === "D"
+    );
+  }, [availableDatasets, deferredArea, currentYear]);
+
   return (
     <HomeContext.Provider value={{ 
       activeArea, 
@@ -172,7 +179,8 @@ export function HomeProvider({ children }: { children: ReactNode }) {
       chartLogic, 
       handleTabChange: (id: string) => { setActiveArea(id) }, 
       isUpdating: activeArea !== deferredArea || loading,
-      dicData
+      dicData,
+      hasDigital
     }}>
       {children}
     </HomeContext.Provider>

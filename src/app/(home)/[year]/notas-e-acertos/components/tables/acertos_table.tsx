@@ -13,6 +13,8 @@ import {
 
 import styles from "./tables.module.css";
 import { useNineteenData } from "../../../../../../context/nineteen_context";
+import { useHomeData } from "../../../../../../context/home_context";
+import Dropdown from "../../../../../../components/tsx/dropdown";
 
 type TableRow = {
   id: number;
@@ -26,13 +28,13 @@ type TableRow = {
 };
 
 export default function AcertosTable() {
-  const { acertosData, acertosNum, setAcertosNum } = useNineteenData();
-  const [sorting, setSorting] = useState<SortingState>([{ id: "id", desc: false }]);
   
-  // Estado para controlar visibilidade das colunas
+  const { acertosData, acertosNum, setAcertosNum, isDigital } = useNineteenData();
+  const { hasDigital } = useHomeData();
+  const [sorting, setSorting] = useState<SortingState>([{ id: "id", desc: false }]);
+
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
-  // Detectar largura da tela para esconder N, Skew e Kurtosis no mobile (< 800px)
   useEffect(() => {
     const handleResize = () => {
       const isMobile = window.innerWidth < 800;
@@ -149,11 +151,14 @@ export default function AcertosTable() {
         <div>
           <h3 className={styles.card_title}>Estatísticas por Faixa de Acertos</h3>
           <p className={styles.card_subtitle_p}>
-            Resumo descritivo baseado no volume de acertos
+            <span>Resumo descritivo baseado no volume de acertos&nbsp;</span>
+            {hasDigital && (
+              isDigital ? "(todas as versões digitais)" : "(todas as versões impressas)"
+            )}
           </p>
         </div>
+        {hasDigital && (<Dropdown />)}
       </div>
-      
       <div className={styles.table_scroll_wrapper}>
         <table className={styles.probtable_table}>
           <thead className={styles.probtable_thead}>
@@ -208,6 +213,17 @@ export default function AcertosTable() {
             })}
           </tbody>
         </table>
+      </div>
+      <div className={styles.table_footer}>
+        {!hasDigital ? (
+          <>
+            Neste ano, foi aplicada apenas a versão impressa do exame.
+          </>
+        ) : (
+          <>
+            Tendo em vista que a versao digital e a impressa diferem significamente no que diz respeito à dificuldade da prova, essa análise separa os dados das versões. Escolha uma prova digital para ver a relação nota/acertos.
+          </>
+        )}
       </div>
     </section>
   );

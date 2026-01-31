@@ -21,9 +21,16 @@
     // ------------------------------------------------------
 
     const { deferredArea, selectedRowId, chartLogic } = useHomeData();
-    const { selectedLabel } = chartLogic
+    const { selectedLabel, currentInfo } = chartLogic
     const [lastItemActivate, setLastItemActivate] = useState<number>(0);
     const [selectedItems, setSelectedItems] = useState<Record<number, any>>({});
+    const [isDigital, setIsDigital] = useState<boolean>(false)
+
+    useEffect(() => {
+      if (!currentInfo || !currentInfo.corNome) return;
+      const versao = currentInfo.corNome.includes("Digital") ? "digital" : "regular"
+      versao === "digital" ? setIsDigital(true) : setIsDigital(false) 
+    }, [currentInfo, deferredArea])
 
     // --------------------------------------------------------------------------------
     // ---------------- CARGA DINÂMICA DE JSON POR ANO (BUNDLE INICIAL) ---------------
@@ -123,12 +130,12 @@
             describe = await import(`../app/(home)/JSON/${currentYear}/dificuldade-do-exame/LC/describe.json`);
             frequency = await import(`../app/(home)/JSON/${currentYear}/dificuldade-do-exame/LC/frequency_acertos.json`);
         }
-        setDensityDifData(density.default);
-        setDescribeDifData(describe.default);
-        setFrequencyDifData(frequency.default)
+        setDensityDifData(isDigital ? density.default.digital : density.default.regular);
+        setDescribeDifData(isDigital ? describe.default.digital : describe.default.regular);
+        setFrequencyDifData(isDigital ? frequency.default.digital : frequency.default.regular)
       };
       loadData();
-    }, [deferredArea]);
+    }, [deferredArea, isDigital]);
 
     // ---------------------------------------------------------------------
     // ---------------- CARGA DINÂMICA DE JSON POR ANO (API) ---------------
@@ -213,10 +220,14 @@
 
     const [acertosNum, setAcertosNum] = useState<number | null>(null);
     const [acertosData, setAcertosData] = useState<any>(null); 
-    const acertosCache = useRef<{ area: string; dataset: any } | null>(null);
+    const acertosCache = useRef<{ area: string; dataset: any, versao: string } | null>(null);
 
     useEffect(() => {
-      if (acertosCache.current?.area === deferredArea) {
+
+      const tipo = isDigital ? "digital" : "regular"
+      
+      if (acertosCache.current?.area === deferredArea && 
+          acertosCache.current?.versao === tipo) {
         setAcertosData(acertosCache.current.dataset);
         return;
       }
@@ -225,14 +236,14 @@
         try {
           const targetArea = deferredArea || 'LC';
           const res = await fetch(`/api/acertos?area=${String(targetArea)}&year=${currentYear}`);
-          const json = await res.json();   
-          
+          const json = await res.json();  
           if (json.dataset) {
             acertosCache.current = {
               area: String(targetArea),
-              dataset: json.dataset,
+              dataset: isDigital ? json.dataset.digital : json.dataset.regular,
+              versao: tipo
             };
-            setAcertosData(json.dataset);
+            setAcertosData(isDigital ? json.dataset.digital : json.dataset.regular);
           }
         } catch (err) {
           console.error("Erro ao carregar item_score:", err);
@@ -240,7 +251,7 @@
       }
 
       fetchAcertosData();
-    }, [deferredArea]);
+    }, [deferredArea, currentInfo, isDigital]);
 
     const [EAPData, setEAPData] = useState<any>(null);
     const [sampleEAP, setSampleEAP] = useState<string>("000000000000000000000000000000000000000000000");
@@ -356,7 +367,7 @@
         if (deferredArea === 'LC' && num <= 5 && ling !== undefined) {
           return Number(p.TP_LINGUA[i]) === Number(ling);
         }
-        if (vers !== "X" && p.TP_VERSAO_DIGITAL) {
+        if (vers === "D" && p.TP_VERSAO_DIGITAL) {
           if (Number(vers) !== p.TP_VERSAO_DIGITAL[i]) return false;
         }
         return true;
@@ -376,7 +387,7 @@
         if (deferredArea === 'LC' && num <= 5 && ling !== undefined) {
           return Number(p.TP_LINGUA[i]) === Number(ling);
         }
-        if (vers !== "X" && p.TP_VERSAO_DIGITAL) {
+        if (vers === "D" && p.TP_VERSAO_DIGITAL) {
           if (Number(vers) !== p.TP_VERSAO_DIGITAL[i]) return false;
         }
         return true;
@@ -656,7 +667,8 @@
         candidateData,
         itensData,
         getAreaMap,
-        currentYear
+        currentYear,
+        isDigital
       }}>
         {children}
       </NineteenContext.Provider>

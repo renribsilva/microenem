@@ -128,6 +128,7 @@
 
 .card_subtitle_p {
   /* background-color: bisque; */
+  font-weight: 300;
   margin: 0;
   font-size: 14px;
   color: var(--foreground);

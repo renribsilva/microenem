@@ -32,8 +32,10 @@ TableRow.displayName = 'TableRow';
 
 export function DescribeTable() {
   
-  const { deferredArea, selectedRowId, setSelectedRowId } = useHomeData();
-  const { describeRowData } = useNineteenData();
+  const { deferredArea, selectedRowId, setSelectedRowId, hasDigital } = useHomeData();
+  const { describeRowData, isDigital } = useNineteenData();
+
+  console.log(hasDigital, isDigital)
 
   const columns = useMemo(() => [
     columnHelper.accessor('metric', {
@@ -89,13 +91,24 @@ export function DescribeTable() {
         </table>
         <div className={styles.describe_footer}>
           <div>
-            n = {describeRowData.n.toLocaleString('pt-BR')}
-          </div>
-          <div>
             ¹ Prova de referência: {describeRowData.cor_min_ref} (cod: {describeRowData.cod_min_ref})
           </div>
           <div>
             ² Prova de referência: {describeRowData.cor_max_ref} (cod: {describeRowData.cod_max_ref})
+          </div>
+          <div>
+            {hasDigital ? (
+              <>
+                Observação: resumo referente à versão {isDigital ? "digital" : "impressa"} do exame. Selecione uma prova {isDigital ? "impressa" : "digital"} para ver a sua descrição.
+              </>
+            ) : (
+              <>
+                Observação: neste ano, foi aplicada apenas a versão impressa do exame.
+              </>
+            )}
+          </div>
+          <div>
+            (n = {describeRowData.n.toLocaleString('pt-BR')})
           </div>
         </div>
       </div>

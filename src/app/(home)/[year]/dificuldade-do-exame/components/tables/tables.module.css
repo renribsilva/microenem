@@ -6,6 +6,19 @@
   /* background-color: aquamarine; */
 }
 
+.describe_cabecalho {
+  padding-bottom: 15px;
+}
+
+.describe_title {
+
+}
+
+.describe_subtitle {
+  font-weight: 350;
+  font-size: 13px;
+}
+
 .describe_table {
   /* background-color: aquamarine; */
   min-width: 100%;

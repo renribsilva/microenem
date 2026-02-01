@@ -221,7 +221,7 @@ export default function AcertosTable() {
           </>
         ) : (
           <>
-            Tendo em vista que a versao digital e a impressa diferem significamente no que diz respeito à dificuldade da prova, essa análise separa os dados das versões. Escolha uma prova digital para ver a relação nota/acertos.
+            Tendo em vista que algumas versões digitais diferem significamente das versões impressas no que diz respeito à dificuldade da prova, essa análise separa os dados das versões de todos os anos. Escolha uma prova digital para ver a sua relação nota/acertos.
           </>
         )}
       </div>

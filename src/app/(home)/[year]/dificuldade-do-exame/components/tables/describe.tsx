@@ -64,6 +64,14 @@ export function DescribeTable() {
 
   return (
     <div className={styles.describe_wrapper}>
+      <div className={styles.describe_cabecalho}>
+        <h3 className={styles.describe_title}>
+          Descrição estatística de {deferredArea}
+        </h3>
+        <span className={styles.describe_subtitle}>
+          Resumo referente à versão {isDigital ? "digital" : "impressa"} do exame. Selecione uma prova {isDigital ? "impressa" : "digital"} para ver a sua descrição.
+        </span>
+      </div>
       <div className={styles.describe_container}>
         <table className={styles.describe_table}>
           <thead className={styles.describe_thead}>
@@ -95,17 +103,6 @@ export function DescribeTable() {
           </div>
           <div>
             ² Prova de referência: {describeRowData.cor_max_ref} (cod: {describeRowData.cod_max_ref})
-          </div>
-          <div>
-            {hasDigital ? (
-              <>
-                Observação: resumo referente à versão {isDigital ? "digital" : "impressa"} do exame. Selecione uma prova {isDigital ? "impressa" : "digital"} para ver a sua descrição.
-              </>
-            ) : (
-              <>
-                Observação: neste ano, foi aplicada apenas a versão impressa do exame.
-              </>
-            )}
           </div>
           <div>
             (n = {describeRowData.n.toLocaleString('pt-BR')})

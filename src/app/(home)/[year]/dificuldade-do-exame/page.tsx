@@ -57,9 +57,6 @@ export default function DadosDoExame() {
       <div className={styles.main_top}>
         <div className={styles.main_left}>
           <Card className={styles.card_describe}>
-            <h3 className={styles.card_describe_title}>
-              Descrição estatística de {deferredArea}
-            </h3>
             <DescribeTable/>
           </Card>
         </div>

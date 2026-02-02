@@ -171,9 +171,9 @@ export default function MarginImpactTable() {
               <th className={styles.margin_th} onClick={() => requestSort('posicao')} style={{ cursor: 'pointer' }}>ITEM {renderSortIcon('posicao')}</th>
               {!isMobile && (<th className={styles.margin_th} onClick={() => requestSort('codigo')} style={{ cursor: 'pointer' }}>CÓDIGO {renderSortIcon('codigo')}</th>)}
               <th className={styles.margin_th}>STATUS</th>
-              <th className={styles.margin_th} onClick={() => requestSort('a')} style={{ cursor: 'pointer' }}>A¹ {renderSortIcon('a')}</th>
-              {!isMobile && (<th className={styles.margin_th} onClick={() => requestSort('b')} style={{ cursor: 'pointer' }}>B² {renderSortIcon('b')}</th>)}
-              {!isMobile && (<th className={styles.margin_th} onClick={() => requestSort('c')} style={{ cursor: 'pointer' }}>C³ {renderSortIcon('c')}</th>)}
+              <th className={styles.margin_th} onClick={() => requestSort('a')} style={{ cursor: 'pointer' }}>a¹ {renderSortIcon('a')}</th>
+              {!isMobile && (<th className={styles.margin_th} onClick={() => requestSort('b')} style={{ cursor: 'pointer' }}>b² {renderSortIcon('b')}</th>)}
+              {!isMobile && (<th className={styles.margin_th} onClick={() => requestSort('c')} style={{ cursor: 'pointer' }}>c³ {renderSortIcon('c')}</th>)}
               <th className={styles.margin_th} onClick={() => requestSort('impacto')} style={{ cursor: 'pointer', textAlign: 'right' }}>IMPACTO {renderSortIcon('impacto')}</th>
             </tr>
           </thead>

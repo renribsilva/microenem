@@ -1,48 +1,5 @@
 {
-  "digital": {
-    "notas": {
-      "vars": 1,
-      "n": 26417,
-      "mean": 519.7892,
-      "sd": 107.4504,
-      "median": 489.1,
-      "trimmed": 507.2026,
-      "mad": 98.5929,
-      "min": 380.2,
-      "max": 945.8,
-      "range": 565.6,
-      "skew": 0.9628,
-      "kurtosis": 0.2982,
-      "se": 0.6611,
-      "mode": 427.0312,
-      "q1": 434.3,
-      "q3": 586.9,
-      "p99": 821.3,
-      "cor_min": "Rosa (Digital)",
-      "cor_max": "Amarela (Digital)",
-      "cod_min": 697,
-      "cod_max": 696
-    },
-    "acertos": {
-      "vars": 1,
-      "n": 26417,
-      "mean": 11.7472,
-      "sd": 6.7295,
-      "median": 10,
-      "trimmed": 10.6084,
-      "mad": 4.4478,
-      "min": 1,
-      "max": 44,
-      "range": 43,
-      "skew": 1.8825,
-      "kurtosis": 4.1016,
-      "se": 0.0414,
-      "mode": 8,
-      "q1": 8,
-      "q3": 13,
-      "p99": 37
-    }
-  },
+  "digital": {},
   "regular": {
     "notas": {
       "vars": 1,

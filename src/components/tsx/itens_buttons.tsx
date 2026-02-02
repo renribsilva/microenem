@@ -189,11 +189,11 @@ export default function ItensButtons() {
       <div className={styles.itens_rodape}>
         <strong>Dica:</strong>
         <br></br>
-        <span>1º clique (verde): probabilidade de acerto</span>
+        <span>1º clique (verde): indica acerto</span>
         <br></br>
-        <span>2º clique (vermelho): probabilidade de erro</span>
+        <span>2º clique (vermelho): indica erro</span>
         <br></br>
-        <span>3º clique (sem cor): item desativado</span>
+        <span>3º clique (sem cor): indica item em branco</span>
       </div>
       {backdropAlert && (
         <>

@@ -35,8 +35,6 @@ export function DescribeTable() {
   const { deferredArea, selectedRowId, setSelectedRowId, hasDigital } = useHomeData();
   const { describeRowData, isDigital } = useNineteenData();
 
-  console.log(hasDigital, isDigital)
-
   const columns = useMemo(() => [
     columnHelper.accessor('metric', {
       header: 'Medidas',
@@ -68,9 +66,11 @@ export function DescribeTable() {
         <h3 className={styles.describe_title}>
           Descrição estatística de {deferredArea}
         </h3>
-        <span className={styles.describe_subtitle}>
-          Resumo referente à versão {isDigital ? "digital" : "impressa"} do exame. Selecione uma prova {isDigital ? "impressa" : "digital"} para ver a sua descrição.
-        </span>
+        {hasDigital && (
+          <span className={styles.describe_subtitle}>
+            Resumo referente à versão {isDigital ? "digital" : "impressa"} do exame. Selecione uma prova {isDigital ? "impressa" : "digital"} para ver a sua descrição.
+          </span>
+        )}
       </div>
       <div className={styles.describe_container}>
         <table className={styles.describe_table}>

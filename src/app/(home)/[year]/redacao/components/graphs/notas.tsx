@@ -183,9 +183,9 @@ export default function NotasRedacaoChart() {
 
       <div style={{ minHeight: `${calculatedHeight}px` }}>
         <Chart options={options} series={series} type="bar" height={calculatedHeight} width="100%" />
-        <div className={styles.table_footer}>
+        {/* <div className={styles.table_footer}>
           Aviso: não inclui redações de reaplicações (o que explica o ano de 2020 ter, nesta análise, 27 redações nota mil e não 28 como divulgado pelo Inep)
-        </div>
+        </div> */}
       </div>
     </div>
   );

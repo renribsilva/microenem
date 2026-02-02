@@ -4,40 +4,40 @@
       "tree": [
         {
           "label": "Não declarado",
-          "value": 1.94,
-          "abs": 52355
+          "value": 2.02,
+          "abs": 116883
         },
         {
           "label": "Branca",
-          "value": 38.2,
-          "abs": 1031872
+          "value": 34.72,
+          "abs": 2007633
         },
         {
           "label": "Preta",
-          "value": 12.34,
-          "abs": 333273
+          "value": 13.34,
+          "abs": 771740
         },
         {
           "label": "Parda",
-          "value": 44.8,
-          "abs": 1210209
+          "value": 47.04,
+          "abs": 2720485
         },
         {
           "label": "Amarela",
-          "value": 2.23,
-          "abs": 60214
+          "value": 2.22,
+          "abs": 128522
         },
         {
           "label": "Indígena",
-          "value": 0.5,
-          "abs": 13570
+          "value": 0.65,
+          "abs": 37846
         }
       ],
       "key": "value",
       "groups": [
         "label"
       ],
-      "n": 2701493
+      "n": 5783109
     }
   ]
 }

@@ -9,10 +9,9 @@ import { useNineteenData } from '../../../../../../context/nineteen_context';
 export default function FX_ETARIA() {
 
   const { textColor, gridColor } = useChartTheme();
-  const { presence_data, fx_etaria_data } = useNineteenData();
+  const { fx_etaria_data } = useNineteenData();
 
   const barColor = "rgba(255, 208, 53, 1)";
-  const n = (presence_data[0].subRows[0].total).toLocaleString('pt-BR');
 
   const series = useMemo(() => fx_etaria_data.datasets.map(dataset => ({
     name: 'Porcentagem',
@@ -113,7 +112,7 @@ export default function FX_ETARIA() {
     legend: {
       show: false
     }
-  }), [textColor, gridColor, n, series]);
+  }), [textColor, gridColor, series]);
 
   return (
     <div style={{ flex: 1}}>

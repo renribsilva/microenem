@@ -41,7 +41,6 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
   const [Inscritos, setInscritos] = useState<any>(null);
   const [Abstencao_dia1, setAbstencao_dia1] = useState<any>(null);
   const [Abstencao_dia2, setAbstencao_dia2] = useState<any>(null);
-  const [presence_data, setPresence_data] = useState<any>(null);
   const [cor_raca_data, setCor_raca_data] = useState<any>(null);
   const [sexo_data, setSexo_data] = useState<any>(null);
   const [fx_etaria_data, setFx_etaria_data] = useState<any>(null);
@@ -51,6 +50,16 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+
+    const yearNum = Array.isArray(currentYear) 
+      ? Number(currentYear[0]) 
+      : Number(currentYear);
+
+    // Agora a comparação funciona perfeitamente
+    if (isNaN(yearNum) || yearNum > 2023) {
+      return;
+    }
+
     async function loadYearlyData() {
       setLoading(true);
       try {
@@ -59,7 +68,6 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
           inscritos, 
           abstencao1,
           abstencao2,
-          presence,
           cor_raca,
           sexo,
           fx_etaria,
@@ -72,7 +80,6 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
           import(`../app/(home)/JSON/${currentYear}/visao-geral/overview/inscritos.json`),
           import(`../app/(home)/JSON/${currentYear}/visao-geral/overview/presenca_dia1.json`),
           import(`../app/(home)/JSON/${currentYear}/visao-geral/overview/presenca_dia2.json`),
-          import(`../app/(home)/JSON/${currentYear}/visao-geral/overview/presenca.json`),
           import(`../app/(home)/JSON/${currentYear}/visao-geral/socials/cor_raca.json`),
           import(`../app/(home)/JSON/${currentYear}/visao-geral/socials/sexo.json`),
           import(`../app/(home)/JSON/${currentYear}/visao-geral/socials/faixa_etaria.json`),
@@ -84,7 +91,6 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
         setInscritos(inscritos.default)
         setAbstencao_dia1(abstencao1.default)
         setAbstencao_dia2(abstencao2.default)
-        setPresence_data(presence.default)
         setCor_raca_data(cor_raca.default)
         setSexo_data(sexo.default)
         setFx_etaria_data(fx_etaria.default)
@@ -99,6 +105,8 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
     }
     loadYearlyData();
   }, [currentYear]);
+
+  // console.log(Inscritos)
 
   const [densityDifData, setDensityDifData] = useState<any>(null);
   const [describeDifData, setDescribeDifData] = useState<any>(null);
@@ -622,7 +630,6 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
       Inscritos,
       Abstencao_dia1,
       Abstencao_dia2,
-      presence_data,
       cor_raca_data,
       sexo_data,
       fx_etaria_data,

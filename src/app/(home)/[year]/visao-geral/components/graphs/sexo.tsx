@@ -9,10 +9,9 @@ import { useNineteenData } from '../../../../../../context/nineteen_context';
 export default function SEXO() {
 
   const { textColor, panelColor } = useChartTheme();
-  const { presence_data, sexo_data } = useNineteenData();
+  const { sexo_data } = useNineteenData();
 
   const doughnutColors = ["rgba(60, 245, 188, 0.7)", "rgba(245, 99, 59, 0.7)"];
-  const n = (presence_data[0].subRows[0].total).toLocaleString('pt-BR');
 
   const series = useMemo(() => sexo_data.datasets[0].data, []);
   const absValues = useMemo(() => sexo_data.datasets[0].abs_values, []);
@@ -84,7 +83,7 @@ export default function SEXO() {
     //     fontWeight: 'normal',
     //   }
     // }
-  }), [textColor, panelColor, n, labels]);
+  }), [textColor, panelColor, labels]);
 
   return (
     <div style={{ flex: 1 }}>

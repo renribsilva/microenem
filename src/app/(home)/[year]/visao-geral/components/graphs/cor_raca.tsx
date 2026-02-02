@@ -9,8 +9,7 @@ import { useNineteenData } from '../../../../../../context/nineteen_context';
 export default function COR_RACA() {
 
   const { textColor, panelColor } = useChartTheme();  
-  const { presence_data, cor_raca_data } = useNineteenData();
-  const n = (presence_data[0].subRows[0].total).toLocaleString('pt-BR');  
+  const { cor_raca_data } = useNineteenData();
 
   const series = [{
     data: cor_raca_data.datasets[0].tree
@@ -93,7 +92,7 @@ export default function COR_RACA() {
         return customTooltip({ label, value, absolute });
       }
     }
-  }), [textColor, panelColor, n, series]);
+  }), [textColor, panelColor, series]);
 
   return (
     <div style={{ flex: 1}}>

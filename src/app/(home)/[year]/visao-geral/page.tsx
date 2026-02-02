@@ -5,10 +5,10 @@ import dynamic from "next/dynamic"
 import styles from "./visao-geral.module.css"
 import Card from "../../../../components/tsx/card"
 import Group from "../../../../components/svg/group"
-import PersonCheck from "../../../../components/svg/person_check"
 import PersonCancel from "../../../../components/svg/person_cancel"
-import Presence from "./components/tables/presence"
 import { useNineteenData } from "../../../../context/nineteen_context"
+import Treineiros from "./components/tables/treineiros"
+import PersonRemove from "../../../../components/svg/person_remove"
 
 // Imports dinâmicos
 const FX_ETARIA = dynamic(() => import("./components/graphs/fx_etaria"), { ssr: false })
@@ -52,10 +52,10 @@ export default function Visao() {
           </div>
           <div className={styles.block1_first_right}>
             <Card className={styles.card_presenca}>
-              <PersonCheck />
-              <h3 className={styles.card_presenca_title}>Presença</h3>
+              <PersonRemove />
+              <h3 className={styles.card_presenca_title}>Treineiros</h3>
               <div className={styles.card_presenca_table}>
-                <Presence />
+                <Treineiros />
               </div>
             </Card>
           </div>

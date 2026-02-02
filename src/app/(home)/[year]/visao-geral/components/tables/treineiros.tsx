@@ -18,10 +18,10 @@ export interface InscritoData {
   subRows?: InscritoData[]
 }
 
-export default function Presence() {
+export default function Treineiros() {
 
-  const { presence_data } =useNineteenData();
-  const data = presence_data as InscritoData[]
+  const { Inscritos } =useNineteenData();
+  const data = Inscritos as InscritoData[]
 
   // 2. Tipagem das colunas
   const columns = useMemo<ColumnDef<InscritoData>[]>(() => [
@@ -83,10 +83,6 @@ export default function Presence() {
           ))}
         </tbody>
       </table>
-      {/* RODAPÉ DA TABELA */}
-      <div className={styles.table_footer}>
-        * Recorte de análise de todas as variáveis
-      </div>
     </div>
   )
 }

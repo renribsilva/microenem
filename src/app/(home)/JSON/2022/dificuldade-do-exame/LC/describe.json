@@ -1,48 +1,5 @@
 {
-  "digital": {
-    "notas": {
-      "vars": 1,
-      "n": 32168,
-      "mean": 520.3094,
-      "sd": 70.709,
-      "median": 525.5,
-      "trimmed": 522.6096,
-      "mad": 72.3509,
-      "min": 278.3,
-      "max": 751.2,
-      "range": 472.9,
-      "skew": -0.2911,
-      "kurtosis": -0.2186,
-      "se": 0.3942,
-      "mode": 544.1215,
-      "q1": 473.2,
-      "q3": 571.7,
-      "p99": 663.1,
-      "cor_min": "Branca (Digital)",
-      "cor_max": "Amarela (Digital)",
-      "cod_min": 1181,
-      "cod_max": 1180
-    },
-    "acertos": {
-      "vars": 1,
-      "n": 32168,
-      "mean": 20.2994,
-      "sd": 6.7039,
-      "median": 20,
-      "trimmed": 20.1882,
-      "mad": 7.413,
-      "min": 1,
-      "max": 42,
-      "range": 41,
-      "skew": 0.1354,
-      "kurtosis": -0.6177,
-      "se": 0.0374,
-      "mode": 17,
-      "q1": 15,
-      "q3": 25,
-      "p99": 35
-    }
-  },
+  "digital": {},
   "regular": {
     "notas": {
       "vars": 1,

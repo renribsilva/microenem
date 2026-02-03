@@ -2,9 +2,9 @@
   "labels": ["Feminino", "Masculino"],
   "datasets": [
     {
-      "data": [61.81, 38.19],
-      "abs_values": [1427176, 881900],
-      "n": 2309076
+      "data": [61.67, 38.33],
+      "abs_values": [2090526, 1299306],
+      "n": 3389832
     }
   ]
 }

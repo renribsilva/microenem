@@ -1,48 +1,5 @@
 {
-  "digital": {
-    "notas": {
-      "vars": 1,
-      "n": 36836,
-      "mean": 502.6691,
-      "sd": 75.3485,
-      "median": 505.1,
-      "trimmed": 503.2718,
-      "mad": 79.4674,
-      "min": 300,
-      "max": 758.4,
-      "range": 458.4,
-      "skew": -0.0571,
-      "kurtosis": -0.4253,
-      "se": 0.3926,
-      "mode": 525.1592,
-      "q1": 449.4,
-      "q3": 556.6,
-      "p99": 667.2,
-      "cor_min": "Branca (Digital)",
-      "cor_max": "Rosa (Digital)",
-      "cod_min": 1005,
-      "cod_max": 1006
-    },
-    "acertos": {
-      "vars": 1,
-      "n": 36836,
-      "mean": 16.6071,
-      "sd": 6.4594,
-      "median": 16,
-      "trimmed": 16.2213,
-      "mad": 7.413,
-      "min": 1,
-      "max": 39,
-      "range": 38,
-      "skew": 0.5049,
-      "kurtosis": -0.2333,
-      "se": 0.0337,
-      "mode": 13,
-      "q1": 12,
-      "q3": 21,
-      "p99": 33
-    }
-  },
+  "digital": {},
   "regular": {
     "notas": {
       "vars": 1,

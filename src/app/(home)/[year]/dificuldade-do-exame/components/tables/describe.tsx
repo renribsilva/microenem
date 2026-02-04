@@ -35,6 +35,8 @@ export function DescribeTable() {
   const { deferredArea, selectedRowId, setSelectedRowId, hasDigital } = useHomeData();
   const { describeRowData, isDigital } = useNineteenData();
 
+  // console.log(describeRowData)
+
   const columns = useMemo(() => [
     columnHelper.accessor('metric', {
       header: 'Medidas',

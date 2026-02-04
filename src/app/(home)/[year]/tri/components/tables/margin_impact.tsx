@@ -146,6 +146,11 @@ export default function MarginImpactTable() {
 
   const temImpacto = impactosArray.length > 0;
 
+  const isTRIDivergente = (
+    (deferredArea === "MT" && currentYear === "2019")
+    // || (deferredArea === "CN" && currentYear === "2021")
+  )
+  
   return (
     <div className={styles.impact_container}>
       <div className={styles.tcc_cabecalho}>      
@@ -212,12 +217,10 @@ export default function MarginImpactTable() {
                   {!isMobile && (<td className={styles.margin_td}>{params?.c?.toFixed(3) ?? '—'}</td>)}
                   <td style={{ 
                     padding: '8px', textAlign: 'right', fontWeight: '500', 
-                    color: (isAnulado || impactoDesatualizado || 
-                      ((deferredArea === "MT" && currentYear === 2019) || 
-                        (deferredArea === "CN" && currentYear === 2021))) ? '#64748b' : (valNum > 0 ? '#10b981' : '#f43f5e'),
+                    color: (isAnulado || impactoDesatualizado || isTRIDivergente) ? '#64748b' : (valNum > 0 ? '#10b981' : '#f43f5e'),
                     fontFamily: 'monospace', fontSize: '13px'
                   }}>
-                    {impactoDesatualizado ? '---' : (isAnulado ? 'N/A' : (((deferredArea === "MT" && currentYear === "2019") || (deferredArea === "CN" && currentYear === "2021")) ? '---' : (valNum > 0 ? `+${valNum.toFixed(1)}` : `${valNum.toFixed(1)}`)))}
+                    {impactoDesatualizado ? '---' : (isAnulado ? 'N/A' : (isTRIDivergente ? '---' : (valNum > 0 ? `+${valNum.toFixed(1)}` : `${valNum.toFixed(1)}`)))}
                   </td>
                 </tr>
               )

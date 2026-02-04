@@ -113,7 +113,7 @@ export default function DensityNotasChart() {
       yaxis: {
         labels: { 
             style: { colors: axisColor },
-            formatter: (val: number) => val.toFixed(1) 
+            formatter: (val: number) => Number(val).toFixed(1) 
         },
         title: { text: 'Densidade (x100)', style: { color: axisColor, fontWeight: 'bold' } }
       },

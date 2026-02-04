@@ -70,7 +70,7 @@ export default function CandidateFullDetail() {
       <div className={styles.full_header}>
         <div className={styles.main_info}>
           <span className={styles.rank_badge}>#{candidateData.RANKING}°</span>
-          <h2 className={styles.media_title}>Média Simples: {candidateData.MEDIA_GERAL.toFixed(2)}</h2>
+          <h2 className={styles.media_title}>Média Simples: {Number(candidateData.MEDIA_GERAL).toFixed(2)}</h2>
         </div>
       </div>
 

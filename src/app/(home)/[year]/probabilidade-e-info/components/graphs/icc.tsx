@@ -126,7 +126,7 @@ export default function ICCChart() {
         tickAmount: 5,
         labels: { 
           style: { colors: axisColor },
-          formatter: (val) => val.toFixed(1)
+          formatter: (val) => Number(val).toFixed(1)
         },
         title: { text: 'Probabilidade', style: { color: axisColor } }
       },

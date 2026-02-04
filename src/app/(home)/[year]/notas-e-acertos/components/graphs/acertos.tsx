@@ -91,7 +91,7 @@ export default function DensityNotasChart() {
           strokeDashArray: 5,     
           borderWidth: 2,
           label: {
-            text: `MÉDIA: ${chartData.mean.toFixed(1)}`,
+            text: `MÉDIA: ${Number(chartData.mean).toFixed(1)}`,
             position: 'left',
             orientation: 'horizontal',
             offsetY: 20, 

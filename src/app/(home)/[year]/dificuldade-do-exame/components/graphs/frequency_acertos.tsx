@@ -125,7 +125,7 @@ export default function FrequencyAcertosChart() {
       yaxis: {
         labels: { 
             style: { colors: axisColor },
-            formatter: (v) => v.toFixed(0) + '%'
+            formatter: (v) => Number(v).toFixed(0) + '%'
         },
         title: { text: 'Frequência relativa', style: { color: axisColor, fontWeight: 'bold' } }
       },
@@ -141,7 +141,7 @@ export default function FrequencyAcertosChart() {
           const valorAbsoluto = frequencyDifData?.datasets?.[0]?.data?.[dataPointIndex]?.y || 0;
           return customTooltip({ 
             label: `Acertos ${acertosReal}`, 
-            value: porcentagem.toFixed(1), 
+            value: Number(porcentagem).toFixed(1), 
             absolute: valorAbsoluto 
           });
         }

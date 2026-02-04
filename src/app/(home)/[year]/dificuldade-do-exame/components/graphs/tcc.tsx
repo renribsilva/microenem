@@ -104,7 +104,7 @@ export default function TCCChart() {
       tickAmount: 9,
       labels: { 
         style: { colors: axisColor },
-        formatter: (val) => val.toFixed(0) 
+        formatter: (val) => Number(val).toFixed(0) 
       },
       title: { text: 'Acertos', style: { color: axisColor, fontWeight: 'bold' } }
     },
@@ -121,7 +121,7 @@ export default function TCCChart() {
         formatter: function(val, { series, seriesIndex, dataPointIndex, w }) {
           // Se o valor atual já existe, retorna ele
           if (val !== null && val !== undefined) {
-            return val.toFixed(0);
+            return Number(val).toFixed(0);
           }
 
           // Se o valor for null, buscamos no array da série o valor mais próximo
@@ -146,7 +146,7 @@ export default function TCCChart() {
             }
           }
 
-          return closestVal !== null ? `${closestVal.toFixed(0)}` : "N/A";
+          return closestVal !== null ? `${Number(closestVal).toFixed(0)}` : "N/A";
         },
         title: {
           formatter: (seriesName) => seriesName + ": "
@@ -161,7 +161,7 @@ export default function TCCChart() {
           borderWidth: 2,
           strokeDashArray: 4,
           label: {
-            text: `Dificuldade Média: ${bMedio.toFixed(1)}`,
+            text: `Dificuldade Média: ${Number(bMedio).toFixed(1)}`,
             style: { color: '#000000ff', background: chartColor, fontWeight: 'bold' },
             offsetY: 25,
             offsetX: -10,

@@ -150,7 +150,7 @@ export default function InfoChart() {
         tickAmount: 5,
         labels: { 
           style: { colors: axisColor },
-          formatter: (val) => val.toFixed(1)
+          formatter: (val) => Number(val).toFixed(1)
         },
         title: { text: 'Informação', style: { color: axisColor } }
       },

@@ -78,7 +78,7 @@ export default function DensityNotasChart() {
         title: { text: "Notas na escala do ENEM", style: { color: axisColor } }
       },
       yaxis: {
-        labels: { style: { colors: axisColor }, formatter: (v) => v.toFixed(3) },
+        labels: { style: { colors: axisColor }, formatter: (v) => Number(v).toFixed(3) },
         title: { text: "Densidade f(x)", style: { color: axisColor } }
       },
       grid: { borderColor: gridColor, strokeDashArray: 4 },

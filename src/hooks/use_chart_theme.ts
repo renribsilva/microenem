@@ -10,9 +10,14 @@ export function useChartTheme() {
   const [axisColor, setAxisColor] = useState(null);
 
   const colorMap: Record<string, string> = {
-      "Azul": "#2563eb", "Amarela": "#eab308", "Rosa": "#db2777",
+     "Azul": "#2563eb", "Amarela": "#eab308", "Rosa": "#db2777",
     "Branca": "#94a3b8", "Cinza": "#475569", "Laranja - Adaptada Ledor": "#f97316",
     "Verde - Videoprova - Libras": "#22c55e",
+    "Roxa - Videoprova - Libras": "#8b5cf6",
+    "Verde (Ampliada)": "#22c55e",
+    "Verde (Superampliada)": "#22c55e",
+    "Rosa (Ampliada)": "#db2777",
+    "Rosa (Superampliada)": "#db2777",
   };
 
   const densidadeColor: Record<string, string> = {

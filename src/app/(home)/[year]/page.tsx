@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
 
 export default function HomePage() {
-  redirect('/2023/visao-geral');
+  redirect('/2024/visao-geral');
 }

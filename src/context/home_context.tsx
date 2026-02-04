@@ -22,10 +22,10 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   const datasetsCache = useRef<{ label: string; data: any, year: any } | null>(null);
 
   const [selectionsByArea, setSelectionsByArea] = useState<Record<string, string>>({
-    "LC": "1065_0_X",
-    "CH": "1055_X_X",
-    "CN": "1085_X_X",
-    "MT": "1075_X_X"
+    "LC": "1395_0_X",
+    "CH": "1383_X_X",
+    "CN": "1419_X_X",
+    "MT": "1407_X_X"
   });
 
   // ---------------------------------------------------------------
@@ -64,7 +64,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
     return new Map(
       dicData.codigo.map((cod: any, i: number) => [
         cod, 
-        { cor: dicData.cor[i], aplicacao: dicData.aplicacao[i] }
+        { cor: dicData.cor[i], tipo: dicData.tipo[i] }
       ])
     );
   }, [dicData]);
@@ -135,7 +135,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
     if (deferredArea === 'LC' && (lingua === 0 || lingua === 1)) {
       textoBase += lingua === 0 ? " (Inglês)" : " (Espanhol)";
     }
-    return { fullText: `${textoBase} - ${info.aplicacao}`, corNome: info.cor };
+    return { fullText: `${textoBase} - ${info.tipo}`, corNome: info.cor };
   }, [activeDataset, deferredArea, dicMap]);
 
   const chartLogic = {
@@ -159,7 +159,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
       if (deferredArea === 'LC' && (lingua === 0 || lingua === 1)) {
         textoBase += lingua === 0 ? " (Inglês)" : " (Espanhol)";
       }
-      return { fullText: `${textoBase} - ${info.aplicacao}`, corNome: info.cor };
+      return { fullText: `${textoBase} - ${info.tipo}`, corNome: info.cor };
     }
   };
 

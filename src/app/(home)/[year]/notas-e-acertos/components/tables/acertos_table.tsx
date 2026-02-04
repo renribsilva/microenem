@@ -214,17 +214,6 @@ export default function AcertosTable() {
           </tbody>
         </table>
       </div>
-      <div className={styles.table_footer}>
-        {!hasDigital ? (
-          <>
-            Neste ano, foi aplicada apenas a versão impressa do exame.
-          </>
-        ) : (
-          <>
-            Tendo em vista que algumas versões digitais diferem significamente das versões impressas no que diz respeito à dificuldade da prova, essa análise separa os dados das versões de todos os anos. Escolha uma prova digital para ver a sua relação nota/acertos.
-          </>
-        )}
-      </div>
     </section>
   );
 }

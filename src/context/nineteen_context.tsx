@@ -56,7 +56,7 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
       : Number(currentYear);
 
     // Agora a comparação funciona perfeitamente
-    if (isNaN(yearNum) || yearNum > 2023) {
+    if (isNaN(yearNum)) {
       return;
     }
 
@@ -75,7 +75,6 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
           competencia,
           status
         ] = await Promise.all([
-          // 2019 data
           import(`../app/(home)/JSON/${currentYear}/itens_${currentYear}.json`),
           import(`../app/(home)/JSON/${currentYear}/visao-geral/overview/inscritos.json`),
           import(`../app/(home)/JSON/${currentYear}/visao-geral/overview/presenca_dia1.json`),

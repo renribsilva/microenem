@@ -3,5 +3,5 @@
   "ano": [2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022],
   "codigo": [1065, 1066, 1067, 1068, 1072, 1073, 1055, 1056, 1057, 1058, 1062, 1063, 1085, 1086, 1087, 1088, 1092, 1093, 1075, 1076, 1077, 1078, 1082, 1083],
   "cor": ["Azul", "Amarela", "Rosa", "Branca", "Laranja - Adaptada Ledor", "Verde - Videoprova - Libras", "Azul", "Amarela", "Branca", "Rosa", "Laranja - Adaptada Ledor", "Verde - Videoprova - Libras", "Azul", "Amarela", "Cinza", "Rosa", "Laranja - Adaptada Ledor", "Verde - Videoprova - Libras", "Azul", "Amarela", "Rosa", "Cinza", "Laranja - Adaptada Ledor", "Verde - Videoprova - Libras"],
-  "aplicacao": ["P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1"]
+  "tipo": ["1", "1", "1", "1", "2", "3", "1", "1", "1", "1", "2", "3", "1", "1", "1", "1", "2", "3", "1", "1", "1", "1", "2", "3"]
 }

@@ -3,5 +3,5 @@
   "ano": [2019, 2019, 2019, 2019, 2019, 2019, 2019, 2019, 2019, 2019, 2019, 2019, 2019, 2019, 2019, 2019, 2019, 2019, 2019, 2019, 2019, 2019, 2019, 2019],
   "codigo": [511, 512, 513, 514, 521, 525, 507, 508, 509, 510, 520, 524, 503, 504, 505, 506, 519, 523, 515, 516, 517, 518, 522, 526],
   "cor": ["Azul", "Amarela", "Rosa", "Branca", "Laranja - Adaptada Ledor", "Verde - Videoprova - Libras", "Azul", "Amarela", "Branca", "Rosa", "Laranja - Adaptada Ledor", "Verde - Videoprova - Libras", "Azul", "Amarela", "Cinza", "Rosa", "Laranja - Adaptada Ledor", "Verde - Videoprova - Libras", "Azul", "Amarela", "Rosa", "Cinza", "Laranja - Adaptada Ledor", "Verde - Videoprova - Libras"],
-  "aplicacao": ["P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1", "P1"]
+  "tipo": ["1", "1", "1", "1", "2", "3", "1", "1", "1", "1", "2", "3", "1", "1", "1", "1", "2", "3", "1", "1", "1", "1", "2", "3"]
 }

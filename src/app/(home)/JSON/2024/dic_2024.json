@@ -1,0 +1,7 @@
+{
+  "area": ["LC", "LC", "LC", "LC", "LC", "LC", "LC", "LC", "CH", "CH", "CH", "CH", "CH", "CH", "CH", "CH", "CN", "CN", "CN", "CN", "CN", "CN", "CN", "CN", "MT", "MT", "MT", "MT", "MT", "MT", "MT", "MT"],
+  "ano": [2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024, 2024],
+  "codigo": [1395, 1396, 1397, 1398, 1399, 1400, 1402, 1403, 1383, 1384, 1385, 1386, 1387, 1388, 1390, 1391, 1419, 1420, 1421, 1422, 1423, 1424, 1426, 1427, 1407, 1408, 1409, 1410, 1411, 1412, 1414, 1415],
+  "cor": ["Azul", "Amarela", "Verde", "Branca", "Verde (Ampliada)", "Verde (Superampliada)", "Laranja - Adaptada Ledor", "Roxa - Videoprova - Libras", "Azul", "Amarela", "Branca", "Verde", "Verde (Ampliada)", "Verde (Superampliada)", "Laranja - Adaptada Ledor", "Roxa - Videoprova - Libras", "Azul", "Amarela", "Verde", "Cinza", "Verde (Ampliada)", "Verde (Superampliada)", "Laranja - Adaptada Ledor", "Roxa - Videoprova - Libras", "Azul", "Amarela", "Verde", "Cinza", "Verde (Ampliada)", "Verde (Superampliada)", "Laranja - Adaptada Ledor", "Roxa - Videoprova - Libras"],
+  "tipo": ["1", "1", "1", "1", "1", "1", "2", "3", "1", "1", "1", "1", "1", "1", "2", "3", "1", "1", "1", "1", "1", "1", "2", "3", "1", "1", "1", "1", "1", "1", "2", "3"]
+}

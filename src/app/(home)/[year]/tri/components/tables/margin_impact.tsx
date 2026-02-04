@@ -239,12 +239,16 @@ export default function MarginImpactTable() {
         <div>
           ¹ Parâmetro de discriminação: é o poder de discriminação do item para diferenciar os participantes que dominam dos participantes que não dominam a habilidade avaliada.
         </div>
-        <div>
-          ² Parâmetro de dificuldade: associado à dificuldade do item, sendo que quanto maior seu valor, mais difícil é o item.
-        </div>
-        <div>
-          ³ Parâmetro de acerto ao acaso: é a probabilidade de um participante acertar o item não dominando a habilidade exigida.
-        </div>
+        {!isMobile && (
+          <>
+            <div>
+              ² Parâmetro de dificuldade: associado à dificuldade do item, sendo que quanto maior seu valor, mais difícil é o item.
+            </div>
+            <div>
+              ³ Parâmetro de acerto ao acaso: é a probabilidade de um participante acertar o item não dominando a habilidade exigida.
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

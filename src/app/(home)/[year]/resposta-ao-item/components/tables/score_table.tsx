@@ -321,7 +321,7 @@ export default function ScoreTable() {
           })}
         </tbody>
       </table>
-      {isMobile && (
+      {!isMobile && (
         <div className={styles.table_footer}>
           * Parâmetro de dificuldade: associado à dificuldade do item, sendo que quanto maior seu valor, mais difícil é o item.
         </div>

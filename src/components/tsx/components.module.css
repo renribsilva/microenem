@@ -117,11 +117,11 @@
 }
 
 .navbar_button_active {
-  background-color: var(--background);
+  background-color: var(--tab-hover);
 }
 
 .navbar_button:hover  {
-  background-color: var(--background);
+  background-color: var(--tab-hover);
 }
 
 .navbar_subitems {
@@ -161,11 +161,11 @@
 }
 
 .navbar_subitems_items:hover {
-  background-color: var(--background);
+  background-color: var(--tab-hover);
 }
 
 .navbar_subitems_items_active {
-  background-color: var(--background);
+  background-color: var(--tab-hover);
 }
 
 .navbar_subitems_links {

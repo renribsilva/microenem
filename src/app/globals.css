@@ -10,13 +10,13 @@
   --color-tab-background-light: hsl(240, 23%, 97%);
   --color-tab-border-light: hsl(240, 4%, 86%);     
   --color-tab-text-light: hsl(240, 4%, 46%);       
-  --color-tab-hover-light: hsl(216, 12%, 84%);
+  --color-tab-hover-light: hsl(216, 17%, 94%);
   --color-tab-indicator-light:  hsl(221, 71%, 19%);
 
   /* --- TEMA DARK --- */
   --color-fill-dark: hsl(240, 10%, 4%);            
   --color-text-base-dark: hsl(0, 0%, 98%);       
-  --color-panel-dark: hsl(240, 7%, 13%);           
+  --color-panel-dark: hsl(240, 8%, 16%);           
   --color-grid-dark: rgba(255, 255, 255, 0.05);
   --color-tick-dark: rgba(102, 102, 102);
   

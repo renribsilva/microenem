@@ -173,7 +173,7 @@ export default function AcertosChart() {
         formatter: (val) => `Proficiência: ${Number(val).toFixed(0)}`
       },
       y: {
-        formatter: (val) => val !== undefined ? val.toFixed(2) : ""
+        formatter: (val) => val !== undefined ? Number(val).toFixed(2) : ""
       }
     },
     title: {

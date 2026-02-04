@@ -27,8 +27,11 @@ export default function ProdProbChart() {
   const { axisColor, textColor, gridColor } = useChartTheme();
   const [EAPDesatualizado, setEAPDesatualizado] = useState<boolean>(false);
 
-  const isMath = ((deferredArea === "MT" && currentYear === "2019") || 
-    (deferredArea === "CN" && currentYear === "2021"));
+  const isTRIDivergente = (
+    (deferredArea === "MT" && currentYear === "2009")
+    || (deferredArea === "MT" && currentYear === "2019") 
+    // || (deferredArea === "CN" && currentYear === "2021")
+  );
 
   useEffect(() => {
     setIsUpdating(false);
@@ -65,12 +68,12 @@ export default function ProdProbChart() {
     if (!EAPData?.theta || !EAPData?.posterior || !k || !d) return [];    
     
     const chartPoints = EAPData.theta.map((t: number, i: number) => [
-      isMath ? Number(t.toFixed(2)) : Number((t * k + d).toFixed(1)),           
+      isTRIDivergente ? Number(t.toFixed(2)) : Number((t * k + d).toFixed(1)),           
       Number(EAPData.posterior[i].toFixed(4))   
     ]);
     
     return [{ name: 'Log-Likelihood', data: chartPoints }];
-  }, [EAPData, k, d, isMath]);
+  }, [EAPData, k, d, isTRIDivergente]);
 
   const options: ApexCharts.ApexOptions = {
     chart: {
@@ -98,13 +101,13 @@ export default function ProdProbChart() {
     xaxis: {
       type: 'numeric',
       title: { 
-        text: isMath ? `Proficiência (Theta) - ${deferredArea}` : `Notas na escala do ENEM - ${deferredArea}`, 
+        text: isTRIDivergente ? `Proficiência (Theta) - ${deferredArea}` : `Notas na escala do ENEM - ${deferredArea}`, 
         style: { color: axisColor, fontWeight: 600 } 
       },
-      min: isMath ? -4 : Math.round(-4 * k + d),
-      max: isMath ? 4 : Math.round(4 * k + d),
+      min: isTRIDivergente ? -4 : Math.round(-4 * k + d),
+      max: isTRIDivergente ? 4 : Math.round(4 * k + d),
       labels: { 
-        formatter: (val) => isMath ? Number(val).toFixed(1) : Math.round(Number(val)).toString(), 
+        formatter: (val) => isTRIDivergente ? Number(val).toFixed(1) : Math.round(Number(val)).toString(), 
         style: { colors: axisColor} 
       },
       tickAmount: 6,
@@ -115,7 +118,7 @@ export default function ProdProbChart() {
       labels: { formatter: (val) => Math.floor(val).toString(), style: { colors: axisColor } }
     },
     annotations: {
-      xaxis: isMath 
+      xaxis: isTRIDivergente 
         ? [
             {
               x: 0,
@@ -183,7 +186,7 @@ export default function ProdProbChart() {
             transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
           }}
         >
-          {isUpdating ? '⏳ PROCESSANDO...' : (EAPDesatualizado ? '🔄 RECALCULAR DESEMPENHO TRI' : '🚀 CALCULAR DESEMPENHO TRI')}
+          {isUpdating ? '⏳ PROCESSANDO...' : (EAPDesatualizado && EAPData ? '🔄 RECALCULAR DESEMPENHO TRI' : '🚀 CALCULAR DESEMPENHO TRI')}
         </button>       
         {showRenderWarning && (
           <p style={{ color: '#f43f5e', fontSize: '12px', fontWeight: '600', animation: 'pulse 2s infinite' }}>
@@ -191,7 +194,7 @@ export default function ProdProbChart() {
           </p>
         )}
       </div>
-      {series.length > 0 && EAPData ? (
+      {series.length > 0 && EAPData && !EAPDesatualizado ? (
         <>
           <div className={styles.tcc_cabecalho}>      
             <div className={styles.tcc_title}>

@@ -147,10 +147,11 @@ export default function MarginImpactTable() {
   const temImpacto = impactosArray.length > 0;
 
   const isTRIDivergente = (
-    (deferredArea === "MT" && currentYear === "2019")
+    (deferredArea === "MT" && currentYear === "2009")
+    || (deferredArea === "MT" && currentYear === "2019")
     // || (deferredArea === "CN" && currentYear === "2021")
   )
-  
+
   return (
     <div className={styles.impact_container}>
       <div className={styles.tcc_cabecalho}>      

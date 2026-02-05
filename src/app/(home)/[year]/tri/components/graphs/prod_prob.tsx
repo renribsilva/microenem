@@ -170,6 +170,14 @@ export default function ProdProbChart() {
   return (
     <div className={styles.eap_container}>      
       <div className={styles.eap_button_container}>
+        <div className={styles.tcc_cabecalho}>      
+          <div className={styles.tcc_title}>
+            <h3 className={styles.tcc_title_h3}>Curva de probabilidade a posteriori</h3>
+            <p className={styles.tcc_subtitle_p}>
+              Função de probabilidade a posteriori da sequência de acertos e erros determinada.
+            </p>
+          </div>
+        </div>
         <button 
           onClick={handleUpdateChart}
           disabled={isUpdating}
@@ -196,14 +204,6 @@ export default function ProdProbChart() {
       </div>
       {series.length > 0 && EAPData && !EAPDesatualizado ? (
         <>
-          <div className={styles.tcc_cabecalho}>      
-            <div className={styles.tcc_title}>
-              <h3 className={styles.tcc_title_h3}>Curva de probabilidade a posteriori</h3>
-              <p className={styles.tcc_subtitle_p}>
-                Função de probabilidade a posteriori da sequência de acertos e erros determinada.
-              </p>
-            </div>
-          </div>
           <Chart options={options} series={series} type="area" height={350} />
           <div style={{ fontSize: '0.75rem', fontWeight: '300', color: '#888'}}>
             A nota mais provável é a média ponderada de todas as proficiências sob a curva, tendo como peso as probabilidades ajustadas à normal N(0,1).

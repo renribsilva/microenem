@@ -6,7 +6,7 @@ const currentYear = new Date().getFullYear();
 export default function Footer() {
   return (
     <footer className={styles.footer}>
-      <div>GPLv3 © {currentYear}</div>
+      <div>MIT © {currentYear}</div>
       <div>No bullshit, just data.</div>
       <div className={styles.links_container}>
         <span>

@@ -7,7 +7,7 @@ import AppSidebar from "../../components/tsx/sidebar";
 import AppHeader from "../../components/tsx/header";
 import Card from "../../components/tsx/card";
 
-export default function PrivacyLayout() {  
+export default function PrivacyLayout() {
 
   const { isMobileOpen, toggleMobileSidebar, isMobile } = useSidebar();
 
@@ -25,7 +25,7 @@ export default function PrivacyLayout() {
   return (
     <div className={styles.layout_container}>
       {isMobile && (
-        <div 
+        <div
           className={`${styles.backdrop} ${isMobileOpen ? styles.backdrop_active : ""}`}
           onClick={toggleMobileSidebar}
         />
@@ -36,7 +36,7 @@ export default function PrivacyLayout() {
       <header className={styles.layout_header}>
         <AppHeader />
       </header>
-      
+
       <main className={styles.layout_main}>
         <Card className={styles.card_privacy}>
           <h1>Política de Privacidade</h1>
@@ -60,7 +60,7 @@ export default function PrivacyLayout() {
           <section>
             <h2>3. Infraestrutura e Hospedagem (Vercel)</h2>
             <p>
-              Este site é hospedado na plataforma Vercel. Para viabilizar a entrega do conteúdo e garantir a segurança da 
+              Este site é hospedado na plataforma Vercel. Para viabilizar a entrega do conteúdo e garantir a segurança da
               navegação, a infraestrutura da Vercel pode processar automaticamente certos dados técnicos, tais como:
             </p>
             <ul>
@@ -68,8 +68,8 @@ export default function PrivacyLayout() {
               <li>Logs de solicitações HTTP (tipo de navegador, data e hora do acesso).</li>
             </ul>
             <p>
-              Esses dados são processados pela Vercel estritamente para fins de monitoramento de performance, diagnóstico de erros 
-              e proteção contra acessos maliciosos. Nós não utilizamos esses dados para identificar você pessoalmente. 
+              Esses dados são processados pela Vercel estritamente para fins de monitoramento de performance, diagnóstico de erros
+              e proteção contra acessos maliciosos. Nós não utilizamos esses dados para identificar você pessoalmente.
               Para mais detalhes, você pode consultar a Política de Privacidade da Vercel.
             </p>
           </section>

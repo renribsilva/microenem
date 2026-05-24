@@ -13,7 +13,7 @@ export default function ItensButtons() {
   const { 
     chartColor,
     currentInfo,
-    availableDatasets,
+    availableTCC,
     getInfoCaderno,
     setSelectedLabel,
     selectedLabel,
@@ -89,7 +89,7 @@ export default function ItensButtons() {
             backgroundColor: panelColor, border: `1px solid ${gridColor}`, borderRadius: '8px',
             boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)', maxHeight: '300px', overflowY: 'auto', zIndex: 20
           }}>
-            {availableDatasets.map((ds) => {
+            {availableTCC.map((ds) => {
               const info = getInfoCaderno(ds.metadata.codigo, ds.metadata.lingua);
               return (
                 <div

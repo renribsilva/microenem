@@ -18,7 +18,7 @@ export default function TCCChart() {
     xMin, 
     xMax, 
     bMedio, 
-    activeDataset, 
+    activeTCC, 
     proficienciaAtual,
     resultadoAtual,
     setPointIndex
@@ -29,28 +29,28 @@ export default function TCCChart() {
     {
       name: "Acertos esperados", // Série 0 (Prioridade)
       type: 'line',
-      data: activeDataset?.data_teorico?.map((val, i) => ({
-        x: activeDataset?.labels_x[i],
+      data: activeTCC?.data_teorico?.map((val, i) => ({
+        x: activeTCC?.labels_x[i],
         y: val !== null ? Math.round(val * 10) / 10 : null
       })) || []
     },
     {
       name: "Média observada", // Série 1
       type: 'scatter',
-      data: activeDataset?.data_empirico?.map((val, i) => ({
-        x: activeDataset?.labels_x[i],
+      data: activeTCC?.data_empirico?.map((val, i) => ({
+        x: activeTCC?.labels_x[i],
         y: val
       })) || []
     }
-  ], [activeDataset]);
+  ], [activeTCC]);
 
   const yBMedio = useMemo(() => {
-    if (!activeDataset || !bMedio) return 22.5;
-    const closestIndex = activeDataset.labels_x.reduce((prev: number, curr: number, idx: number) => {
-      return Math.abs(curr - bMedio) < Math.abs(activeDataset.labels_x[prev] - bMedio) ? idx : prev;
+    if (!activeTCC || !bMedio) return 22.5;
+    const closestIndex = activeTCC.labels_x.reduce((prev: number, curr: number, idx: number) => {
+      return Math.abs(curr - bMedio) < Math.abs(activeTCC.labels_x[prev] - bMedio) ? idx : prev;
     }, 0);
-    return activeDataset.data_teorico[closestIndex];
-  }, [activeDataset, bMedio]);
+    return activeTCC.data_teorico[closestIndex];
+  }, [activeTCC, bMedio]);
 
   // --- CONFIGURAÇÕES DO APEXCHARTS ---
   const options: ApexCharts.ApexOptions = useMemo(() => ({

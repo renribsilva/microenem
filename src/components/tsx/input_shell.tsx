@@ -9,7 +9,7 @@ export default function InputShell() {
   const { chartLogic } = useHomeData();
 
   const { 
-    activeDataset, 
+    activeTCC, 
     proficienciaAtual,
     xMax,
     xMin,
@@ -21,8 +21,8 @@ export default function InputShell() {
   const { gridColor } = useChartTheme();
 
   // 1. Fallback para o tamanho dos dados: se não houver dataset, o range é 0 a 0
-  const maxRange = activeDataset?.data_teorico?.length 
-    ? activeDataset.data_teorico.length - 1 
+  const maxRange = activeTCC?.data_teorico?.length 
+    ? activeTCC.data_teorico.length - 1 
     : 0;
 
   const [inputValue, setInputValue] = useState(proficienciaAtual?.toFixed(1) || "0.0");
@@ -34,14 +34,14 @@ export default function InputShell() {
 
   const applyValue = () => {
     let numericVal = parseFloat(inputValue as string);
-    if (!isNaN(numericVal) && activeDataset?.labels_x) {
+    if (!isNaN(numericVal) && activeTCC?.labels_x) {
       if (numericVal < xMin) numericVal = xMin;
       if (numericVal > xMax) numericVal = xMax;
       
       setInputValue(numericVal.toString());
       
-      const closestIndex = activeDataset.labels_x.reduce((prev: number, curr: number, idx: number) => {
-        return Math.abs(curr - numericVal) < Math.abs(activeDataset.labels_x[prev] - numericVal) ? idx : prev;
+      const closestIndex = activeTCC.labels_x.reduce((prev: number, curr: number, idx: number) => {
+        return Math.abs(curr - numericVal) < Math.abs(activeTCC.labels_x[prev] - numericVal) ? idx : prev;
       }, 0);
       setPointIndex(closestIndex);
     } else {

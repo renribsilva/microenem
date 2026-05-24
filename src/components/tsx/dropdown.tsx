@@ -9,7 +9,7 @@ export default function Dropdown () {
   const { 
     chartColor, 
     currentInfo ,
-    availableDatasets,
+    availableTCC,
     getInfoCaderno,
     selectedLabel,
     setSelectedLabel
@@ -41,7 +41,7 @@ export default function Dropdown () {
 
       {isOpen && (
         <div className={styles.dropdown_list} >
-          {availableDatasets?.map((ds: any) => {
+          {availableTCC?.map((ds: any) => {
             const info = getInfoCaderno(ds.metadata.codigo, ds.metadata.lingua);
             const isSelected = selectedLabel === ds.label;
             return (

@@ -16,11 +16,12 @@ import {
   ActiveTCCType,
   AvailableTCCType,
   DicDataType,
+  HomeContextType,
   SelectionsByAreaType,
   TCCCacheType,
 } from "../types/context_types";
 
-const HomeContext = createContext(null);
+const HomeContext = createContext<HomeContextType | null>(null);
 
 export function HomeProvider({ children }: { children: ReactNode }) {
   // --------------------------------------------------------------------------
@@ -113,7 +114,6 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   const [availableTCC, setAvailableTCC] = useState<AvailableTCCType | null>(
     null,
   );
-
   // Prepara cache para dados do tcc
   const tccCache = useRef<TCCCacheType | null>(null);
 
@@ -149,14 +149,14 @@ export function HomeProvider({ children }: { children: ReactNode }) {
           availableTCC: json.availableDatasets,
         };
         // Guarda o tcc ativo
-        setActiveTCC(json.dataset);
+        setActiveTCC(json.activeDataset);
         // Guarda a lista de todos os tccs disponíveis
         setAvailableTCC(json.availableDatasets);
         // Atualiza os labels das provas
-        if (json.label && json.label !== selectedLabel) {
+        if (json.label && json.resLabel !== selectedLabel) {
           setSelectionsByArea((prev) => ({
             ...prev,
-            [deferredArea]: json.label,
+            [deferredArea]: json.resLabel,
           }));
         }
       } catch (err) {
@@ -166,20 +166,8 @@ export function HomeProvider({ children }: { children: ReactNode }) {
     loadData();
   }, [deferredArea, selectedLabel, currentYear]);
 
-  // ---------------------------------------------------------------------------
-  // -------------------------- OUTROS PROCESSAMENTOS --------------------------
-  // ---------------------------------------------------------------------------
-
-  const [userPointIndex, setUserPointIndex] = useState<number | null>(null);
-
-  const initialIndex = useMemo(() => {
-    if (!activeTCC?.labels_x?.length) return 0;
-    return 0;
-  }, [activeTCC]);
-
-  const pointIndex = userPointIndex !== null ? userPointIndex : initialIndex;
-
-  // CORREÇÃO: Dependência do dicMap adicionada e check de segurança
+  // DEVE SUMIR APOS A REMOÇÃO DA CONDICIONAL ISDIGITAL
+  // Mapeia as informações de todos as provas disponíveis
   const currentInfo = useMemo(() => {
     if (!activeTCC?.metadata || dicMap.size === 0) {
       return { fullText: "Carregando...", corNome: "..." };
@@ -196,12 +184,25 @@ export function HomeProvider({ children }: { children: ReactNode }) {
     return { fullText: `${textoBase} - ${info.tipo}`, corNome: info.cor };
   }, [activeTCC, deferredArea, dicMap]);
 
+  // ---------------------------------------------------------------------------
+  // ------------------------------ CHART POPS ---------------------------------
+  // ---------------------------------------------------------------------------
+
+  // Estado para armazenar a manipulação do PointIndex
+  const [userPointIndex, setUserPointIndex] = useState<number | null>(null);
+
+  // PointIndex inicial
+  const initialIndex = useMemo(() => {
+    if (!activeTCC?.labels_x?.length) return 0;
+    return 0;
+  }, [activeTCC]);
+
+  // PointIndex definido
+  const pointIndex = userPointIndex !== null ? userPointIndex : initialIndex;
+
   const { colorMap } = useChartTheme();
 
   const chartLogic = {
-    selectedLabel,
-    setSelectedLabel,
-    activeTCC,
     pointIndex,
     setPointIndex: setUserPointIndex,
     chartColor: colorMap[currentInfo.corNome] || "#3b82f6",
@@ -212,7 +213,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
     xMin: Math.floor((activeTCC?.metadata?.min || 0) / 100) * 100,
     xMax: Math.ceil((activeTCC?.metadata?.max || 1000) / 100) * 100,
     bMedio: activeTCC?.metadata?.b_medio_enem || 0,
-    getInfoCaderno: (codigo: number, lingua?: any) => {
+    getInfoCaderno: (codigo: number, lingua?: number | string) => {
       const info = dicMap.get(codigo);
       if (!info) return { fullText: `Caderno ${codigo}`, corNome: "" };
       let textoBase = info.cor;
@@ -226,11 +227,14 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   const hasDigital = useMemo(() => {
     if (!availableTCC || availableTCC.length === 0) return false;
     return availableTCC.some((item) => item.metadata?.versao_digital === "D");
-  }, [availableTCC, deferredArea, currentYear]);
+  }, [availableTCC]);
 
   return (
     <HomeContext.Provider
       value={{
+        activeTCC,
+        selectedLabel,
+        setSelectedLabel,
         activeArea,
         deferredArea,
         selectedRowId,

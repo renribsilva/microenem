@@ -1,212 +1,254 @@
-'use client'
+"use client";
 
-import { useMemo } from 'react';
-import Chart from 'react-apexcharts';
-import { useChartTheme } from '../../../../../../hooks/use_chart_theme';
+import { useMemo } from "react";
+import Chart from "react-apexcharts";
+import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 // import InputShell from '../../../../../../components/tsx/input_shell';
-import styles from "./graphs.module.css"
-import { useHomeData } from '../../../../../../context/home_context';
-import Dropdown from '../../../../../../components/tsx/dropdown';
+import styles from "./graphs.module.css";
+import { useHomeData } from "../../../../../../context/home_context";
+import Dropdown from "../../../../../../components/tsx/dropdown";
 
 export default function TCCChart() {
-
-  const { chartLogic } = useHomeData();
+  const { chartLogic, activeTCC } = useHomeData();
   const { gridColor, axisColor } = useChartTheme();
 
-  const { 
+  const {
     chartColor,
-    xMin, 
-    xMax, 
-    bMedio, 
-    activeTCC, 
+    xMin,
+    xMax,
+    bMedio,
     proficienciaAtual,
     resultadoAtual,
-    setPointIndex
+    setPointIndex,
   } = chartLogic;
 
   // --- CONFIGURAÇÃO DE DADOS ---
-  const series = useMemo(() => [
-    {
-      name: "Acertos esperados", // Série 0 (Prioridade)
-      type: 'line',
-      data: activeTCC?.data_teorico?.map((val, i) => ({
-        x: activeTCC?.labels_x[i],
-        y: val !== null ? Math.round(val * 10) / 10 : null
-      })) || []
-    },
-    {
-      name: "Média observada", // Série 1
-      type: 'scatter',
-      data: activeTCC?.data_empirico?.map((val, i) => ({
-        x: activeTCC?.labels_x[i],
-        y: val
-      })) || []
-    }
-  ], [activeTCC]);
+  const series = useMemo(
+    () => [
+      {
+        name: "Acertos esperados", // Série 0 (Prioridade)
+        type: "line",
+        data:
+          activeTCC?.data_teorico?.map((val, i) => ({
+            x: activeTCC?.labels_x[i],
+            y: val !== null ? Math.round(val * 10) / 10 : null,
+          })) || [],
+      },
+      {
+        name: "Média observada", // Série 1
+        type: "scatter",
+        data:
+          activeTCC?.data_empirico?.map((val, i) => ({
+            x: activeTCC?.labels_x[i],
+            y: val,
+          })) || [],
+      },
+    ],
+    [activeTCC],
+  );
 
   const yBMedio = useMemo(() => {
     if (!activeTCC || !bMedio) return 22.5;
-    const closestIndex = activeTCC.labels_x.reduce((prev: number, curr: number, idx: number) => {
-      return Math.abs(curr - bMedio) < Math.abs(activeTCC.labels_x[prev] - bMedio) ? idx : prev;
-    }, 0);
+    const closestIndex = activeTCC.labels_x.reduce(
+      (prev: number, curr: number, idx: number) => {
+        return Math.abs(curr - bMedio) <
+          Math.abs(activeTCC.labels_x[prev] - bMedio)
+          ? idx
+          : prev;
+      },
+      0,
+    );
     return activeTCC.data_teorico[closestIndex];
   }, [activeTCC, bMedio]);
 
   // --- CONFIGURAÇÕES DO APEXCHARTS ---
-  const options: ApexCharts.ApexOptions = useMemo(() => ({
-    chart: {
-      id: 'tcc-chart',
-      type: 'line',
-      toolbar: {
-        offsetX: 0,
-        offsetY: 0,
-        show: true,
+  const options: ApexCharts.ApexOptions = useMemo(
+    () => ({
+      chart: {
+        id: "tcc-chart",
+        type: "line",
+        toolbar: {
+          offsetX: 0,
+          offsetY: 0,
+          show: true,
+        },
+        zoom: { enabled: false },
+        animations: {
+          enabled: false,
+          dynamicAnimation: {
+            enabled: false,
+          },
+        },
       },
-      zoom: { enabled: false },
-      animations: {
-        enabled: false, 
-        dynamicAnimation: {
-          enabled: false 
-        }
-      } 
-    },
-    markers: {
-      size: [1, 1],
-      strokeColors: '#fff',
-      strokeWidth: 0,
-      hover: {
-        size: 6,
-      }
-    },
-    colors: [chartColor, '#94a3b8'],
-    stroke: {
-      curve: 'smooth',
-      width: [1, 1],
-      colors: [chartColor],
-      connectNulls: true  
-    },
-    grid: { borderColor: gridColor },
-    xaxis: {
-      type: 'numeric',
-      min: xMin,
-      max: xMax,
-      tickAmount: 10,
-      labels: { 
-        style: { colors: axisColor },
-        formatter: (val) => Number(val).toFixed(0)
+      markers: {
+        size: [1, 1],
+        strokeColors: "#fff",
+        strokeWidth: 0,
+        hover: {
+          size: 6,
+        },
       },
-      tooltip: { enabled: false },
-      title: { text: 'Notas na escala do ENEM', style: { color: axisColor, fontWeight: 'bold' } }
-    },
-    yaxis: {
-      min: 0,
-      max: 45,
-      tickAmount: 9,
-      labels: { 
-        style: { colors: axisColor },
-        formatter: (val) => Number(val).toFixed(0) 
+      colors: [chartColor, "#94a3b8"],
+      stroke: {
+        curve: "smooth",
+        width: [1, 1],
+        colors: [chartColor],
+        connectNulls: true,
       },
-      title: { text: 'Acertos', style: { color: axisColor, fontWeight: 'bold' } }
-    },
-    tooltip: {
-      theme: 'dark',
-      followCursor: true,
-      enabled: true,
-      marker: { show: true },
-      x: {
-        show: true,
-        formatter: (val) => "\u00A0\u00A0Proficiência: " + val
+      grid: { borderColor: gridColor },
+      xaxis: {
+        type: "numeric",
+        min: xMin,
+        max: xMax,
+        tickAmount: 10,
+        labels: {
+          style: { colors: axisColor },
+          formatter: (val) => Number(val).toFixed(0),
+        },
+        tooltip: { enabled: false },
+        title: {
+          text: "Notas na escala do ENEM",
+          style: { color: axisColor, fontWeight: "bold" },
+        },
       },
-      y: {
-        formatter: function(val, { series, seriesIndex, dataPointIndex, w }) {
-          // Se o valor atual já existe, retorna ele
-          if (val !== null && val !== undefined) {
-            return Number(val).toFixed(0);
-          }
-
-          // Se o valor for null, buscamos no array da série o valor mais próximo
-          const currentSeries = series[seriesIndex];
-          
-          // Busca para trás (valor anterior mais próximo)
-          let closestVal = null;
-          for (let i = dataPointIndex; i >= 0; i--) {
-            if (currentSeries[i] !== null && currentSeries[i] !== undefined) {
-              closestVal = currentSeries[i];
-              break;
+      yaxis: {
+        min: 0,
+        max: 45,
+        tickAmount: 9,
+        labels: {
+          style: { colors: axisColor },
+          formatter: (val) => Number(val).toFixed(0),
+        },
+        title: {
+          text: "Acertos",
+          style: { color: axisColor, fontWeight: "bold" },
+        },
+      },
+      tooltip: {
+        theme: "dark",
+        followCursor: true,
+        enabled: true,
+        marker: { show: true },
+        x: {
+          show: true,
+          formatter: (val) => "\u00A0\u00A0Proficiência: " + val,
+        },
+        y: {
+          formatter: function (
+            val,
+            { series, seriesIndex, dataPointIndex, w },
+          ) {
+            // Se o valor atual já existe, retorna ele
+            if (val !== null && val !== undefined) {
+              return Number(val).toFixed(0);
             }
-          }
 
-          // Se não achou para trás, busca para frente
-          if (closestVal === null) {
-            for (let i = dataPointIndex; i < currentSeries.length; i++) {
+            // Se o valor for null, buscamos no array da série o valor mais próximo
+            const currentSeries = series[seriesIndex];
+
+            // Busca para trás (valor anterior mais próximo)
+            let closestVal = null;
+            for (let i = dataPointIndex; i >= 0; i--) {
               if (currentSeries[i] !== null && currentSeries[i] !== undefined) {
                 closestVal = currentSeries[i];
                 break;
               }
             }
-          }
 
-          return closestVal !== null ? `${Number(closestVal).toFixed(0)}` : "N/A";
-        },
-        title: {
-          formatter: (seriesName) => seriesName + ": "
-        }
-      }
-    },
-    annotations: {
-      yaxis: [
-        {
-          y: yBMedio,
-          borderColor: chartColor,
-          borderWidth: 2,
-          strokeDashArray: 4,
-          label: {
-            text: `Dificuldade Média: ${Number(bMedio).toFixed(1)}`,
-            style: { color: '#000000ff', background: chartColor, fontWeight: 'bold' },
-            offsetY: 25,
-            offsetX: -10,
-            borderColor: chartColor,
-            borderWidth: 6,
-          }
-        }
-      ],
-      points: [
-        {
-          x: proficienciaAtual,
-          y: resultadoAtual,
-          marker: {
-            size: 6,
-            fillColor: chartColor,
-            strokeColor: '#fff',
-            strokeWidth: 0,
-            radius: 2
+            // Se não achou para trás, busca para frente
+            if (closestVal === null) {
+              for (let i = dataPointIndex; i < currentSeries.length; i++) {
+                if (
+                  currentSeries[i] !== null &&
+                  currentSeries[i] !== undefined
+                ) {
+                  closestVal = currentSeries[i];
+                  break;
+                }
+              }
+            }
+
+            return closestVal !== null
+              ? `${Number(closestVal).toFixed(0)}`
+              : "N/A";
           },
-          // label: {
-          //   borderColor: chartColor,
-          //   offsetY: proficienciaAtual > bMedio ? 35 : -20,
-          //   offsetX: proficienciaAtual <= bMedio ? 80 : -80,
-          //   style: {
-          //     color: '#fff',
-          //     background: chartColor,
-          //     padding: { left: 10, right: 10, top: 5, bottom: 5 }
-          //   },
-          //   text: [
-          //     `proficiência de ${proficienciaAtual.toFixed(0)}`,
-          //     `${resultadoAtual.toFixed(0)} acertos esperados`
-          //   ] 
-          // }
-        }
-      ]
-    }
-  }), [chartColor, gridColor, axisColor, xMin, xMax, bMedio, proficienciaAtual, resultadoAtual, setPointIndex]);
+          title: {
+            formatter: (seriesName) => seriesName + ": ",
+          },
+        },
+      },
+      annotations: {
+        yaxis: [
+          {
+            y: yBMedio,
+            borderColor: chartColor,
+            borderWidth: 2,
+            strokeDashArray: 4,
+            label: {
+              text: `Dificuldade Média: ${Number(bMedio).toFixed(1)}`,
+              style: {
+                color: "#000000ff",
+                background: chartColor,
+                fontWeight: "bold",
+              },
+              offsetY: 25,
+              offsetX: -10,
+              borderColor: chartColor,
+              borderWidth: 6,
+            },
+          },
+        ],
+        points: [
+          {
+            x: proficienciaAtual,
+            y: resultadoAtual,
+            marker: {
+              size: 6,
+              fillColor: chartColor,
+              strokeColor: "#fff",
+              strokeWidth: 0,
+              radius: 2,
+            },
+            // label: {
+            //   borderColor: chartColor,
+            //   offsetY: proficienciaAtual > bMedio ? 35 : -20,
+            //   offsetX: proficienciaAtual <= bMedio ? 80 : -80,
+            //   style: {
+            //     color: '#fff',
+            //     background: chartColor,
+            //     padding: { left: 10, right: 10, top: 5, bottom: 5 }
+            //   },
+            //   text: [
+            //     `proficiência de ${proficienciaAtual.toFixed(0)}`,
+            //     `${resultadoAtual.toFixed(0)} acertos esperados`
+            //   ]
+            // }
+          },
+        ],
+      },
+    }),
+    [
+      chartColor,
+      gridColor,
+      axisColor,
+      xMin,
+      xMax,
+      bMedio,
+      proficienciaAtual,
+      resultadoAtual,
+      setPointIndex,
+    ],
+  );
 
   return (
-    <div className={styles.tcc_container}>    
-      <div className={styles.tcc_cabecalho}>      
+    <div className={styles.tcc_container}>
+      <div className={styles.tcc_cabecalho}>
         <div className={styles.tcc_title}>
           <h3 className={styles.tcc_title_h3}>Curva característica do teste</h3>
           <p className={styles.tcc_subtitle_p}>
-            Comportamento esperado (teórico) e observado (empírico) da relação nota/acerto. Destaque para o ponto de inflexão que representa a dificuldade média da prova.
+            Comportamento esperado (teórico) e observado (empírico) da relação
+            nota/acerto. Destaque para o ponto de inflexão que representa a
+            dificuldade média da prova.
           </p>
         </div>
         <Dropdown />
@@ -214,12 +256,12 @@ export default function TCCChart() {
       <div className={styles.tcc_graph_container}>
         {/* <InputShell logic={logic}/> */}
         <div className={styles.tcc_graph_wrapper}>
-          <Chart 
-            options={options} 
-            series={series} 
+          <Chart
+            options={options}
+            series={series}
             type="line"
-            height='100%'
-            width='100%'
+            height="100%"
+            width="100%"
           />
         </div>
       </div>

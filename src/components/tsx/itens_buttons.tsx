@@ -7,16 +7,15 @@ import { useHomeData } from "../../context/home_context";
 import { useNineteenData } from "../../context/nineteen_context";
 
 export default function ItensButtons() {
-  const { chartLogic, deferredArea } = useHomeData();
-
   const {
-    chartColor,
-    currentInfo,
-    availableTCC,
-    getInfoCaderno,
+    chartLogic,
+    activeTCC,
+    deferredArea,
     setSelectedLabel,
     selectedLabel,
-  } = chartLogic;
+  } = useHomeData();
+
+  const { chartColor, availableTCC, getInfoCaderno } = chartLogic;
 
   const { colorMap, panelColor, textColor, gridColor, isDark } =
     useChartTheme();
@@ -93,7 +92,9 @@ export default function ItensButtons() {
         >
           <span>
             Prova:{" "}
-            <span style={{ color: chartColor }}>{currentInfo.fullText}</span>
+            <span style={{ color: chartColor }}>
+              {activeTCC?.metadata?.cor}
+            </span>
           </span>
           <span
             style={{

@@ -24,30 +24,33 @@ type TableRow = {
   freq_branco: string;
   freq_dupla_marcacao: string;
   abandonado: boolean;
-  param_b: number
+  param_b: number;
 };
 
 export default function ScoreTable() {
-  const { chartLogic, deferredArea } = useHomeData();
-  const { selectedLabel } = chartLogic;
-  const { 
-    scoreData, 
-    getCodeByLabel, 
+  const { selectedLabel, deferredArea } = useHomeData();
+  const {
+    scoreData,
+    getCodeByLabel,
     getParamByLabel,
-    abandonadosCodes, 
+    abandonadosCodes,
     lastItemActivate,
     setLastItemActivate,
-    setLastItemActivateNum
+    setLastItemActivateNum,
   } = useNineteenData();
-  
-  const [sorting, setSorting] = useState<SortingState>([{ id: "posicao", desc: false }]);
+
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: "posicao", desc: false },
+  ]);
   const columnHelper = createColumnHelper<TableRow>();
-  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 800 : false);
-  
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth < 800 : false,
+  );
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 800);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const columns = useMemo(() => {
@@ -58,26 +61,39 @@ export default function ScoreTable() {
         cell: (info) => <strong>{info.getValue()}</strong>,
       }),
       // Só inclui Código se não for mobile
-      ...(!isMobile ? [
-        columnHelper.accessor("id", {
-          header: "Código",
-          cell: (info) => <span style={{ fontSize: "0.85rem", color: "#888" }}>{info.getValue() || "—"}</span>,
-        })
-      ] : []),
+      ...(!isMobile
+        ? [
+            columnHelper.accessor("id", {
+              header: "Código",
+              cell: (info) => (
+                <span style={{ fontSize: "0.85rem", color: "#888" }}>
+                  {info.getValue() || "—"}
+                </span>
+              ),
+            }),
+          ]
+        : []),
       // Só inclui Abandonado se não for mobile
-      ...(!isMobile ? [
-        columnHelper.accessor("abandonado", {
-          header: "Aband?",
-          cell: (info) => {
-            const val = info.getValue();
-            return (
-              <span style={{ fontSize: "0.85rem", color: val ? "#ff4b4b" : "#888" }}>
-                {val ? "Sim" : "Não"}
-              </span>
-            );
-          },
-        })
-      ] : []),
+      ...(!isMobile
+        ? [
+            columnHelper.accessor("abandonado", {
+              header: "Aband?",
+              cell: (info) => {
+                const val = info.getValue();
+                return (
+                  <span
+                    style={{
+                      fontSize: "0.85rem",
+                      color: val ? "#ff4b4b" : "#888",
+                    }}
+                  >
+                    {val ? "Sim" : "Não"}
+                  </span>
+                );
+              },
+            }),
+          ]
+        : []),
     ];
 
     // Definimos as sub-colunas de Score
@@ -85,109 +101,148 @@ export default function ScoreTable() {
       columnHelper.accessor("respondentes", {
         header: "n",
         cell: (info) => {
-          if (info.row.original.abandonado) return <span style={{ color: "#ccc" }}>—</span>;
-          
+          if (info.row.original.abandonado)
+            return <span style={{ color: "#ccc" }}>—</span>;
+
           const val = info.getValue();
-          const compactFormatter = new Intl.NumberFormat('pt-BR', {
+          const compactFormatter = new Intl.NumberFormat("pt-BR", {
             notation: "compact",
             compactDisplay: "short",
-            maximumFractionDigits: 1
+            maximumFractionDigits: 1,
           });
 
           return (
             <span style={{ fontSize: "0.8rem", color: "#888" }}>
-              {isMobile 
-                ? compactFormatter.format(val).toLowerCase() 
-                : val.toLocaleString('pt-BR')}
+              {isMobile
+                ? compactFormatter.format(val).toLowerCase()
+                : val.toLocaleString("pt-BR")}
             </span>
           );
         },
       }),
       columnHelper.accessor("freq_acerto", {
         header: "Acerto",
-        cell: (info) => info.row.original.abandonado 
-          ? <span style={{ color: "#ccc" }}>—</span> 
-          : <span style={{ fontSize: "0.85rem", color: "#52c41a", fontWeight: "500" }}>{info.getValue()}%</span>,
+        cell: (info) =>
+          info.row.original.abandonado ? (
+            <span style={{ color: "#ccc" }}>—</span>
+          ) : (
+            <span
+              style={{
+                fontSize: "0.85rem",
+                color: "#52c41a",
+                fontWeight: "500",
+              }}
+            >
+              {info.getValue()}%
+            </span>
+          ),
       }),
-      columnHelper.accessor("freq_erro", { 
-        header: "Erro", 
-        cell: (info) => info.row.original.abandonado 
-          ? <span style={{ color: "#ccc" }}>—</span> 
-          : <span style={{ fontSize: "0.85rem", color: "#ff4b4b", fontWeight: "500" }}>{info.getValue()}%</span>
+      columnHelper.accessor("freq_erro", {
+        header: "Erro",
+        cell: (info) =>
+          info.row.original.abandonado ? (
+            <span style={{ color: "#ccc" }}>—</span>
+          ) : (
+            <span
+              style={{
+                fontSize: "0.85rem",
+                color: "#ff4b4b",
+                fontWeight: "500",
+              }}
+            >
+              {info.getValue()}%
+            </span>
+          ),
       }),
-      ...(!isMobile ? [
-        columnHelper.accessor("freq_branco", { 
-          header: "Branco", 
-          cell: (info) => info.row.original.abandonado 
-            ? <span style={{ color: "#ccc" }}>—</span> 
-            : <span style={{ color: "#888" }}>{info.getValue()}%</span> 
-        }),
-        columnHelper.accessor("freq_dupla_marcacao", { 
-          header: "Dupla", 
-          cell: (info) => info.row.original.abandonado 
-            ? <span style={{ color: "#ccc" }}>—</span> 
-            : <span style={{ color: "#888" }}>{info.getValue()}%</span> 
-        }),
-      ] : []),
+      ...(!isMobile
+        ? [
+            columnHelper.accessor("freq_branco", {
+              header: "Branco",
+              cell: (info) =>
+                info.row.original.abandonado ? (
+                  <span style={{ color: "#ccc" }}>—</span>
+                ) : (
+                  <span style={{ color: "#888" }}>{info.getValue()}%</span>
+                ),
+            }),
+            columnHelper.accessor("freq_dupla_marcacao", {
+              header: "Dupla",
+              cell: (info) =>
+                info.row.original.abandonado ? (
+                  <span style={{ color: "#ccc" }}>—</span>
+                ) : (
+                  <span style={{ color: "#888" }}>{info.getValue()}%</span>
+                ),
+            }),
+          ]
+        : []),
     ];
 
     const paramCols = [
       // Só inclui Código se não for mobile
-      ...(!isMobile ? [
-        columnHelper.accessor("param_b", {
-          header: "b*",
-          cell: (info) => <span style={{ fontSize: "0.85rem", color: "#888" }}>{info.getValue() || "—"}</span>,
-        })
-      ] : []),
+      ...(!isMobile
+        ? [
+            columnHelper.accessor("param_b", {
+              header: "b*",
+              cell: (info) => (
+                <span style={{ fontSize: "0.85rem", color: "#888" }}>
+                  {info.getValue() || "—"}
+                </span>
+              ),
+            }),
+          ]
+        : []),
     ];
 
     return [
       columnHelper.group({
-        id: 'identificacao_grupo',
-        header: isMobile ? 'Item' : 'Identificação',
+        id: "identificacao_grupo",
+        header: isMobile ? "Item" : "Identificação",
         columns: idCols,
       }),
-      ...(!isMobile ? [
-        columnHelper.group({
-        id: 'param_grupo',
-        header: isMobile ? 'Param' : 'Parâmetro',
-        columns: paramCols,
-        })] : []
-      ),
+      ...(!isMobile
+        ? [
+            columnHelper.group({
+              id: "param_grupo",
+              header: isMobile ? "Param" : "Parâmetro",
+              columns: paramCols,
+            }),
+          ]
+        : []),
       columnHelper.group({
-        id: 'score_grupo',
-        header: isMobile ? 'Frequência' : 'Frequência de Respostas',
+        id: "score_grupo",
+        header: isMobile ? "Frequência" : "Frequência de Respostas",
         columns: scoreCols,
-      })
+      }),
     ];
   }, [columnHelper, isMobile]);
 
   const data = useMemo(() => {
-
     const ranges: Record<string, { start: number; end: number }> = {
-      "LC": { start: 1, end: 45 },
-      "CH": { start: 46, end: 90 },
-      "CN": { start: 91, end: 135 },
-      "MT": { start: 136, end: 180 },
+      LC: { start: 1, end: 45 },
+      CH: { start: 46, end: 90 },
+      CN: { start: 91, end: 135 },
+      MT: { start: 136, end: 180 },
     };
 
     const { start, end } = ranges[deferredArea] || { start: 1, end: 45 };
-    
+
     // Gera o range e mapeia os dados
     return Array.from({ length: end - start + 1 }, (_, i) => {
       const num = start + i;
       const code = getCodeByLabel(num, selectedLabel);
       const param = getParamByLabel(num, selectedLabel, "b");
-      const itemScores = (scoreData && code) ? (scoreData[code]?.counts || {}) : {};
-      
+      const itemScores = scoreData && code ? scoreData[code]?.counts || {} : {};
+
       const v1 = Number(itemScores["1"] ?? 0);
       const v0 = Number(itemScores["0"] ?? 0);
       const v7 = Number(itemScores["7"] ?? 0);
       const v8 = Number(itemScores["8"] ?? 0);
 
       const total = v1 + v0 + v7 + v8;
-      const safeDiv = (v: number) => total > 0 ? ((v / total) * 100).toFixed(1) : "0.0";
-      
+      const safeDiv = (v: number) =>
+        total > 0 ? ((v / total) * 100).toFixed(1) : "0.0";
+
       return {
         id: code,
         posicao: num,
@@ -197,10 +252,16 @@ export default function ScoreTable() {
         freq_erro: safeDiv(v0),
         freq_branco: safeDiv(v8),
         freq_dupla_marcacao: safeDiv(v7),
-        param_b: param
+        param_b: param,
       };
     });
-  }, [scoreData, deferredArea, selectedLabel, getCodeByLabel, abandonadosCodes]);
+  }, [
+    scoreData,
+    deferredArea,
+    selectedLabel,
+    getCodeByLabel,
+    abandonadosCodes,
+  ]);
 
   useEffect(() => {
     if (data.length > 0) {
@@ -227,14 +288,17 @@ export default function ScoreTable() {
   }, [data, lastItemActivate, setLastItemActivate, setLastItemActivateNum]);
 
   // if (activeCodes.length === 0) return <section className={styles.probtable_fallback}>Selecione itens na tabela para vizualizar suas probabilidades e desempenho.</section>;
-  
+
   return (
     <section className={styles.probtable_container}>
       <div className={styles.probtable_cabecalho}>
         <div>
-          <h3 className={styles.card_title}>Tabela de frequência de respostas</h3>
+          <h3 className={styles.card_title}>
+            Tabela de frequência de respostas
+          </h3>
           <p className={styles.card_subtitle_p}>
-            Frequência relativa de acertos e erros observada em cada item dos exames.
+            Frequência relativa de acertos e erros observada em cada item dos
+            exames.
           </p>
         </div>
         <Dropdown />
@@ -253,16 +317,30 @@ export default function ScoreTable() {
                     key={header.id}
                     colSpan={header.colSpan}
                     className={`${styles.probtable_th} ${isGroup ? styles.probtable_group_th : ""}`}
-                    onClick={canSort ? header.column.getToggleSortingHandler() : undefined}
+                    onClick={
+                      canSort
+                        ? header.column.getToggleSortingHandler()
+                        : undefined
+                    }
                   >
-                    <div 
-                      className={styles.probtable_th_item} 
-                      style={{ cursor: canSort ? 'pointer' : 'default' }}
+                    <div
+                      className={styles.probtable_th_item}
+                      style={{ cursor: canSort ? "pointer" : "default" }}
                     >
-                      {!header.isPlaceholder && flexRender(header.column.columnDef.header, header.getContext())}
+                      {!header.isPlaceholder &&
+                        flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
 
                       {canSort && (
-                        <span style={{ fontSize: '10px', marginLeft: '4px', opacity: sortedState ? 1 : 0.5 }}>
+                        <span
+                          style={{
+                            fontSize: "10px",
+                            marginLeft: "4px",
+                            opacity: sortedState ? 1 : 0.5,
+                          }}
+                        >
                           {{
                             asc: " 🔼",
                             desc: " 🔽",
@@ -279,12 +357,12 @@ export default function ScoreTable() {
         <tbody>
           {table.getRowModel().rows.map((row) => {
             const isAbandonado = row.original.abandonado;
-            const itemId = row.original.id; 
+            const itemId = row.original.id;
             const isActive = lastItemActivate === itemId;
 
             return (
-              <tr 
-                key={row.id} 
+              <tr
+                key={row.id}
                 className={`
                   ${styles.probtable_tr} 
                   ${isAbandonado ? styles.row_abandonado : ""} 
@@ -297,18 +375,22 @@ export default function ScoreTable() {
                     setLastItemActivateNum(row.original.posicao);
                   }
                 }}
-                style={{ 
-                  backgroundColor: isActive 
+                style={{
+                  backgroundColor: isActive
                     ? "rgba(0, 227, 150, 0.1)"
-                    : isAbandonado ? "rgba(255, 75, 75, 0.05)" : "transparent",
+                    : isAbandonado
+                      ? "rgba(255, 75, 75, 0.05)"
+                      : "transparent",
                   borderLeft: isActive
-                    ? "4px solid #00E396" 
-                    : isAbandonado ? "4px solid #ff4b4b" : "4px solid transparent",
+                    ? "4px solid #00E396"
+                    : isAbandonado
+                      ? "4px solid #ff4b4b"
+                      : "4px solid transparent",
                   // 2. CURSOR CONDICIONAL: 'default' ou 'not-allowed' para abandonados
                   cursor: isAbandonado ? "not-allowed" : "pointer",
                   transition: "all 0.2s ease",
                   // 3. OPACIDADE (Opcional): ajuda visualmente a indicar que está desativado
-                  opacity: isAbandonado ? 0.7 : 1
+                  opacity: isAbandonado ? 0.7 : 1,
                 }}
               >
                 {row.getVisibleCells().map((cell) => (
@@ -323,9 +405,11 @@ export default function ScoreTable() {
       </table>
       {!isMobile && (
         <div className={styles.table_footer}>
-          * Parâmetro de dificuldade: associado à dificuldade do item, sendo que quanto maior seu valor, mais difícil é o item.
+          * Parâmetro de dificuldade: associado à dificuldade do item, sendo que
+          quanto maior seu valor, mais difícil é o item.
         </div>
       )}
     </section>
   );
 }
+

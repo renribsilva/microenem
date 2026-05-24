@@ -29,8 +29,9 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
   // ---------------- CONTEXTOS NECESSÁRIOS ---------------
   // ------------------------------------------------------
 
-  const { deferredArea, selectedRowId, chartLogic } = useHomeData();
-  const { selectedLabel, currentInfo } = chartLogic;
+  const { deferredArea, selectedRowId, chartLogic, selectedLabel } =
+    useHomeData();
+  const { currentInfo } = chartLogic;
   const [lastItemActivate, setLastItemActivate] = useState<number>(0);
   const [selectedItems, setSelectedItems] = useState<Record<number, any>>({});
   const [isDigital, setIsDigital] = useState<boolean>(false);
@@ -817,4 +818,3 @@ export const useNineteenData = () => {
   }
   return context;
 };
-

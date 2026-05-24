@@ -45,3 +45,18 @@ export type TCCCacheType = {
   activeTCC: ActiveTCCType;
   availableTCC: AvailableTCCType;
 };
+
+export type HomeContextType = {
+  activeTCC: ActiveTCCType;
+  selectedLabel: any;
+  setSelectedLabel: any;
+  activeArea: any;
+  deferredArea: any;
+  selectedRowId: any;
+  setSelectedRowId: any;
+  chartLogic: any;
+  handleTabChange: any;
+  isUpdating: any;
+  dicData: any;
+  hasDigital: any;
+};

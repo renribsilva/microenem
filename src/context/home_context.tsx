@@ -12,7 +12,13 @@ import {
 } from "react";
 import { useChartTheme } from "../hooks/use_chart_theme";
 import { useParams } from "next/navigation";
-import { dicDataType, selectionsByAreaType } from "../types/context_types";
+import {
+  ActiveTCCType,
+  AvailableTCCType,
+  DicDataType,
+  SelectionsByAreaType,
+  TCCCacheType,
+} from "../types/context_types";
 
 const HomeContext = createContext(null);
 
@@ -30,12 +36,20 @@ export function HomeProvider({ children }: { children: ReactNode }) {
 
   // Labels iniciais de cada área do conhecimento
   const [selectionsByArea, setSelectionsByArea] =
-    useState<selectionsByAreaType>({
+    useState<SelectionsByAreaType>({
       LC: "1395_0_X",
       CH: "1383_X_X",
       CN: "1419_X_X",
       MT: "1407_X_X",
     });
+
+  // Extrai o rótulo da prova de acordo com a área ativa
+  const selectedLabel = selectionsByArea[deferredArea];
+
+  // Função auxiliar para alterar os rótulos das provas por área
+  const setSelectedLabel = (newLabel: string) => {
+    setSelectionsByArea((prev) => ({ ...prev, [deferredArea]: newLabel }));
+  };
 
   // Loading inicial
   const [loading, setLoading] = useState<boolean>(true);
@@ -52,7 +66,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   // --------------------------------------------------------------------------
 
   // Estado dependente de currentYear
-  const [dicData, setDicData] = useState<dicDataType | null>(null);
+  const [dicData, setDicData] = useState<DicDataType | null>(null);
 
   // Importa um novo JSON sempre que o parâmentro currentYear for alterado
   useEffect(() => {
@@ -76,8 +90,8 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   // cor e tipo
   const dicMap = useMemo(() => {
     const map = new Map<
-      dicDataType["codigo"][number],
-      { cor: dicDataType["cor"][number]; tipo: dicDataType["tipo"][number] }
+      DicDataType["codigo"][number],
+      { cor: DicDataType["cor"][number]; tipo: DicDataType["tipo"][number] }
     >();
     if (!dicData || !dicData.codigo) return map;
     dicData.codigo.forEach((cod, i) => {
@@ -93,26 +107,30 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   // ------------------ CARGA DINÂMICA DO TCC POR ANO (API) --------------------
   // ---------------------------------------------------------------------------
 
-  const [activeTCC, setActiveDataset] = useState(null);
-  const [availableTCC, setAvailableDatasets] = useState([]);
-  const tccCache = useRef(null);
+  // Prepara estados e referência para receber dados do TCC (curva
+  // caracterísitca do tste)
+  const [activeTCC, setActiveTCC] = useState<ActiveTCCType | null>(null);
+  const [availableTCC, setAvailableTCC] = useState<AvailableTCCType | null>(
+    null,
+  );
 
-  const selectedLabel = selectionsByArea[deferredArea];
-  const setSelectedLabel = (newLabel: string) => {
-    setSelectionsByArea((prev) => ({ ...prev, [deferredArea]: newLabel }));
-  };
+  // Prepara cache para dados do tcc
+  const tccCache = useRef<TCCCacheType | null>(null);
 
   useEffect(() => {
+    // Primeiro, tenta buscar os dados do tcc no cache
     if (
-      tccCache.current?.label === selectedLabel &&
-      tccCache.current?.year === currentYear
+      tccCache.current?.resLabel === selectedLabel &&
+      tccCache.current?.year === Number(currentYear)
     ) {
-      setActiveDataset(tccCache.current.data);
+      setActiveTCC(tccCache.current.activeTCC);
+      setAvailableTCC(tccCache.current.availableTCC);
       return;
     }
 
     if (!currentYear || !selectedLabel || !deferredArea) return;
 
+    // Api assíncrona que busca os dados do tcc seletivamente
     async function loadData() {
       try {
         const params = new URLSearchParams({
@@ -123,13 +141,18 @@ export function HomeProvider({ children }: { children: ReactNode }) {
         const res = await fetch(`/api/tcc?${params}`);
         if (!res.ok) return;
         const json = await res.json();
+        // Guarda no cache
         tccCache.current = {
-          label: selectedLabel,
-          data: json.dataset,
-          year: currentYear,
+          year: Number(currentYear),
+          resLabel: json.resLabel,
+          activeTCC: json.activeDataset,
+          availableTCC: json.availableDatasets,
         };
-        setActiveDataset(json.dataset);
-        setAvailableDatasets(json.availableTCC);
+        // Guarda o tcc ativo
+        setActiveTCC(json.dataset);
+        // Guarda a lista de todos os tccs disponíveis
+        setAvailableTCC(json.availableDatasets);
+        // Atualiza os labels das provas
         if (json.label && json.label !== selectedLabel) {
           setSelectionsByArea((prev) => ({
             ...prev,

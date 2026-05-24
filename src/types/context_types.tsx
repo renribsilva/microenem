@@ -48,6 +48,7 @@ export type TCCCacheType = {
 
 export type HomeContextType = {
   activeTCC: ActiveTCCType;
+  availableTCC: AvailableTCCType;
   selectedLabel: any;
   setSelectedLabel: any;
   activeArea: any;

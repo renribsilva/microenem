@@ -200,7 +200,7 @@ export default function AcertosChart() {
           `Frequência relativa de acertos observados em cada`,
           `faixa de proficiência`,
           `(cod: ${lastItemActivate}; p: ${activeTCC?.metadata?.cor}).`,
-        ] as string[],
+        ] as any,
         style: { color: textColor, fontSize: "13px" },
       },
       legend: {

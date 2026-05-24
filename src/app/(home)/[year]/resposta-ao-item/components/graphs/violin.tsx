@@ -146,7 +146,7 @@ export default function ViolinBinsChart() {
           `Frequência absoluta de acertos e erros`,
           `por faixa de proficiência`,
           `(cod: ${lastItemActivate}; p: ${activeTCC?.metadata?.cor || ""}).`,
-        ] as string[],
+        ] as any,
         style: { color: textColor, fontSize: "13px" },
       },
     }),
@@ -175,4 +175,3 @@ export default function ViolinBinsChart() {
     </div>
   );
 }
-

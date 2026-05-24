@@ -114,6 +114,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   const [availableTCC, setAvailableTCC] = useState<AvailableTCCType | null>(
     null,
   );
+
   // Prepara cache para dados do tcc
   const tccCache = useRef<TCCCacheType | null>(null);
 
@@ -207,7 +208,6 @@ export function HomeProvider({ children }: { children: ReactNode }) {
     setPointIndex: setUserPointIndex,
     chartColor: colorMap[currentInfo.corNome] || "#3b82f6",
     currentInfo,
-    availableTCC,
     proficienciaAtual: activeTCC?.labels_x?.[pointIndex] || 0,
     resultadoAtual: activeTCC?.data_teorico?.[pointIndex] || 0,
     xMin: Math.floor((activeTCC?.metadata?.min || 0) / 100) * 100,
@@ -232,6 +232,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   return (
     <HomeContext.Provider
       value={{
+        availableTCC,
         activeTCC,
         selectedLabel,
         setSelectedLabel,

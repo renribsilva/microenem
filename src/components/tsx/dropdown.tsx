@@ -4,9 +4,14 @@ import { useChartTheme } from "../../hooks/use_chart_theme";
 import { useHomeData } from "../../context/home_context";
 
 export default function Dropdown() {
-  const { chartLogic, activeTCC, selectedLabel, setSelectedLabel } =
-    useHomeData();
-  const { chartColor, availableTCC, getInfoCaderno } = chartLogic;
+  const {
+    chartLogic,
+    availableTCC,
+    activeTCC,
+    selectedLabel,
+    setSelectedLabel,
+  } = useHomeData();
+  const { chartColor, getInfoCaderno } = chartLogic;
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);

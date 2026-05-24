@@ -10,12 +10,13 @@ export default function ItensButtons() {
   const {
     chartLogic,
     activeTCC,
+    availableTCC,
     deferredArea,
     setSelectedLabel,
     selectedLabel,
   } = useHomeData();
 
-  const { chartColor, availableTCC, getInfoCaderno } = chartLogic;
+  const { chartColor, getInfoCaderno } = chartLogic;
 
   const { colorMap, panelColor, textColor, gridColor, isDark } =
     useChartTheme();

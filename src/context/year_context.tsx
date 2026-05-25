@@ -265,18 +265,25 @@ export function YearProvider({ children }: { children: ReactNode }) {
   // ---------------- CARGA DINÂMICA DE JSON POR ANO (API) ---------------
   // ---------------------------------------------------------------------
 
-  const [infoData, setInfoData] = useState<any>(null);
+  const [infoData, setInfoData] = useState<Record<string, number[]> | null>(
+    null,
+  );
   const [co_p_selected] = selectedLabel.split("_");
-  const [probData, setProbData] = useState<any>(null);
-  const [probLabels, setProbLabels] = useState<any>([]);
-  const [infoLabels, setInfoLabels] = useState<any>([]);
-
-  const probCache = useRef<{ co_p: string; dataset: any; labels: any } | null>(
+  const [probData, setProbData] = useState<Record<string, number[]> | null>(
     null,
   );
-  const infoCache = useRef<{ co_p: string; dataset: any; labels: any } | null>(
-    null,
-  );
+  const [probLabels, setProbLabels] = useState<number[] | []>([]);
+  const [infoLabels, setInfoLabels] = useState<number[] | []>([]);
+  const probCache = useRef<{
+    co_p: string;
+    dataset: Record<string, number[]> | null;
+    labels: number[] | null;
+  } | null>(null);
+  const infoCache = useRef<{
+    co_p: string;
+    dataset: Record<string, number[]> | null;
+    labels: number[] | null;
+  } | null>(null);
 
   useEffect(() => {
     if (!co_p_selected) return;
@@ -322,7 +329,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
 
     fetchProbData();
     fetchInfoData();
-  }, [co_p_selected]);
+  }, [co_p_selected, currentYear]);
 
   const [itemGraphData, setItemGraphData] = useState<any>(null);
   const itemGraphCache = useRef<{ code: number; dataset: any } | null>(null);
@@ -336,7 +343,8 @@ export function YearProvider({ children }: { children: ReactNode }) {
     async function fetchItemData() {
       try {
         const res = await fetch(
-          `/api/score_graph?code=${String(lastItemActivate)}&year=${currentYear}`,
+          `/api/score_graph?code=${String(lastItemActivate)}` +
+            `&year=${currentYear}`,
         );
         const json = await res.json();
         itemGraphCache.current = {

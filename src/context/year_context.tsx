@@ -60,7 +60,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
   // ------------ CARGA DINÂMICA DE JSON POR ANO (BUNDLE INICIAL) --------------
   // ---------------------------------------------------------------------------
 
-  // 2019 DATA
   const [itensData, setItensData] = useState<ItensDataType | null>(null);
   const [inscritosData, setInscritosData] = useState<InscritosType | null>(
     null,

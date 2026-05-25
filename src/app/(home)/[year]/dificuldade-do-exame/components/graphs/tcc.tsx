@@ -3,24 +3,16 @@
 import { useMemo } from "react";
 import Chart from "react-apexcharts";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
-// import InputShell from '../../../../../../components/tsx/input_shell';
 import styles from "./graphs.module.css";
 import { useHomeData } from "../../../../../../context/home_context";
 import Dropdown from "../../../../../../components/tsx/dropdown";
 
 export default function TCCChart() {
-  const { chartLogic, activeTCC } = useHomeData();
+  const { chartProps, activeTCC } = useHomeData();
   const { gridColor, axisColor } = useChartTheme();
 
-  const {
-    chartColor,
-    xMin,
-    xMax,
-    bMedio,
-    proficienciaAtual,
-    resultadoAtual,
-    setPointIndex,
-  } = chartLogic;
+  const { chartColor, xMin, xMax, bMedio, proficienciaAtual, resultadoAtual } =
+    chartProps;
 
   // --- CONFIGURAÇÃO DE DADOS ---
   const series = useMemo(
@@ -233,10 +225,10 @@ export default function TCCChart() {
       axisColor,
       xMin,
       xMax,
+      yBMedio,
       bMedio,
       proficienciaAtual,
       resultadoAtual,
-      setPointIndex,
     ],
   );
 
@@ -254,7 +246,6 @@ export default function TCCChart() {
         <Dropdown />
       </div>
       <div className={styles.tcc_graph_container}>
-        {/* <InputShell logic={logic}/> */}
         <div className={styles.tcc_graph_wrapper}>
           <Chart
             options={options}

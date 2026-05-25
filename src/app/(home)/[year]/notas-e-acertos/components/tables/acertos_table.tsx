@@ -28,10 +28,11 @@ type TableRow = {
 };
 
 export default function AcertosTable() {
-  
-  const { acertosData, acertosNum, setAcertosNum, isDigital } = useNineteenData();
-  const { hasDigital } = useHomeData();
-  const [sorting, setSorting] = useState<SortingState>([{ id: "id", desc: false }]);
+  const { acertosData, acertosNum, setAcertosNum, isDigital } =
+    useNineteenData();
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: "id", desc: false },
+  ]);
 
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
@@ -39,7 +40,7 @@ export default function AcertosTable() {
     const handleResize = () => {
       const isMobile = window.innerWidth < 800;
       setColumnVisibility({
-        n: !isMobile,        // Adicionado N aqui
+        n: !isMobile, // Adicionado N aqui
         skew: !isMobile,
         kurtosis: !isMobile,
       });
@@ -58,64 +59,89 @@ export default function AcertosTable() {
     }
   }, [setAcertosNum, acertosNum]);
 
-  const columns = useMemo(() => [
-    columnHelper.group({
-      id: 'identificacao_grupo',
-      header: 'Score',
-      columns: [
-        columnHelper.accessor("id", {
-          header: "Acertos",
-          cell: (info) => <strong>{info.getValue()}</strong>,
-        }),
-        columnHelper.accessor("n", {
-          id: "n", // ID necessário para a visibilidade
-          header: "n",
-          cell: (info) => {
-            const val = info.getValue();
-            return <span style={{ fontSize: "0.85rem", color: "#888" }}>{val ? val.toLocaleString() : 0}</span>;
-          },
-        }),
-      ]
-    }),
-    columnHelper.group({
-      id: 'score_grupo',
-      header: 'Estatísticas da Nota',
-      columns: [
-        columnHelper.accessor("min", { 
-          header: "Mín", 
-          cell: (info) => info.getValue() !== 0 ? info.getValue().toFixed(1) : "—"
-        }),
-        columnHelper.accessor("mean", {
-          header: "Média",
-          cell: (info) => {
-            const val = info.getValue();
-            return <span style={{ fontWeight: "600" }}>{val !== 0 ? val.toFixed(1) : "—"}</span>;
-          },
-        }),
-        columnHelper.accessor("max", { 
-          header: "Máx", 
-          cell: (info) => info.getValue() !== 0 ? info.getValue().toFixed(1) : "—"
-        }),
-        columnHelper.accessor("sd", {
-          header: "D.P.",
-          cell: (info) => {
-            const val = info.getValue();
-            return <span style={{ color: "#888" }}>{val !== 0 ? val.toFixed(1) : "—"}</span>;
-          },
-        }),
-        columnHelper.accessor("skew", { 
-          id: "skew",
-          header: "Assimetria", 
-          cell: (info) => <span style={{ color: "#888" }}>{info.getValue() !== 0 ? info.getValue().toFixed(1) : "—"}</span>
-        }),
-        columnHelper.accessor("kurtosis", { 
-          id: "kurtosis",
-          header: "Curtose", 
-          cell: (info) => <span style={{ color: "#888" }}>{info.getValue() !== 0 ? info.getValue().toFixed(1) : "—"}</span>
-        }),
-      ]
-    })
-  ], [columnHelper]);
+  const columns = useMemo(
+    () => [
+      columnHelper.group({
+        id: "identificacao_grupo",
+        header: "Score",
+        columns: [
+          columnHelper.accessor("id", {
+            header: "Acertos",
+            cell: (info) => <strong>{info.getValue()}</strong>,
+          }),
+          columnHelper.accessor("n", {
+            id: "n", // ID necessário para a visibilidade
+            header: "n",
+            cell: (info) => {
+              const val = info.getValue();
+              return (
+                <span style={{ fontSize: "0.85rem", color: "#888" }}>
+                  {val ? val.toLocaleString() : 0}
+                </span>
+              );
+            },
+          }),
+        ],
+      }),
+      columnHelper.group({
+        id: "score_grupo",
+        header: "Estatísticas da Nota",
+        columns: [
+          columnHelper.accessor("min", {
+            header: "Mín",
+            cell: (info) =>
+              info.getValue() !== 0 ? info.getValue().toFixed(1) : "—",
+          }),
+          columnHelper.accessor("mean", {
+            header: "Média",
+            cell: (info) => {
+              const val = info.getValue();
+              return (
+                <span style={{ fontWeight: "600" }}>
+                  {val !== 0 ? val.toFixed(1) : "—"}
+                </span>
+              );
+            },
+          }),
+          columnHelper.accessor("max", {
+            header: "Máx",
+            cell: (info) =>
+              info.getValue() !== 0 ? info.getValue().toFixed(1) : "—",
+          }),
+          columnHelper.accessor("sd", {
+            header: "D.P.",
+            cell: (info) => {
+              const val = info.getValue();
+              return (
+                <span style={{ color: "#888" }}>
+                  {val !== 0 ? val.toFixed(1) : "—"}
+                </span>
+              );
+            },
+          }),
+          columnHelper.accessor("skew", {
+            id: "skew",
+            header: "Assimetria",
+            cell: (info) => (
+              <span style={{ color: "#888" }}>
+                {info.getValue() !== 0 ? info.getValue().toFixed(1) : "—"}
+              </span>
+            ),
+          }),
+          columnHelper.accessor("kurtosis", {
+            id: "kurtosis",
+            header: "Curtose",
+            cell: (info) => (
+              <span style={{ color: "#888" }}>
+                {info.getValue() !== 0 ? info.getValue().toFixed(1) : "—"}
+              </span>
+            ),
+          }),
+        ],
+      }),
+    ],
+    [columnHelper],
+  );
 
   const data = useMemo(() => {
     const source = acertosData || {};
@@ -130,7 +156,7 @@ export default function AcertosTable() {
         min: item.min || 0,
         max: item.max || 0,
         skew: item.skew || 0,
-        kurtosis: item.kurtosis || 0
+        kurtosis: item.kurtosis || 0,
       };
     });
   }, [acertosData]);
@@ -149,15 +175,13 @@ export default function AcertosTable() {
     <section className={styles.probtable_container}>
       <div className={styles.probtable_cabecalho}>
         <div>
-          <h3 className={styles.card_title}>Estatísticas por Faixa de Acertos</h3>
+          <h3 className={styles.card_title}>
+            Estatísticas por Faixa de Acertos
+          </h3>
           <p className={styles.card_subtitle_p}>
             <span>Resumo descritivo baseado no volume de acertos&nbsp;</span>
-            {hasDigital && (
-              isDigital ? "(todas as versões digitais)" : "(todas as versões impressas)"
-            )}
           </p>
         </div>
-        {hasDigital && (<Dropdown />)}
       </div>
       <div className={styles.table_scroll_wrapper}>
         <table className={styles.probtable_table}>
@@ -173,13 +197,23 @@ export default function AcertosTable() {
                       key={header.id}
                       colSpan={header.colSpan}
                       className={`${styles.probtable_th} ${isGroup ? styles.probtable_group_th : ""}`}
-                      onClick={canSort ? header.column.getToggleSortingHandler() : undefined}
+                      onClick={
+                        canSort
+                          ? header.column.getToggleSortingHandler()
+                          : undefined
+                      }
                     >
                       <div className={styles.probtable_th_item}>
-                        {!header.isPlaceholder && flexRender(header.column.columnDef.header, header.getContext())}
+                        {!header.isPlaceholder &&
+                          flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                         {canSort && (
-                          <span style={{ fontSize: '10px' }}>
-                            {{ asc: " 🔼", desc: " 🔽" }[header.column.getIsSorted() as string] ?? null}
+                          <span style={{ fontSize: "10px" }}>
+                            {{ asc: " 🔼", desc: " 🔽" }[
+                              header.column.getIsSorted() as string
+                            ] ?? null}
                           </span>
                         )}
                       </div>
@@ -193,19 +227,26 @@ export default function AcertosTable() {
             {table.getRowModel().rows.map((row) => {
               const isActive = acertosNum === row.original.id;
               return (
-                <tr 
-                  key={row.id} 
+                <tr
+                  key={row.id}
                   className={`${styles.probtable_tr} ${isActive ? styles.row_active : ""}`}
                   onClick={() => setAcertosNum(row.original.id)}
-                  style={{ 
-                    backgroundColor: isActive ? "rgba(0, 227, 150, 0.1)" : "transparent",
-                    borderLeft: isActive ? "4px solid #00E396" : "4px solid transparent",
-                    cursor: "pointer"
+                  style={{
+                    backgroundColor: isActive
+                      ? "rgba(0, 227, 150, 0.1)"
+                      : "transparent",
+                    borderLeft: isActive
+                      ? "4px solid #00E396"
+                      : "4px solid transparent",
+                    cursor: "pointer",
                   }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} className={styles.probtable_td}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
                     </td>
                   ))}
                 </tr>
@@ -217,3 +258,4 @@ export default function AcertosTable() {
     </section>
   );
 }
+

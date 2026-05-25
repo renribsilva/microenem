@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from "react";
+
 export type DicDataType = {
   area: string[];
   ano: number[];
@@ -46,18 +48,43 @@ export type TCCCacheType = {
   availableTCC: AvailableTCCType;
 };
 
+export type PointIndexType = {
+  pointIndex: number;
+  setPointIndex: Dispatch<SetStateAction<number | null>>;
+};
+
+interface MetadataResult {
+  fullText: string;
+  corNome: string;
+}
+
+export type GetMetadataType = (
+  codigo: number,
+  lingua?: number | string,
+) => MetadataResult;
+
+export type chartPropsType = {
+  chartColor: string;
+  proficienciaAtual: number;
+  resultadoAtual: number;
+  xMin: number;
+  xMax: number;
+  bMedio: number;
+};
+
 export type HomeContextType = {
+  dicData: DicDataType;
   activeTCC: ActiveTCCType;
   availableTCC: AvailableTCCType;
-  selectedLabel: any;
-  setSelectedLabel: any;
-  activeArea: any;
-  deferredArea: any;
-  selectedRowId: any;
-  setSelectedRowId: any;
-  chartLogic: any;
-  handleTabChange: any;
-  isUpdating: any;
-  dicData: any;
-  hasDigital: any;
+  selectedLabel: SelectionsByAreaType["LC"];
+  setSelectedLabel: Dispatch<SetStateAction<string | null>>;
+  pointIndexStuff: PointIndexType;
+  getMetadata: GetMetadataType;
+  chartProps: chartPropsType;
+  activeArea: SelectionsByAreaType["LC"];
+  deferredArea: SelectionsByAreaType["LC"];
+  selectedRowId: string;
+  setSelectedRowId: Dispatch<SetStateAction<string | null>>;
+  handleTabChange: Dispatch<SetStateAction<string | null>>;
+  isUpdating: boolean;
 };

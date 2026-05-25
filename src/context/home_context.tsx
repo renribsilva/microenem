@@ -15,8 +15,11 @@ import { useParams } from "next/navigation";
 import {
   ActiveTCCType,
   AvailableTCCType,
+  chartPropsType,
   DicDataType,
+  GetMetadataType,
   HomeContextType,
+  PointIndexType,
   SelectionsByAreaType,
   TCCCacheType,
 } from "../types/context_types";
@@ -31,6 +34,11 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   // Área do conhecimento inicial é Linguagens
   const [activeArea, setActiveArea] = useState<string>("LC");
   const deferredArea = useDeferredValue<string | null>(activeArea);
+
+  // Função auxiliar para atualizar estado da área ativa
+  const handleTabChange = (id: string) => {
+    setActiveArea(id);
+  };
 
   // Medida de centralidade inicial é média
   const [selectedRowId, setSelectedRowId] = useState<string>("mean");
@@ -104,6 +112,17 @@ export function HomeProvider({ children }: { children: ReactNode }) {
     return map;
   }, [dicData]);
 
+  // Função auxiliar para extrair metadados do dicionário
+  const getMetadata: GetMetadataType = (codigo, lingua) => {
+    const info = dicMap.get(codigo);
+    if (!info) return { fullText: `Caderno ${codigo}`, corNome: "" };
+    let textoBase = info.cor;
+    if (deferredArea === "LC" && (lingua === 0 || lingua === 1)) {
+      textoBase += lingua === 0 ? " (Inglês)" : " (Espanhol)";
+    }
+    return { fullText: `${textoBase}`, corNome: info.cor };
+  };
+
   // ---------------------------------------------------------------------------
   // ------------------ CARGA DINÂMICA DO TCC POR ANO (API) --------------------
   // ---------------------------------------------------------------------------
@@ -167,26 +186,8 @@ export function HomeProvider({ children }: { children: ReactNode }) {
     loadData();
   }, [deferredArea, selectedLabel, currentYear]);
 
-  // DEVE SUMIR APOS A REMOÇÃO DA CONDICIONAL ISDIGITAL
-  // Mapeia as informações de todos as provas disponíveis
-  const currentInfo = useMemo(() => {
-    if (!activeTCC?.metadata || dicMap.size === 0) {
-      return { fullText: "Carregando...", corNome: "..." };
-    }
-    const { codigo, lingua } = activeTCC.metadata;
-    const info = dicMap.get(codigo);
-
-    if (!info) return { fullText: `Caderno ${codigo}`, corNome: "" };
-
-    let textoBase = info.cor;
-    if (deferredArea === "LC" && (lingua === 0 || lingua === 1)) {
-      textoBase += lingua === 0 ? " (Inglês)" : " (Espanhol)";
-    }
-    return { fullText: `${textoBase} - ${info.tipo}`, corNome: info.cor };
-  }, [activeTCC, deferredArea, dicMap]);
-
   // ---------------------------------------------------------------------------
-  // ------------------------------ CHART POPS ---------------------------------
+  // ------------------------------ POINT INDEX --------------------------------
   // ---------------------------------------------------------------------------
 
   // Estado para armazenar a manipulação do PointIndex
@@ -199,35 +200,29 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   }, [activeTCC]);
 
   // PointIndex definido
-  const pointIndex = userPointIndex !== null ? userPointIndex : initialIndex;
+  const pointIndexStuff: PointIndexType = {
+    pointIndex: userPointIndex !== null ? userPointIndex : initialIndex,
+    setPointIndex: setUserPointIndex,
+  };
+
+  // ---------------------------------------------------------------------------
+  // ------------------------------ CHART PROPS --------------------------------
+  // ---------------------------------------------------------------------------
 
   const { colorMap } = useChartTheme();
 
-  const chartLogic = {
-    pointIndex,
-    setPointIndex: setUserPointIndex,
-    chartColor: colorMap[currentInfo.corNome] || "#3b82f6",
-    currentInfo,
-    proficienciaAtual: activeTCC?.labels_x?.[pointIndex] || 0,
-    resultadoAtual: activeTCC?.data_teorico?.[pointIndex] || 0,
+  const chartProps: chartPropsType = {
+    chartColor: colorMap[activeTCC?.metadata?.cor] || "#3b82f6",
+    proficienciaAtual: activeTCC?.labels_x?.[pointIndexStuff.pointIndex] || 0,
+    resultadoAtual: activeTCC?.data_teorico?.[pointIndexStuff.pointIndex] || 0,
     xMin: Math.floor((activeTCC?.metadata?.min || 0) / 100) * 100,
     xMax: Math.ceil((activeTCC?.metadata?.max || 1000) / 100) * 100,
     bMedio: activeTCC?.metadata?.b_medio_enem || 0,
-    getInfoCaderno: (codigo: number, lingua?: number | string) => {
-      const info = dicMap.get(codigo);
-      if (!info) return { fullText: `Caderno ${codigo}`, corNome: "" };
-      let textoBase = info.cor;
-      if (deferredArea === "LC" && (lingua === 0 || lingua === 1)) {
-        textoBase += lingua === 0 ? " (Inglês)" : " (Espanhol)";
-      }
-      return { fullText: `${textoBase} - ${info.tipo}`, corNome: info.cor };
-    },
   };
 
-  const hasDigital = useMemo(() => {
-    if (!availableTCC || availableTCC.length === 0) return false;
-    return availableTCC.some((item) => item.metadata?.versao_digital === "D");
-  }, [availableTCC]);
+  // ---------------------------------------------------------------------------
+  // -------------------------------- RETURN -----------------------------------
+  // ---------------------------------------------------------------------------
 
   return (
     <HomeContext.Provider
@@ -236,17 +231,16 @@ export function HomeProvider({ children }: { children: ReactNode }) {
         activeTCC,
         selectedLabel,
         setSelectedLabel,
+        pointIndexStuff,
+        getMetadata,
+        chartProps,
         activeArea,
         deferredArea,
         selectedRowId,
         setSelectedRowId,
-        chartLogic,
-        handleTabChange: (id: string) => {
-          setActiveArea(id);
-        },
+        handleTabChange,
         isUpdating: activeArea !== deferredArea || loading,
         dicData,
-        hasDigital,
       }}
     >
       {children}

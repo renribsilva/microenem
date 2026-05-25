@@ -7,7 +7,7 @@ import { useHomeData } from "../../../../../../context/home_context";
 import { useNineteenData } from "../../../../../../context/nineteen_context";
 
 export default function AcertosChart() {
-  const { chartLogic, activeTCC } = useHomeData();
+  const { chartProps, activeTCC } = useHomeData();
   const { gridColor, axisColor, textColor } = useChartTheme();
   const {
     lastItemActivate,
@@ -53,7 +53,7 @@ export default function AcertosChart() {
     };
   }, []);
 
-  const { xMin, xMax } = chartLogic;
+  const { xMin, xMax } = chartProps;
   const transformTheta = (theta: number) => theta * k + d;
 
   // --- CONFIGURAÇÃO DE DADOS ---

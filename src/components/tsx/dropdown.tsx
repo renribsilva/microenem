@@ -5,13 +5,14 @@ import { useHomeData } from "../../context/home_context";
 
 export default function Dropdown() {
   const {
-    chartLogic,
+    chartProps,
     availableTCC,
     activeTCC,
     selectedLabel,
     setSelectedLabel,
+    getMetadata,
   } = useHomeData();
-  const { chartColor, getInfoCaderno } = chartLogic;
+  const { chartColor } = chartProps;
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -58,7 +59,7 @@ export default function Dropdown() {
       {isOpen && (
         <div className={styles.dropdown_list}>
           {availableTCC?.map((ds: any) => {
-            const info = getInfoCaderno(ds.metadata.codigo, ds.metadata.lingua);
+            const info = getMetadata(ds.metadata.codigo, ds.metadata.lingua);
             const isSelected = selectedLabel === ds.label;
             return (
               <div

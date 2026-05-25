@@ -8,15 +8,16 @@ import { useNineteenData } from "../../context/nineteen_context";
 
 export default function ItensButtons() {
   const {
-    chartLogic,
+    chartProps,
     activeTCC,
     availableTCC,
     deferredArea,
     setSelectedLabel,
     selectedLabel,
+    getMetadata,
   } = useHomeData();
 
-  const { chartColor, getInfoCaderno } = chartLogic;
+  const { chartColor } = chartProps;
 
   const { colorMap, panelColor, textColor, gridColor, isDark } =
     useChartTheme();
@@ -124,7 +125,7 @@ export default function ItensButtons() {
             }}
           >
             {availableTCC.map((ds) => {
-              const info = getInfoCaderno(
+              const info = getMetadata(
                 ds.metadata.codigo,
                 ds.metadata.lingua,
               );

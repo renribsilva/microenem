@@ -34,7 +34,7 @@ export function useChartTheme() {
     border: "rgba(139, 92, 241, 0.6)",
   };
 
-  const acertosColor = {
+  const acertosColor: Record<string, string> = {
     bar: "rgba(16, 185, 129, 0.2)",
     fill: "rgba(16, 185, 129, 0.8)",
     line: "#f43f5e",

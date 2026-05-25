@@ -29,20 +29,11 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
   // ---------------- CONTEXTOS NECESSÁRIOS ---------------
   // ------------------------------------------------------
 
-  const { deferredArea, selectedRowId, chartLogic, selectedLabel } =
+  const { deferredArea, selectedRowId, chartProps, selectedLabel } =
     useHomeData();
-  const { currentInfo } = chartLogic;
   const [lastItemActivate, setLastItemActivate] = useState<number>(0);
   const [selectedItems, setSelectedItems] = useState<Record<number, any>>({});
   const [isDigital, setIsDigital] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (!currentInfo || !currentInfo.corNome) return;
-    const versao = currentInfo.corNome.includes("Digital")
-      ? "digital"
-      : "regular";
-    versao === "digital" ? setIsDigital(true) : setIsDigital(false);
-  }, [currentInfo, deferredArea]);
 
   // --------------------------------------------------------------------------------
   // ---------------- CARGA DINÂMICA DE JSON POR ANO (BUNDLE INICIAL) ---------------
@@ -335,7 +326,7 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
     }
 
     fetchAcertosData();
-  }, [deferredArea, currentInfo, isDigital]);
+  }, [deferredArea, isDigital]);
 
   const [EAPData, setEAPData] = useState<any>(null);
   const [sampleEAP, setSampleEAP] = useState<string>(

@@ -9,8 +9,8 @@ import styles from "./graphs.module.css"
 
 export default function ICCChart() {
   
-  const { chartLogic, deferredArea } = useHomeData();
-  const { chartColor, proficienciaAtual, xMin, xMax } = chartLogic;
+  const { chartProps, deferredArea } = useHomeData();
+  const { chartColor, proficienciaAtual, xMin, xMax } = chartProps;
   const { gridColor, axisColor, textColor } = useChartTheme();
   const { 
     abandonadosCodes, 

@@ -1,37 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styles from "./components.module.css";
 import { useHomeData } from "../../context/home_context";
 import { useChartTheme } from "../../hooks/use_chart_theme";
 
 export default function InputShell() {
-  const { chartLogic, activeTCC } = useHomeData();
-
-  const {
-    proficienciaAtual,
-    xMax,
-    xMin,
-    pointIndex,
-    setPointIndex,
-    chartColor,
-  } = chartLogic;
-
+  const { chartProps, activeTCC, pointIndexStuff } = useHomeData();
+  const { proficienciaAtual, xMax, xMin, chartColor } = chartProps;
   const { gridColor } = useChartTheme();
 
-  // 1. Fallback para o tamanho dos dados: se não houver dataset, o range é 0 a 0
+  // 1. Fallback para o tamanho dos dados: se não houver dataset,
+  // o range é 0 a 0
   const maxRange = activeTCC?.data_teorico?.length
     ? activeTCC.data_teorico.length - 1
     : 0;
 
   const [inputValue, setInputValue] = useState(
-    proficienciaAtual?.toFixed(1) || "0.0",
+    proficienciaAtual !== undefined ? proficienciaAtual.toFixed(1) : "0.0",
   );
-
-  useEffect(() => {
-    // Garantia de que proficienciaAtual existe antes de formatar
-    setInputValue(proficienciaAtual !== undefined ? proficienciaAtual : 0);
-  }, [proficienciaAtual]);
 
   const applyValue = () => {
     let numericVal = parseFloat(inputValue as string);
@@ -50,9 +37,9 @@ export default function InputShell() {
         },
         0,
       );
-      setPointIndex(closestIndex);
+      pointIndexStuff.setPointIndex(closestIndex);
     } else {
-      setInputValue(proficienciaAtual);
+      setInputValue(proficienciaAtual.toFixed(1));
     }
   };
 
@@ -64,7 +51,7 @@ export default function InputShell() {
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.replace(",", ".");
+    const value = e.target.value.replace(",", ".");
     if (value.length > 6) return;
     const regex = /^\d{0,4}(\.\d{0,1})?$/;
     if (regex.test(value)) {
@@ -73,7 +60,8 @@ export default function InputShell() {
   };
 
   // 2. Proteção para o cálculo do progresso (evita divisão por zero ou NaN)
-  const progressPercent = maxRange > 0 ? (pointIndex / maxRange) * 100 : 0;
+  const progressPercent =
+    maxRange > 0 ? (pointIndexStuff.pointIndex / maxRange) * 100 : 0;
 
   return (
     <div className={styles.shell_container}>
@@ -98,13 +86,17 @@ export default function InputShell() {
             type="range"
             className={styles.custom_slider}
             style={{
-              background: `linear-gradient(to right, ${chartColor} ${progressPercent}%, ${gridColor} ${progressPercent}%)`,
+              background: `linear-gradient(
+                to right, ${chartColor} ${progressPercent}%, 
+                ${gridColor} ${progressPercent}%)`,
             }}
             min="0"
             // 3. AQUI ESTAVA O ERRO: Agora usamos a variável blindada
             max={maxRange}
-            value={pointIndex || 0}
-            onChange={(e) => setPointIndex(Number(e.target.value))}
+            value={pointIndexStuff.pointIndex || 0}
+            onChange={(e) =>
+              pointIndexStuff.setPointIndex(Number(e.target.value))
+            }
           />
         </div>
       </div>

@@ -26,8 +26,8 @@ type TableRow = {
 
 export default function ProbsInfoTable() {
 
-  const { chartLogic } = useHomeData();
-  const { proficienciaAtual } = chartLogic;
+  const { chartProps } = useHomeData();
+  const { proficienciaAtual } = chartProps;
   const { 
     k, 
     d, 
@@ -112,7 +112,7 @@ export default function ProbsInfoTable() {
   ], [columnHelper]);
 
   const data = useMemo(() => {
-    if (!activeCodes.length || !chartLogic) return [];
+    if (!activeCodes.length || !chartProps) return [];
     const thetaAlvo = (proficienciaAtual - d) / k;
     const closestIndex = probLabels?.reduce((prevIdx, currVal, currIdx) => {
       return Math.abs(currVal - thetaAlvo) < Math.abs(probLabels[prevIdx] - thetaAlvo) ? currIdx : prevIdx;
@@ -134,7 +134,7 @@ export default function ProbsInfoTable() {
         informacao: infoBruta !== null ? infoBruta.toFixed(2) : null,
       };
     });
-  }, [activeCodes, chartLogic, selectedItems, proficienciaAtual, k, d, probData, probLabels]);
+  }, [activeCodes, chartProps, selectedItems, proficienciaAtual, k, d, probData, probLabels]);
   
   const table = useReactTable({
     data,

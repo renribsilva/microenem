@@ -22,9 +22,13 @@ import {
   DificuldadeDoExameType,
   FreqDensityType,
   FxSexoType,
+  InfoDataType,
+  InfoProbDataType,
+  InfoProbLabelType,
   InscritosType,
   ItensDataType,
   OverviewType,
+  ProbCacheType,
   RedacaoType,
   RespostaAoItemType,
   ScoreType,
@@ -262,28 +266,16 @@ export function YearProvider({ children }: { children: ReactNode }) {
     frequencyDifData,
   };
 
-  // ---------------------------------------------------------------------
-  // ---------------- CARGA DINÂMICA DE JSON POR ANO (API) ---------------
-  // ---------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  // ------------------ CARGA DINÂMICA DE JSON POR ANO (API) -------------------
+  // ---------------------------------------------------------------------------
 
-  const [infoData, setInfoData] = useState<Record<string, number[]> | null>(
-    null,
-  );
-  const [probData, setProbData] = useState<Record<string, number[]> | null>(
-    null,
-  );
-  const [probLabels, setProbLabels] = useState<number[] | []>([]);
-  const [infoLabels, setInfoLabels] = useState<number[] | []>([]);
-  const probCache = useRef<{
-    co_p: string;
-    dataset: Record<string, number[]> | null;
-    labels: number[] | null;
-  } | null>(null);
-  const infoCache = useRef<{
-    co_p: string;
-    dataset: Record<string, number[]> | null;
-    labels: number[] | null;
-  } | null>(null);
+  const [infoData, setInfoData] = useState<InfoProbDataType>(null);
+  const [probData, setProbData] = useState<InfoProbDataType>(null);
+  const [probLabels, setProbLabels] = useState<InfoProbLabelType>([]);
+  const [infoLabels, setInfoLabels] = useState<InfoProbLabelType>([]);
+  const probCache = useRef<ProbCacheType | null>(null);
+  const infoCache = useRef<ProbCacheType | null>(null);
 
   useEffect(() => {
     if (!co_p_selected) return;

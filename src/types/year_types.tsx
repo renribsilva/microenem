@@ -207,6 +207,16 @@ export type DificuldadeDoExameType = {
   frequencyDifData: FreqDensityType["regular"] | null;
 };
 
+export type InfoProbDataType = Record<string, number[]> | null;
+
+export type InfoProbLabelType = number[] | [];
+
+export type ProbCacheType = {
+  co_p: string;
+  dataset: InfoProbDataType;
+  labels: InfoProbLabelType;
+};
+
 export type YearContextType = {
   lastItemActivate: number;
   selectedItems: SelectedItemsType | object;
@@ -216,16 +226,17 @@ export type YearContextType = {
   redacaoData: RedacaoType;
   dificuldadeDoExame: DificuldadeDoExameType;
 
+  infoData: InfoProbDataType | null;
+  probData: InfoProbDataType | null;
+  probLabels: InfoProbLabelType | null;
+  infoLabels: InfoProbLabelType | null;
+
   describeRowData: any;
   activeSelectedRow: any;
   abandonadosCodes: any;
   FIXED_PALETTE: any;
   d: any;
   k: any;
-  probData: any;
-  probLabels: any;
-  infoData: any;
-  infoLabels: any;
   setLastItemActivate: any;
   lastItemActivateNum: any;
   setLastItemActivateNum: any;

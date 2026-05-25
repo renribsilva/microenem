@@ -93,11 +93,128 @@ export type ScoreType = Record<
   }
 >;
 
+interface FrequenciaItem {
+  labels: number[];
+  values: (number | null)[];
+}
+
+interface EstatisticasItem {
+  media: number;
+  mediana: number;
+  moda: number;
+  sd: number;
+  q1: number;
+  q3: number;
+  p99: number;
+  skew: number;
+  kurtosis: number;
+  n: number;
+}
+
+interface DensidadeItem {
+  x: (number | null)[];
+  y: (number | null)[];
+}
+
+interface NUNotaItem {
+  nome: string;
+  frequencia: FrequenciaItem;
+  estatisticas: EstatisticasItem;
+  densidade: DensidadeItem;
+}
+
+export type CompetenciaRowType = {
+  NU_NOTA_COMP1: NUNotaItem;
+  NU_NOTA_COMP2: NUNotaItem;
+  NU_NOTA_COMP3: NUNotaItem;
+  NU_NOTA_COMP4: NUNotaItem;
+  NU_NOTA_COMP5: NUNotaItem;
+  NU_NOTA_REDACAO: NUNotaItem;
+};
+
+interface StatusItem {
+  data: number[];
+  n_total: number;
+}
+
+export type StatusType = {
+  labels: string[];
+  datasets: StatusItem[];
+};
+
+export type RespostaAoItemType = {
+  scoreData: ScoreType | null;
+};
+
+export type RedacaoType = {
+  competenciaRowData: CompetenciaRowType;
+  statusData: StatusType;
+};
+
+interface FreqDensityDatasetDataItem {
+  x: number;
+  y: number;
+}
+
+interface FreqDensityDatasetItem {
+  id?: string[];
+  label?: string[];
+  data: FreqDensityDatasetDataItem;
+}
+
+export type FreqDensityType = {
+  digital: object;
+  regular: {
+    datasets: FreqDensityDatasetItem[];
+  };
+};
+
+interface DescribeItem {
+  vars: number;
+  n: number;
+  mean: number;
+  sd: number;
+  median: number;
+  trimmed: number;
+  mad: number;
+  min: number;
+  max: number;
+  range: number;
+  skew: number;
+  kurtosis: number;
+  se: number;
+  mode: number;
+  q1: number;
+  q3: number;
+  p99: number;
+  cor_min?: string;
+  cor_max?: string;
+  cod_min?: number;
+  cod_max?: number;
+}
+
+export type DescribeType = {
+  digital: object;
+  regular: {
+    notas: DescribeItem;
+    acertos: DescribeItem;
+  };
+};
+
+export type DificuldadeDoExameType = {
+  densityDifData: FreqDensityType["regular"] | null;
+  describeDifData: DescribeType["regular"] | null;
+  frequencyDifData: FreqDensityType["regular"] | null;
+};
+
 export type YearContextType = {
   lastItemActivate: number;
   selectedItems: SelectedItemsType | object;
   itensData: ItensDataType | null;
   overviewData: OverviewType;
+  respostaAoItemData: RespostaAoItemType;
+  redacaoData: RedacaoType;
+  dificuldadeDoExame: DificuldadeDoExameType;
   inscritosData: InscritosType | null;
   abstencaoDia1: AbstencaoType | null;
   abstencaoDia2: AbstencaoType | null;
@@ -105,6 +222,11 @@ export type YearContextType = {
   sexoData: FxSexoType | null;
   fxEtariaData: FxSexoType | null;
   scoreData: ScoreType | null;
+  competenciaRowData: CompetenciaRowType | null;
+  statusData: StatusType | null;
+  densityDifData: FreqDensityType["regular"] | null;
+  describeDifData: DescribeType["regular"] | null;
+  frequencyDifData: FreqDensityType["regular"] | null;
   describeRowData: any;
   activeSelectedRow: any;
   abandonadosCodes: any;
@@ -126,11 +248,6 @@ export type YearContextType = {
   acertosNum: any;
   setAcertosNum: any;
   itemGraphData: any;
-  densityDifData: any;
-  describeDifData: any;
-  frequencyDifData: any;
-  competenciaRowData: any;
-  statusData: any;
   EAPData: any;
   sampleEAP: any;
   setSampleEAP: any;

@@ -16,13 +16,20 @@ import { usePathname } from "next/navigation";
 import constantes from "../app/(home)/JSON/constantes.json";
 import {
   AbstencaoType,
+  CompetenciaRowType,
   CorRacaDataType,
+  DescribeType,
+  DificuldadeDoExameType,
+  FreqDensityType,
   FxSexoType,
   InscritosType,
   ItensDataType,
   OverviewType,
+  RedacaoType,
+  RespostaAoItemType,
   ScoreType,
   SelectedItemsType,
+  StatusType,
   YearContextType,
 } from "../types/year_types";
 
@@ -45,6 +52,8 @@ export function YearProvider({ children }: { children: ReactNode }) {
     SelectedItemsType | object
   >({});
 
+  const [loading, setLoading] = useState(true);
+
   // ---------------------------------------------------------------------------
   // ------------ CARGA DINÂMICA DE JSON POR ANO (BUNDLE INICIAL) --------------
   // ---------------------------------------------------------------------------
@@ -66,9 +75,9 @@ export function YearProvider({ children }: { children: ReactNode }) {
   const [sexoData, setSexo_data] = useState<FxSexoType | null>();
   const [fxEtariaData, setFx_etaria_data] = useState<FxSexoType | null>(null);
   const [scoreData, setScoreData] = useState<ScoreType | null>(null);
-  const [competenciaRowData, setCompetenciaRowData] = useState<any>(null);
-  const [statusData, setStatusData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [competenciaRowData, setCompetenciaRowData] =
+    useState<CompetenciaRowType>(null);
+  const [statusData, setStatusData] = useState<StatusType | null>(null);
 
   useEffect(() => {
     async function loadYearlyData() {
@@ -145,15 +154,21 @@ export function YearProvider({ children }: { children: ReactNode }) {
   // ------- CARGA DINÂMICA DE JSON POR ANO E POR ÁREA (BUNDLE INICIAL) --------
   // ---------------------------------------------------------------------------
 
-  const [densityDifData, setDensityDifData] = useState<any>(null);
-  const [describeDifData, setDescribeDifData] = useState<any>(null);
-  const [frequencyDifData, setFrequencyDifData] = useState<any>(null);
+  const [densityDifData, setDensityDifData] = useState<
+    FreqDensityType["regular"] | null
+  >(null);
+  const [describeDifData, setDescribeDifData] = useState<
+    DescribeType["regular"] | null
+  >(null);
+  const [frequencyDifData, setFrequencyDifData] = useState<
+    FreqDensityType["regular"] | null
+  >(null);
 
   useEffect(() => {
     const loadData = async () => {
-      let density;
-      let describe;
-      let frequency;
+      let density: { default: { regular: FreqDensityType["regular"] } };
+      let describe: { default: { regular: DescribeType["regular"] } };
+      let frequency: { default: { regular: FreqDensityType["regular"] } };
       switch (deferredArea) {
         case "CH":
           density = await import(
@@ -229,6 +244,21 @@ export function YearProvider({ children }: { children: ReactNode }) {
     corRacaData,
     sexoData,
     fxEtariaData,
+  };
+
+  const respostaAoItemData: RespostaAoItemType = {
+    scoreData,
+  };
+
+  const redacaoData: RedacaoType = {
+    competenciaRowData,
+    statusData,
+  };
+
+  const dificuldadeDoExame: DificuldadeDoExameType = {
+    densityDifData,
+    describeDifData,
+    frequencyDifData,
   };
 
   // ---------------------------------------------------------------------
@@ -779,7 +809,12 @@ export function YearProvider({ children }: { children: ReactNode }) {
   return (
     <YearContext.Provider
       value={{
+        lastItemActivate,
+        selectedItems,
         overviewData,
+        respostaAoItemData,
+        redacaoData,
+        dificuldadeDoExame,
         inscritosData,
         abstencaoDia1,
         abstencaoDia2,
@@ -796,8 +831,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
         probLabels,
         infoData,
         infoLabels,
-        selectedItems,
-        lastItemActivate,
         setLastItemActivate,
         lastItemActivateNum,
         setLastItemActivateNum,

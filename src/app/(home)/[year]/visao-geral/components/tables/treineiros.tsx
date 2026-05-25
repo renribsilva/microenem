@@ -10,20 +10,15 @@ import {
 } from "@tanstack/react-table";
 import styles from "./tables.module.css";
 import { useYearData } from "../../../../../../context/year_context";
-
-export interface InscritoData {
-  grupo: string;
-  total: number;
-  freq: number;
-  subRows?: InscritoData[];
-}
+import { InscritosType } from "../../../../../../types/year_types";
 
 export default function Treineiros() {
-  const { inscritosData } = useYearData();
-  const data = inscritosData as InscritoData[];
+  const { overviewData } = useYearData();
+
+  const data = overviewData.inscritosData;
 
   // 2. Tipagem das colunas
-  const columns = useMemo<ColumnDef<InscritoData>[]>(
+  const columns = useMemo<ColumnDef<InscritosType>[]>(
     () => [
       {
         accessorKey: "grupo",

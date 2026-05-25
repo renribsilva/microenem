@@ -12,41 +12,55 @@ import {
   useEffect,
 } from "react";
 import { useHomeData } from "./home_context";
-import { useParams, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import constantes from "../app/(home)/JSON/constantes.json";
+import {
+  AbstencaoType,
+  CorRacaDataType,
+  FxSexoType,
+  InscritosType,
+  ItensDataType,
+  SelectedItemsType,
+  YearContextType,
+} from "../types/year_types";
 
-const YearContext = createContext(null);
+const YearContext = createContext<YearContextType>(null);
 
 export function YearProvider({ children }: { children: ReactNode }) {
-  // ---------------------------------------------------------------
-  // ---------------- PARÂMETROS PARA CARGA DINÂMICA ---------------
-  // ---------------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  // ---------------------- CONTEXTOS NECESSÁRIOS ------------------------------
+  // ---------------------------------------------------------------------------
 
-  const params = useParams();
-  const currentYear = params.year;
-
-  // ------------------------------------------------------
-  // ---------------- CONTEXTOS NECESSÁRIOS ---------------
-  // ------------------------------------------------------
-
-  const { deferredArea, selectedRowId, chartProps, selectedLabel } =
+  const { currentYear, deferredArea, selectedRowId, selectedLabel } =
     useHomeData();
-  const [lastItemActivate, setLastItemActivate] = useState<number>(0);
-  const [selectedItems, setSelectedItems] = useState<Record<number, any>>({});
-  const [isDigital, setIsDigital] = useState<boolean>(false);
 
-  // --------------------------------------------------------------------------------
-  // ---------------- CARGA DINÂMICA DE JSON POR ANO (BUNDLE INICIAL) ---------------
-  // --------------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  // ------------------------ DEFINIÇÕES INICIAIS ------------------------------
+  // ---------------------------------------------------------------------------
+
+  const [lastItemActivate, setLastItemActivate] = useState<number>(0);
+  const [selectedItems, setSelectedItems] = useState<
+    SelectedItemsType | object
+  >({});
+
+  // ---------------------------------------------------------------------------
+  // ------------ CARGA DINÂMICA DE JSON POR ANO (BUNDLE INICIAL) --------------
+  // ---------------------------------------------------------------------------
 
   // 2019 DATA
-  const [itensData, setItensData] = useState<any>(null);
-  const [Inscritos, setInscritos] = useState<any>(null);
-  const [Abstencao_dia1, setAbstencao_dia1] = useState<any>(null);
-  const [Abstencao_dia2, setAbstencao_dia2] = useState<any>(null);
-  const [cor_raca_data, setCor_raca_data] = useState<any>(null);
-  const [sexo_data, setSexo_data] = useState<any>(null);
-  const [fx_etaria_data, setFx_etaria_data] = useState<any>(null);
+  const [itensData, setItensData] = useState<ItensDataType | null>(null);
+  const [Inscritos, setInscritos] = useState<InscritosType | null>(null);
+  const [Abstencao_dia1, setAbstencao_dia1] = useState<AbstencaoType | null>(
+    null,
+  );
+  const [Abstencao_dia2, setAbstencao_dia2] = useState<AbstencaoType | null>(
+    null,
+  );
+  const [cor_raca_data, setCor_raca_data] = useState<CorRacaDataType | null>(
+    null,
+  );
+  const [sexo_data, setSexo_data] = useState<FxSexoType | null>();
+  const [fx_etaria_data, setFx_etaria_data] = useState<FxSexoType | null>(null);
   const [scoreData, setScoreData] = useState<any>(null);
   const [competenciaRowData, setCompetenciaRowData] = useState<any>(null);
   const [statusData, setStatusData] = useState<any>(null);
@@ -181,18 +195,12 @@ export function YearProvider({ children }: { children: ReactNode }) {
             `../app/(home)/JSON/${currentYear}/dificuldade-do-exame/LC/frequency_acertos.json`
           );
       }
-      setDensityDifData(
-        isDigital ? density.default.digital : density.default.regular,
-      );
-      setDescribeDifData(
-        isDigital ? describe.default.digital : describe.default.regular,
-      );
-      setFrequencyDifData(
-        isDigital ? frequency.default.digital : frequency.default.regular,
-      );
+      setDensityDifData(density.default.regular);
+      setDescribeDifData(describe.default.regular);
+      setFrequencyDifData(frequency.default.regular);
     };
     loadData();
-  }, [deferredArea, isDigital]);
+  }, [deferredArea]);
 
   // ---------------------------------------------------------------------
   // ---------------- CARGA DINÂMICA DE JSON POR ANO (API) ---------------
@@ -293,7 +301,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
   } | null>(null);
 
   useEffect(() => {
-    const tipo = isDigital ? "digital" : "regular";
+    const tipo = "regular";
 
     if (
       acertosCache.current?.area === deferredArea &&
@@ -313,12 +321,10 @@ export function YearProvider({ children }: { children: ReactNode }) {
         if (json.dataset) {
           acertosCache.current = {
             area: String(targetArea),
-            dataset: isDigital ? json.dataset.digital : json.dataset.regular,
+            dataset: json.dataset.regular,
             versao: tipo,
           };
-          setAcertosData(
-            isDigital ? json.dataset.digital : json.dataset.regular,
-          );
+          setAcertosData(json.dataset.regular);
         }
       } catch (err) {
         console.error("Erro ao carregar item_score:", err);
@@ -326,7 +332,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
     }
 
     fetchAcertosData();
-  }, [deferredArea, isDigital]);
+  }, [deferredArea]);
 
   const [EAPData, setEAPData] = useState<any>(null);
   const [sampleEAP, setSampleEAP] = useState<string>(
@@ -792,7 +798,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
         itensData,
         getAreaMap,
         currentYear,
-        isDigital,
       }}
     >
       {children}
@@ -803,9 +808,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
 export const useYearData = () => {
   const context = useContext(YearContext);
   if (!context) {
-    throw new Error(
-      "useYearData deve ser usado dentro de um YearProvider",
-    );
+    throw new Error("useYearData deve ser usado dentro de um YearProvider");
   }
   return context;
 };

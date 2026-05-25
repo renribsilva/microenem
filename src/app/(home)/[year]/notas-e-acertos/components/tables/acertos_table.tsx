@@ -28,8 +28,7 @@ type TableRow = {
 };
 
 export default function AcertosTable() {
-  const { acertosData, acertosNum, setAcertosNum, isDigital } =
-    useYearData();
+  const { acertosData, acertosNum, setAcertosNum } = useYearData();
   const [sorting, setSorting] = useState<SortingState>([
     { id: "id", desc: false },
   ]);
@@ -258,4 +257,3 @@ export default function AcertosTable() {
     </section>
   );
 }
-

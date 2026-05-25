@@ -22,7 +22,7 @@ import {
   PointIndexType,
   SelectionsByAreaType,
   TCCCacheType,
-} from "../types/context_types";
+} from "../types/home_types";
 
 const HomeContext = createContext<HomeContextType | null>(null);
 
@@ -229,6 +229,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   return (
     <HomeContext.Provider
       value={{
+        currentYear,
         availableTCC,
         activeTCC,
         selectedLabel,

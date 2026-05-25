@@ -23,14 +23,14 @@ export type ItensDataType = {
   TP_VERSAO_DIGITAL?: (number | null)[];
 };
 
-export type inscritosItem = {
+export type InscritosItem = {
   grupo: string;
   total: number;
   freq: number;
-  subRows?: inscritosItem[];
+  subRows?: InscritosItem[];
 };
 
-export type inscritosType = inscritosItem[];
+export type InscritosType = InscritosItem[];
 
 interface AbstencaoItem {
   grupo: string;
@@ -127,5 +127,4 @@ export type YearContextType = {
   candidateData: any;
   getAreaMap: any;
   currentYear: any;
-  isDigital: any;
 };

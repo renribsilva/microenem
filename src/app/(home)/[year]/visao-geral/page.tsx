@@ -1,30 +1,37 @@
-'use client'
+"use client";
 
-import { Suspense } from "react"
-import dynamic from "next/dynamic"
-import styles from "./visao-geral.module.css"
-import Card from "../../../../components/tsx/card"
-import Group from "../../../../components/svg/group"
-import PersonCancel from "../../../../components/svg/person_cancel"
-import { useYearData } from "../../../../context/year_context"
-import Treineiros from "./components/tables/treineiros"
-import PersonRemove from "../../../../components/svg/person_remove"
+import { Suspense } from "react";
+import dynamic from "next/dynamic";
+import styles from "./visao-geral.module.css";
+import Card from "../../../../components/tsx/card";
+import Group from "../../../../components/svg/group";
+import PersonCancel from "../../../../components/svg/person_cancel";
+import { useYearData } from "../../../../context/year_context";
+import Treineiros from "./components/tables/treineiros";
+import PersonRemove from "../../../../components/svg/person_remove";
 
 // Imports dinâmicos
-const FX_ETARIA = dynamic(() => import("./components/graphs/fx_etaria"), { ssr: false })
-const SEXO = dynamic(() => import("./components/graphs/sexo"), { ssr: false })
-const COR_RACA = dynamic(() => import("./components/graphs/cor_raca"), { ssr: false })
+const FX_ETARIA = dynamic(() => import("./components/graphs/fx_etaria"), {
+  ssr: false,
+});
+const SEXO = dynamic(() => import("./components/graphs/sexo"), { ssr: false });
+const COR_RACA = dynamic(() => import("./components/graphs/cor_raca"), {
+  ssr: false,
+});
 
 export default function Visao() {
-
-  const { Inscritos, Abstencao_dia1, Abstencao_dia2 } = useYearData();
-  const total_inscritos = Inscritos[0].total.toLocaleString('pt-BR');
-  const abstencao_dia1 = Abstencao_dia1[0].abst.toLocaleString('pt-BR', {
-    minimumFractionDigits: 1, maximumFractionDigits: 1
-  }) + '%';
-  const abstencao_dia2 = Abstencao_dia2[0].abst.toLocaleString('pt-BR', {
-    minimumFractionDigits: 1, maximumFractionDigits: 1
-  }) + '%';
+  const { inscritosData, abstencaoDia1, abstencaoDia2 } = useYearData();
+  const total_inscritos = inscritosData[0].total.toLocaleString("pt-BR");
+  const abstencao_dia1 =
+    abstencaoDia1[0].abst.toLocaleString("pt-BR", {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
+    }) + "%";
+  const abstencao_dia2 =
+    abstencaoDia2[0].abst.toLocaleString("pt-BR", {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
+    }) + "%";
 
   return (
     <section className={styles.main}>
@@ -62,14 +69,20 @@ export default function Visao() {
         </div>
 
         <div className={styles.block1_second}>
-          <div className={styles.block1_second_left} style={{ minWidth: 0, minHeight: 0 }}>
+          <div
+            className={styles.block1_second_left}
+            style={{ minWidth: 0, minHeight: 0 }}
+          >
             <Card className={styles.card_fxetaria}>
               <Suspense fallback={<p>Carregando gráfico...</p>}>
                 <FX_ETARIA />
               </Suspense>
             </Card>
           </div>
-          <div className={styles.block1_second_right} style={{ minWidth: 0, minHeight: 0 }}>
+          <div
+            className={styles.block1_second_right}
+            style={{ minWidth: 0, minHeight: 0 }}
+          >
             <Card className={styles.card_sexo}>
               <Suspense fallback={<p>Carregando gráfico...</p>}>
                 <SEXO />
@@ -80,7 +93,10 @@ export default function Visao() {
       </div>
 
       <div className={styles.block2} style={{ minWidth: 0, minHeight: 0 }}>
-        <div className={styles.block_third} style={{ minWidth: 0, minHeight: 0 }}>
+        <div
+          className={styles.block_third}
+          style={{ minWidth: 0, minHeight: 0 }}
+        >
           <Card className={styles.card_racacor}>
             <Suspense fallback={<p>Carregando gráfico...</p>}>
               <COR_RACA />
@@ -89,5 +105,5 @@ export default function Visao() {
         </div>
       </div>
     </section>
-  )
+  );
 }

@@ -1,80 +1,85 @@
-'use client'
+"use client";
 
-import { useMemo } from 'react'
+import { useMemo } from "react";
 import {
   useReactTable,
   getCoreRowModel,
   getExpandedRowModel,
   flexRender,
-  ColumnDef
-} from '@tanstack/react-table'
-import styles from "./tables.module.css"
-import { useYearData } from '../../../../../../context/year_context'
+  ColumnDef,
+} from "@tanstack/react-table";
+import styles from "./tables.module.css";
+import { useYearData } from "../../../../../../context/year_context";
 
 export interface InscritoData {
-  grupo: string
-  total: number
-  freq: number
-  subRows?: InscritoData[]
+  grupo: string;
+  total: number;
+  freq: number;
+  subRows?: InscritoData[];
 }
 
 export default function Treineiros() {
-
-  const { Inscritos } =useYearData();
-  const data = Inscritos as InscritoData[]
+  const { inscritosData } = useYearData();
+  const data = inscritosData as InscritoData[];
 
   // 2. Tipagem das colunas
-  const columns = useMemo<ColumnDef<InscritoData>[]>(() => [
-    {
-      accessorKey: 'grupo',
-      header: '',
-      cell: ({ row, getValue }) => (
-        <div style={{ paddingLeft: `${row.depth * 2}rem` }}>
-          {getValue() as string}
-        </div>
-      ),
-    },
-    {
-      accessorKey: 'total',
-      header: 'Total',
-      cell: ({ getValue }) => (getValue() as number)?.toLocaleString('pt-BR'),
-    },
-    {
-      accessorKey: 'freq',
-      header: '(%)',
-      cell: ({ getValue }) => `${getValue()}%`,
-    },
-  ], [])
+  const columns = useMemo<ColumnDef<InscritoData>[]>(
+    () => [
+      {
+        accessorKey: "grupo",
+        header: "",
+        cell: ({ row, getValue }) => (
+          <div style={{ paddingLeft: `${row.depth * 2}rem` }}>
+            {getValue() as string}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "total",
+        header: "Total",
+        cell: ({ getValue }) => (getValue() as number)?.toLocaleString("pt-BR"),
+      },
+      {
+        accessorKey: "freq",
+        header: "(%)",
+        cell: ({ getValue }) => `${getValue()}%`,
+      },
+    ],
+    [],
+  );
 
   const table = useReactTable({
     data,
     columns,
     initialState: {
-      expanded: true, 
+      expanded: true,
     },
-    getSubRows: row => row.subRows,
+    getSubRows: (row) => row.subRows,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
-  })
+  });
 
   return (
     <div className={styles.table_container}>
       <table className={styles.table_body}>
         <thead>
-          {table.getHeaderGroups().map(headerGroup => (
+          {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
-              {headerGroup.headers.map(header => (
+              {headerGroup.headers.map((header) => (
                 <th key={header.id}>
-                  {flexRender(header.column.columnDef.header, header.getContext())}
+                  {flexRender(
+                    header.column.columnDef.header,
+                    header.getContext(),
+                  )}
                 </th>
               ))}
             </tr>
           ))}
         </thead>
         <tbody>
-          {table.getRowModel().rows.map(row => (
+          {table.getRowModel().rows.map((row) => (
             <tr key={row.id}>
-              {row.getVisibleCells().map(cell => (
+              {row.getVisibleCells().map((cell) => (
                 <td key={cell.id}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
@@ -84,5 +89,5 @@ export default function Treineiros() {
         </tbody>
       </table>
     </div>
-  )
+  );
 }

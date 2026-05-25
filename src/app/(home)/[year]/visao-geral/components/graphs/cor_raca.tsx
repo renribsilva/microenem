@@ -9,10 +9,10 @@ import { useYearData } from '../../../../../../context/year_context';
 export default function COR_RACA() {
 
   const { textColor, panelColor } = useChartTheme();  
-  const { cor_raca_data } = useYearData();
+  const { corRacaData } = useYearData();
 
   const series = [{
-    data: cor_raca_data.datasets[0].tree
+    data: corRacaData.datasets[0].tree
       .map((item: any) => ({
         x: item.label,
         y: item.value,

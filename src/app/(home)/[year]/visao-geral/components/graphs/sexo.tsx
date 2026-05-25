@@ -9,13 +9,13 @@ import { useYearData } from '../../../../../../context/year_context';
 export default function SEXO() {
 
   const { textColor, panelColor } = useChartTheme();
-  const { sexo_data } = useYearData();
+  const { sexoData } = useYearData();
 
   const doughnutColors = ["rgba(60, 245, 188, 0.7)", "rgba(245, 99, 59, 0.7)"];
 
-  const series = useMemo(() => sexo_data.datasets[0].data, []);
-  const absValues = useMemo(() => sexo_data.datasets[0].abs_values, []);
-  const labels = useMemo(() => sexo_data.labels, []);
+  const series = useMemo(() => sexoData.datasets[0].data, []);
+  const absValues = useMemo(() => sexoData.datasets[0].abs_values, []);
+  const labels = useMemo(() => sexoData.labels, []);
 
   const options: ApexCharts.ApexOptions = useMemo(() => ({
     chart: {

@@ -9,20 +9,20 @@ import { useYearData } from '../../../../../../context/year_context';
 export default function FX_ETARIA() {
 
   const { textColor, gridColor } = useChartTheme();
-  const { fx_etaria_data } = useYearData();
+  const { fxEtariaData } = useYearData();
 
   const barColor = "rgba(255, 208, 53, 1)";
 
-  const series = useMemo(() => fx_etaria_data.datasets.map(dataset => ({
+  const series = useMemo(() => fxEtariaData.datasets.map(dataset => ({
     name: 'Porcentagem',
     data: dataset.data.map((val, i) => ({
-      x: fx_etaria_data.labels[i],
+      x: fxEtariaData.labels[i],
       y: val,
       abs: dataset.abs_values[i]
     }))
   })), []);
 
-  const allValues = fx_etaria_data.datasets.flatMap(d => d.data);
+  const allValues = fxEtariaData.datasets.flatMap(d => d.data);
   const maxValue = Math.max(...allValues);
   const chartMax = Math.ceil((maxValue + 10) / 10) * 10;
 

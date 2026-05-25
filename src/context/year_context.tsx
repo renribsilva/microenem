@@ -20,6 +20,7 @@ import {
   FxSexoType,
   InscritosType,
   ItensDataType,
+  OverviewType,
   SelectedItemsType,
   YearContextType,
 } from "../types/year_types";
@@ -49,33 +50,26 @@ export function YearProvider({ children }: { children: ReactNode }) {
 
   // 2019 DATA
   const [itensData, setItensData] = useState<ItensDataType | null>(null);
-  const [Inscritos, setInscritos] = useState<InscritosType | null>(null);
-  const [Abstencao_dia1, setAbstencao_dia1] = useState<AbstencaoType | null>(
+  const [inscritosData, setInscritosData] = useState<InscritosType | null>(
     null,
   );
-  const [Abstencao_dia2, setAbstencao_dia2] = useState<AbstencaoType | null>(
+  const [abstencaoDia1, setabstencaoDia1] = useState<AbstencaoType | null>(
     null,
   );
-  const [cor_raca_data, setCor_raca_data] = useState<CorRacaDataType | null>(
+  const [abstencaoDia2, setabstencaoDia2] = useState<AbstencaoType | null>(
     null,
   );
-  const [sexo_data, setSexo_data] = useState<FxSexoType | null>();
-  const [fx_etaria_data, setFx_etaria_data] = useState<FxSexoType | null>(null);
+  const [corRacaData, setCor_raca_data] = useState<CorRacaDataType | null>(
+    null,
+  );
+  const [sexoData, setSexo_data] = useState<FxSexoType | null>();
+  const [fxEtariaData, setFx_etaria_data] = useState<FxSexoType | null>(null);
   const [scoreData, setScoreData] = useState<any>(null);
   const [competenciaRowData, setCompetenciaRowData] = useState<any>(null);
   const [statusData, setStatusData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const yearNum = Array.isArray(currentYear)
-      ? Number(currentYear[0])
-      : Number(currentYear);
-
-    // Agora a comparação funciona perfeitamente
-    if (isNaN(yearNum)) {
-      return;
-    }
-
     async function loadYearlyData() {
       setLoading(true);
       try {
@@ -93,37 +87,44 @@ export function YearProvider({ children }: { children: ReactNode }) {
         ] = await Promise.all([
           import(`../app/(home)/JSON/${currentYear}/itens_${currentYear}.json`),
           import(
-            `../app/(home)/JSON/${currentYear}/visao-geral/overview/inscritos.json`
+            `../app/(home)/JSON/${currentYear}/` +
+              `visao-geral/overview/inscritos.json`
           ),
           import(
-            `../app/(home)/JSON/${currentYear}/visao-geral/overview/presenca_dia1.json`
+            `../app/(home)/JSON/${currentYear}/` +
+              `visao-geral/overview/presenca_dia1.json`
           ),
           import(
-            `../app/(home)/JSON/${currentYear}/visao-geral/overview/presenca_dia2.json`
+            `../app/(home)/JSON/${currentYear}/` +
+              `visao-geral/overview/presenca_dia2.json`
           ),
           import(
-            `../app/(home)/JSON/${currentYear}/visao-geral/socials/cor_raca.json`
+            `../app/(home)/JSON/${currentYear}/` +
+              `visao-geral/socials/cor_raca.json`
           ),
           import(
             `../app/(home)/JSON/${currentYear}/visao-geral/socials/sexo.json`
           ),
           import(
-            `../app/(home)/JSON/${currentYear}/visao-geral/socials/faixa_etaria.json`
+            `../app/(home)/JSON/${currentYear}/` +
+              `visao-geral/socials/faixa_etaria.json`
           ),
           import(
-            `../app/(home)/JSON/${currentYear}/resposta-ao-item/score_table.json`
+            `../app/(home)/JSON/${currentYear}/` +
+              `resposta-ao-item/score_table.json`
           ),
           import(
-            `../app/(home)/JSON/${currentYear}/redacao/estatisticas_redacao_completa.json`
+            `../app/(home)/JSON/${currentYear}/` +
+              `redacao/estatisticas_redacao_completa.json`
           ),
           import(
             `../app/(home)/JSON/${currentYear}/redacao/status_redacao.json`
           ),
         ]);
         setItensData(itens.default);
-        setInscritos(inscritos.default);
-        setAbstencao_dia1(abstencao1.default);
-        setAbstencao_dia2(abstencao2.default);
+        setInscritosData(inscritos.default);
+        setabstencaoDia1(abstencao1.default);
+        setabstencaoDia2(abstencao2.default);
         setCor_raca_data(cor_raca.default);
         setSexo_data(sexo.default);
         setFx_etaria_data(fx_etaria.default);
@@ -139,7 +140,14 @@ export function YearProvider({ children }: { children: ReactNode }) {
     loadYearlyData();
   }, [currentYear]);
 
-  // console.log(Inscritos)
+  const overviewData: OverviewType = {
+    inscritosData,
+    abstencaoDia1,
+    abstencaoDia2,
+    corRacaData,
+    sexoData,
+    fxEtariaData,
+  };
 
   const [densityDifData, setDensityDifData] = useState<any>(null);
   const [describeDifData, setDescribeDifData] = useState<any>(null);
@@ -750,12 +758,13 @@ export function YearProvider({ children }: { children: ReactNode }) {
   return (
     <YearContext.Provider
       value={{
-        Inscritos,
-        Abstencao_dia1,
-        Abstencao_dia2,
-        cor_raca_data,
-        sexo_data,
-        fx_etaria_data,
+        overviewData,
+        inscritosData,
+        abstencaoDia1,
+        abstencaoDia2,
+        corRacaData,
+        sexoData,
+        fxEtariaData,
         describeRowData,
         activeSelectedRow,
         abandonadosCodes,

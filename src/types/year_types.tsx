@@ -69,7 +69,7 @@ export type FxSexoType = {
 };
 
 export type OverviewType = {
-  inscritos: inscritosType | null;
+  inscritosData: InscritosType | null;
   abstencaoDia1: AbstencaoType | null;
   abstencaoDia2: AbstencaoType | null;
   corRacaData: CorRacaDataType | null;
@@ -82,7 +82,7 @@ export type YearContextType = {
   selectedItems: SelectedItemsType | object;
   itensData: ItensDataType | null;
   overviewData: OverviewType;
-  inscritos: inscritosType | null;
+  inscritosData: InscritosType | null;
   abstencaoDia1: AbstencaoType | null;
   abstencaoDia2: AbstencaoType | null;
   corRacaData: CorRacaDataType | null;

@@ -12,7 +12,7 @@ import {
 } from "@tanstack/react-table";
 
 import styles from "./tables.module.css";
-import { useNineteenData } from "../../../../../../context/nineteen_context";
+import { useYearData } from "../../../../../../context/year_context";
 import { useHomeData } from "../../../../../../context/home_context";
 import Dropdown from "../../../../../../components/tsx/dropdown";
 
@@ -29,7 +29,7 @@ type TableRow = {
 
 export default function AcertosTable() {
   const { acertosData, acertosNum, setAcertosNum, isDigital } =
-    useNineteenData();
+    useYearData();
   const [sorting, setSorting] = useState<SortingState>([
     { id: "id", desc: false },
   ]);

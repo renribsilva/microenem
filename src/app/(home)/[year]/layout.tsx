@@ -1,10 +1,10 @@
 'use client'
 
 import { usePathname } from "next/navigation"
-import { NineteenProvider } from "../../../context/nineteen_context"
+import { YearProvider } from "../../../context/year_context"
 import styles from "./layout.module.css"
 
-export default function NineteenLayout({
+export default function YearLayout({
   children,
 }: {
   children: React.ReactNode
@@ -21,7 +21,7 @@ export default function NineteenLayout({
     path.endsWith("probabilidade-e-info") 
 
   return (
-    <NineteenProvider>
+    <YearProvider>
       <main>
         {children}
       </main>
@@ -30,6 +30,6 @@ export default function NineteenLayout({
           Aviso: a análise dos microdados do ENEM apresentada na seção "{secaoFormatada}" está circunscrita aos dados dos que participaram de ao menos um dia da aplicação regular do exame (incluindo treineiros) – não inclui reaplicações, versões digitais ou adaptadas do exame. O motivo dessa exclusão reside no fato de que alguns microdados apresentam essas informações e outros não, além de itens exclusivos que modificam a dificuldade média do exame; de modo que excluí-los estabelece uma normalização para possíveis comparações.
         </div>
       )}
-    </NineteenProvider>
+    </YearProvider>
   )
 }

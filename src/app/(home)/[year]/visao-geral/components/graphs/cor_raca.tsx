@@ -4,12 +4,12 @@ import Chart from 'react-apexcharts';
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import customTooltip from '../../../../../../components/tsx/customTooltip';
 import { useMemo } from 'react';
-import { useNineteenData } from '../../../../../../context/nineteen_context';
+import { useYearData } from '../../../../../../context/year_context';
 
 export default function COR_RACA() {
 
   const { textColor, panelColor } = useChartTheme();  
-  const { cor_raca_data } = useNineteenData();
+  const { cor_raca_data } = useYearData();
 
   const series = [{
     data: cor_raca_data.datasets[0].tree

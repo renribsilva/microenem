@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
-import { useNineteenData } from "../../../../../../context/nineteen_context";
+import { useYearData } from "../../../../../../context/year_context";
 import { useHomeData } from "../../../../../../context/home_context";
 import Chart from "react-apexcharts";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
@@ -18,7 +18,7 @@ export default function ProdProbChart() {
     activeCodes,
     intervalData,
     currentYear,
-  } = useNineteenData();
+  } = useYearData();
   const { deferredArea, selectedLabel } = useHomeData();
   const [isUpdating, setIsUpdating] = useState(false);
   const [showRenderWarning, setShowRenderWarning] = useState(false);

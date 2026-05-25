@@ -9,7 +9,7 @@ import {
   ColumnDef
 } from '@tanstack/react-table'
 import styles from "./tables.module.css"
-import { useNineteenData } from '../../../../../../context/nineteen_context'
+import { useYearData } from '../../../../../../context/year_context'
 
 export interface InscritoData {
   grupo: string
@@ -20,7 +20,7 @@ export interface InscritoData {
 
 export default function Treineiros() {
 
-  const { Inscritos } =useNineteenData();
+  const { Inscritos } =useYearData();
   const data = Inscritos as InscritoData[]
 
   // 2. Tipagem das colunas

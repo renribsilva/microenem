@@ -13,7 +13,7 @@ import styles from "./tables.module.css";
 
 import InputShell from "../../../../../../components/tsx/input_shell";
 import { useHomeData } from "../../../../../../context/home_context";
-import { useNineteenData } from "../../../../../../context/nineteen_context";
+import { useYearData } from "../../../../../../context/year_context";
 
 type TableRow = {
   id: number;
@@ -36,7 +36,7 @@ export default function ProbsInfoTable() {
     selectedItems,
     activeCodes,
     abandonadosCodes,
-  } = useNineteenData();
+  } = useYearData();
 
   const [sorting, setSorting] = useState<SortingState>([
     { id: "posicao", desc: false },

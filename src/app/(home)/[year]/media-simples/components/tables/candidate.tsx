@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react";
 import styles from "./tables.module.css";
-import { useNineteenData } from "../../../../../../context/nineteen_context";
+import { useYearData } from "../../../../../../context/year_context";
 import { useHomeData } from "../../../../../../context/home_context";
 
 export default function CandidateFullDetail() {
   const { dicData } = useHomeData();
-  const { candidateData, getAreaMap } = useNineteenData();
+  const { candidateData, getAreaMap } = useYearData();
   const [activeTab, setActiveTab] = useState<"geral" | "scores">("geral");
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 800 : false);
   const [tooltip, setTooltip] = useState<{ text: string, x: number, y: number, visible: boolean }>({

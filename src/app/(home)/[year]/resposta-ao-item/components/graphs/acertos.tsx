@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Chart from "react-apexcharts";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import { useHomeData } from "../../../../../../context/home_context";
-import { useNineteenData } from "../../../../../../context/nineteen_context";
+import { useYearData } from "../../../../../../context/year_context";
 
 export default function AcertosChart() {
   const { chartProps, activeTCC } = useHomeData();
@@ -17,7 +17,7 @@ export default function AcertosChart() {
     k,
     d,
     itemGraphData,
-  } = useNineteenData();
+  } = useYearData();
 
   // Refs e Estados para controle de renderização por tamanho
   const parentRef = useRef<HTMLDivElement>(null);

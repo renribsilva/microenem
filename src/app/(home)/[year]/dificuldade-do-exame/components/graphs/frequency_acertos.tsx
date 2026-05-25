@@ -5,13 +5,13 @@ import Chart from 'react-apexcharts';
 import { useChartTheme } from '../../../../../../hooks/use_chart_theme';
 import customTooltip from '../../../../../../components/tsx/customTooltip';
 import { useHomeData } from '../../../../../../context/home_context';
-import { useNineteenData } from '../../../../../../context/nineteen_context';
+import { useYearData } from '../../../../../../context/year_context';
 import styles from "./graphs.module.css"
 
 export default function FrequencyAcertosChart() {
   
   const { deferredArea } = useHomeData();
-  const { describeDifData, activeSelectedRow, frequencyDifData } = useNineteenData();
+  const { describeDifData, activeSelectedRow, frequencyDifData } = useYearData();
   const { acertosColor, gridColor, axisColor, textColor } = useChartTheme();
 
   const selectedRow = activeSelectedRow;

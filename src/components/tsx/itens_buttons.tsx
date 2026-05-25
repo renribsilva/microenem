@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import styles from "./components.module.css";
 import { useChartTheme } from "../../hooks/use_chart_theme";
 import { useHomeData } from "../../context/home_context";
-import { useNineteenData } from "../../context/nineteen_context";
+import { useYearData } from "../../context/year_context";
 
 export default function ItensButtons() {
   const {
@@ -26,7 +26,7 @@ export default function ItensButtons() {
   const [backdropAlert, setBackdropAlert] = useState<any | null>(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const { abandonadosCodes, selectedItems, handleToggle, getCodeByLabel } =
-    useNineteenData();
+    useYearData();
 
   const ranges: Record<string, { start: number; end: number }> = {
     LC: { start: 1, end: 45 },

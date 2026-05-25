@@ -9,7 +9,7 @@ import {
 } from "@tanstack/react-table";
 
 import styles from "./tables.module.css";
-import { useNineteenData } from "../../../../../../context/nineteen_context";
+import { useYearData } from "../../../../../../context/year_context";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 
 type RankingRow = {
@@ -19,7 +19,7 @@ type RankingRow = {
 
 export default function RankingTable() {
   
-  const { top2000Data, activeRanking, setActiveRanking } = useNineteenData(); 
+  const { top2000Data, activeRanking, setActiveRanking } = useYearData(); 
   const columnHelper = createColumnHelper<RankingRow>();
   const { textColor } = useChartTheme();
 

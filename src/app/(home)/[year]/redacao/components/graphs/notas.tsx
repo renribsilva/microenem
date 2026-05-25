@@ -5,14 +5,14 @@ import { useMemo, useState } from 'react';
 import { useChartTheme } from '../../../../../../hooks/use_chart_theme';
 import customTooltip from '../../../../../../components/tsx/customTooltip';
 import { useHomeData } from '../../../../../../context/home_context';
-import { useNineteenData } from '../../../../../../context/nineteen_context';
+import { useYearData } from '../../../../../../context/year_context';
 import styles from './graphs.module.css'
 
 type NotaKey = "NU_NOTA_COMP1" | "NU_NOTA_COMP2" | "NU_NOTA_COMP3" | "NU_NOTA_COMP4" | "NU_NOTA_COMP5" | "NU_NOTA_REDACAO";
 
 export default function NotasRedacaoChart() {
 
-  const { competenciaRowData } = useNineteenData();
+  const { competenciaRowData } = useYearData();
   const { textColor, gridColor, axisColor } = useChartTheme();
   const { selectedRowId } = useHomeData(); 
   const [selectedNota, setSelectedNota] = useState<NotaKey>("NU_NOTA_REDACAO");

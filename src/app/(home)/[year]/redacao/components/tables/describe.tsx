@@ -4,7 +4,7 @@ import { useMemo, memo, useState, useEffect } from 'react';
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import styles from "./tables.module.css";
 import { useHomeData } from '../../../../../../context/home_context';
-import { useNineteenData } from '../../../../../../context/nineteen_context';
+import { useYearData } from '../../../../../../context/year_context';
 
 const columnHelper = createColumnHelper<any>();
 
@@ -31,7 +31,7 @@ TableRow.displayName = 'TableRow';
 
 export default function NotasRedacaoTable() {
 
-  const { competenciaRowData } = useNineteenData();
+  const { competenciaRowData } = useYearData();
   const { deferredArea, selectedRowId, setSelectedRowId } = useHomeData();
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 800 : false);
   

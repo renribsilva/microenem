@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useHomeData } from "../../../../../../context/home_context";
-import { useNineteenData } from "../../../../../../context/nineteen_context";
+import { useYearData } from "../../../../../../context/year_context";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import styles from "./tables.module.css";
 
@@ -17,7 +17,7 @@ export default function MarginImpactTable() {
     currentYear,
     getParamByLabel,
     getCodeByLabel,
-  } = useNineteenData();
+  } = useYearData();
 
   const { textColor, isDark } = useChartTheme();
   const [impactoDesatualizado, setImpactoDesatualizado] = useState(false);

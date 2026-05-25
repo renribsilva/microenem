@@ -9,7 +9,7 @@ import {
   ColumnDef
 } from '@tanstack/react-table'
 import styles from './tables.module.css'
-import { useNineteenData } from '../../../../../../context/nineteen_context';
+import { useYearData } from '../../../../../../context/year_context';
 
 interface StatusRow {
   grupo: string;
@@ -31,7 +31,7 @@ const statusMap: Record<string, string> = {
 
 export default function StatusRedacaoTable() {
 
-  const { statusData } = useNineteenData();
+  const { statusData } = useYearData();
 
   const tableData = useMemo<StatusRow[]>(() => {
     const nTotal = statusData?.datasets[0]?.n_total || 0;

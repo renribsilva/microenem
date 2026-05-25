@@ -4,13 +4,13 @@ import { useMemo } from 'react';
 import Chart from 'react-apexcharts';
 import { useChartTheme } from '../../../../../../hooks/use_chart_theme';
 import { useHomeData } from '../../../../../../context/home_context';
-import { useNineteenData } from '../../../../../../context/nineteen_context';
+import { useYearData } from '../../../../../../context/year_context';
 import styles from './graphs.module.css'
 
 export default function DensityNotasChart() {
   
   const { deferredArea } = useHomeData();
-  const { activeSelectedRow, describeDifData, densityDifData } = useNineteenData();
+  const { activeSelectedRow, describeDifData, densityDifData } = useYearData();
   const { densidadeColor, gridColor, textColor, axisColor } = useChartTheme();
   
   const selectedRow = activeSelectedRow;

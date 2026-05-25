@@ -15,9 +15,9 @@ import { useHomeData } from "./home_context";
 import { useParams, usePathname } from "next/navigation";
 import constantes from "../app/(home)/JSON/constantes.json";
 
-const NineteenContext = createContext(null);
+const YearContext = createContext(null);
 
-export function NineteenProvider({ children }: { children: ReactNode }) {
+export function YearProvider({ children }: { children: ReactNode }) {
   // ---------------------------------------------------------------
   // ---------------- PARÂMETROS PARA CARGA DINÂMICA ---------------
   // ---------------------------------------------------------------
@@ -742,7 +742,7 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <NineteenContext.Provider
+    <YearContext.Provider
       value={{
         Inscritos,
         Abstencao_dia1,
@@ -796,15 +796,15 @@ export function NineteenProvider({ children }: { children: ReactNode }) {
       }}
     >
       {children}
-    </NineteenContext.Provider>
+    </YearContext.Provider>
   );
 }
 
-export const useNineteenData = () => {
-  const context = useContext(NineteenContext);
+export const useYearData = () => {
+  const context = useContext(YearContext);
   if (!context) {
     throw new Error(
-      "useNineteenData deve ser usado dentro de um NineteenProvider",
+      "useYearData deve ser usado dentro de um YearProvider",
     );
   }
   return context;

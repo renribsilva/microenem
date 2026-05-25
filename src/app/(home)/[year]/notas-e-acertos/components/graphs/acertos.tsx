@@ -3,12 +3,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import Chart from 'react-apexcharts';
 import { useChartTheme } from '../../../../../../hooks/use_chart_theme';
-import { useNineteenData } from '../../../../../../context/nineteen_context';
+import { useYearData } from '../../../../../../context/year_context';
 import styles from "./graphs.module.css"
 
 export default function DensityNotasChart() {
 
-  const { acertosData, acertosNum } = useNineteenData();
+  const { acertosData, acertosNum } = useYearData();
   const { gridColor, textColor, axisColor } = useChartTheme();
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 800 : false);
     

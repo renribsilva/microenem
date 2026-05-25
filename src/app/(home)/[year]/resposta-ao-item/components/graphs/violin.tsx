@@ -2,13 +2,13 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Chart from "react-apexcharts";
-import { useNineteenData } from "../../../../../../context/nineteen_context";
+import { useYearData } from "../../../../../../context/year_context";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import { useHomeData } from "../../../../../../context/home_context";
 
 export default function ViolinBinsChart() {
   const { scoreData, lastItemActivate, lastItemActivateNum } =
-    useNineteenData();
+    useYearData();
   const { textColor, axisColor, gridColor } = useChartTheme();
   const { activeTCC } = useHomeData();
   const [isMobile, setIsMobile] = useState(

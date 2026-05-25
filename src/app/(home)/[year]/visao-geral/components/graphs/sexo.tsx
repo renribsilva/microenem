@@ -4,12 +4,12 @@ import { useMemo } from 'react';
 import Chart from 'react-apexcharts';
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import customTooltip from '../../../../../../components/tsx/customTooltip';
-import { useNineteenData } from '../../../../../../context/nineteen_context';
+import { useYearData } from '../../../../../../context/year_context';
 
 export default function SEXO() {
 
   const { textColor, panelColor } = useChartTheme();
-  const { sexo_data } = useNineteenData();
+  const { sexo_data } = useYearData();
 
   const doughnutColors = ["rgba(60, 245, 188, 0.7)", "rgba(245, 99, 59, 0.7)"];
 

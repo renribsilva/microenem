@@ -4,12 +4,12 @@ import Chart from 'react-apexcharts';
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import { useMemo } from 'react';
 import customTooltip from '../../../../../../components/tsx/customTooltip';
-import { useNineteenData } from '../../../../../../context/nineteen_context';
+import { useYearData } from '../../../../../../context/year_context';
 
 export default function FX_ETARIA() {
 
   const { textColor, gridColor } = useChartTheme();
-  const { fx_etaria_data } = useNineteenData();
+  const { fx_etaria_data } = useYearData();
 
   const barColor = "rgba(255, 208, 53, 1)";
 

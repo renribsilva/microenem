@@ -6,7 +6,7 @@ import styles from "./visao-geral.module.css"
 import Card from "../../../../components/tsx/card"
 import Group from "../../../../components/svg/group"
 import PersonCancel from "../../../../components/svg/person_cancel"
-import { useNineteenData } from "../../../../context/nineteen_context"
+import { useYearData } from "../../../../context/year_context"
 import Treineiros from "./components/tables/treineiros"
 import PersonRemove from "../../../../components/svg/person_remove"
 
@@ -17,7 +17,7 @@ const COR_RACA = dynamic(() => import("./components/graphs/cor_raca"), { ssr: fa
 
 export default function Visao() {
 
-  const { Inscritos, Abstencao_dia1, Abstencao_dia2 } = useNineteenData();
+  const { Inscritos, Abstencao_dia1, Abstencao_dia2 } = useYearData();
   const total_inscritos = Inscritos[0].total.toLocaleString('pt-BR');
   const abstencao_dia1 = Abstencao_dia1[0].abst.toLocaleString('pt-BR', {
     minimumFractionDigits: 1, maximumFractionDigits: 1

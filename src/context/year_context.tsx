@@ -332,9 +332,15 @@ export function YearProvider({ children }: { children: ReactNode }) {
     fetchInfoData();
   }, [co_p_selected, currentYear]);
 
-  const [itemGraphData, setItemGraphData] = useState<any>(null);
-  const itemGraphCache = useRef<{ code: number; dataset: any } | null>(null);
-  console.log(itemGraphData);
+  const [itemGraphData, setItemGraphData] = useState<{
+    x: number[];
+    y: number[];
+  }>(null);
+  const itemGraphCache = useRef<{
+    code: number;
+    dataset: { x: number[]; y: number[] };
+  } | null>(null);
+
   useEffect(() => {
     if (!lastItemActivate) return;
     if (itemGraphCache.current?.code === lastItemActivate) {
@@ -358,7 +364,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
       }
     }
     fetchItemData();
-  }, [lastItemActivate]);
+  }, [lastItemActivate, currentYear]);
 
   const [acertosNum, setAcertosNum] = useState<number | null>(null);
   const [acertosData, setAcertosData] = useState<any>(null);
@@ -400,7 +406,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
     }
 
     fetchAcertosData();
-  }, [deferredArea]);
+  }, [deferredArea, currentYear]);
 
   const [EAPData, setEAPData] = useState<any>(null);
   const [sampleEAP, setSampleEAP] = useState<string>(
@@ -427,7 +433,14 @@ export function YearProvider({ children }: { children: ReactNode }) {
       }
     }
     if (Object.entries(selectedItems).length !== 0) fetchEAPData();
-  }, [updateTrigger]);
+  }, [
+    updateTrigger,
+    deferredArea,
+    sampleEAP,
+    selectedItems,
+    selectedLabel,
+    currentYear,
+  ]);
 
   //--------------------------------------------------------------------------
   //---------------------------DIFICULDADE DO EXAME---------------------------
@@ -480,7 +493,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
         nota: formatValue(key, describeDifData.notas[key], "nota"),
         acerto: formatValue(key, describeDifData.acertos?.[key], "acerto"),
       }));
-  }, [describeDifData, deferredArea]);
+  }, [describeDifData]);
 
   const describeRowData = useMemo(
     () => ({
@@ -667,12 +680,12 @@ export function YearProvider({ children }: { children: ReactNode }) {
       return nextMapping;
     });
     prevLabelRef.current = selectedLabel;
-  }, [selectedLabel, getCodeByLabel, deferredArea]);
+  }, [selectedLabel, getCodeByLabel, previousLabel, deferredArea]);
 
   const activeCodes = useMemo(() => {
     const codes = Object.keys(selectedItems).map(Number);
     return codes.filter((code) => String(code) in (probData || {}));
-  }, [selectedItems, probData, abandonadosCodes]);
+  }, [selectedItems, probData]);
 
   //--------------------------------------------------------
   //--------------------------EAP---------------------------

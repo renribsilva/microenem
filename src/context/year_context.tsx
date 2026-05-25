@@ -22,7 +22,6 @@ import {
   DificuldadeDoExameType,
   FreqDensityType,
   FxSexoType,
-  InfoDataType,
   InfoProbDataType,
   InfoProbLabelType,
   InscritosType,

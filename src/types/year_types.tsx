@@ -209,7 +209,7 @@ export type DificuldadeDoExameType = {
 
 export type InfoProbDataType = Record<string, number[]> | null;
 
-export type InfoProbLabelType = number[] | [];
+export type InfoProbLabelType = number[];
 
 export type ProbCacheType = {
   co_p: string;

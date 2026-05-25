@@ -54,6 +54,8 @@ export function YearProvider({ children }: { children: ReactNode }) {
 
   const [loading, setLoading] = useState(true);
 
+  const [co_p_selected] = selectedLabel.split("_");
+
   // ---------------------------------------------------------------------------
   // ------------ CARGA DINÂMICA DE JSON POR ANO (BUNDLE INICIAL) --------------
   // ---------------------------------------------------------------------------
@@ -268,7 +270,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
   const [infoData, setInfoData] = useState<Record<string, number[]> | null>(
     null,
   );
-  const [co_p_selected] = selectedLabel.split("_");
   const [probData, setProbData] = useState<Record<string, number[]> | null>(
     null,
   );
@@ -309,6 +310,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
         console.error("Erro ao carregar probtrace:", err);
       }
     }
+
     async function fetchInfoData() {
       try {
         const res = await fetch(
@@ -333,7 +335,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
 
   const [itemGraphData, setItemGraphData] = useState<any>(null);
   const itemGraphCache = useRef<{ code: number; dataset: any } | null>(null);
-
+  console.log(itemGraphData);
   useEffect(() => {
     if (!lastItemActivate) return;
     if (itemGraphCache.current?.code === lastItemActivate) {
@@ -413,7 +415,8 @@ export function YearProvider({ children }: { children: ReactNode }) {
     async function fetchEAPData() {
       try {
         const res = await fetch(
-          `/api/eap?sample=${sampleEAP}&area=${deferredArea}&ano=${currentYear}&codigo=${codigo}&lingua=${lingua}`,
+          `/api/eap?sample=${sampleEAP}&area=${deferredArea}&ano=` +
+            `${currentYear}&codigo=${codigo}&lingua=${lingua}`,
         );
         if (!res.ok) throw new Error("Erro na rota interna");
         const json = await res.json();
@@ -534,7 +537,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
   // Função para traduzir Posição (ex: questão 95) em Código (ex: 11234)
   const getCodeByLabel = useCallback(
     (num: number, label: string) => {
-      if (!label || !itensData || !itensData.CO_POSICAO) return null; // Check de segurança
+      if (!label || !itensData || !itensData.CO_POSICAO) return null;
       const [co_p, ling, vers] = label.split("_");
       const p = itensData;
       const idx = Object.keys(p.CO_POSICAO).find((i) => {
@@ -586,12 +589,12 @@ export function YearProvider({ children }: { children: ReactNode }) {
 
   const handleToggle = useCallback(
     (num: number, isAbandoned: boolean) => {
-      // Usamos o selectedLabel atual para descobrir qual o código do item no momento do clique
       const codeItem = getCodeByLabel(num, selectedLabel);
 
       if (!codeItem) {
         console.warn(
-          `Não foi possível encontrar o código para a posição ${num} na prova ${selectedLabel}`,
+          `Não foi possível encontrar o código para a posição ` +
+            `${num} na prova ${selectedLabel}`,
         );
         return;
       }
@@ -763,7 +766,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
       .filter((i) => {
         const matchProva = itensData.CO_PROVA[i] === codProva;
 
-        // Filtro de Língua (obrigatório para LC, ignorado nas outras se for null)
         const matchLingua =
           itensData.TP_LINGUA[i] === null ||
           itensData.TP_LINGUA[i] === tpLingua;
@@ -786,7 +788,8 @@ export function YearProvider({ children }: { children: ReactNode }) {
     // e o score não pode ser mapeado com segurança.
     if (indicesFiltrados.length !== 45) {
       console.error(
-        `Erro de integridade: Esperados 45 itens, encontrados ${indicesFiltrados.length} para a prova ${codProva}.`,
+        `Erro de integridade: Esperados 45 itens, ` +
+          `encontrados ${indicesFiltrados.length} para a prova ${codProva}.`,
       );
       return []; // Ou throw new Error(...) dependendo da sua preferência
     }

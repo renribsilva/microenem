@@ -215,15 +215,7 @@ export type YearContextType = {
   respostaAoItemData: RespostaAoItemType;
   redacaoData: RedacaoType;
   dificuldadeDoExame: DificuldadeDoExameType;
-  inscritosData: InscritosType | null;
-  abstencaoDia1: AbstencaoType | null;
-  abstencaoDia2: AbstencaoType | null;
-  corRacaData: CorRacaDataType | null;
-  sexoData: FxSexoType | null;
-  fxEtariaData: FxSexoType | null;
-  scoreData: ScoreType | null;
-  competenciaRowData: CompetenciaRowType | null;
-  statusData: StatusType | null;
+
   densityDifData: FreqDensityType["regular"] | null;
   describeDifData: DescribeType["regular"] | null;
   frequencyDifData: FreqDensityType["regular"] | null;

@@ -30,7 +30,7 @@ type TableRow = {
 export default function ScoreTable() {
   const { selectedLabel, deferredArea } = useHomeData();
   const {
-    scoreData,
+    respostaAoItemData,
     getCodeByLabel,
     getParamByLabel,
     abandonadosCodes,
@@ -38,6 +38,8 @@ export default function ScoreTable() {
     setLastItemActivate,
     setLastItemActivateNum,
   } = useYearData();
+
+  const scoreData = respostaAoItemData.scoreData;
 
   const [sorting, setSorting] = useState<SortingState>([
     { id: "posicao", desc: false },
@@ -412,4 +414,3 @@ export default function ScoreTable() {
     </section>
   );
 }
-

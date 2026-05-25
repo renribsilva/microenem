@@ -7,13 +7,15 @@ import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import { useHomeData } from "../../../../../../context/home_context";
 
 export default function ViolinBinsChart() {
-  const { scoreData, lastItemActivate, lastItemActivateNum } =
+  const { respostaAoItemData, lastItemActivate, lastItemActivateNum } =
     useYearData();
   const { textColor, axisColor, gridColor } = useChartTheme();
   const { activeTCC } = useHomeData();
   const [isMobile, setIsMobile] = useState(
     typeof window !== "undefined" ? window.innerWidth < 800 : false,
   );
+
+  const scoreData = respostaAoItemData.scoreData;
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 800);

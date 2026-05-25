@@ -1,15 +1,16 @@
-'use client'
+"use client";
 
-import { useMemo } from 'react';
-import Chart from 'react-apexcharts';
+import { useMemo } from "react";
+import Chart from "react-apexcharts";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
-import customTooltip from '../../../../../../components/tsx/customTooltip';
-import { useYearData } from '../../../../../../context/year_context';
+import customTooltip from "../../../../../../components/tsx/customTooltip";
+import { useYearData } from "../../../../../../context/year_context";
 
 export default function SEXO() {
-
   const { textColor, panelColor } = useChartTheme();
-  const { sexoData } = useYearData();
+  const { overviewData } = useYearData();
+
+  const sexoData = overviewData.sexoData;
 
   const doughnutColors = ["rgba(60, 245, 188, 0.7)", "rgba(245, 99, 59, 0.7)"];
 
@@ -17,73 +18,76 @@ export default function SEXO() {
   const absValues = useMemo(() => sexoData.datasets[0].abs_values, []);
   const labels = useMemo(() => sexoData.labels, []);
 
-  const options: ApexCharts.ApexOptions = useMemo(() => ({
-    chart: {
-      type: 'donut',
-      toolbar: { show: true },
-      animations: {
-        enabled: false, 
-        dynamicAnimation: {
-          enabled: false 
-        }
-      } 
-    },
-    stroke: {
-      show: true,
-      width: 2, 
-      colors: [panelColor]
-    },
-    colors: doughnutColors,
-    labels: labels,
-    plotOptions: {
-      pie: {
-        donut: {
-          size: '45%',
-        }
-      }
-    },
-    dataLabels: {
-      enabled: true,
-      style: {
-        fontSize: '12px',
-        fontWeight: 'bold',
-        colors: [textColor]
+  const options: ApexCharts.ApexOptions = useMemo(
+    () => ({
+      chart: {
+        type: "donut",
+        toolbar: { show: true },
+        animations: {
+          enabled: false,
+          dynamicAnimation: {
+            enabled: false,
+          },
+        },
       },
-      dropShadow: { enabled: false }
-    },
-    legend: {
-      position: 'top',
-      labels: { colors: textColor },
-      offsetY: 0,
-    },
-    tooltip: {
-      theme: 'dark',
-      custom: function({ series, seriesIndex, w }: any) {
-        const value = series[seriesIndex]
-        const label = w.globals.labels[seriesIndex]
-        const absolute = absValues[seriesIndex]
-        return customTooltip({ label, value, absolute });
-      }
-    },
-    title: {
-      text: 'Sexo',
-      align: 'center',
-      style: {
-        color: textColor,
-        fontSize: '16px',
-        fontWeight: 'bold'
-      }
-    },
-    // subtitle: {
-    //   text: `*n = ${n}`,
-    //   align: 'center',
-    //   style: {
-    //     color: textColor,
-    //     fontSize: '13px',
-    //     fontWeight: 'normal',
-    //   }
-    // }
-  }), [textColor, panelColor, labels]);
+      stroke: {
+        show: true,
+        width: 2,
+        colors: [panelColor],
+      },
+      colors: doughnutColors,
+      labels: labels,
+      plotOptions: {
+        pie: {
+          donut: {
+            size: "45%",
+          },
+        },
+      },
+      dataLabels: {
+        enabled: true,
+        style: {
+          fontSize: "12px",
+          fontWeight: "bold",
+          colors: [textColor],
+        },
+        dropShadow: { enabled: false },
+      },
+      legend: {
+        position: "top",
+        labels: { colors: textColor },
+        offsetY: 0,
+      },
+      tooltip: {
+        theme: "dark",
+        custom: function ({ series, seriesIndex, w }: any) {
+          const value = series[seriesIndex];
+          const label = w.globals.labels[seriesIndex];
+          const absolute = absValues[seriesIndex];
+          return customTooltip({ label, value, absolute });
+        },
+      },
+      title: {
+        text: "Sexo",
+        align: "center",
+        style: {
+          color: textColor,
+          fontSize: "16px",
+          fontWeight: "bold",
+        },
+      },
+      // subtitle: {
+      //   text: `*n = ${n}`,
+      //   align: 'center',
+      //   style: {
+      //     color: textColor,
+      //     fontSize: '13px',
+      //     fontWeight: 'normal',
+      //   }
+      // }
+    }),
+    [textColor, panelColor, labels],
+  );
 
   return (
     <div style={{ flex: 1 }}>

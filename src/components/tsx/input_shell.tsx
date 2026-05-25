@@ -1,13 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./components.module.css";
 import { useHomeData } from "../../context/home_context";
 import { useChartTheme } from "../../hooks/use_chart_theme";
 
 export default function InputShell() {
   const { chartProps, activeTCC, pointIndexStuff } = useHomeData();
+
   const { proficienciaAtual, xMax, xMin, chartColor } = chartProps;
+
   const { gridColor } = useChartTheme();
 
   // 1. Fallback para o tamanho dos dados: se não houver dataset,
@@ -17,8 +19,14 @@ export default function InputShell() {
     : 0;
 
   const [inputValue, setInputValue] = useState(
-    proficienciaAtual !== undefined ? proficienciaAtual.toFixed(1) : "0.0",
+    proficienciaAtual?.toFixed(1) || "0.0",
   );
+
+  useEffect(() => {
+    setInputValue(
+      proficienciaAtual !== undefined ? proficienciaAtual.toFixed(1) : "0.0",
+    );
+  }, [proficienciaAtual]);
 
   const applyValue = () => {
     let numericVal = parseFloat(inputValue as string);

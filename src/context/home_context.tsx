@@ -212,7 +212,9 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   const { colorMap } = useChartTheme();
 
   const chartProps: chartPropsType = {
-    chartColor: colorMap[activeTCC?.metadata?.cor] || "#3b82f6",
+    chartColor:
+      colorMap[activeTCC?.metadata?.cor.replace(/\s*\(.*?\)\s*/g, "").trim()] ||
+      "#3b82f6",
     proficienciaAtual: activeTCC?.labels_x?.[pointIndexStuff.pointIndex] || 0,
     resultadoAtual: activeTCC?.data_teorico?.[pointIndexStuff.pointIndex] || 0,
     xMin: Math.floor((activeTCC?.metadata?.min || 0) / 100) * 100,

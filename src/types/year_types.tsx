@@ -77,6 +77,22 @@ export type OverviewType = {
   fxEtariaData: FxSexoType | null;
 };
 
+interface ScoreItem {
+  0: number | number[];
+  1: number | number[];
+  7: number | number[];
+  8: number | number[];
+  labels: string[];
+}
+
+export type ScoreType = Record<
+  string,
+  {
+    counts: ScoreItem;
+    bins: ScoreItem;
+  }
+>;
+
 export type YearContextType = {
   lastItemActivate: number;
   selectedItems: SelectedItemsType | object;
@@ -88,6 +104,7 @@ export type YearContextType = {
   corRacaData: CorRacaDataType | null;
   sexoData: FxSexoType | null;
   fxEtariaData: FxSexoType | null;
+  scoreData: ScoreType | null;
   describeRowData: any;
   activeSelectedRow: any;
   abandonadosCodes: any;
@@ -101,7 +118,6 @@ export type YearContextType = {
   setLastItemActivate: any;
   lastItemActivateNum: any;
   setLastItemActivateNum: any;
-  scoreData: any;
   handleToggle: any;
   getCodeByLabel: any;
   getParamByLabel: any;

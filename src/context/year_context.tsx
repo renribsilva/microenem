@@ -21,6 +21,7 @@ import {
   InscritosType,
   ItensDataType,
   OverviewType,
+  ScoreType,
   SelectedItemsType,
   YearContextType,
 } from "../types/year_types";
@@ -64,7 +65,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
   );
   const [sexoData, setSexo_data] = useState<FxSexoType | null>();
   const [fxEtariaData, setFx_etaria_data] = useState<FxSexoType | null>(null);
-  const [scoreData, setScoreData] = useState<any>(null);
+  const [scoreData, setScoreData] = useState<ScoreType | null>(null);
   const [competenciaRowData, setCompetenciaRowData] = useState<any>(null);
   const [statusData, setStatusData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -140,14 +141,9 @@ export function YearProvider({ children }: { children: ReactNode }) {
     loadYearlyData();
   }, [currentYear]);
 
-  const overviewData: OverviewType = {
-    inscritosData,
-    abstencaoDia1,
-    abstencaoDia2,
-    corRacaData,
-    sexoData,
-    fxEtariaData,
-  };
+  // ---------------------------------------------------------------------------
+  // ------- CARGA DINÂMICA DE JSON POR ANO E POR ÁREA (BUNDLE INICIAL) --------
+  // ---------------------------------------------------------------------------
 
   const [densityDifData, setDensityDifData] = useState<any>(null);
   const [describeDifData, setDescribeDifData] = useState<any>(null);
@@ -161,46 +157,58 @@ export function YearProvider({ children }: { children: ReactNode }) {
       switch (deferredArea) {
         case "CH":
           density = await import(
-            `../app/(home)/JSON/${currentYear}/dificuldade-do-exame/CH/density.json`
+            `../app/(home)/JSON/${currentYear}/` +
+              `dificuldade-do-exame/CH/density.json`
           );
           describe = await import(
-            `../app/(home)/JSON/${currentYear}/dificuldade-do-exame/CH/describe.json`
+            `../app/(home)/JSON/${currentYear}/` +
+              `dificuldade-do-exame/CH/describe.json`
           );
           frequency = await import(
-            `../app/(home)/JSON/${currentYear}/dificuldade-do-exame/CH/frequency_acertos.json`
+            `../app/(home)/JSON/${currentYear}/` +
+              `dificuldade-do-exame/CH/frequency_acertos.json`
           );
           break;
         case "CN":
           density = await import(
-            `../app/(home)/JSON/${currentYear}/dificuldade-do-exame/CN/density.json`
+            `../app/(home)/JSON/${currentYear}/` +
+              `dificuldade-do-exame/CN/density.json`
           );
           describe = await import(
-            `../app/(home)/JSON/${currentYear}/dificuldade-do-exame/CN/describe.json`
+            `../app/(home)/JSON/${currentYear}/` +
+              `dificuldade-do-exame/CN/describe.json`
           );
           frequency = await import(
-            `../app/(home)/JSON/${currentYear}/dificuldade-do-exame/CN/frequency_acertos.json`
+            `../app/(home)/JSON/${currentYear}/` +
+              `dificuldade-do-exame/CN/frequency_acertos.json`
           );
           break;
         case "MT":
           density = await import(
-            `../app/(home)/JSON/${currentYear}/dificuldade-do-exame/MT/density.json`
+            `../app/(home)/JSON/${currentYear}/` +
+              `dificuldade-do-exame/MT/density.json`
           );
           describe = await import(
-            `../app/(home)/JSON/${currentYear}/dificuldade-do-exame/MT/describe.json`
+            `../app/(home)/JSON/${currentYear}/` +
+              `dificuldade-do-exame/MT/describe.json`
           );
           frequency = await import(
-            `../app/(home)/JSON/${currentYear}/dificuldade-do-exame/MT/frequency_acertos.json`
+            `../app/(home)/JSON/${currentYear}/` +
+              `dificuldade-do-exame/MT/frequency_acertos.json`
           );
           break;
         default:
           density = await import(
-            `../app/(home)/JSON/${currentYear}/dificuldade-do-exame/LC/density.json`
+            `../app/(home)/JSON/${currentYear}/` +
+              `dificuldade-do-exame/LC/density.json`
           );
           describe = await import(
-            `../app/(home)/JSON/${currentYear}/dificuldade-do-exame/LC/describe.json`
+            `../app/(home)/JSON/${currentYear}/` +
+              `dificuldade-do-exame/LC/describe.json`
           );
           frequency = await import(
-            `../app/(home)/JSON/${currentYear}/dificuldade-do-exame/LC/frequency_acertos.json`
+            `../app/(home)/JSON/${currentYear}/` +
+              `dificuldade-do-exame/LC/frequency_acertos.json`
           );
       }
       setDensityDifData(density.default.regular);
@@ -208,7 +216,20 @@ export function YearProvider({ children }: { children: ReactNode }) {
       setFrequencyDifData(frequency.default.regular);
     };
     loadData();
-  }, [deferredArea]);
+  }, [deferredArea, currentYear]);
+
+  // ---------------------------------------------------------------------------
+  // ----------------- AGRUPAMENTO DE DADOS DO BUNDLE INICIAL ------------------
+  // ---------------------------------------------------------------------------
+
+  const overviewData: OverviewType = {
+    inscritosData,
+    abstencaoDia1,
+    abstencaoDia2,
+    corRacaData,
+    sexoData,
+    fxEtariaData,
+  };
 
   // ---------------------------------------------------------------------
   // ---------------- CARGA DINÂMICA DE JSON POR ANO (API) ---------------

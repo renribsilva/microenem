@@ -25,7 +25,10 @@ import {
   InfoProbDataType,
   InfoProbLabelType,
   InscritosType,
+  ItemGraphCacheType,
+  ItemGraphType,
   ItensDataType,
+  AcertosNumType,
   OverviewType,
   ProbCacheType,
   RedacaoType,
@@ -34,6 +37,8 @@ import {
   SelectedItemsType,
   StatusType,
   YearContextType,
+  AcertosDataType,
+  AcertosDataCacheType,
 } from "../types/year_types";
 
 const YearContext = createContext<YearContextType>(null);
@@ -269,6 +274,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
   // ------------------ CARGA DINÂMICA DE JSON POR ANO (API) -------------------
   // ---------------------------------------------------------------------------
 
+  // PROBABILIDADE E INFORMAÇÃO
   const [infoData, setInfoData] = useState<InfoProbDataType>(null);
   const [probData, setProbData] = useState<InfoProbDataType>(null);
   const [probLabels, setProbLabels] = useState<InfoProbLabelType>([]);
@@ -323,14 +329,11 @@ export function YearProvider({ children }: { children: ReactNode }) {
     fetchInfoData();
   }, [co_p_selected, currentYear]);
 
-  const [itemGraphData, setItemGraphData] = useState<{
-    x: number[];
-    y: number[];
-  }>(null);
-  const itemGraphCache = useRef<{
-    code: number;
-    dataset: { x: number[]; y: number[] };
-  } | null>(null);
+  // RESPOSTA AO ITEM
+  const [itemGraphData, setItemGraphData] = useState<ItemGraphType | null>(
+    null,
+  );
+  const itemGraphCache = useRef<ItemGraphCacheType | null>(null);
 
   useEffect(() => {
     if (!lastItemActivate) return;
@@ -357,13 +360,10 @@ export function YearProvider({ children }: { children: ReactNode }) {
     fetchItemData();
   }, [lastItemActivate, currentYear]);
 
-  const [acertosNum, setAcertosNum] = useState<number | null>(null);
-  const [acertosData, setAcertosData] = useState<any>(null);
-  const acertosCache = useRef<{
-    area: string;
-    dataset: any;
-    versao: string;
-  } | null>(null);
+  // RELAÇÃO NOTAS-ACERTOS
+  const [acertosNum, setAcertosNum] = useState<AcertosNumType | null>(null);
+  const [acertosData, setAcertosData] = useState<AcertosDataType | null>(null);
+  const acertosCache = useRef<AcertosDataCacheType | null>(null);
 
   useEffect(() => {
     const tipo = "regular";
@@ -399,12 +399,14 @@ export function YearProvider({ children }: { children: ReactNode }) {
     fetchAcertosData();
   }, [deferredArea, currentYear]);
 
+  // TRI E PARÂMETROS
   const [EAPData, setEAPData] = useState<any>(null);
   const [sampleEAP, setSampleEAP] = useState<string>(
     "000000000000000000000000000000000000000000000",
   );
   const [updateTrigger, setUpdateTrigger] = useState(false);
 
+  console.log(EAPData);
   useEffect(() => {
     if (!selectedLabel) return null;
     const [codigo, lingua] = selectedLabel.split("_");

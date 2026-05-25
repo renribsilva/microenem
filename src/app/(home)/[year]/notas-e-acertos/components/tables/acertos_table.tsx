@@ -146,10 +146,10 @@ export default function AcertosTable() {
     const source = acertosData || {};
     return Array.from({ length: 46 }, (_, i) => {
       const scoreKey = i.toString();
-      const item = source[scoreKey] || {};
+      const item = source[scoreKey];
       return {
         id: i,
-        n: item.n || 0,
+        n: item?.n || 0,
         mean: item.mean || 0,
         sd: item.sd || 0,
         min: item.min || 0,

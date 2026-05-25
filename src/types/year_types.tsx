@@ -1,3 +1,5 @@
+import { it } from "node:test";
+
 interface SelectedItemsItem {
   status: string;
   posicao: number;
@@ -217,19 +219,68 @@ export type ProbCacheType = {
   labels: InfoProbLabelType;
 };
 
+export type ItemGraphType = {
+  x: number[];
+  y: number[];
+};
+
+export type ItemGraphCacheType = {
+  code: number;
+  dataset: ItemGraphType;
+};
+
+export type AcertosNumType = number;
+
+interface AcertosDensityItem {
+  x: number[];
+  y: number[];
+}
+
+interface AcertosItem {
+  n: number;
+  mean: number;
+  sd: number;
+  median: number;
+  trimmed: number;
+  mad: number;
+  min: number;
+  max: number;
+  range: number;
+  skew: number;
+  kurtosis: number;
+  se: number;
+  density: AcertosDensityItem;
+}
+
+export type AcertosDataType = Record<string, AcertosItem>;
+
+export type AcertosDataCacheType = {
+  area: string;
+  dataset: AcertosDataType;
+  versao: string;
+};
+
 export type YearContextType = {
   lastItemActivate: number;
   selectedItems: SelectedItemsType | object;
+
+  // Carga no server (bundle inicial)
   itensData: ItensDataType | null;
   overviewData: OverviewType;
   respostaAoItemData: RespostaAoItemType;
   redacaoData: RedacaoType;
   dificuldadeDoExame: DificuldadeDoExameType;
 
+  // Carga no cliente (API)
   infoData: InfoProbDataType | null;
   probData: InfoProbDataType | null;
   probLabels: InfoProbLabelType | null;
   infoLabels: InfoProbLabelType | null;
+
+  itemGraphData: ItemGraphType | null;
+
+  acertosNum: AcertosNumType | null;
+  acertosData: AcertosDataType | null;
 
   describeRowData: any;
   activeSelectedRow: any;
@@ -244,10 +295,7 @@ export type YearContextType = {
   getCodeByLabel: any;
   getParamByLabel: any;
   activeCodes: any;
-  acertosData: any;
-  acertosNum: any;
   setAcertosNum: any;
-  itemGraphData: any;
   EAPData: any;
   sampleEAP: any;
   setSampleEAP: any;

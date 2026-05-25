@@ -216,9 +216,6 @@ export type YearContextType = {
   redacaoData: RedacaoType;
   dificuldadeDoExame: DificuldadeDoExameType;
 
-  densityDifData: FreqDensityType["regular"] | null;
-  describeDifData: DescribeType["regular"] | null;
-  frequencyDifData: FreqDensityType["regular"] | null;
   describeRowData: any;
   activeSelectedRow: any;
   abandonadosCodes: any;

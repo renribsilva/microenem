@@ -10,7 +10,11 @@ import { FreqDensityType } from "../../../../../../types/year_types";
 
 export default function DensityNotasChart() {
   const { deferredArea } = useHomeData();
-  const { activeSelectedRow, describeDifData, densityDifData } = useYearData();
+  const { activeSelectedRow, dificuldadeDoExame } = useYearData();
+
+  const densityDifData = dificuldadeDoExame.densityDifData;
+  const describeDifData = dificuldadeDoExame.describeDifData;
+
   const { densidadeColor, gridColor, axisColor } = useChartTheme();
 
   const selectedRow = activeSelectedRow;

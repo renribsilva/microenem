@@ -10,8 +10,11 @@ import styles from "./graphs.module.css";
 
 export default function FrequencyAcertosChart() {
   const { deferredArea } = useHomeData();
-  const { describeDifData, activeSelectedRow, frequencyDifData } =
-    useYearData();
+  const { dificuldadeDoExame, activeSelectedRow } = useYearData();
+
+  const describeDifData = dificuldadeDoExame.describeDifData;
+  const frequencyDifData = dificuldadeDoExame.frequencyDifData;
+
   const { acertosColor, gridColor, axisColor, textColor } = useChartTheme();
 
   const selectedRow = activeSelectedRow;

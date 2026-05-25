@@ -157,8 +157,8 @@ interface FreqDensityDatasetDataItem {
 }
 
 interface FreqDensityDatasetItem {
-  id?: string[];
-  label?: string[];
+  id?: string;
+  label?: string;
   data: FreqDensityDatasetDataItem;
 }
 

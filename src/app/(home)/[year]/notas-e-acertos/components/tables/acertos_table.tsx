@@ -148,7 +148,6 @@ export default function AcertosTable() {
     return Array.from({ length: 46 }, (_, i) => {
       const scoreKey = i.toString();
       const item = source[scoreKey];
-      console.log(item);
       return {
         id: i,
         n: item.n || 0,

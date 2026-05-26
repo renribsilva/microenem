@@ -12,14 +12,15 @@ export default function AcertosChart() {
   const {
     lastItemActivate,
     lastItemActivateNum,
-    probData,
-    probLabels,
+    probInfoData,
     k,
     d,
     itemGraphData,
   } = useYearData();
 
   // Refs e Estados para controle de renderização por tamanho
+  const probLabels = probInfoData.probLabels;
+  const probData = probInfoData.probData;
   const parentRef = useRef<HTMLDivElement>(null);
   const [dimensionsReady, setDimensionsReady] = useState(false);
   const [isMobile, setIsMobile] = useState(

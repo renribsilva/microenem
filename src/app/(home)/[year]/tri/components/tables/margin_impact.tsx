@@ -7,14 +7,13 @@ import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import styles from "./tables.module.css";
 
 export default function MarginImpactTable() {
-  const { deferredArea, selectedLabel } = useHomeData();
+  const { deferredArea, selectedLabel, currentYear } = useHomeData();
   const {
     EAPData,
     selectedItems,
     setSampleEAP,
     intervalData,
     setUpdateTrigger,
-    currentYear,
     getParamByLabel,
     getCodeByLabel,
   } = useYearData();
@@ -162,7 +161,7 @@ export default function MarginImpactTable() {
   const isTRIDivergente =
     (deferredArea === "MT" && currentYear === "2009") ||
     (deferredArea === "MT" && currentYear === "2019");
-    // || (deferredArea === "CN" && currentYear === "2021")
+  // || (deferredArea === "CN" && currentYear === "2021")
 
   return (
     <div className={styles.impact_container}>
@@ -365,4 +364,3 @@ export default function MarginImpactTable() {
     </div>
   );
 }
-

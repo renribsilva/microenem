@@ -229,8 +229,6 @@ export type ItemGraphCacheType = {
   dataset: ItemGraphType;
 };
 
-export type AcertosNumType = number;
-
 interface AcertosDensityItem {
   x: number[];
   y: number[];
@@ -260,9 +258,32 @@ export type AcertosDataCacheType = {
   versao: string;
 };
 
+interface ImpactoItem {
+  posicao: number[];
+  valor: number[];
+}
+
+export type EAPDataType = {
+  theta: number[];
+  posterior: number[];
+  eap: number[];
+  theta_eap: number[];
+  impacto_individual: Record<string, ImpactoItem>;
+};
+
+export type ProbInfoDataType = {
+  infoData: InfoProbDataType | null;
+  probData: InfoProbDataType | null;
+  probLabels: InfoProbLabelType | null;
+  infoLabels: InfoProbLabelType | null;
+};
+
 export type YearContextType = {
   lastItemActivate: number;
   selectedItems: SelectedItemsType | object;
+  acertosNum: number;
+  sampleEAP: string;
+  updateTrigger: boolean;
 
   // Carga no server (bundle inicial)
   itensData: ItensDataType | null;
@@ -271,41 +292,36 @@ export type YearContextType = {
   redacaoData: RedacaoType;
   dificuldadeDoExame: DificuldadeDoExameType;
 
-  // Carga no cliente (API)
-  infoData: InfoProbDataType | null;
-  probData: InfoProbDataType | null;
-  probLabels: InfoProbLabelType | null;
-  infoLabels: InfoProbLabelType | null;
-
+  // Carga solicitada pelo cliente (API)
+  probInfoData: ProbInfoDataType;
   itemGraphData: ItemGraphType | null;
-
-  acertosNum: AcertosNumType | null;
   acertosData: AcertosDataType | null;
 
+  // Carga solicitada pelo cliente (API externa: Render)
+  EAPData: EAPDataType | null;
+
+  // Tratamento de dados
   describeRowData: any;
   activeSelectedRow: any;
   abandonadosCodes: any;
   FIXED_PALETTE: any;
   d: any;
   k: any;
-  setLastItemActivate: any;
   lastItemActivateNum: any;
-  setLastItemActivateNum: any;
-  handleToggle: any;
-  getCodeByLabel: any;
-  getParamByLabel: any;
   activeCodes: any;
-  setAcertosNum: any;
-  EAPData: any;
-  sampleEAP: any;
-  setSampleEAP: any;
-  setUpdateTrigger: any;
-  updateTrigger: any;
   intervalData: any;
   top2000Data: any;
   activeRanking: any;
-  setActiveRanking: any;
   candidateData: any;
+
   getAreaMap: any;
-  currentYear: any;
+  handleToggle: any;
+  getCodeByLabel: any;
+  getParamByLabel: any;
+  setUpdateTrigger: any;
+  setSampleEAP: any;
+  setAcertosNum: any;
+  setLastItemActivateNum: any;
+  setActiveRanking: any;
+  setLastItemActivate: any;
 };

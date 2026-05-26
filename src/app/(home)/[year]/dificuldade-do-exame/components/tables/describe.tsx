@@ -38,8 +38,6 @@ export function DescribeTable() {
   const { deferredArea, selectedRowId, setSelectedRowId } = useHomeData();
   const { describeRowData } = useYearData();
 
-  // console.log(describeRowData)
-
   const columns = useMemo(
     () => [
       columnHelper.accessor("metric", {
@@ -124,4 +122,3 @@ export function DescribeTable() {
     </div>
   );
 }
-

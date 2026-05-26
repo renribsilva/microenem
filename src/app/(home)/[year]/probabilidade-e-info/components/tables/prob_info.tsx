@@ -27,17 +27,12 @@ type TableRow = {
 export default function ProbsInfoTable() {
   const { chartProps } = useHomeData();
   const { proficienciaAtual } = chartProps;
-  const {
-    k,
-    d,
-    probData,
-    probLabels,
-    infoData,
-    selectedItems,
-    activeCodes,
-    abandonadosCodes,
-  } = useYearData();
+  const { k, d, probInfoData, selectedItems, activeCodes, abandonadosCodes } =
+    useYearData();
 
+  const probLabels = probInfoData.probLabels;
+  const probData = probInfoData.probData;
+  const infoData = probInfoData.infoData;
   const [sorting, setSorting] = useState<SortingState>([
     { id: "posicao", desc: false },
   ]);

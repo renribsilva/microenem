@@ -28,7 +28,6 @@ import {
   ItemGraphCacheType,
   ItemGraphType,
   ItensDataType,
-  AcertosNumType,
   OverviewType,
   ProbCacheType,
   RedacaoType,
@@ -39,9 +38,38 @@ import {
   YearContextType,
   AcertosDataType,
   AcertosDataCacheType,
+  EAPDataType,
 } from "../types/year_types";
 
 const YearContext = createContext<YearContextType>(null);
+
+const labelMap: Record<string, string> = {
+  mean: "Média",
+  median: "Mediana",
+  mode: "Moda",
+  sd: "Desvio Padrão",
+  min: "Mínima¹",
+  max: "Máxima²",
+  skew: "Assimetria",
+  kurtosis: "Curtose",
+  q1: "1º quartil",
+  q3: "3º quartil",
+  p99: "Percentil 99",
+};
+
+const rowOrder = [
+  "mean",
+  "median",
+  "mode",
+  "min",
+  "max",
+  "sd",
+  "q1",
+  "q3",
+  "p99",
+  "skew",
+  "kurtosis",
+];
 
 export function YearProvider({ children }: { children: ReactNode }) {
   // ---------------------------------------------------------------------------
@@ -63,6 +91,14 @@ export function YearProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const [co_p_selected] = selectedLabel.split("_");
+
+  const [acertosNum, setAcertosNum] = useState<number | null>(null);
+
+  const [sampleEAP, setSampleEAP] = useState<string>(
+    "000000000000000000000000000000000000000000000",
+  );
+
+  const [updateTrigger, setUpdateTrigger] = useState<boolean>(false);
 
   // ---------------------------------------------------------------------------
   // ------------ CARGA DINÂMICA DE JSON POR ANO (BUNDLE INICIAL) --------------
@@ -361,7 +397,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
   }, [lastItemActivate, currentYear]);
 
   // RELAÇÃO NOTAS-ACERTOS
-  const [acertosNum, setAcertosNum] = useState<AcertosNumType | null>(null);
   const [acertosData, setAcertosData] = useState<AcertosDataType | null>(null);
   const acertosCache = useRef<AcertosDataCacheType | null>(null);
 
@@ -399,14 +434,24 @@ export function YearProvider({ children }: { children: ReactNode }) {
     fetchAcertosData();
   }, [deferredArea, currentYear]);
 
-  // TRI E PARÂMETROS
-  const [EAPData, setEAPData] = useState<any>(null);
-  const [sampleEAP, setSampleEAP] = useState<string>(
-    "000000000000000000000000000000000000000000000",
-  );
-  const [updateTrigger, setUpdateTrigger] = useState(false);
+  // ---------------------------------------------------------------------------
+  // ------------ AGRUPAMENTO DE DADOS SOCILITIDADOS PELO CLIENTE --------------
+  // ---------------------------------------------------------------------------
 
-  console.log(EAPData);
+  const probInfoData = {
+    probData,
+    probLabels,
+    infoData,
+    infoLabels,
+  };
+
+  // ---------------------------------------------------------------------------
+  // -------------- CARGA DO CÁLCULO EAP (API EXTERNA: RENDER) -----------------
+  // ---------------------------------------------------------------------------
+
+  // TRI E PARÂMETROS
+  const [EAPData, setEAPData] = useState<EAPDataType | null>(null);
+
   useEffect(() => {
     if (!selectedLabel) return null;
     const [codigo, lingua] = selectedLabel.split("_");
@@ -439,35 +484,11 @@ export function YearProvider({ children }: { children: ReactNode }) {
   //---------------------------DIFICULDADE DO EXAME---------------------------
   //--------------------------------------------------------------------------
 
-  const labelMap: Record<string, string> = {
-    mean: "Média",
-    median: "Mediana",
-    mode: "Moda",
-    sd: "Desvio Padrão",
-    min: "Mínima¹",
-    max: "Máxima²",
-    skew: "Assimetria",
-    kurtosis: "Curtose",
-    q1: "1º quartil",
-    q3: "3º quartil",
-    p99: "Percentil 99",
-  };
-
-  const rowOrder = [
-    "mean",
-    "median",
-    "mode",
-    "min",
-    "max",
-    "sd",
-    "q1",
-    "q3",
-    "p99",
-    "skew",
-    "kurtosis",
-  ];
-
-  const formatValue = (key: string, val: any, type: "nota" | "acerto") => {
+  const formatValue = (
+    key: string,
+    val: number | null,
+    type: "nota" | "acerto",
+  ) => {
     if (typeof val !== "number") return val;
     const isSpecial = key === "skew" || key === "kurtosis";
     return val.toLocaleString("pt-BR", {
@@ -827,45 +848,49 @@ export function YearProvider({ children }: { children: ReactNode }) {
       value={{
         lastItemActivate,
         selectedItems,
+        acertosNum,
+        sampleEAP,
+        updateTrigger,
+
+        // Carga no server (bundle inicial)
         itensData,
         overviewData,
         respostaAoItemData,
         redacaoData,
         dificuldadeDoExame,
 
+        // Carga solicitada pelo cliente (API)
+        probInfoData,
+        itemGraphData,
+        acertosData,
+
+        // Carga solicitada pelo cliente (API externa: render)
+        EAPData,
+
+        // Tratamento de dados
         describeRowData,
         activeSelectedRow,
         abandonadosCodes,
         FIXED_PALETTE,
         d,
         k,
-        probData,
-        probLabels,
-        infoData,
-        infoLabels,
-        setLastItemActivate,
         lastItemActivateNum,
+        activeCodes,
+        intervalData,
+        top2000Data,
+        activeRanking,
+        candidateData,
+
+        getAreaMap,
+        setLastItemActivate,
         setLastItemActivateNum,
         handleToggle,
         getCodeByLabel,
         getParamByLabel,
-        activeCodes,
-        acertosData,
-        acertosNum,
+        setActiveRanking,
         setAcertosNum,
-        itemGraphData,
-        EAPData,
-        sampleEAP,
         setSampleEAP,
         setUpdateTrigger,
-        updateTrigger,
-        intervalData,
-        top2000Data,
-        activeRanking,
-        setActiveRanking,
-        candidateData,
-        getAreaMap,
-        currentYear,
       }}
     >
       {children}

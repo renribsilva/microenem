@@ -17,9 +17,8 @@ export default function ProdProbChart() {
     setUpdateTrigger,
     activeCodes,
     intervalData,
-    currentYear,
   } = useYearData();
-  const { deferredArea, selectedLabel } = useHomeData();
+  const { deferredArea, selectedLabel, currentYear } = useHomeData();
   const [isUpdating, setIsUpdating] = useState(false);
   const [showRenderWarning, setShowRenderWarning] = useState(false);
   const { axisColor, textColor, gridColor } = useChartTheme();
@@ -28,7 +27,7 @@ export default function ProdProbChart() {
   const isTRIDivergente =
     (deferredArea === "MT" && currentYear === "2009") ||
     (deferredArea === "MT" && currentYear === "2019");
-    // || (deferredArea === "CN" && currentYear === "2021")
+  // || (deferredArea === "CN" && currentYear === "2021")
 
   useEffect(() => {
     setIsUpdating(false);
@@ -72,6 +71,9 @@ export default function ProdProbChart() {
     return [{ name: "Log-Likelihood", data: chartPoints }];
   }, [EAPData, k, d, isTRIDivergente]);
 
+  const valorEAP = Array.isArray(EAPData?.eap)
+    ? EAPData.eap[0]
+    : (EAPData?.eap ?? 0);
   const options: ApexCharts.ApexOptions = {
     chart: {
       type: "area",
@@ -150,7 +152,7 @@ export default function ProdProbChart() {
           ]
         : [
             {
-              x: EAPData?.eap || 0,
+              x: valorEAP || 0,
               borderColor: "#f43f5e",
               strokeDashArray: 4,
               label: {
@@ -263,4 +265,3 @@ export default function ProdProbChart() {
     </div>
   );
 }
-

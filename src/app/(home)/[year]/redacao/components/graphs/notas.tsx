@@ -3,10 +3,9 @@
 import Chart from "react-apexcharts";
 import { useMemo, useState } from "react";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
-import customTooltip from "../../../../../../components/tsx/customTooltip";
 import { useHomeData } from "../../../../../../context/home_context";
 import { useYearData } from "../../../../../../context/year_context";
-import styles from "./graphs.module.css";
+import { CompetenciaRowType } from "../../../../../../types/year_types";
 
 type NotaKey =
   | "NU_NOTA_COMP1"
@@ -16,14 +15,22 @@ type NotaKey =
   | "NU_NOTA_COMP5"
   | "NU_NOTA_REDACAO";
 
+interface NotaItem {
+  x: string;
+  y: number;
+  rel: number;
+}
+
 export default function NotasRedacaoChart() {
   const { redacaoData } = useYearData();
-  const { textColor, gridColor, axisColor } = useChartTheme();
+  const { panelColor, textColor, gridColor, axisColor } = useChartTheme();
   const { selectedRowId } = useHomeData();
   const [selectedNota, setSelectedNota] = useState<NotaKey>("NU_NOTA_REDACAO");
+
   const competenciaRowData = redacaoData.competenciaRowData;
-  const currentData = (competenciaRowData as any)[selectedNota];
+  const currentData = (competenciaRowData as CompetenciaRowType)[selectedNota];
   const nTotal = currentData?.estatisticas?.n || 0;
+
   const categories = useMemo(
     () => currentData?.frequencia?.labels || [],
     [currentData],
@@ -32,7 +39,6 @@ export default function NotasRedacaoChart() {
   // Paleta Dark Mode
   const barColor = "#6366f1";
   const accentColor = "#22d3ee";
-  const alertColor = "#fb7185";
 
   const series = useMemo(() => {
     if (!currentData) return [];
@@ -58,6 +64,9 @@ export default function NotasRedacaoChart() {
     const metricId = selectedRowId || "media";
     const rawValue = currentData?.estatisticas[metricId];
     const numericValue = Number(rawValue);
+    const numericValueFormat = numericValue.toLocaleString("pt-BR", {
+      maximumFractionDigits: 2,
+    });
     const isSpecialMetric = ["skew", "kurtosis"].includes(metricId);
     const shouldShowAnnotation =
       rawValue !== undefined &&
@@ -85,7 +94,7 @@ export default function NotasRedacaoChart() {
         bar: {
           horizontal: true,
           barHeight: "80%",
-          borderRadius: 0, // REMOVIDO ARREDONDAMENTO
+          borderRadius: 0,
           dataLabels: { position: "top" },
         },
       },
@@ -103,7 +112,7 @@ export default function NotasRedacaoChart() {
                     background: accentColor,
                     fontWeight: "700",
                   },
-                  text: `${metricId.toUpperCase()}: ${numericValue.toLocaleString("pt-BR", { maximumFractionDigits: 2 })}`,
+                  text: `${metricId.toUpperCase()}: ${numericValueFormat}`,
                   position: "left",
                   offsetX: 80,
                 },
@@ -114,8 +123,11 @@ export default function NotasRedacaoChart() {
       dataLabels: {
         enabled: true,
         formatter: (val: number) => {
+          const valFormat = (val / 1000).toLocaleString("pt-BR", {
+            maximumFractionDigits: 0,
+          });
           if (val >= 1000) {
-            return `${(val / 1000).toLocaleString("pt-BR", { maximumFractionDigits: 0 })}k`;
+            return `${valFormat}k`;
           }
           return val.toLocaleString("pt-BR");
         },
@@ -152,20 +164,50 @@ export default function NotasRedacaoChart() {
         theme: "dark",
         intersect: false,
         followCursor: true,
-        custom: function ({ seriesIndex, dataPointIndex, w }: any) {
-          const dataConfig = w.config.series[seriesIndex].data[dataPointIndex];
-          return customTooltip({
-            label: `Nota: ${dataConfig.x}`,
-            value: `${dataConfig.rel.toFixed(1)}`,
-            absolute: dataConfig.y.toLocaleString("pt-BR"),
-          });
+        y: {
+          formatter: function (val, { seriesIndex, dataPointIndex, w }) {
+            const series = w.config.series as { data: NotaItem[] }[];
+            const item = series[seriesIndex].data[dataPointIndex];
+            const relative = item.rel.toLocaleString("pt-BR");
+            const css = {
+              label: ["font-weight: 300", "opacity: 0.7"].join("; "),
+              value: ["font-weight: bold", "margin-left: 4px"].join("; "),
+            };
+            return `
+              <div>
+                <span style="${css.label}">Porcentagem:</span>
+                <span style="${css.value}">${relative}%</span>
+              </div>
+              <div style="margin-top: 2px;">
+                <span style="${css.label}">Total:</span>
+                <span style="${css.value}">${val.toLocaleString("pt-BR")}</span>
+              </div>
+            `;
+          },
+          title: {
+            formatter: function () {
+              return "";
+            },
+          },
+        },
+        x: {
+          show: true,
+          formatter: function (val) {
+            const css = {
+              bg: [`color: ${panelColor}`, "padding-left: 5px"].join("; "),
+            };
+            return `<span style="${css.bg}">Nota: ${val}<span>`;
+          },
+        },
+        marker: {
+          show: false,
         },
       },
     };
   }, [
-    textColor,
+    axisColor,
     gridColor,
-    selectedNota,
+    panelColor,
     selectedRowId,
     currentData,
     categories,
@@ -202,7 +244,7 @@ export default function NotasRedacaoChart() {
             onClick={() => setSelectedNota(opt.key)}
             style={{
               padding: "8px 16px",
-              borderRadius: "4px 4px 0 0", // Bordas levemente arredondadas apenas no topo
+              borderRadius: "4px 4px 0 0",
               border: "none",
               cursor: "pointer",
               fontSize: "12px",
@@ -227,9 +269,6 @@ export default function NotasRedacaoChart() {
           height={calculatedHeight}
           width="100%"
         />
-        {/* <div className={styles.table_footer}>
-          Aviso: não inclui redações de reaplicações (o que explica o ano de 2020 ter, nesta análise, 27 redações nota mil e não 28 como divulgado pelo Inep)
-        </div> */}
       </div>
     </div>
   );

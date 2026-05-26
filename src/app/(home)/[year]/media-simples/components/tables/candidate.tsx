@@ -7,17 +7,29 @@ import { useHomeData } from "../../../../../../context/home_context";
 
 export default function CandidateFullDetail() {
   const { dicData } = useHomeData();
-  const { candidateData, getAreaMap } = useYearData();
+  const { meanData, getAreaMap } = useYearData();
   const [activeTab, setActiveTab] = useState<"geral" | "scores">("geral");
-  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 800 : false);
-  const [tooltip, setTooltip] = useState<{ text: string, x: number, y: number, visible: boolean }>({
-    text: "", x: 0, y: 0, visible: false
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth < 800 : false,
+  );
+  const [tooltip, setTooltip] = useState<{
+    text: string;
+    x: number;
+    y: number;
+    visible: boolean;
+  }>({
+    text: "",
+    x: 0,
+    y: 0,
+    visible: false,
   });
-    
+
+  const candidateData = meanData.candidateData;
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 800);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const handleMouseMove = (e: React.MouseEvent, text: string) => {
@@ -26,20 +38,25 @@ export default function CandidateFullDetail() {
       text,
       // Se estiver na direita, subtrai o offset (aparece na esquerda)
       // Se estiver na esquerda, soma o offset (aparece na direita)
-      x: isRightSide ? e.clientX - 160 : e.clientX + 15, 
+      x: isRightSide ? e.clientX - 160 : e.clientX + 15,
       y: e.clientY - 10,
-      visible: true
+      visible: true,
     });
   };
-  
+
   const getProvaInfo = (codProva: number) => {
     if (!dicData || !dicData.codigo) return { cor: "#333", nome: "---" };
     const index = dicData.codigo.indexOf(codProva);
     if (index === -1) return { cor: "#333", nome: `Cód: ${codProva}` };
     const nomeCorOriginal = dicData.cor[index];
     const colorMap: { [key: string]: string } = {
-      "Azul": "#0070f3", "Amarela": "#d4a522", "Rosa": "#ff2ddc",
-      "Branca": "#ffffff", "Cinza": "#808080", "Laranja": "#ff8c00", "Verde": "#28a745"
+      Azul: "#0070f3",
+      Amarela: "#d4a522",
+      Rosa: "#ff2ddc",
+      Branca: "#ffffff",
+      Cinza: "#808080",
+      Laranja: "#ff8c00",
+      Verde: "#28a745",
     };
     const hex = colorMap[nomeCorOriginal.split(" ")[0]] || "#333";
     return { cor: hex, nome: nomeCorOriginal };
@@ -47,21 +64,48 @@ export default function CandidateFullDetail() {
 
   if (!candidateData) return <div className={styles.fallback}>Aguarde...</div>;
 
-  const linguaEstrangeira = candidateData.TP_LINGUA === 0 ? "Inglês" : "Espanhol";
+  const linguaEstrangeira =
+    candidateData.TP_LINGUA === 0 ? "Inglês" : "Espanhol";
 
   const areas = [
-    { label: isMobile ? `LC (${linguaEstrangeira.slice(0,3)})` : `Linguagens (${linguaEstrangeira})`, key: "LC", nota: candidateData.NU_NOTA_LC, score: candidateData.SCORE_LC, cod: candidateData.CO_PROVA_LC },
-    { label: isMobile ? "CH" : "Humanas", key: "CH", nota: candidateData.NU_NOTA_CH, score: candidateData.SCORE_CH, cod: candidateData.CO_PROVA_CH },
-    { label: isMobile ? "CN" : "Natureza", key: "CN", nota: candidateData.NU_NOTA_CN, score: candidateData.SCORE_CN, cod: candidateData.CO_PROVA_CN },
-    { label: isMobile ? "MT" : "Matemática", key: "MT", nota: candidateData.NU_NOTA_MT, score: candidateData.SCORE_MT, cod: candidateData.CO_PROVA_MT },
+    {
+      label: isMobile
+        ? `LC (${linguaEstrangeira.slice(0, 3)})`
+        : `Linguagens (${linguaEstrangeira})`,
+      key: "LC",
+      nota: candidateData.NU_NOTA_LC,
+      score: candidateData.SCORE_LC,
+      cod: candidateData.CO_PROVA_LC,
+    },
+    {
+      label: isMobile ? "CH" : "Humanas",
+      key: "CH",
+      nota: candidateData.NU_NOTA_CH,
+      score: candidateData.SCORE_CH,
+      cod: candidateData.CO_PROVA_CH,
+    },
+    {
+      label: isMobile ? "CN" : "Natureza",
+      key: "CN",
+      nota: candidateData.NU_NOTA_CN,
+      score: candidateData.SCORE_CN,
+      cod: candidateData.CO_PROVA_CN,
+    },
+    {
+      label: isMobile ? "MT" : "Matemática",
+      key: "MT",
+      nota: candidateData.NU_NOTA_MT,
+      score: candidateData.SCORE_MT,
+      cod: candidateData.CO_PROVA_MT,
+    },
   ];
 
   return (
     <section className={styles.candidate_container}>
       {/* TOOLTIP FLUTUANTE */}
       {tooltip.visible && (
-        <div 
-          className={styles.custom_tooltip} 
+        <div
+          className={styles.custom_tooltip}
           style={{ left: tooltip.x + 15, top: tooltip.y - 10 }}
         >
           {tooltip.text}
@@ -70,13 +114,25 @@ export default function CandidateFullDetail() {
       <div className={styles.full_header}>
         <div className={styles.main_info}>
           <span className={styles.rank_badge}>#{candidateData.RANKING}°</span>
-          <h2 className={styles.media_title}>Média Simples: {Number(candidateData.MEDIA_GERAL).toFixed(2)}</h2>
+          <h2 className={styles.media_title}>
+            Média Simples: {Number(candidateData.MEDIA_GERAL).toFixed(2)}
+          </h2>
         </div>
       </div>
 
       <div className={styles.tabs}>
-        <button onClick={() => setActiveTab("geral")} className={`${styles.tab_btn} ${activeTab === "geral" ? styles.active : ""}`}>Resumo de Notas</button>
-        <button onClick={() => setActiveTab("scores")} className={`${styles.tab_btn} ${activeTab === "scores" ? styles.active : ""}`}>Mapa de Acertos</button>
+        <button
+          onClick={() => setActiveTab("geral")}
+          className={`${styles.tab_btn} ${activeTab === "geral" ? styles.active : ""}`}
+        >
+          Resumo de Notas
+        </button>
+        <button
+          onClick={() => setActiveTab("scores")}
+          className={`${styles.tab_btn} ${activeTab === "scores" ? styles.active : ""}`}
+        >
+          Mapa de Acertos
+        </button>
       </div>
 
       <div className={styles.tab_body}>
@@ -94,18 +150,37 @@ export default function CandidateFullDetail() {
               <tbody className={styles.static_body}>
                 {areas.map((area) => {
                   const info = getProvaInfo(area.cod);
-                  const map = getAreaMap(area.cod, candidateData.TP_LINGUA, area.score);
-                  const validos = map.filter(x => x.status !== "abandoned").length;
-                  const acertos = map.filter(x => x.status === "correct").length;
+                  const map = getAreaMap(
+                    area.cod,
+                    candidateData.TP_LINGUA,
+                    area.score,
+                  );
+                  const validos = map.filter(
+                    (x) => x.status !== "abandoned",
+                  ).length;
+                  const acertos = map.filter(
+                    (x) => x.status === "correct",
+                  ).length;
                   return (
                     <tr key={area.key} className={styles.static_tr}>
                       <td className={styles.static_td}>{area.label}</td>
                       <td className={styles.static_td}>{area.nota}</td>
-                      <td className={styles.static_td}>{acertos}/{validos}</td>
+                      <td className={styles.static_td}>
+                        {acertos}/{validos}
+                      </td>
                       <td className={styles.static_td}>
                         <div className={styles.prova_color_cell}>
-                          <span className={styles.color_circle} style={{ backgroundColor: info.cor }} />
-                          <span style={{ color: info.cor === "#ffffff" ? "#999" : info.cor }}>{info.nome}</span>
+                          <span
+                            className={styles.color_circle}
+                            style={{ backgroundColor: info.cor }}
+                          />
+                          <span
+                            style={{
+                              color: info.cor === "#ffffff" ? "#999" : info.cor,
+                            }}
+                          >
+                            {info.nome}
+                          </span>
                         </div>
                       </td>
                     </tr>
@@ -120,16 +195,30 @@ export default function CandidateFullDetail() {
                 <strong>{candidateData.NU_NOTA_REDACAO}</strong>
               </div>
               <div>
-                {[1, 2, 3, 4, 5].map(i => (
+                {[1, 2, 3, 4, 5].map((i) => (
                   <div key={i} className={styles.comp_row}>
                     <span className={styles.comp_label}>C{i}</span>
                     <div className={styles.comp_bar_bg}>
-                      <div 
-                        className={styles.comp_bar_fill} 
-                        style={{ width: `${(candidateData[`NU_NOTA_COMP${i}` as keyof typeof candidateData] / 200) * 100}%` }} 
+                      <div
+                        className={styles.comp_bar_fill}
+                        style={{
+                          width: (() => {
+                            const notaCompetencia = candidateData[
+                              `NU_NOTA_COMP${i}` as keyof typeof candidateData
+                            ] as number;
+                            const percentual = (notaCompetencia / 200) * 100;
+                            return `${percentual}%`;
+                          })(),
+                        }}
                       />
                     </div>
-                    <span className={styles.comp_val}>{candidateData[`NU_NOTA_COMP${i}` as keyof typeof candidateData]}</span>
+                    <span className={styles.comp_val}>
+                      {
+                        candidateData[
+                          `NU_NOTA_COMP${i}` as keyof typeof candidateData
+                        ]
+                      }
+                    </span>
                   </div>
                 ))}
               </div>
@@ -152,23 +241,36 @@ export default function CandidateFullDetail() {
                 <span>Anulada</span>
               </div>
             </div>
-            {areas.map(area => {
-              const map = getAreaMap(area.cod, candidateData.TP_LINGUA, area.score)
+            {areas.map((area) => {
+              const map = getAreaMap(
+                area.cod,
+                candidateData.TP_LINGUA,
+                area.score,
+              );
               return (
                 <div key={area.key} className={styles.score_block}>
                   <h4 className={styles.score_h4}>{area.label}</h4>
                   <div className={styles.score_dots_grid}>
                     {map.map((item, idx) => {
                       // Definindo o texto do tooltip baseado no status
-                      const statusText = item.status === "correct" ? "Acerto" : item.status === "wrong" ? "Erro" : "Anulada";
+                      const statusText =
+                        item.status === "correct"
+                          ? "Acerto"
+                          : item.status === "wrong"
+                            ? "Erro"
+                            : "Anulada";
                       const tooltipContent = `Questão ${item.pos}: ${statusText}`;
 
                       return (
-                        <div 
-                          key={idx} 
+                        <div
+                          key={idx}
                           className={`${styles.dot} ${styles[item.status]}`}
-                          onMouseMove={(e) => handleMouseMove(e, tooltipContent)}
-                          onMouseLeave={() => setTooltip({ ...tooltip, visible: false })}
+                          onMouseMove={(e) =>
+                            handleMouseMove(e, tooltipContent)
+                          }
+                          onMouseLeave={() =>
+                            setTooltip({ ...tooltip, visible: false })
+                          }
                         />
                       );
                     })}

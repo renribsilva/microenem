@@ -74,19 +74,28 @@ export type chartPropsType = {
 };
 
 export type HomeContextType = {
+  // Definições iniciais
   currentYear: ParamValue;
-  dicData: DicDataType;
-  activeTCC: ActiveTCCType;
-  availableTCC: AvailableTCCType;
-  selectedLabel: SelectionsByAreaType["LC"];
-  setSelectedLabel: Dispatch<SetStateAction<string | null>>;
-  pointIndexStuff: PointIndexType;
-  getMetadata: GetMetadataType;
-  chartProps: chartPropsType;
   activeArea: SelectionsByAreaType["LC"];
   deferredArea: SelectionsByAreaType["LC"];
+  selectedLabel: SelectionsByAreaType["LC"];
   selectedRowId: string;
-  setSelectedRowId: Dispatch<SetStateAction<string | null>>;
-  handleTabChange: Dispatch<SetStateAction<string | null>>;
   isUpdating: boolean;
+
+  // Carga dinâmica do dicionário no server (bundle inicial)
+  dicData: DicDataType;
+
+  //Carga dinâmica do TCC solicitada pelo cliente (API)
+  activeTCC: ActiveTCCType;
+  availableTCC: AvailableTCCType;
+
+  // Chart props
+  pointIndexStuff: PointIndexType;
+  chartProps: chartPropsType;
+
+  // Funções
+  setSelectedRowId: React.Dispatch<React.SetStateAction<string | null>>;
+  handleTabChange: React.Dispatch<React.SetStateAction<string | null>>;
+  getMetadata: GetMetadataType;
+  setSelectedLabel: React.Dispatch<React.SetStateAction<string | null>>;
 };

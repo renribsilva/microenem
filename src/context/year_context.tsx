@@ -43,6 +43,15 @@ import {
   DescribeRowDataType,
   TableDataItem,
   ConstantesType,
+  Top2000Type,
+  CandidateDataType,
+  ProbInfoDataType,
+  MeanDataType,
+  FormatValueType,
+  GetCodeByLabelType,
+  GetParamByLabelType,
+  HandleToggleType,
+  GetAreaMapType,
 } from "../types/year_types";
 
 const YearContext = createContext<YearContextType>(null);
@@ -75,6 +84,13 @@ const rowOrder = [
   "kurtosis",
 ];
 
+const ranges: Record<string, { start: number; end: number }> = {
+  LC: { start: 1, end: 45 },
+  CH: { start: 46, end: 90 },
+  CN: { start: 91, end: 135 },
+  MT: { start: 136, end: 180 },
+};
+
 export function YearProvider({ children }: { children: ReactNode }) {
   // ---------------------------------------------------------------------------
   // ---------------------- CONTEXTOS NECESSÁRIOS ------------------------------
@@ -103,6 +119,12 @@ export function YearProvider({ children }: { children: ReactNode }) {
   );
 
   const [updateTrigger, setUpdateTrigger] = useState<boolean>(false);
+
+  const fixedPalette = useMemo<Record<number, string>>(
+    () =>
+      Array.from({ length: 45 }, (_, i) => `hsl(${(i * 360) / 45}, 70%, 50%)`),
+    [],
+  );
 
   // ---------------------------------------------------------------------------
   // ------------ CARGA ESTÁTICA DE JSON POR ANO (BUNDLE INICIAL) --------------
@@ -328,7 +350,8 @@ export function YearProvider({ children }: { children: ReactNode }) {
   // ------------------ CARGA DINÂMICA DE JSON POR ANO (API) -------------------
   // ---------------------------------------------------------------------------
 
-  // PROBABILIDADE E INFORMAÇÃO
+  // -----------------------PROBABILIDADE E INFORMAÇÃO--------------------------
+
   const [infoData, setInfoData] = useState<InfoProbDataType>(null);
   const [probData, setProbData] = useState<InfoProbDataType>(null);
   const [probLabels, setProbLabels] = useState<InfoProbLabelType>([]);
@@ -383,7 +406,8 @@ export function YearProvider({ children }: { children: ReactNode }) {
     fetchInfoData();
   }, [co_p_selected, currentYear]);
 
-  // RESPOSTA AO ITEM
+  // ---------------------------RESPOSTA AO ITEM--------------------------------
+
   const [itemGraphData, setItemGraphData] = useState<ItemGraphType | null>(
     null,
   );
@@ -414,7 +438,8 @@ export function YearProvider({ children }: { children: ReactNode }) {
     fetchItemData();
   }, [lastItemActivate, currentYear]);
 
-  // RELAÇÃO NOTAS-ACERTOS
+  // -------------------------RELAÇÃO NOTAS-ACERTOS-----------------------------
+
   const [acertosData, setAcertosData] = useState<AcertosDataType | null>(null);
   const acertosCache = useRef<AcertosDataCacheType | null>(null);
 
@@ -452,22 +477,66 @@ export function YearProvider({ children }: { children: ReactNode }) {
     fetchAcertosData();
   }, [deferredArea, currentYear]);
 
+  //---------------------------------MEAN---------------------------------------
+
+  const [activeRanking, setActiveRanking] = useState<number | null>(1);
+  const [top2000Data, setTop2000Data] = useState<Top2000Type>();
+  const [candidateData, setCandidateData] = useState<CandidateDataType>();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const isMediaSimplesPage = pathname?.endsWith("/media-simples");
+    async function fetchTop2000Data() {
+      if (!isMediaSimplesPage || !currentYear) return;
+      try {
+        const res = await fetch(`/api/mean?year=${currentYear}`);
+        const json = await res.json();
+        setTop2000Data(json);
+      } catch (err) {
+        console.error("Erro ao carregar probtrace:", err);
+      }
+    }
+    fetchTop2000Data();
+  }, [pathname, currentYear]);
+
+  useEffect(() => {
+    const isMediaSimplesPage = pathname?.endsWith("/media-simples");
+    async function fetchCandidateData() {
+      if (!isMediaSimplesPage || !currentYear) return;
+      try {
+        const res = await fetch(
+          `/api/candidate?year=${currentYear}&rank=${activeRanking}`,
+        );
+        const json = await res.json();
+        setCandidateData(json);
+      } catch (err) {
+        console.error("Erro ao carregar probtrace:", err);
+      }
+    }
+    fetchCandidateData();
+  }, [pathname, currentYear, activeRanking]);
+
   // ---------------------------------------------------------------------------
   // ------------ AGRUPAMENTO DE DADOS SOCILITIDADOS PELO CLIENTE --------------
   // ---------------------------------------------------------------------------
 
-  const probInfoData = {
+  const probInfoData: ProbInfoDataType = {
     probData,
     probLabels,
     infoData,
     infoLabels,
   };
 
+  const meanData: MeanDataType = {
+    activeRanking,
+    top2000Data,
+    candidateData,
+  };
+
   // ---------------------------------------------------------------------------
   // -------------- CARGA DO CÁLCULO EAP (API EXTERNA: RENDER) -----------------
   // ---------------------------------------------------------------------------
 
-  // TRI E PARÂMETROS
   const [EAPData, setEAPData] = useState<EAPDataType | null>(null);
 
   useEffect(() => {
@@ -502,13 +571,9 @@ export function YearProvider({ children }: { children: ReactNode }) {
   //---------------------------TRANSFORMAÇÃO DE DADOS---------------------------
   //----------------------------------------------------------------------------
 
-  //---------------------------------AUXILIARES---------------------------------
+  //---------------------------FUNÇÕES AUXILIARES-------------------------------
 
-  const formatValue = (
-    key: string,
-    val: number | null,
-    type: "nota" | "acerto",
-  ): string => {
+  const formatValue: FormatValueType = (key, val, type) => {
     if (typeof val !== "number") return val;
     const isSpecial = key === "skew" || key === "kurtosis";
     return val.toLocaleString("pt-BR", {
@@ -516,6 +581,146 @@ export function YearProvider({ children }: { children: ReactNode }) {
       minimumFractionDigits: 0,
     });
   };
+
+  // Função para traduzir Posição (ex: questão 95) em Código (ex: 11234)
+  const getCodeByLabel = useCallback<GetCodeByLabelType>(
+    (num, label) => {
+      if (!label || !itensData || !itensData.CO_POSICAO) return null;
+      const [co_p, ling, vers] = label.split("_");
+      const p = itensData;
+      const idx = Object.keys(p.CO_POSICAO).find((i) => {
+        const matchProva = Number(p.CO_PROVA[i]) === Number(co_p);
+        const matchPos = Number(p.CO_POSICAO[i]) === num;
+        if (!matchProva || !matchPos) return false;
+        if (deferredArea === "LC" && num <= 5 && ling !== undefined) {
+          return Number(p.TP_LINGUA[i]) === Number(ling);
+        }
+        if (vers === "D" && p.TP_VERSAO_DIGITAL) {
+          if (Number(vers) !== p.TP_VERSAO_DIGITAL[i]) return false;
+        }
+        return true;
+      });
+      return idx ? Number(p.CO_ITEM[idx]) : null;
+    },
+    [deferredArea, itensData],
+  );
+
+  // Função para traduzir Posição (ex: questão 95) em Parâmetro (ex: 1.234)
+  const getParamByLabel = useCallback<GetParamByLabelType>(
+    (num, label, type) => {
+      if (!label || !itensData || !itensData.CO_POSICAO) return null;
+      const [co_p, ling, vers] = label.split("_");
+      const p = itensData;
+      const idx = Object.keys(p.CO_POSICAO).find((i) => {
+        const matchProva = Number(p.CO_PROVA[i]) === Number(co_p);
+        const matchPos = Number(p.CO_POSICAO[i]) === num;
+        if (!matchProva || !matchPos) return false;
+        if (deferredArea === "LC" && num <= 5 && ling !== undefined) {
+          return Number(p.TP_LINGUA[i]) === Number(ling);
+        }
+        if (vers === "D" && p.TP_VERSAO_DIGITAL) {
+          if (Number(vers) !== p.TP_VERSAO_DIGITAL[i]) return false;
+        }
+        return true;
+      });
+      const map = {
+        a: p.NU_PARAM_A?.[idx],
+        b: p.NU_PARAM_B?.[idx],
+        c: p.NU_PARAM_C?.[idx],
+      };
+
+      const val = map[type];
+      return idx ? Number(val) : null;
+    },
+    [deferredArea, itensData],
+  );
+
+  const handleToggle = useCallback<HandleToggleType>(
+    (num, isAbandoned) => {
+      const codeItem = getCodeByLabel(num, selectedLabel);
+      if (!codeItem) {
+        console.warn(
+          `Não foi possível encontrar o código para a posição ` +
+            `${num} na prova ${selectedLabel}`,
+        );
+        return;
+      }
+      setLastItemActivate(codeItem);
+      setSelectedItems((prev) => {
+        const nextMapping = { ...prev };
+        const current = nextMapping[codeItem];
+        if (isAbandoned) {
+          // Se for abandonado: Toggle simples entre selecionado (cinza) e nada
+          if (current) {
+            delete nextMapping[codeItem];
+          } else {
+            nextMapping[codeItem] = { status: "anulado", posicao: num };
+          }
+          return nextMapping;
+        }
+        // Lógica de ciclo: Nada -> Acerto (verde) -> Erro (vermelho) -> Nada
+        if (!current) {
+          nextMapping[codeItem] = { status: "acerto", posicao: num };
+        } else if (current.status === "acerto") {
+          nextMapping[codeItem] = { status: "erro", posicao: num };
+        } else {
+          delete nextMapping[codeItem];
+        }
+        return nextMapping;
+      });
+    },
+    [selectedLabel, getCodeByLabel],
+  );
+
+  const getAreaMap: GetAreaMapType = (codProva, tpLingua, score) => {
+    if (!itensData || !score) return [];
+    const bits = score.split("");
+    const temVersaoDigital = "TP_VERSAO_DIGITAL" in itensData;
+    // 1. Coletar todos os índices válidos para esta prova e língua
+    const indicesFiltrados = Object.keys(itensData.CO_PROVA)
+      .map(Number)
+      .filter((i) => {
+        const matchProva = itensData.CO_PROVA[i] === codProva;
+        const matchLingua =
+          itensData.TP_LINGUA[i] === null ||
+          itensData.TP_LINGUA[i] === tpLingua;
+        let matchDigital = true;
+        if (temVersaoDigital && itensData.TP_VERSAO_DIGITAL[i] !== null) {
+          matchDigital = itensData.TP_VERSAO_DIGITAL[i] === tpLingua;
+        }
+        return matchProva && matchLingua && matchDigital;
+      });
+
+    // 2. ORDENAÇÃO por posição (essencial para parear com a string do score)
+    indicesFiltrados.sort(
+      (a, b) => itensData.CO_POSICAO[a] - itensData.CO_POSICAO[b],
+    );
+
+    // Se não encontrar exatamente 45 itens, a estrutura do caderno está errada
+    // e o score não pode ser mapeado com segurança.
+    if (indicesFiltrados.length !== 45) {
+      console.error(
+        `Erro de integridade: Esperados 45 itens, ` +
+          `encontrados ${indicesFiltrados.length} para a prova ${codProva}.`,
+      );
+      return [];
+    }
+
+    return indicesFiltrados.map((i, pointer) => {
+      return {
+        pos: itensData.CO_POSICAO[i],
+        status:
+          itensData.IN_ITEM_ABAN[i] === 1
+            ? "abandoned"
+            : bits[pointer] === "1"
+              ? "correct"
+              : "wrong",
+        co_item: itensData.CO_ITEM[i],
+      };
+    });
+  };
+
+  //---------------------------------ITEM CODES---------------------------------
 
   const abandonadosCodes = useMemo(() => {
     const codes = new Set<number>();
@@ -530,6 +735,11 @@ export function YearProvider({ children }: { children: ReactNode }) {
     });
     return codes;
   }, [itensData]);
+
+  const activeCodes = useMemo(() => {
+    const codes = Object.keys(selectedItems).map(Number);
+    return codes.filter((code) => String(code) in (probData || {}));
+  }, [selectedItems, probData]);
 
   //-----------------------------DIFICULDADE DO EXAME---------------------------
 
@@ -573,127 +783,18 @@ export function YearProvider({ children }: { children: ReactNode }) {
 
   //---------------------------PROBABILIDADE E INFO-----------------------------
 
-  // Paleta fixa para os 45 itens
-  const fixedPalette = useMemo<Record<number, string>>(
-    () =>
-      Array.from({ length: 45 }, (_, i) => `hsl(${(i * 360) / 45}, 70%, 50%)`),
-    [],
-  );
-
-  // Função para traduzir Posição (ex: questão 95) em Código (ex: 11234)
-  const getCodeByLabel = useCallback(
-    (num: number, label: string) => {
-      if (!label || !itensData || !itensData.CO_POSICAO) return null;
-      const [co_p, ling, vers] = label.split("_");
-      const p = itensData;
-      const idx = Object.keys(p.CO_POSICAO).find((i) => {
-        const matchProva = Number(p.CO_PROVA[i]) === Number(co_p);
-        const matchPos = Number(p.CO_POSICAO[i]) === num;
-        if (!matchProva || !matchPos) return false;
-        if (deferredArea === "LC" && num <= 5 && ling !== undefined) {
-          return Number(p.TP_LINGUA[i]) === Number(ling);
-        }
-        if (vers === "D" && p.TP_VERSAO_DIGITAL) {
-          if (Number(vers) !== p.TP_VERSAO_DIGITAL[i]) return false;
-        }
-        return true;
-      });
-      return idx ? Number(p.CO_ITEM[idx]) : null;
-    },
-    [deferredArea, itensData],
-  );
-
-  // Função para traduzir Posição (ex: questão 95) em Parâmetro (ex: 1.234)
-  const getParamByLabel = useCallback(
-    (num: number, label: string, type: string) => {
-      if (!label || !itensData || !itensData.CO_POSICAO) return null;
-      const [co_p, ling, vers] = label.split("_");
-      const p = itensData;
-      const idx = Object.keys(p.CO_POSICAO).find((i) => {
-        const matchProva = Number(p.CO_PROVA[i]) === Number(co_p);
-        const matchPos = Number(p.CO_POSICAO[i]) === num;
-        if (!matchProva || !matchPos) return false;
-        if (deferredArea === "LC" && num <= 5 && ling !== undefined) {
-          return Number(p.TP_LINGUA[i]) === Number(ling);
-        }
-        if (vers === "D" && p.TP_VERSAO_DIGITAL) {
-          if (Number(vers) !== p.TP_VERSAO_DIGITAL[i]) return false;
-        }
-        return true;
-      });
-      const map = {
-        a: p.NU_PARAM_A?.[idx],
-        b: p.NU_PARAM_B?.[idx],
-        c: p.NU_PARAM_C?.[idx],
-      };
-
-      const val = map[type];
-      return idx ? Number(val) : null;
-    },
-    [deferredArea, itensData],
-  );
-
-  const handleToggle = useCallback(
-    (num: number, isAbandoned: boolean) => {
-      const codeItem = getCodeByLabel(num, selectedLabel);
-
-      if (!codeItem) {
-        console.warn(
-          `Não foi possível encontrar o código para a posição ` +
-            `${num} na prova ${selectedLabel}`,
-        );
-        return;
-      }
-
-      setLastItemActivate(codeItem);
-
-      setSelectedItems((prev) => {
-        const nextMapping = { ...prev };
-        const current = nextMapping[codeItem];
-
-        if (isAbandoned) {
-          // Se for abandonado: Toggle simples entre selecionado (cinza) e nada
-          if (current) {
-            delete nextMapping[codeItem];
-          } else {
-            nextMapping[codeItem] = { status: "anulado", posicao: num };
-          }
-          return nextMapping;
-        }
-
-        // Lógica de ciclo: Nada -> Acerto (verde) -> Erro (vermelho) -> Nada
-        if (!current) {
-          nextMapping[codeItem] = { status: "acerto", posicao: num };
-        } else if (current.status === "acerto") {
-          nextMapping[codeItem] = { status: "erro", posicao: num };
-        } else {
-          delete nextMapping[codeItem];
-        }
-        return nextMapping;
-      });
-    },
-    [selectedLabel, getCodeByLabel],
-  );
-
   const prevLabelRef = useRef<string>(selectedLabel);
 
   useLayoutEffect(() => {
     const previousLabel = prevLabelRef.current;
     if (previousLabel === selectedLabel) return;
 
-    const ranges: Record<string, { start: number; end: number }> = {
-      LC: { start: 1, end: 45 },
-      CH: { start: 46, end: 90 },
-      CN: { start: 91, end: 135 },
-      MT: { start: 136, end: 180 },
-    };
-
     const { start, end } = ranges[deferredArea] || { start: 1, end: 45 };
 
     setSelectedItems((prev) => {
       const currentlySelectedCodes = Object.keys(prev).map(Number);
       if (currentlySelectedCodes.length === 0) return prev;
-      const nextMapping: Record<number, any> = {};
+      const nextMapping: typeof prev = {};
       const translationMap = new Map();
       for (let num = start; num <= end; num++) {
         const oldCode = getCodeByLabel(num, previousLabel);
@@ -719,23 +820,9 @@ export function YearProvider({ children }: { children: ReactNode }) {
     prevLabelRef.current = selectedLabel;
   }, [selectedLabel, getCodeByLabel, deferredArea]);
 
-  const activeCodes = useMemo(() => {
-    const codes = Object.keys(selectedItems).map(Number);
-    return codes.filter((code) => String(code) in (probData || {}));
-  }, [selectedItems, probData]);
-
-  //--------------------------------------------------------
   //--------------------------EAP---------------------------
-  //--------------------------------------------------------
 
-  const intervalData = useMemo(() => {
-    const ranges = {
-      LC: { start: 1, end: 45 },
-      CH: { start: 46, end: 90 },
-      CN: { start: 91, end: 135 },
-      MT: { start: 136, end: 180 },
-    };
-
+  const intervalData = useMemo<string>(() => {
     const { start, end } = ranges[deferredArea as keyof typeof ranges] || {
       start: 1,
       end: 45,
@@ -758,109 +845,11 @@ export function YearProvider({ children }: { children: ReactNode }) {
     return updatedInterval.join("");
   }, [deferredArea, activeCodes, selectedItems]);
 
-  //---------------------------------------------------------
-  //--------------------------MEAN---------------------------
-  //---------------------------------------------------------
+  //-------------------------------MEAN-----------------------------------------
 
-  const [activeRanking, setActiveRanking] = useState<number | null>(1);
-  const [top2000Data, setTop2000Data] = useState<any>();
-  const [candidateData, setCandidateData] = useState<any>();
-  const pathname = usePathname();
-
-  useEffect(() => {
-    const isMediaSimplesPage = pathname?.endsWith("/media-simples");
-    async function fetchTop2000Data() {
-      if (!isMediaSimplesPage || !currentYear) return;
-      try {
-        const res = await fetch(`/api/mean?year=${currentYear}`);
-        const json = await res.json();
-        setTop2000Data(json);
-      } catch (err) {
-        console.error("Erro ao carregar probtrace:", err);
-      }
-    }
-    fetchTop2000Data();
-  }, [pathname, currentYear]);
-
-  useEffect(() => {
-    const isMediaSimplesPage = pathname?.endsWith("/media-simples");
-    async function fetchCandidateData() {
-      if (!isMediaSimplesPage || !currentYear) return;
-      try {
-        const res = await fetch(
-          `/api/candidate?year=${currentYear}&rank=${activeRanking}`,
-        );
-        const json = await res.json();
-        setCandidateData(json);
-      } catch (err) {
-        console.error("Erro ao carregar probtrace:", err);
-      }
-    }
-    fetchCandidateData();
-  }, [pathname, currentYear, activeRanking]);
-
-  //---------------------------------------------------------
-  //--------------------------MEAN---------------------------
-  //---------------------------------------------------------
-
-  const getAreaMap = (codProva: number, tpLingua: number, score: string) => {
-    if (!itensData || !score) return [];
-
-    const bits = score.split("");
-    const temVersaoDigital = "TP_VERSAO_DIGITAL" in itensData;
-
-    // 1. Coletar todos os índices válidos para esta prova e língua
-    const indicesFiltrados = Object.keys(itensData.CO_PROVA)
-      .map(Number)
-      .filter((i) => {
-        const matchProva = itensData.CO_PROVA[i] === codProva;
-
-        const matchLingua =
-          itensData.TP_LINGUA[i] === null ||
-          itensData.TP_LINGUA[i] === tpLingua;
-
-        let matchDigital = true;
-        if (temVersaoDigital && itensData.TP_VERSAO_DIGITAL[i] !== null) {
-          matchDigital = itensData.TP_VERSAO_DIGITAL[i] === tpLingua;
-        }
-
-        return matchProva && matchLingua && matchDigital;
-      });
-
-    // 2. ORDENAÇÃO por posição (essencial para parear com a string do score)
-    indicesFiltrados.sort(
-      (a, b) => itensData.CO_POSICAO[a] - itensData.CO_POSICAO[b],
-    );
-
-    // 3. VALIDAÇÃO DE INTEGRIDADE
-    // Se não encontrar exatamente 45 itens, a estrutura do caderno está errada
-    // e o score não pode ser mapeado com segurança.
-    if (indicesFiltrados.length !== 45) {
-      console.error(
-        `Erro de integridade: Esperados 45 itens, ` +
-          `encontrados ${indicesFiltrados.length} para a prova ${codProva}.`,
-      );
-      return []; // Ou throw new Error(...) dependendo da sua preferência
-    }
-
-    // 4. MAPEAMENTO FINAL
-    return indicesFiltrados.map((i, pointer) => {
-      return {
-        pos: itensData.CO_POSICAO[i],
-        status:
-          itensData.IN_ITEM_ABAN[i] === 1
-            ? "abandoned"
-            : bits[pointer] === "1"
-              ? "correct"
-              : "wrong",
-        co_item: itensData.CO_ITEM[i],
-      };
-    });
-  };
-
-  //--------------------------------------------------------
-  //--------------------------FIM---------------------------
-  //--------------------------------------------------------
+  //----------------------------------------------------------------------------
+  //----------------------------------RETURN------------------------------------
+  //----------------------------------------------------------------------------
 
   if (loading) {
     return null;
@@ -869,13 +858,15 @@ export function YearProvider({ children }: { children: ReactNode }) {
   return (
     <YearContext.Provider
       value={{
+        // Definições iniciais
         lastItemActivate,
         selectedItems,
         acertosNum,
         sampleEAP,
         updateTrigger,
+        fixedPalette,
 
-        // Carga estática no srver
+        // Carga estática no server (bundle inicial)
         constantesData,
 
         // Carga dinâmica no server (bundle inicial)
@@ -885,31 +876,29 @@ export function YearProvider({ children }: { children: ReactNode }) {
         redacaoData,
         dificuldadeDoExame,
 
-        // Carga solicitada pelo cliente (API)
+        // Carga solicitada pelo cliente (API interna: lazy)
         probInfoData,
         itemGraphData,
         acertosData,
+        meanData,
 
         // Carga solicitada pelo cliente (API externa: render)
         EAPData,
 
         // Transformação de dados
-        dificuldadeDoExameAux,
         abandonadosCodes,
-        fixedPalette,
-        lastItemActivateNum,
         activeCodes,
+        dificuldadeDoExameAux,
+        lastItemActivateNum,
         intervalData,
-        top2000Data,
-        activeRanking,
-        candidateData,
 
+        // Funções
+        getCodeByLabel,
+        getParamByLabel,
+        handleToggle,
         getAreaMap,
         setLastItemActivate,
         setLastItemActivateNum,
-        handleToggle,
-        getCodeByLabel,
-        getParamByLabel,
         setActiveRanking,
         setAcertosNum,
         setSampleEAP,
@@ -921,10 +910,4 @@ export function YearProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export const useYearData = () => {
-  const context = useContext(YearContext);
-  if (!context) {
-    throw new Error("useYearData deve ser usado dentro de um YearProvider");
-  }
-  return context;
-};
+export const useYearData = () => useContext(YearContext);

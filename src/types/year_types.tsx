@@ -304,10 +304,76 @@ export type DescribeRowDataType = {
   cor_max_ref: string;
 };
 
+interface Top2000Item {
+  ranking: number;
+  media: number;
+}
+
+export type Top2000Type = Top2000Item[];
+
 export type dificuldadeDoExameAuxType = {
   describeRowData: DescribeRowDataType;
   activeSelectedRow: TableDataItem;
 };
+
+export type CandidateDataType = {
+  RANKING: number;
+  SCORE_LC: string;
+  SCORE_CH: string;
+  SCORE_CN: string;
+  SCORE_MT: string;
+  CO_PROVA_CN: number;
+  CO_PROVA_CH: number;
+  CO_PROVA_LC: number;
+  CO_PROVA_MT: number;
+  NU_NOTA_CN: number;
+  NU_NOTA_CH: number;
+  NU_NOTA_LC: number;
+  NU_NOTA_MT: number;
+  NU_NOTA_COMP1: number;
+  NU_NOTA_COMP2: number;
+  NU_NOTA_COMP3: number;
+  NU_NOTA_COMP4: number;
+  NU_NOTA_COMP5: number;
+  NU_NOTA_REDACAO: number;
+  TP_LINGUA: number | null;
+  MEDIA_GERAL: number;
+};
+
+export type MeanDataType = {
+  activeRanking: number;
+  top2000Data: Top2000Type;
+  candidateData: CandidateDataType;
+};
+
+export type FormatValueType = (
+  key: string,
+  val: number | null,
+  type: "nota" | "acerto",
+) => string;
+
+export type GetCodeByLabelType = (num: number, label: string) => number | null;
+
+export type GetParamByLabelType = (
+  num: number,
+  label: string,
+  type: string,
+) => number | null;
+
+export type HandleToggleType = (num: number, isAbandoned: boolean) => void;
+
+interface AreaItemMap {
+  pos: number;
+  status: "abandoned" | "correct" | "wrong";
+  co_item: number;
+}
+
+// 2. Tipo da Função (A assinatura completa do contrato)
+export type GetAreaMapType = (
+  codProva: number,
+  tpLingua: number,
+  score: string,
+) => AreaItemMap[];
 
 export type YearContextType = {
   lastItemActivate: number;
@@ -315,6 +381,7 @@ export type YearContextType = {
   acertosNum: number;
   sampleEAP: string;
   updateTrigger: boolean;
+  fixedPalette: Record<number, string>;
 
   // Carga estática no server
   constantesData: ConstantesType;
@@ -330,29 +397,27 @@ export type YearContextType = {
   probInfoData: ProbInfoDataType;
   itemGraphData: ItemGraphType | null;
   acertosData: AcertosDataType | null;
+  meanData: MeanDataType;
 
   // Carga solicitada pelo cliente (API externa: Render)
   EAPData: EAPDataType | null;
 
   // Transformação de dados
+  abandonadosCodes: Set<number>;
+  activeCodes: number[];
   dificuldadeDoExameAux: dificuldadeDoExameAuxType;
-  abandonadosCodes: any;
-  fixedPalette: any;
-  lastItemActivateNum: any;
-  activeCodes: any;
-  intervalData: any;
-  top2000Data: any;
-  activeRanking: any;
-  candidateData: any;
+  lastItemActivateNum: number;
+  intervalData: string;
 
-  getAreaMap: any;
-  handleToggle: any;
-  getCodeByLabel: any;
-  getParamByLabel: any;
-  setUpdateTrigger: any;
-  setSampleEAP: any;
-  setAcertosNum: any;
-  setLastItemActivateNum: any;
-  setActiveRanking: any;
-  setLastItemActivate: any;
+  // Funções
+  getCodeByLabel: GetCodeByLabelType;
+  getParamByLabel: GetParamByLabelType;
+  handleToggle: HandleToggleType;
+  getAreaMap: GetAreaMapType;
+  setUpdateTrigger: React.Dispatch<React.SetStateAction<boolean>>;
+  setSampleEAP: React.Dispatch<React.SetStateAction<string>>;
+  setAcertosNum: React.Dispatch<React.SetStateAction<number | null>>;
+  setLastItemActivateNum: React.Dispatch<React.SetStateAction<number>>;
+  setActiveRanking: React.Dispatch<React.SetStateAction<number | null>>;
+  setLastItemActivate: React.Dispatch<React.SetStateAction<number>>;
 };

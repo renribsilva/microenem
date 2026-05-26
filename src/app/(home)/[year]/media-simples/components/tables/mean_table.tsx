@@ -18,25 +18,30 @@ type RankingRow = {
 };
 
 export default function RankingTable() {
-  
-  const { top2000Data, activeRanking, setActiveRanking } = useYearData(); 
+  const { meanData, setActiveRanking } = useYearData();
   const columnHelper = createColumnHelper<RankingRow>();
   const { textColor } = useChartTheme();
 
-  const columns = useMemo(() => [
-    columnHelper.accessor("ranking", {
-      header: "Ranking",
-      cell: (info) => <span>#{info.getValue()}º</span>,
-    }),
-    columnHelper.accessor("media", {
-      header: "Média Simples",
-      cell: (info) => (
-        <span style={{ color: textColor, fontWeight: "300" }}>
-          {info.getValue().toFixed(2)}
-        </span>
-      ),
-    })
-  ], []);
+  const activeRanking = meanData.activeRanking;
+  const top2000Data = meanData.top2000Data;
+
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor("ranking", {
+        header: "Ranking",
+        cell: (info) => <span>#{info.getValue()}º</span>,
+      }),
+      columnHelper.accessor("media", {
+        header: "Média Simples",
+        cell: (info) => (
+          <span style={{ color: textColor, fontWeight: "300" }}>
+            {info.getValue().toFixed(2)}
+          </span>
+        ),
+      }),
+    ],
+    [],
+  );
 
   const table = useReactTable({
     data: top2000Data || [],
@@ -52,17 +57,20 @@ export default function RankingTable() {
           {/*   <p className={styles.card_subtitle_p}>Média simples das 5 áreas do conhecimento.</p> */}
         </div>
       </div>
-      
+
       {/* Container que limita a altura pela tela (viewport) */}
       <div className={styles.table_scroll_y}>
         <table className={styles.meantable_table}>
           <thead className={styles.meantable_thead_sticky}>
-            {table.getHeaderGroups().map(headerGroup => (
+            {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
-                {headerGroup.headers.map(header => (
+                {headerGroup.headers.map((header) => (
                   <th key={header.id} className={styles.meantable_th}>
                     <div className={styles.th_content}>
-                      {flexRender(header.column.columnDef.header, header.getContext())}
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                     </div>
                   </th>
                 ))}
@@ -70,20 +78,23 @@ export default function RankingTable() {
             ))}
           </thead>
           <tbody>
-            {table.getRowModel().rows.map(row => {
+            {table.getRowModel().rows.map((row) => {
               const currentRank = row.original.ranking;
               const isSelected = activeRanking === currentRank;
-              
+
               return (
-                <tr 
-                  key={row.id} 
+                <tr
+                  key={row.id}
                   className={`${styles.meantable_tr} ${isSelected ? styles.row_active : ""}`}
                   // Aqui a mágica acontece: clicou, salvou o rank no state
                   onClick={() => setActiveRanking(currentRank)}
                 >
-                  {row.getVisibleCells().map(cell => (
+                  {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} className={styles.meantable_td}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
                     </td>
                   ))}
                 </tr>

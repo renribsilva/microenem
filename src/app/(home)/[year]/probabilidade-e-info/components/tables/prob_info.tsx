@@ -159,7 +159,7 @@ export default function ProbsInfoTable() {
               ? 1 - probBruta
               : probBruta
             : null,
-        informacao: infoBruta !== null ? infoBruta.toFixed(2) : null,
+        informacao: infoBruta !== null ? Number(infoBruta.toFixed(2)) : null,
       };
     });
   }, [

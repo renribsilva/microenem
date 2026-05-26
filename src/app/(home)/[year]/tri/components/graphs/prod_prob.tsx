@@ -258,7 +258,7 @@ export default function ProdProbChart() {
       ) : (
         <div className={styles.eap_initial}>
           <p style={{ fontSize: "16px", fontWeight: 500 }}>
-            {isUpdating && activeCodes.lenght === 0
+            {isUpdating && activeCodes.length === 0
               ? "Iniciando cálculos..."
               : "Marque as respostas e clique no botão para calcular."}
           </p>

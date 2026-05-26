@@ -63,10 +63,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   // Loading inicial
   const [loading, setLoading] = useState<boolean>(true);
 
-  // --------------------------------------------------------------------------
-  // -------------------- PARÂMETROS PARA CARGA DINÂMICA ----------------------
-  // --------------------------------------------------------------------------
-
+  // Parâmetro para carga dinâmica
   const params = useParams();
   const currentYear = params.year;
 
@@ -229,21 +226,30 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   return (
     <HomeContext.Provider
       value={{
+        // Definiões iniciais
         currentYear,
-        availableTCC,
-        activeTCC,
-        selectedLabel,
-        setSelectedLabel,
-        pointIndexStuff,
-        getMetadata,
-        chartProps,
         activeArea,
         deferredArea,
+        selectedLabel,
         selectedRowId,
+        isUpdating: activeArea !== deferredArea || loading,
+
+        // Carga dinâmica do dicionário no server (bundle inicial)
+        dicData,
+
+        // Carga dinâmica do TCC solicitada pelo ciente (API)
+        availableTCC,
+        activeTCC,
+
+        // Carts props
+        pointIndexStuff,
+        chartProps,
+
+        // Funções
+        getMetadata,
         setSelectedRowId,
         handleTabChange,
-        isUpdating: activeArea !== deferredArea || loading,
-        dicData,
+        setSelectedLabel,
       }}
     >
       {children}

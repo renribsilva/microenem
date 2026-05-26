@@ -21,8 +21,8 @@
     left: 0;
     top: 60px;
     height: calc(100dvh - 60px);
-    transform: translateX(-100%); 
-    visibility: hidden;  
+    transform: translateX(-100%);
+    visibility: hidden;
     pointer-events: none;
   }
 }
@@ -120,7 +120,7 @@
   background-color: var(--tab-hover);
 }
 
-.navbar_button:hover  {
+.navbar_button:hover {
   background-color: var(--tab-hover);
 }
 
@@ -198,7 +198,7 @@
 /***********************************/
 
 .appheader_container {
-  background-color: var(--panel); 
+  background-color: var(--panel);
   height: 60px;
   width: 100%;
   padding: 10px;
@@ -207,7 +207,7 @@
   align-items: center;
   justify-content: space-between;
   padding-inline: 10px;
-  position: fixed; 
+  position: fixed;
   border-bottom: 1px solid var(--background);
 }
 
@@ -243,7 +243,7 @@
   height: 35px;
   border-radius: 99px;
   width: 35px;
-  padding: 0; 
+  padding: 0;
   line-height: 0;
   cursor: pointer;
 }
@@ -258,7 +258,7 @@
   height: 35px;
   border-radius: 99px;
   width: 35px;
-  padding: 0; 
+  padding: 0;
   line-height: 0;
   cursor: pointer;
 }
@@ -270,7 +270,7 @@
 .card_container {
   background-color: var(--panel);
   border-radius: 1rem;
-  padding: 20px;   
+  padding: 20px;
   box-sizing: border-box;
   width: 100%;
   height: 100%;
@@ -305,8 +305,8 @@
 }
 
 .tab_button:hover {
-  color:var(--foreground);
-  background-color: var(--tab-hover)
+  color: var(--foreground);
+  background-color: var(--tab-hover);
 }
 
 .tab_indicator {
@@ -315,7 +315,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background-color: var(--tab-indicator)
+  background-color: var(--tab-indicator);
 }
 
 /****************************************/
@@ -346,7 +346,7 @@
 
 .slider_wrapper {
   /* background-color: blueviolet; */
-  flex: 1; 
+  flex: 1;
   padding-block: 10px;
 }
 
@@ -365,7 +365,8 @@
 /* Thumb (Bolinha) */
 .custom_slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 20px; height: 20px;
+  width: 20px;
+  height: 20px;
   border: 3px solid var(--grid);
   border-radius: 50%;
   cursor: pointer;
@@ -384,7 +385,7 @@
   border: none;
   background-color: transparent;
   outline: none;
-  color:var(--foreground);
+  color: var(--foreground);
   text-align: center;
   padding-block: 5px;
 }
@@ -405,7 +406,6 @@
   /* justify-content: right; */
 }
 
-
 /*****************************************/
 /***************ITEMS_BUTTON**************/
 /*****************************************/
@@ -420,8 +420,8 @@
 .itens_button {
   aspect-ratio: 1/1;
   border-radius: 6px;
-  background-color:var(--panel);
-  color:var(--foreground);
+  background-color: var(--panel);
+  color: var(--foreground);
   font-size: 0.8rem;
   font-weight: 400;
   cursor: pointer;
@@ -448,7 +448,9 @@
   z-index: 50;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  transition:
+    opacity 0.3s ease-in-out,
+    visibility 0.3s ease-in-out;
 }
 
 /* Quando o backdrop estiver ativo */
@@ -470,7 +472,7 @@
   padding: 8px 12px;
   border-radius: 8px;
   border: 1px solid var(--grid);
-  background-color:var(--panel);
+  background-color: var(--panel);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -491,9 +493,24 @@
   border-radius: 8px;
   max-height: 250px;
   overflow-y: auto;
-  z-index: 101
+  z-index: 101;
 }
 
 .link_source {
   color: var(--foreground);
 }
+
+/*******************************************************/
+/*******************CUSTOM TOOLTIPS*********************/
+/*******************************************************/
+
+.tooltip_container {
+  background-color: rgba(30, 30, 30, 0.95);
+  border: 1px solid #444;
+  color: #fff;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  min-width: 150px;
+}
+

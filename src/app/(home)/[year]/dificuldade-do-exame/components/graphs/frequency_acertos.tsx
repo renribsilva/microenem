@@ -3,7 +3,6 @@
 import { useMemo } from "react";
 import Chart from "react-apexcharts";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
-import customTooltip from "../../../../../../components/tsx/customTooltip";
 import { useHomeData } from "../../../../../../context/home_context";
 import { useYearData } from "../../../../../../context/year_context";
 import styles from "./graphs.module.css";
@@ -16,7 +15,7 @@ export default function FrequencyAcertosChart() {
   const describeDifData = dificuldadeDoExame.describeDifData;
   const frequencyDifData = dificuldadeDoExame.frequencyDifData;
 
-  const { acertosColor, gridColor, axisColor, textColor } = useChartTheme();
+  const { acertosColor, gridColor, axisColor } = useChartTheme();
 
   const selectedRow = activeSelectedRow;
 
@@ -173,17 +172,24 @@ export default function FrequencyAcertosChart() {
       tooltip: {
         theme: "dark",
         intersect: false,
-        custom: function ({ seriesIndex, dataPointIndex, w }: any) {
-          const configPonto = w.config.series[seriesIndex].data[dataPointIndex];
-          const acertosReal = configPonto.x;
-          const porcentagem = configPonto.y;
-          const valorAbsoluto =
-            frequencyDifData?.datasets?.[0]?.data?.[dataPointIndex]?.y || 0;
-          return customTooltip({
-            label: `Acertos ${acertosReal}`,
-            value: Number(porcentagem).toFixed(1),
-            absolute: valorAbsoluto,
-          });
+        followCursor: true,
+        x: {
+          formatter: function (value: number) {
+            return "Acertos: " + value;
+          },
+        },
+        y: {
+          formatter: function (value: number) {
+            return value.toFixed(2) + "%";
+          },
+          title: {
+            formatter: function () {
+              return "Porcentagem: ";
+            },
+          },
+        },
+        marker: {
+          show: false,
         },
       },
       annotations: {
@@ -239,7 +245,6 @@ export default function FrequencyAcertosChart() {
     axisColor,
     gridColor,
     deferredArea,
-    textColor,
   ]);
 
   // if (!describeDifData?.acertos || !frequencyDifData) {

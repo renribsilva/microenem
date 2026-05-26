@@ -2,24 +2,28 @@
 
 import Chart from "react-apexcharts";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
-import customTooltip from "../../../../../../components/tsx/customTooltip";
 import { useMemo } from "react";
 import { useYearData } from "../../../../../../context/year_context";
+
+interface CorRacaItem {
+  x: string;
+  y: number;
+  abs: number;
+}
 
 export default function COR_RACA() {
   const { textColor, panelColor } = useChartTheme();
   const { overviewData } = useYearData();
   const corRacaData = overviewData.corRacaData;
-
-  const series = [
+  const series: { data: CorRacaItem[] }[] = [
     {
       data: corRacaData.datasets[0].tree
-        .map((item: any) => ({
+        .map((item) => ({
           x: item.label,
           y: item.value,
           abs: item.abs,
         }))
-        .sort((a: any, b: any) => b.y - a.y),
+        .sort((a, b) => b.y - a.y),
     },
   ];
 
@@ -36,11 +40,6 @@ export default function COR_RACA() {
           },
         },
       },
-      stroke: {
-        show: true,
-        width: 2,
-        colors: [panelColor],
-      },
       title: {
         text: "Cor ou raça",
         align: "center",
@@ -50,15 +49,6 @@ export default function COR_RACA() {
           fontWeight: "bold",
         },
       },
-      // subtitle: {
-      //   text: `*n = ${n}`,
-      //   align: 'center',
-      //   style: {
-      //     color: textColor,
-      //     fontSize: '13px',
-      //     fontWeight: 'normal',
-      //   }
-      // },
       colors: [
         "#1D85B1",
         "#2D6B86",
@@ -75,35 +65,61 @@ export default function COR_RACA() {
         },
       },
       dataLabels: {
-        enabled: true,
+        distributed: true,
         style: {
           fontSize: "12px",
           fontWeight: "bold",
         },
-        textAnchor: "middle",
-        distributed: true,
         offsetY: -4,
-        formatter: (val: any, op?: any) => {
-          const label = String(val);
-          // Se o texto for muito longo e a área for pequena, abrevia ou corta
-          if (op.value < 8 && label.length > 10) {
-            return [label.substring(0, 8) + "...", `${op.value}%`];
-          }
-          return [label, `${op.value}%`];
+        formatter: function (val, { seriesIndex, dataPointIndex, w }) {
+          const series = w.config.series as { data: CorRacaItem[] }[];
+          const item = series[seriesIndex].data[dataPointIndex];
+          return [String(val), `${item.y}%`];
         },
       },
       tooltip: {
         theme: "dark",
-        custom: function ({ seriesIndex, dataPointIndex, w }: any) {
-          const data = w.config.series[seriesIndex].data[dataPointIndex];
-          const label = data.x;
-          const value = data.y;
-          const absolute = data.abs;
-          return customTooltip({ label, value, absolute });
+        y: {
+          formatter: function (val, { seriesIndex, dataPointIndex, w }) {
+            const series = w.config.series as { data: CorRacaItem[] }[];
+            const item = series[seriesIndex].data[dataPointIndex];
+            const absoluto = item.abs.toLocaleString("pt-BR");
+            const css = {
+              label: ["font-weight: 300", "opacity: 0.7"].join("; "),
+              value: ["font-weight: bold", "margin-left: 4px"].join("; "),
+            };
+            return `
+              <div>
+                <span style="${css.label}">Porcentagem:</span>
+                <span style="${css.value}">${val}%</span>
+              </div>
+              <div style="margin-top: 2px;">
+                <span style="${css.label}">Total:</span>
+                <span style="${css.value}">${absoluto}</span>
+              </div>
+            `;
+          },
+          title: {
+            formatter: function () {
+              return "";
+            },
+          },
+        },
+        x: {
+          show: true,
+          formatter: function (val) {
+            const css = {
+              bg: [`color: ${panelColor}`, "padding-left: 5px"].join("; "),
+            };
+            return `<span style="${css.bg}">${val}<span>`;
+          },
+        },
+        marker: {
+          show: false,
         },
       },
     }),
-    [textColor, panelColor, series],
+    [textColor, panelColor],
   );
 
   return (

@@ -17,7 +17,7 @@
 }
 
 .block1 {
-  /* background-color: rgb(190, 121, 42);   */
+  /*  background-color: rgb(190, 121, 42);  */
   flex: 2;
   display: flex;
   flex-direction: column;
@@ -33,11 +33,11 @@
 
 @media (max-width: 800px) {
   .block1 {
-    min-width: 300px
+    min-width: 300px;
   }
 
   .block2 {
-    min-width: 300px
+    min-width: 300px;
   }
 }
 
@@ -106,7 +106,7 @@
 
 .block1_second_right {
   /* background-color: rgb(167, 78, 78); */
-  flex: 1 1 50%; 
+  flex: 1 1 50%;
 }
 
 /******************************************/
@@ -123,24 +123,28 @@
 /***************CARD_INSCRITOS & CARD_ABSTENCAO***************/
 /*************************************************************/
 
-.card_inscritos, .card_abstencao {
+.card_inscritos,
+.card_abstencao {
   /* background-color: aqua; */
   height: fit-content;
 }
 
-.card_inscritos_title, .card_abstencao_title {
+.card_inscritos_title,
+.card_abstencao_title {
   /* background-color: aquamarine; */
   margin: 0;
 }
 
-.card_inscritos_subtitle, .card_abstencao_subtitle {
+.card_inscritos_subtitle,
+.card_abstencao_subtitle {
   /* background-color: aquamarine; */
   margin: 0;
   margin-top: 20px;
   font-weight: 300;
 }
 
-.card_inscritos_num, .card_abstencao_num{
+.card_inscritos_num,
+.card_abstencao_num {
   /* background-color: aquamarine; */
   font-size: 22px;
   margin: 0;
@@ -158,7 +162,7 @@
 }
 
 .card_presenca_title {
-   margin: 0;
+  margin: 0;
 }
 
 .card_presenca_table {
@@ -196,3 +200,4 @@
   min-height: 300px;
   display: flex;
 }
+

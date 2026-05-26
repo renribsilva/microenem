@@ -23,7 +23,7 @@ export default function ItensButtons() {
     useChartTheme();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const [backdropAlert, setBackdropAlert] = useState<any | null>(false);
+  const [backdropAlert, setBackdropAlert] = useState<any>(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const { abandonadosCodes, selectedItems, handleToggle, getCodeByLabel } =
     useYearData();
@@ -125,10 +125,7 @@ export default function ItensButtons() {
             }}
           >
             {availableTCC.map((ds) => {
-              const info = getMetadata(
-                ds.metadata.codigo,
-                ds.metadata.lingua,
-              );
+              const info = getMetadata(ds.metadata.codigo, ds.metadata.lingua);
               return (
                 <div
                   key={ds.label}

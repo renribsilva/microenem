@@ -1,40 +1,41 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styles from "./components.module.css";
 import { useHomeData } from "../../context/home_context";
 import { useChartTheme } from "../../hooks/use_chart_theme";
 
 export default function InputShell() {
   const { chartProps, activeTCC, pointIndexStuff } = useHomeData();
-
   const { proficienciaAtual, xMax, xMin, chartColor } = chartProps;
-
   const { gridColor } = useChartTheme();
 
-  // 1. Fallback para o tamanho dos dados: se não houver dataset,
-  // o range é 0 a 0
+  // --- Sincronização de Estado ---
+  const [inputValue, setInputValue] = useState<string>(
+    proficienciaAtual?.toFixed(0) || "0",
+  );
+
+  const [prevProficiencia, setPrevProficiencia] = useState(proficienciaAtual);
+
+  // Se a proficiência mudou externamente (clique no gráfico), atualiza o input
+  if (proficienciaAtual !== prevProficiencia) {
+    setPrevProficiencia(proficienciaAtual);
+    setInputValue(proficienciaAtual?.toFixed(0) || "0");
+  }
+
   const maxRange = activeTCC?.data_teorico?.length
     ? activeTCC.data_teorico.length - 1
     : 0;
 
-  const [inputValue, setInputValue] = useState(
-    proficienciaAtual?.toFixed(1) || "0.0",
-  );
-
-  useEffect(() => {
-    setInputValue(
-      proficienciaAtual !== undefined ? proficienciaAtual.toFixed(1) : "0.0",
-    );
-  }, [proficienciaAtual]);
-
   const applyValue = () => {
-    let numericVal = parseFloat(inputValue as string);
+    let numericVal = parseFloat(inputValue);
+
     if (!isNaN(numericVal) && activeTCC?.labels_x) {
+      // Clamping de valores dentro do range permitido
       if (numericVal < xMin) numericVal = xMin;
       if (numericVal > xMax) numericVal = xMax;
 
-      setInputValue(numericVal.toString());
+      setInputValue(numericVal.toFixed(0));
 
       const closestIndex = activeTCC.labels_x.reduce(
         (prev: number, curr: number, idx: number) => {
@@ -61,13 +62,13 @@ export default function InputShell() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(",", ".");
     if (value.length > 6) return;
+
     const regex = /^\d{0,4}(\.\d{0,1})?$/;
     if (regex.test(value)) {
       setInputValue(value);
     }
   };
 
-  // 2. Proteção para o cálculo do progresso (evita divisão por zero ou NaN)
   const progressPercent =
     maxRange > 0 ? (pointIndexStuff.pointIndex / maxRange) * 100 : 0;
 
@@ -99,7 +100,6 @@ export default function InputShell() {
                 ${gridColor} ${progressPercent}%)`,
             }}
             min="0"
-            // 3. AQUI ESTAVA O ERRO: Agora usamos a variável blindada
             max={maxRange}
             value={pointIndexStuff.pointIndex || 0}
             onChange={(e) =>

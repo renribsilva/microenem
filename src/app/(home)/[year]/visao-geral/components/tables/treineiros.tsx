@@ -15,6 +15,7 @@ import { InscritosItem } from "../../../../../../types/year_types";
 export default function Treineiros() {
   const { overviewData } = useYearData();
   const data = overviewData.inscritosData;
+
   const columns = useMemo<ColumnDef<InscritosItem>[]>(
     () => [
       {

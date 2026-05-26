@@ -3,20 +3,17 @@
 import { useMemo } from "react";
 import Chart from "react-apexcharts";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
-import customTooltip from "../../../../../../components/tsx/customTooltip";
 import { useYearData } from "../../../../../../context/year_context";
 
+const doughnutColors = ["rgba(60, 245, 188, 0.7)", "rgba(245, 99, 59, 0.7)"];
+
 export default function SEXO() {
-  const { textColor, panelColor } = useChartTheme();
+  const { textColor } = useChartTheme();
   const { overviewData } = useYearData();
-
   const sexoData = overviewData.sexoData;
-
-  const doughnutColors = ["rgba(60, 245, 188, 0.7)", "rgba(245, 99, 59, 0.7)"];
-
-  const series = useMemo(() => sexoData.datasets[0].data, []);
-  const absValues = useMemo(() => sexoData.datasets[0].abs_values, []);
-  const labels = useMemo(() => sexoData.labels, []);
+  const series = useMemo(() => sexoData.datasets[0].data, [sexoData]);
+  const absValues = useMemo(() => sexoData.datasets[0].abs_values, [sexoData]);
+  const labels = useMemo(() => sexoData.labels, [sexoData]);
 
   const options: ApexCharts.ApexOptions = useMemo(
     () => ({
@@ -29,11 +26,6 @@ export default function SEXO() {
             enabled: false,
           },
         },
-      },
-      stroke: {
-        show: true,
-        width: 2,
-        colors: [panelColor],
       },
       colors: doughnutColors,
       labels: labels,
@@ -48,7 +40,7 @@ export default function SEXO() {
         enabled: true,
         style: {
           fontSize: "12px",
-          fontWeight: "bold",
+          fontWeight: "light",
           colors: [textColor],
         },
         dropShadow: { enabled: false },
@@ -59,12 +51,39 @@ export default function SEXO() {
         offsetY: 0,
       },
       tooltip: {
+        fillSeriesColor: false,
         theme: "dark",
-        custom: function ({ series, seriesIndex, w }: any) {
-          const value = series[seriesIndex];
-          const label = w.globals.labels[seriesIndex];
-          const absolute = absValues[seriesIndex];
-          return customTooltip({ label, value, absolute });
+        y: {
+          formatter: function (val, { seriesIndex }) {
+            const absolute = absValues[seriesIndex].toLocaleString("pt-BR");
+            const label = labels[seriesIndex];
+            const css = {
+              label: ["font-weight: 300", "opacity: 0.7"].join("; "),
+              value: ["font-weight: bold", "margin-left: 4px"].join("; "),
+              title: ["margin-bottom: 14px"],
+            };
+            return `
+              <div style="${css.title}">
+                <span >${label}</span>
+              </div>
+              <div>
+                <span style="${css.label}">Porcentagem:</span>
+                <span style="${css.value}">${val}%</span>
+              </div>
+              <div style="margin-top: 2px;">
+                <span style="${css.label}">Total:</span>
+                <span style="${css.value}">${absolute}</span>
+              </div>
+            `;
+          },
+          title: {
+            formatter: function () {
+              return "";
+            },
+          },
+        },
+        marker: {
+          show: false,
         },
       },
       title: {
@@ -76,17 +95,8 @@ export default function SEXO() {
           fontWeight: "bold",
         },
       },
-      // subtitle: {
-      //   text: `*n = ${n}`,
-      //   align: 'center',
-      //   style: {
-      //     color: textColor,
-      //     fontSize: '13px',
-      //     fontWeight: 'normal',
-      //   }
-      // }
     }),
-    [textColor, panelColor, labels],
+    [textColor, absValues, labels],
   );
 
   return (

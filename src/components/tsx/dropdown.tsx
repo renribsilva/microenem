@@ -58,7 +58,7 @@ export default function Dropdown() {
 
       {isOpen && (
         <div className={styles.dropdown_list}>
-          {availableTCC?.map((ds: any) => {
+          {availableTCC?.map((ds) => {
             const info = getMetadata(ds.metadata.codigo, ds.metadata.lingua);
             const isSelected = selectedLabel === ds.label;
             return (
@@ -76,7 +76,10 @@ export default function Dropdown() {
                   color: isSelected
                     ? colorMap[info.corNome] || "#475569"
                     : tickColor,
-                  borderLeft: `4px solid ${isSelected ? colorMap[info.corNome] || "#475569" : "transparent"}`,
+                  borderLeft:
+                    isSelected && colorMap
+                      ? `4px solid ${colorMap[info.corNome]}` || "#475569"
+                      : "transparent",
                 }}
               >
                 {info.fullText}

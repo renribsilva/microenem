@@ -1,4 +1,8 @@
-import { it } from "node:test";
+export type ConstantesType = {
+  areaIdx: number;
+  d: number;
+  k: number;
+};
 
 interface SelectedItemsItem {
   status: string;
@@ -278,6 +282,33 @@ export type ProbInfoDataType = {
   infoLabels: InfoProbLabelType | null;
 };
 
+export type TableDataItem = {
+  acerto: string;
+  id: string;
+  metric: string;
+  nota: string;
+};
+
+export type TableDataType = TableDataItem[];
+
+export type DescribeRowDataType = {
+  data: TableDataType;
+  n: number;
+  raw: {
+    notas: DescribeItem;
+    acertos: DescribeItem;
+  };
+  cod_min_ref: number;
+  cod_max_ref: number;
+  cor_min_ref: string;
+  cor_max_ref: string;
+};
+
+export type dificuldadeDoExameAuxType = {
+  describeRowData: DescribeRowDataType;
+  activeSelectedRow: TableDataItem;
+};
+
 export type YearContextType = {
   lastItemActivate: number;
   selectedItems: SelectedItemsType | object;
@@ -285,7 +316,10 @@ export type YearContextType = {
   sampleEAP: string;
   updateTrigger: boolean;
 
-  // Carga no server (bundle inicial)
+  // Carga estática no server
+  constantesData: ConstantesType;
+
+  // Carga dinamenica no server (bundle inicial)
   itensData: ItensDataType | null;
   overviewData: OverviewType;
   respostaAoItemData: RespostaAoItemType;
@@ -300,13 +334,10 @@ export type YearContextType = {
   // Carga solicitada pelo cliente (API externa: Render)
   EAPData: EAPDataType | null;
 
-  // Tratamento de dados
-  describeRowData: any;
-  activeSelectedRow: any;
+  // Transformação de dados
+  dificuldadeDoExameAux: dificuldadeDoExameAuxType;
   abandonadosCodes: any;
-  FIXED_PALETTE: any;
-  d: any;
-  k: any;
+  fixedPalette: any;
   lastItemActivateNum: any;
   activeCodes: any;
   intervalData: any;

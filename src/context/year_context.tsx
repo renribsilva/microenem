@@ -39,6 +39,10 @@ import {
   AcertosDataType,
   AcertosDataCacheType,
   EAPDataType,
+  TableDataType,
+  DescribeRowDataType,
+  TableDataItem,
+  ConstantesType,
 } from "../types/year_types";
 
 const YearContext = createContext<YearContextType>(null);
@@ -99,6 +103,20 @@ export function YearProvider({ children }: { children: ReactNode }) {
   );
 
   const [updateTrigger, setUpdateTrigger] = useState<boolean>(false);
+
+  // ---------------------------------------------------------------------------
+  // ------------ CARGA ESTÁTICA DE JSON POR ANO (BUNDLE INICIAL) --------------
+  // ---------------------------------------------------------------------------
+
+  const areaIdx: number = constantes.area.indexOf(deferredArea || "LC");
+  const d: number = constantes.d[areaIdx];
+  const k: number = constantes.k[areaIdx];
+
+  const constantesData: ConstantesType = {
+    areaIdx: areaIdx,
+    d: d,
+    k: k,
+  };
 
   // ---------------------------------------------------------------------------
   // ------------ CARGA DINÂMICA DE JSON POR ANO (BUNDLE INICIAL) --------------
@@ -480,15 +498,17 @@ export function YearProvider({ children }: { children: ReactNode }) {
     currentYear,
   ]);
 
-  //--------------------------------------------------------------------------
-  //---------------------------DIFICULDADE DO EXAME---------------------------
-  //--------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
+  //---------------------------TRANSFORMAÇÃO DE DADOS---------------------------
+  //----------------------------------------------------------------------------
+
+  //---------------------------------AUXILIARES---------------------------------
 
   const formatValue = (
     key: string,
     val: number | null,
     type: "nota" | "acerto",
-  ) => {
+  ): string => {
     if (typeof val !== "number") return val;
     const isSpecial = key === "skew" || key === "kurtosis";
     return val.toLocaleString("pt-BR", {
@@ -497,7 +517,23 @@ export function YearProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const tableData = useMemo(() => {
+  const abandonadosCodes = useMemo(() => {
+    const codes = new Set<number>();
+    const data = itensData;
+
+    if (!data || !data.CO_ITEM) return codes;
+
+    data.CO_ITEM.forEach((code: number, index: number) => {
+      if (data.IN_ITEM_ABAN && data.IN_ITEM_ABAN[index] === 1) {
+        codes.add(code);
+      }
+    });
+    return codes;
+  }, [itensData]);
+
+  //-----------------------------DIFICULDADE DO EXAME---------------------------
+
+  const tableData = useMemo<TableDataType>(() => {
     if (!describeDifData?.notas) return [];
     return rowOrder
       .filter((key) => describeDifData.notas[key] !== undefined)
@@ -509,7 +545,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
       }));
   }, [describeDifData]);
 
-  const describeRowData = useMemo(
+  const describeRowData = useMemo<DescribeRowDataType>(
     () => ({
       data: tableData,
       n: describeDifData?.notas?.n || 0,
@@ -522,43 +558,27 @@ export function YearProvider({ children }: { children: ReactNode }) {
     [tableData, describeDifData],
   );
 
-  const activeSelectedRow = useMemo(() => {
+  const activeSelectedRow = useMemo<TableDataItem>(() => {
     return tableData.find((row) => row.id === selectedRowId) || null;
   }, [tableData, selectedRowId]);
 
-  //------------------------------------------------------------------------
-  //--------------------------PROBABILIDADE E INFO--------------------------
-  //------------------------------------------------------------------------
+  const dificuldadeDoExameAux = {
+    describeRowData,
+    activeSelectedRow,
+  };
 
-  const abandonadosCodes = useMemo(() => {
-    const codes = new Set<number>();
-    const data = itensData;
+  //-----------------------------RESPOSTA AO ITEM-------------------------------
 
-    // Se o dado ainda não carregou, retorna o set vazio sem quebrar
-    if (!data || !data.CO_ITEM) return codes;
+  const [lastItemActivateNum, setLastItemActivateNum] = useState<number>(0);
 
-    data.CO_ITEM.forEach((code: number, index: number) => {
-      if (data.IN_ITEM_ABAN && data.IN_ITEM_ABAN[index] === 1) {
-        codes.add(code);
-      }
-    });
-    return codes;
-  }, [itensData]);
+  //---------------------------PROBABILIDADE E INFO-----------------------------
 
   // Paleta fixa para os 45 itens
-  const FIXED_PALETTE = useMemo(
+  const fixedPalette = useMemo<Record<number, string>>(
     () =>
       Array.from({ length: 45 }, (_, i) => `hsl(${(i * 360) / 45}, 70%, 50%)`),
     [],
   );
-
-  const areaIdx = constantes.area.indexOf(deferredArea || "LC");
-  const d = constantes.d[areaIdx];
-  const k = constantes.k[areaIdx];
-
-  const [lastItemActivateNum, setLastItemActivateNum] = useState<number>(0);
-  const prevLabelRef = useRef(selectedLabel);
-  const previousLabel = prevLabelRef.current;
 
   // Função para traduzir Posição (ex: questão 95) em Código (ex: 11234)
   const getCodeByLabel = useCallback(
@@ -583,7 +603,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
     [deferredArea, itensData],
   );
 
-  // Função para traduzir Posição (ex: questão 95) em Código (ex: 11234)
+  // Função para traduzir Posição (ex: questão 95) em Parâmetro (ex: 1.234)
   const getParamByLabel = useCallback(
     (num: number, label: string, type: string) => {
       if (!label || !itensData || !itensData.CO_POSICAO) return null;
@@ -655,7 +675,10 @@ export function YearProvider({ children }: { children: ReactNode }) {
     [selectedLabel, getCodeByLabel],
   );
 
+  const prevLabelRef = useRef<string>(selectedLabel);
+
   useLayoutEffect(() => {
+    const previousLabel = prevLabelRef.current;
     if (previousLabel === selectedLabel) return;
 
     const ranges: Record<string, { start: number; end: number }> = {
@@ -694,7 +717,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
       return nextMapping;
     });
     prevLabelRef.current = selectedLabel;
-  }, [selectedLabel, getCodeByLabel, previousLabel, deferredArea]);
+  }, [selectedLabel, getCodeByLabel, deferredArea]);
 
   const activeCodes = useMemo(() => {
     const codes = Object.keys(selectedItems).map(Number);
@@ -852,7 +875,10 @@ export function YearProvider({ children }: { children: ReactNode }) {
         sampleEAP,
         updateTrigger,
 
-        // Carga no server (bundle inicial)
+        // Carga estática no srver
+        constantesData,
+
+        // Carga dinâmica no server (bundle inicial)
         itensData,
         overviewData,
         respostaAoItemData,
@@ -867,13 +893,10 @@ export function YearProvider({ children }: { children: ReactNode }) {
         // Carga solicitada pelo cliente (API externa: render)
         EAPData,
 
-        // Tratamento de dados
-        describeRowData,
-        activeSelectedRow,
+        // Transformação de dados
+        dificuldadeDoExameAux,
         abandonadosCodes,
-        FIXED_PALETTE,
-        d,
-        k,
+        fixedPalette,
         lastItemActivateNum,
         activeCodes,
         intervalData,

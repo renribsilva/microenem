@@ -13,8 +13,7 @@ export default function AcertosChart() {
     lastItemActivate,
     lastItemActivateNum,
     probInfoData,
-    k,
-    d,
+    constantesData,
     itemGraphData,
   } = useYearData();
 
@@ -55,7 +54,8 @@ export default function AcertosChart() {
   }, []);
 
   const { xMin, xMax } = chartProps;
-  const transformTheta = (theta: number) => theta * k + d;
+  const transformTheta = (theta: number) =>
+    theta * constantesData.k + constantesData.d;
 
   // --- CONFIGURAÇÃO DE DADOS ---
   const series = useMemo(() => {

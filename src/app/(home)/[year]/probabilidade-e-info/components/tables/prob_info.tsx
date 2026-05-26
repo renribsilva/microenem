@@ -27,8 +27,13 @@ type TableRow = {
 export default function ProbsInfoTable() {
   const { chartProps } = useHomeData();
   const { proficienciaAtual } = chartProps;
-  const { k, d, probInfoData, selectedItems, activeCodes, abandonadosCodes } =
-    useYearData();
+  const {
+    constantesData,
+    probInfoData,
+    selectedItems,
+    activeCodes,
+    abandonadosCodes,
+  } = useYearData();
 
   const probLabels = probInfoData.probLabels;
   const probData = probInfoData.probData;
@@ -124,7 +129,7 @@ export default function ProbsInfoTable() {
 
   const data = useMemo(() => {
     if (!activeCodes.length || !chartProps) return [];
-    const thetaAlvo = (proficienciaAtual - d) / k;
+    const thetaAlvo = (proficienciaAtual - constantesData.d) / constantesData.k;
     const closestIndex = probLabels?.reduce((prevIdx, currVal, currIdx) => {
       return Math.abs(currVal - thetaAlvo) <
         Math.abs(probLabels[prevIdx] - thetaAlvo)
@@ -164,9 +169,8 @@ export default function ProbsInfoTable() {
     chartProps,
     selectedItems,
     proficienciaAtual,
-    k,
-    d,
     probData,
+    constantesData,
     probLabels,
   ]);
 
@@ -185,7 +189,9 @@ export default function ProbsInfoTable() {
         Tabela de probabilidade e informação do item
       </h3>
       <p className={styles.card_subtitle_p}>
-        {`Probabilidade¹ e informação² estimadas do item para a proficiência ${proficienciaAtual}, segundo os parâmetros de chute, dificuldade e discriminação.`}
+        {`Probabilidade¹ e informação² estimadas do item ` +
+          `para a proficiência ${proficienciaAtual}, segundo ` +
+          `os parâmetros de chute, dificuldade e discriminação.`}
       </p>
       <InputShell />
       <table className={styles.probtable_table}>
@@ -202,7 +208,10 @@ export default function ProbsInfoTable() {
                     key={header.id}
                     colSpan={header.colSpan}
                     /* Aplica a classe da linha apenas se for grupo */
-                    className={`${styles.probtable_th} ${isGroup ? styles.probtable_group_th : ""}`}
+                    className={
+                      `${styles.probtable_th} ` +
+                      `${isGroup ? styles.probtable_group_th : ""}`
+                    }
                     onClick={
                       canSort
                         ? header.column.getToggleSortingHandler()

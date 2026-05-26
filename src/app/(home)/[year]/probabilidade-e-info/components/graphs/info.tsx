@@ -13,9 +13,8 @@ export default function InfoChart() {
   const { gridColor, axisColor, textColor } = useChartTheme();
   const {
     abandonadosCodes,
-    FIXED_PALETTE,
-    k,
-    d,
+    fixedPalette,
+    constantesData,
     probInfoData,
     selectedItems,
     lastItemActivate,
@@ -23,7 +22,8 @@ export default function InfoChart() {
 
   const infoLabels = probInfoData.infoLabels;
   const infoData = probInfoData.infoData;
-  const transformTheta = (theta: number) => theta * k + d;
+  const transformTheta = (theta: number) =>
+    theta * constantesData.k + constantesData.d;
 
   // --- PROCESSAMENTO DE DADOS PARA APEXCHARTS ---
   const { series, hasAbandonedItem, ymax } = useMemo(() => {
@@ -49,7 +49,8 @@ export default function InfoChart() {
         const colorIndex = allItemsInProva.indexOf(itemKey);
 
         const dataPoints = rawPoints.map((yValue, idx) => {
-          // Lógica de inversão se for erro (cuidado: na TRI a info do erro é a mesma do acerto,
+          // Lógica de inversão se for erro (cuidado: na TRI a info
+          // do erro é a mesma do acerto,
           // mas mantive sua lógica de 1 - yValue se for requisito de UI)
           const finalY = yValue || 0;
 
@@ -66,13 +67,14 @@ export default function InfoChart() {
           item: code,
           name: `Item ${code}`,
           data: dataPoints,
-          color: colorIndex !== -1 ? FIXED_PALETTE[colorIndex % 45] : "#999",
+          color: colorIndex !== -1 ? fixedPalette[colorIndex % 45] : "#999",
           strokeDashArray: status === "erro" ? 4 : 0,
         };
       })
       .filter(Boolean);
 
-    // Adiciona uma margem de segurança (ex: 10%) para a curva não encostar no topo
+    // Adiciona uma margem de segurança (ex: 10%) para
+    // a curva não encostar no topo
     const safetyMax = currentMax === 0 ? 1 : currentMax * 1.1;
 
     return {
@@ -83,7 +85,9 @@ export default function InfoChart() {
   }, [
     selectedItems,
     infoData,
-    deferredArea,
+    fixedPalette,
+    infoLabels,
+    transformTheta,
     abandonadosCodes,
     lastItemActivate,
   ]);
@@ -165,14 +169,6 @@ export default function InfoChart() {
       },
       grid: { borderColor: gridColor },
       legend: { show: false },
-      // title: {
-      //   text: 'Função de informação do item',
-      //   style: { color: textColor, fontSize: '16px', fontWeight: 'bold'},
-      // },
-      // subtitle: {
-      //   text: 'Pontos da proficiência para os quais o item aprensenta maior capacidade de posicionar a nota na régua no ENEM.',
-      //   style: { color: textColor, fontSize: '13px' },
-      // },
       annotations: {
         xaxis: [
           {
@@ -193,14 +189,9 @@ export default function InfoChart() {
   }, [
     series,
     xMin,
+    ymax,
     xMax,
-    hasAbandonedItem,
     deferredArea,
-    selectedItems,
-    infoData,
-    abandonadosCodes,
-    lastItemActivate,
-    FIXED_PALETTE,
     proficienciaAtual,
     chartColor,
     axisColor,

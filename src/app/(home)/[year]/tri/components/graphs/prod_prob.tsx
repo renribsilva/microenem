@@ -12,8 +12,7 @@ export default function ProdProbChart() {
     selectedItems,
     setSampleEAP,
     EAPData,
-    k,
-    d,
+    constantesData,
     setUpdateTrigger,
     activeCodes,
     intervalData,
@@ -39,7 +38,7 @@ export default function ProdProbChart() {
     if (Object.keys(selectedItems || {}).length > 0) {
       setEAPDesatualizado(true);
     }
-  }, [selectedItems, deferredArea || "", selectedLabel]);
+  }, [selectedItems, selectedLabel]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -61,15 +60,23 @@ export default function ProdProbChart() {
   };
 
   const series = useMemo(() => {
-    if (!EAPData?.theta || !EAPData?.posterior || !k || !d) return [];
+    if (
+      !EAPData?.theta ||
+      !EAPData?.posterior ||
+      !constantesData.k ||
+      !constantesData.d
+    )
+      return [];
 
     const chartPoints = EAPData.theta.map((t: number, i: number) => [
-      isTRIDivergente ? Number(t.toFixed(2)) : Number((t * k + d).toFixed(1)),
+      isTRIDivergente
+        ? Number(t.toFixed(2))
+        : Number((t * constantesData.k + constantesData.d).toFixed(1)),
       Number(EAPData.posterior[i].toFixed(4)),
     ]);
 
     return [{ name: "Log-Likelihood", data: chartPoints }];
-  }, [EAPData, k, d, isTRIDivergente]);
+  }, [EAPData, constantesData, isTRIDivergente]);
 
   const valorEAP = Array.isArray(EAPData?.eap)
     ? EAPData.eap[0]
@@ -105,8 +112,12 @@ export default function ProdProbChart() {
           : `Notas na escala do ENEM - ${deferredArea}`,
         style: { color: axisColor, fontWeight: 600 },
       },
-      min: isTRIDivergente ? -4 : Math.round(-4 * k + d),
-      max: isTRIDivergente ? 4 : Math.round(4 * k + d),
+      min: isTRIDivergente
+        ? -4
+        : Math.round(-4 * constantesData.k + constantesData.d),
+      max: isTRIDivergente
+        ? 4
+        : Math.round(4 * constantesData.k + constantesData.d),
       labels: {
         formatter: (val) =>
           isTRIDivergente
@@ -169,15 +180,6 @@ export default function ProdProbChart() {
             },
           ],
     },
-    // title: {
-    //   text: `Curva de probabilidade a posteriori`,
-    //   align: 'left',
-    //   style: { fontSize: '18px', color: textColor, fontWeight: 700 }
-    // },
-    // subtitle: {
-    //   text: ['Função de probabilidade a posteriori da', 'sequência de acertos e erros determinada.'] as any,
-    //   style: { color: textColor, fontSize: '13px' },
-    // },
     tooltip: {
       enabled: true,
       shared: true,

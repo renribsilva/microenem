@@ -36,7 +36,9 @@ TableRow.displayName = "TableRow";
 
 export function DescribeTable() {
   const { deferredArea, selectedRowId, setSelectedRowId } = useHomeData();
-  const { describeRowData } = useYearData();
+  const { dificuldadeDoExameAux } = useYearData();
+
+  const describeRowData = dificuldadeDoExameAux.describeRowData;
 
   const columns = useMemo(
     () => [

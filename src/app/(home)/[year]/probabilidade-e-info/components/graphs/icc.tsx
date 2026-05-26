@@ -10,12 +10,11 @@ import styles from "./graphs.module.css";
 export default function ICCChart() {
   const { chartProps, deferredArea } = useHomeData();
   const { chartColor, proficienciaAtual, xMin, xMax } = chartProps;
-  const { gridColor, axisColor, textColor } = useChartTheme();
+  const { gridColor, axisColor } = useChartTheme();
   const {
     abandonadosCodes,
-    FIXED_PALETTE,
-    k,
-    d,
+    fixedPalette,
+    constantesData,
     probInfoData,
     selectedItems,
     lastItemActivate,
@@ -23,7 +22,8 @@ export default function ICCChart() {
 
   const probLabels = probInfoData.probLabels;
   const probData = probInfoData.probData;
-  const transformTheta = (theta: number) => theta * k + d;
+  const transformTheta = (theta: number) =>
+    theta * constantesData.k + constantesData.d;
 
   // --- PROCESSAMENTO DE DADOS PARA APEXCHARTS ---
   const { series, hasAbandonedItem } = useMemo(() => {
@@ -51,7 +51,7 @@ export default function ICCChart() {
               (status === "erro" ? 1 - (yValue || 0) : yValue || 0).toFixed(3),
             ),
           })),
-          color: colorIndex !== -1 ? FIXED_PALETTE[colorIndex % 45] : "#999",
+          color: colorIndex !== -1 ? fixedPalette[colorIndex % 45] : "#999",
           strokeDashArray: status === "erro" ? 4 : 0,
         };
       })
@@ -61,7 +61,9 @@ export default function ICCChart() {
   }, [
     selectedItems,
     probData,
-    deferredArea,
+    fixedPalette,
+    probLabels,
+    transformTheta,
     abandonadosCodes,
     lastItemActivate,
   ]);
@@ -143,14 +145,6 @@ export default function ICCChart() {
       },
       grid: { borderColor: gridColor },
       legend: { show: false },
-      // title: {
-      //   text: 'Curva característica do item',
-      //   style: { color: textColor, fontSize: '16px', fontWeight: 'bold'},
-      // },
-      // subtitle: {
-      //   text: ['Modelagem da probabilidade de acerto em', 'função da proficiência estimada.'] as any,
-      //   style: { color: textColor, fontSize: '13px' },
-      // },
       annotations: {
         xaxis: [
           {
@@ -172,13 +166,7 @@ export default function ICCChart() {
     series,
     xMin,
     xMax,
-    hasAbandonedItem,
     deferredArea,
-    selectedItems,
-    probData,
-    abandonadosCodes,
-    lastItemActivate,
-    FIXED_PALETTE,
     proficienciaAtual,
     chartColor,
     axisColor,

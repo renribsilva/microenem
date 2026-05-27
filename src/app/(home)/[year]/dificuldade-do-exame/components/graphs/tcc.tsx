@@ -126,16 +126,12 @@ export default function TCCChart() {
           formatter: (val) => "\u00A0\u00A0Proficiência: " + val,
         },
         y: {
-          formatter: function (
-            val,
-            { series, seriesIndex, dataPointIndex, w },
-          ) {
+          formatter: function (val, { series, seriesIndex, dataPointIndex }) {
             // Se o valor atual já existe, retorna ele
             if (val !== null && val !== undefined) {
               return Number(val).toFixed(0);
             }
 
-            // Se o valor for null, buscamos no array da série o valor mais próximo
             const currentSeries = series[seriesIndex];
 
             // Busca para trás (valor anterior mais próximo)
@@ -201,20 +197,6 @@ export default function TCCChart() {
               strokeWidth: 0,
               radius: 2,
             },
-            // label: {
-            //   borderColor: chartColor,
-            //   offsetY: proficienciaAtual > bMedio ? 35 : -20,
-            //   offsetX: proficienciaAtual <= bMedio ? 80 : -80,
-            //   style: {
-            //     color: '#fff',
-            //     background: chartColor,
-            //     padding: { left: 10, right: 10, top: 5, bottom: 5 }
-            //   },
-            //   text: [
-            //     `proficiência de ${proficienciaAtual.toFixed(0)}`,
-            //     `${resultadoAtual.toFixed(0)} acertos esperados`
-            //   ]
-            // }
           },
         ],
       },

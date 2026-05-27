@@ -23,7 +23,7 @@ export default function DadosDoExame() {
       className={styles.main}
       style={{
         opacity: isUpdating ? 0.7 : 1,
-        transition: "opacity 0.15s ease",
+        transition: "opacity 0.5s ease",
       }}
     >
       <div className={styles.main_top}>

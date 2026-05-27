@@ -14,7 +14,6 @@ export default function TCCChart() {
   const { chartColor, xMin, xMax, bMedio, proficienciaAtual, resultadoAtual } =
     chartProps;
 
-  // --- CONFIGURAÇÃO DE DADOS ---
   const series = useMemo(
     () => [
       {
@@ -53,7 +52,6 @@ export default function TCCChart() {
     return activeTCC.data_teorico[closestIndex];
   }, [activeTCC, bMedio]);
 
-  // --- CONFIGURAÇÕES DO APEXCHARTS ---
   const options: ApexCharts.ApexOptions = useMemo(
     () => ({
       chart: {

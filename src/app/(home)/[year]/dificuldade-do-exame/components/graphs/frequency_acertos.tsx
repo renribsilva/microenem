@@ -8,16 +8,13 @@ import { useYearData } from "../../../../../../context/year_context";
 import styles from "./graphs.module.css";
 
 export default function FrequencyAcertosChart() {
+  // Contexto necessário
   const { deferredArea } = useHomeData();
   const { dificuldadeDoExame, dificuldadeDoExameAux } = useYearData();
-
   const activeSelectedRow = dificuldadeDoExameAux.activeSelectedRow;
   const describeDifData = dificuldadeDoExame.describeDifData;
   const frequencyDifData = dificuldadeDoExame.frequencyDifData;
-
   const { acertosColor, gridColor, axisColor } = useChartTheme();
-
-  const selectedRow = activeSelectedRow;
 
   const xMin = 0;
   const xMax = 45;
@@ -48,8 +45,8 @@ export default function FrequencyAcertosChart() {
     const dataWithColors = rawData.map((p) => {
       let pointColor = acertosColor["bar"];
       if (
-        selectedRow &&
-        fillIds.includes(selectedRow.id) &&
+        activeSelectedRow &&
+        fillIds.includes(activeSelectedRow.id) &&
         describeDifData?.acertos
       ) {
         const n = describeDifData.acertos;
@@ -57,16 +54,16 @@ export default function FrequencyAcertosChart() {
           end = 0;
 
         // Lógica de destaque baseada nos acertos da área atual
-        if (selectedRow.id === "sd") {
+        if (activeSelectedRow.id === "sd") {
           start = Math.round(n.mean) - Math.round(n.sd);
           end = Math.round(n.mean) + Math.round(n.sd);
-        } else if (selectedRow.id === "q1") {
+        } else if (activeSelectedRow.id === "q1") {
           start = Math.round(n.q1);
           end = Math.round(n.max);
-        } else if (selectedRow.id === "q3") {
+        } else if (activeSelectedRow.id === "q3") {
           start = Math.round(n.q3);
           end = Math.round(n.max);
-        } else if (selectedRow.id === "p99") {
+        } else if (activeSelectedRow.id === "p99") {
           start = Math.round(n.p99);
           end = Math.round(n.max);
         }
@@ -92,24 +89,27 @@ export default function FrequencyAcertosChart() {
   }, [
     frequencyDifData,
     deferredArea,
-    selectedRow,
+    activeSelectedRow,
     describeDifData,
     acertosColor,
   ]);
 
   const options: ApexCharts.ApexOptions = useMemo(() => {
-    const isShape = selectedRow
-      ? ["skew", "kurtosis"].includes(selectedRow.id)
+    const isShape = activeSelectedRow
+      ? ["skew", "kurtosis"].includes(activeSelectedRow.id)
       : false;
     const mean = describeDifData?.acertos?.mean || 0;
 
     // Posição da linha vertical recalculada para a área atual
     const valX =
-      isShape || selectedRow?.id === "sd" || selectedRow?.id === "mean"
+      isShape ||
+      activeSelectedRow?.id === "sd" ||
+      activeSelectedRow?.id === "mean"
         ? Math.round(mean)
         : Math.round(
             parseFloat(
-              selectedRow?.acerto?.replace(/\./g, "").replace(",", ".") || "0",
+              activeSelectedRow?.acerto?.replace(/\./g, "").replace(",", ".") ||
+                "0",
             ),
           );
 
@@ -127,14 +127,6 @@ export default function FrequencyAcertosChart() {
         zoom: { enabled: false },
         animations: { enabled: false },
       },
-      // title: {
-      //   text: 'Frequência relativa dos acertos',
-      //   style: { color: textColor, fontSize: '16px', fontWeight: 'bold' }
-      // },
-      // subtitle: {
-      //   text: ['Distribuição da frequência de acertos.'] as any,
-      //   style: { color: textColor, fontSize: '13px' }
-      // },
       plotOptions: {
         bar: {
           columnWidth: "95%",
@@ -194,14 +186,17 @@ export default function FrequencyAcertosChart() {
       },
       annotations: {
         xaxis:
-          selectedRow && !isShape
+          activeSelectedRow && !isShape
             ? [
                 {
                   x: valX,
                   borderColor: acertosColor["line"],
                   borderWidth: 2,
                   label: {
-                    text: `${selectedRow.metric}: ${selectedRow.acerto}`,
+                    text: [
+                      `${activeSelectedRow.metric}: `,
+                      `${activeSelectedRow.acerto}`,
+                    ].join(""),
                     style: {
                       color: "#000",
                       background: acertosColor["line"],
@@ -219,7 +214,7 @@ export default function FrequencyAcertosChart() {
               ]
             : [],
         points:
-          selectedRow && isShape
+          activeSelectedRow && isShape
             ? [
                 {
                   x: 22.5,
@@ -227,8 +222,12 @@ export default function FrequencyAcertosChart() {
                   marker: { size: 0 },
                   label: {
                     text: [
-                      `${selectedRow.metric}: ${selectedRow.acerto}`,
-                      getStatDescription(selectedRow.id, selectedRow.acerto),
+                      `${activeSelectedRow.metric}: `,
+                      `${activeSelectedRow.acerto}`,
+                      getStatDescription(
+                        activeSelectedRow.id,
+                        activeSelectedRow.acerto,
+                      ),
                     ],
                     style: { color: "#fff", background: acertosColor["line"] },
                   },
@@ -240,16 +239,12 @@ export default function FrequencyAcertosChart() {
   }, [
     describeDifData,
     frequencyDifData,
-    selectedRow,
+    activeSelectedRow,
     acertosColor,
     axisColor,
     gridColor,
     deferredArea,
   ]);
-
-  // if (!describeDifData?.acertos || !frequencyDifData) {
-  //   return <div className={styles.loading}>Carregando gráfico...</div>;
-  // }
 
   return (
     <div style={{ flex: 1 }}>

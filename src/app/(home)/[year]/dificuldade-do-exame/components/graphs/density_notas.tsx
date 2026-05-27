@@ -9,16 +9,13 @@ import styles from "./graphs.module.css";
 import { FreqDensityType } from "../../../../../../types/year_types";
 
 export default function DensityNotasChart() {
+  // Constextos necessários
   const { deferredArea } = useHomeData();
   const { dificuldadeDoExame, dificuldadeDoExameAux } = useYearData();
-
   const activeSelectedRow = dificuldadeDoExameAux.activeSelectedRow;
   const densityDifData = dificuldadeDoExame.densityDifData;
   const describeDifData = dificuldadeDoExame.describeDifData;
-
   const { densidadeColor, gridColor, axisColor } = useChartTheme();
-
-  const selectedRow = activeSelectedRow;
 
   const { xMin, xMax } = useMemo(() => {
     if (!describeDifData?.notas) return { xMin: 0, xMax: 1000 };
@@ -58,23 +55,23 @@ export default function DensityNotasChart() {
 
     const fillIds = ["sd", "q1", "q3", "p99"];
     if (
-      selectedRow &&
-      fillIds.includes(selectedRow.id) &&
+      activeSelectedRow &&
+      fillIds.includes(activeSelectedRow.id) &&
       describeDifData?.notas
     ) {
       const n = describeDifData.notas;
       let start = 0,
         end = 0;
-      if (selectedRow.id === "sd") {
+      if (activeSelectedRow.id === "sd") {
         start = n.mean - n.sd;
         end = n.mean + n.sd;
-      } else if (selectedRow.id === "q1") {
+      } else if (activeSelectedRow.id === "q1") {
         start = n.q1;
         end = n.max;
-      } else if (selectedRow.id === "q3") {
+      } else if (activeSelectedRow.id === "q3") {
         start = n.q3;
         end = n.max;
-      } else if (selectedRow.id === "p99") {
+      } else if (activeSelectedRow.id === "p99") {
         start = n.p99;
         end = n.max;
       }
@@ -83,24 +80,25 @@ export default function DensityNotasChart() {
       datasets.push({ name: `Destaque`, data: filtered });
     }
     return datasets;
-  }, [densityDifData, deferredArea, selectedRow, describeDifData]);
+  }, [densityDifData, deferredArea, activeSelectedRow, describeDifData]);
 
   const options: ApexCharts.ApexOptions = useMemo(() => {
-    const isShape = selectedRow
-      ? ["skew", "kurtosis"].includes(selectedRow.id)
+    const isShape = activeSelectedRow
+      ? ["skew", "kurtosis"].includes(activeSelectedRow.id)
       : false;
-    const isFill = selectedRow
-      ? ["sd", "q1", "q3", "p99"].includes(selectedRow.id)
+    const isFill = activeSelectedRow
+      ? ["sd", "q1", "q3", "p99"].includes(activeSelectedRow.id)
       : false;
 
     const centerPoint = (xMax + xMin) / 2;
 
     const valX = isShape
       ? centerPoint
-      : selectedRow?.id === "mean" || selectedRow?.id === "sd"
+      : activeSelectedRow?.id === "mean" || activeSelectedRow?.id === "sd"
         ? describeDifData?.notas?.mean || 0
         : parseFloat(
-            selectedRow?.nota?.replace(/\./g, "").replace(",", ".") || "0",
+            activeSelectedRow?.nota?.replace(/\./g, "").replace(",", ".") ||
+              "0",
           );
 
     const mainDs = densityDifData?.datasets?.find(
@@ -162,14 +160,17 @@ export default function DensityNotasChart() {
       },
       annotations: {
         xaxis:
-          selectedRow && !isShape
+          activeSelectedRow && !isShape
             ? [
                 {
                   x: valX,
                   borderColor: densidadeColor["line"],
                   borderWidth: 2,
                   label: {
-                    text: `${selectedRow.metric}: ${selectedRow.nota}`,
+                    text: [
+                      `${activeSelectedRow.metric}: `,
+                      `${activeSelectedRow.nota}`,
+                    ].join(""),
                     style: {
                       color: "#000",
                       background: densidadeColor["line"],
@@ -187,7 +188,7 @@ export default function DensityNotasChart() {
               ]
             : [],
         points:
-          selectedRow && isShape
+          activeSelectedRow && isShape
             ? [
                 {
                   x: centerPoint,
@@ -195,8 +196,11 @@ export default function DensityNotasChart() {
                   marker: { size: 0 },
                   label: {
                     text: [
-                      `${selectedRow.metric}: ${selectedRow.nota}`,
-                      getStatDescription(selectedRow.id, selectedRow.nota),
+                      `${activeSelectedRow.metric}: ${activeSelectedRow.nota}`,
+                      getStatDescription(
+                        activeSelectedRow.id,
+                        activeSelectedRow.nota,
+                      ),
                     ],
                     style: {
                       color: "#fff",
@@ -211,7 +215,7 @@ export default function DensityNotasChart() {
   }, [
     describeDifData,
     axisColor,
-    selectedRow,
+    activeSelectedRow,
     densidadeColor,
     gridColor,
     xMin,
@@ -219,10 +223,6 @@ export default function DensityNotasChart() {
     deferredArea,
     densityDifData,
   ]);
-
-  // if (!describeDifData?.notas || !densityDifData) {
-  //   return <div className={styles.loading}>Carregando gráfico...</div>;
-  // }
 
   return (
     <div style={{ flex: 1 }}>

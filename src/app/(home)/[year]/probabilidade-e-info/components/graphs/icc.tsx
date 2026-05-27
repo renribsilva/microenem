@@ -7,6 +7,10 @@ import { useYearData } from "../../../../../../context/year_context";
 import { useHomeData } from "../../../../../../context/home_context";
 import styles from "./graphs.module.css";
 
+function transformTheta(theta: number, k: number, d: number) {
+  return theta * k + d;
+}
+
 export default function ICCChart() {
   const { chartProps, deferredArea } = useHomeData();
   const { chartColor, proficienciaAtual, xMin, xMax } = chartProps;
@@ -22,11 +26,9 @@ export default function ICCChart() {
 
   const probLabels = probInfoData.probLabels;
   const probData = probInfoData.probData;
-  const transformTheta = (theta: number) =>
-    theta * constantesData.k + constantesData.d;
 
   // --- PROCESSAMENTO DE DADOS PARA APEXCHARTS ---
-  const { series, hasAbandonedItem } = useMemo(() => {
+  const { series } = useMemo(() => {
     let abandonedFound = false;
     const codes = Object.keys(selectedItems).map(Number);
     const allItemsInProva = Object.keys(probData || {});
@@ -46,7 +48,11 @@ export default function ICCChart() {
           item: code,
           name: `Item ${code}`, // Nomeclatura para o motor do gráfico
           data: rawPoints.map((yValue, idx) => ({
-            x: transformTheta(probLabels[idx]),
+            x: transformTheta(
+              probLabels[idx],
+              constantesData.k,
+              constantesData.d,
+            ),
             y: parseFloat(
               (status === "erro" ? 1 - (yValue || 0) : yValue || 0).toFixed(3),
             ),
@@ -63,15 +69,12 @@ export default function ICCChart() {
     probData,
     fixedPalette,
     probLabels,
-    transformTheta,
     abandonadosCodes,
+    constantesData.k,
+    constantesData.d,
     lastItemActivate,
   ]);
 
-  // const xMin = Math.floor(transformTheta(-6) / 100) * 100;
-  // const xMax = Math.ceil(transformTheta(6) / 100) * 100;
-
-  // --- CONFIGURAÇÕES DO APEXCHARTS ---
   const options: ApexCharts.ApexOptions = useMemo(() => {
     return {
       chart: {
@@ -92,16 +95,16 @@ export default function ICCChart() {
         curve: "monotoneCubic",
         width: 2,
         lineCap: "round",
-        dashArray: series.map((s: any) => s.strokeDashArray),
+        dashArray: series.map((s) => s.strokeDashArray),
       },
-      colors: series.map((s: any) => s.color),
+      colors: series.map((s) => s.color),
       xaxis: {
         type: "numeric",
         min: xMin,
         max: xMax,
         labels: {
           style: { colors: axisColor },
-          formatter: (val: any) => parseFloat(val).toFixed(0),
+          formatter: (val: string) => parseFloat(val).toFixed(0),
         },
         title: {
           text: `Notas na escala do Enem (${deferredArea})`,
@@ -186,7 +189,7 @@ export default function ICCChart() {
       </div>
       <Chart
         options={options}
-        series={series as any}
+        series={series}
         type="line"
         height="100%"
         // width="100%"

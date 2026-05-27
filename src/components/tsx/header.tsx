@@ -1,6 +1,5 @@
-'use client';
+"use client";
 
-import React from "react";
 import Theme from "./theme_button";
 import styles from "./components.module.css";
 import EnemLogo from "../svg/enem_logo";
@@ -8,21 +7,20 @@ import { useSidebar } from "../../context/sidebar_context";
 import MenuButton from "./menu_button";
 import Link from "next/link";
 
-const AppHeader: React.FC = () => {
-
+function AppHeader() {
   const { isMobile } = useSidebar();
 
   return (
     <section className={styles.appheader_container}>
       {isMobile && (
         <div className={styles.appheader_menu_container}>
-          <MenuButton  />
+          <MenuButton />
         </div>
       )}
-      <Link href= '/' className={styles.appheader_enemlogo}>
+      <Link href="/" className={styles.appheader_enemlogo}>
         <div>
           {/* micro&nbsp; */}
-          <EnemLogo  />
+          <EnemLogo />
           &nbsp;micro
         </div>
       </Link>
@@ -31,6 +29,7 @@ const AppHeader: React.FC = () => {
       </div>
     </section>
   );
-};
+}
 
 export default AppHeader;
+

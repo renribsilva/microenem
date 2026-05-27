@@ -1,4 +1,5 @@
 "use client";
+
 import {
   createContext,
   useContext,
@@ -31,12 +32,14 @@ export const SidebarProvider = ({ children }: { children: ReactNode }) => {
       setIsMobile(mobile);
       if (!mobile) {
         setIsMobileOpen(false);
+        document.body.style.overflow = "unset";
       }
     };
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => {
       window.removeEventListener("resize", handleResize);
+      document.body.style.overflow = "unset";
     };
   }, []);
 
@@ -45,7 +48,11 @@ export const SidebarProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const toggleMobileSidebar = (): void => {
-    setIsMobileOpen((prev) => !prev);
+    setIsMobileOpen((prev) => {
+      const newState = !prev;
+      document.body.style.overflow = newState ? "hidden" : "unset";
+      return newState;
+    });
   };
 
   const toggleSubmenu = (item: string): void => {

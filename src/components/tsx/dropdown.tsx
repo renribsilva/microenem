@@ -1,9 +1,11 @@
+"use client";
+
 import { useEffect, useRef, useState } from "react";
 import styles from "./components.module.css";
 import { useChartTheme } from "../../hooks/use_chart_theme";
 import { useHomeData } from "../../context/home_context";
 
-export default function Dropdown() {
+function Dropdown() {
   const {
     chartProps,
     availableTCC,
@@ -91,3 +93,5 @@ export default function Dropdown() {
     </div>
   );
 }
+
+export default Dropdown;

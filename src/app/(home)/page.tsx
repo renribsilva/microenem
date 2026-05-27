@@ -1,5 +1,8 @@
-import { redirect } from 'next/navigation';
+import { redirect } from "next/navigation";
 
-export default function HomePage() {
-  redirect('/2024/visao-geral');
+function HomePage() {
+  redirect("/2024/visao-geral");
 }
+
+export default HomePage;
+

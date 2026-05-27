@@ -10,12 +10,6 @@
   flex-wrap: wrap;
 }
 
-.nav {
-  /* background-color: rgb(76, 113, 145); */
-  width: 100%;
-  box-sizing: border-box;
-}
-
 /**************************************/
 /***************MAIN TOP***************/
 /**************************************/
@@ -34,7 +28,7 @@
 }
 
 .main_left {
-   /* background-color: aquamarine; */
+  /* background-color: aquamarine; */
   flex: 1 1 30%;
   display: flex;
   flex-direction: column;
@@ -65,7 +59,7 @@
 .main_right_bottom {
   /* background-color: aquamarine; */
   display: flex;
-  height: fit-content
+  height: fit-content;
 }
 
 /*******************************************/
@@ -101,3 +95,4 @@
   display: flex;
   min-height: 260px;
 }
+

@@ -10,12 +10,6 @@
   flex-wrap: wrap;
 }
 
-.nav {
-  /* background-color: rgb(76, 113, 145); */
-  width: 100%;
-  box-sizing: border-box;
-}
-
 /**************************************/
 /***************MAIN TOP***************/
 /**************************************/
@@ -34,14 +28,14 @@
 }
 
 .main_top_left {
-   /* background-color: aquamarine; */
+  /* background-color: aquamarine; */
   flex: 1 1 30%;
   display: flex;
   gap: 10px;
 }
 
 .main_top_right {
-   /* background-color: aquamarine; */
+  /* background-color: aquamarine; */
   flex: 1 1 70%;
   display: flex;
   gap: 10px;
@@ -60,3 +54,4 @@
     flex-direction: column;
   }
 }
+

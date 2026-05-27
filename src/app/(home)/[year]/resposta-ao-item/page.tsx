@@ -1,33 +1,12 @@
-"use client";
-
-import styles from "./resposta-ao-item.module.css"
-import { TabsNavigation } from "../../../../components/tsx/tab_navigation";
+import styles from "./resposta-ao-item.module.css";
 import Card from "../../../../components/tsx/card";
 import ScoreTable from "./components/tables/score_table";
 import AcertosChart from "./components/graphs/acertos";
 import ViolinBinsChart from "./components/graphs/violin";
-import { useHomeData } from "../../../../context/home_context";
-
-const menuItems = [
-  { id: 'LC', label: 'Linguagens' },
-  { id: 'CH', label: 'Humanas' },
-  { id: 'CN', label: 'Natureza' },
-  { id: 'MT', label: 'Matemática' },
-];
 
 export default function QuestoesPage() {
-  
-  const { deferredArea, handleTabChange } = useHomeData();
-
   return (
-    <main className={styles.main_container}>      
-      <nav className={styles.nav_container}>
-        <TabsNavigation 
-          items={menuItems} 
-          activeId={deferredArea} 
-          onTabChange={handleTabChange} 
-        />
-      </nav>
+    <main className={styles.main_container}>
       <div className={styles.main_top}>
         <div className={styles.main_top1}>
           <Card>
@@ -44,7 +23,7 @@ export default function QuestoesPage() {
         <Card>
           <ScoreTable />
         </Card>
-      </div>    
+      </div>
     </main>
   );
 }

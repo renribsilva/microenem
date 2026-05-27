@@ -11,11 +11,7 @@ interface TabsNavigationProps {
   onTabChange: (id: string) => void;
 }
 
-export function TabsNavigation({
-  items,
-  activeId,
-  onTabChange,
-}: TabsNavigationProps) {
+function TabsNavigation({ items, activeId, onTabChange }: TabsNavigationProps) {
   return (
     <div className={styles.tab_container}>
       {items.map((tab) => (
@@ -32,3 +28,4 @@ export function TabsNavigation({
   );
 }
 
+export default TabsNavigation;

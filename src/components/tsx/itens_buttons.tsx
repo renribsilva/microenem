@@ -27,7 +27,7 @@ const ranges: Record<string, { start: number; end: number }> = {
   MT: { start: 136, end: 180 },
 };
 
-export default function ItensButtons() {
+function ItensButtons() {
   const { chartProps, deferredArea, selectedLabel } = useHomeData();
   const { abandonadosCodes, selectedItems, handleToggle, getCodeByLabel } =
     useYearData();
@@ -174,3 +174,5 @@ export default function ItensButtons() {
     </section>
   );
 }
+
+export default ItensButtons;

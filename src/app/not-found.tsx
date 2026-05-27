@@ -1,31 +1,20 @@
-'use client'
+"use client";
 
-import { useEffect } from "react";
-import styles from "../app/(home)/layout.module.css"
+import styles from "../app/(home)/layout.module.css";
 import { useSidebar } from "../context/sidebar_context";
 import AppSidebar from "../components/tsx/sidebar";
 import AppHeader from "../components/tsx/header";
 
-export default function NotFoundLayout() {  
-
+function NotFoundLayout() {
   const { isMobileOpen, toggleMobileSidebar, isMobile } = useSidebar();
-
-  useEffect(() => {
-    if (isMobileOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [isMobileOpen]);
-
   return (
     <div className={styles.layout_container}>
       {isMobile && (
-        <div 
-          className={`${styles.backdrop} ${isMobileOpen ? styles.backdrop_active : ""}`}
+        <div
+          className={[
+            `${styles.backdrop} `,
+            `${isMobileOpen ? styles.backdrop_active : ""}`,
+          ].join("")}
           onClick={toggleMobileSidebar}
         />
       )}
@@ -41,3 +30,5 @@ export default function NotFoundLayout() {
     </div>
   );
 }
+
+export default NotFoundLayout;

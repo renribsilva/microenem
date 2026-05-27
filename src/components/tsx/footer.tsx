@@ -1,18 +1,18 @@
 import Link from "next/link";
-import styles from "./components.module.css"
+import styles from "./components.module.css";
 
 const currentYear = new Date().getFullYear();
 
-export default function Footer() {
+function Footer() {
   return (
     <footer className={styles.footer}>
       <div>GPLv3 © {currentYear}</div>
       <div>No bullshit, just data.</div>
       <div className={styles.links_container}>
         <span>
-          <a 
+          <a
             target="_blank"
-            href="https://github.com/renribsilva/microEnemAnalyze" 
+            href="https://github.com/renribsilva/microEnemAnalyze"
             rel="noopener noreferrer"
             className={styles.link_source}
           >
@@ -21,14 +21,14 @@ export default function Footer() {
         </span>
         <span className={styles.separator}> | </span>
         <span>
-          <Link 
-            href="/privacy" 
-            className={styles.link_source}
-          >
+          <Link href="/privacy" className={styles.link_source}>
             política de privacidade
           </Link>
         </span>
-      </div> 
+      </div>
     </footer>
   );
 }
+
+export default Footer;
+

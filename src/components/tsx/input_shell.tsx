@@ -5,7 +5,7 @@ import styles from "./components.module.css";
 import { useHomeData } from "../../context/home_context";
 import { useChartTheme } from "../../hooks/use_chart_theme";
 
-export default function InputShell() {
+function InputShell() {
   const { chartProps, activeTCC, pointIndexStuff } = useHomeData();
   const { proficienciaAtual, xMax, xMin, chartColor } = chartProps;
   const { gridColor } = useChartTheme();
@@ -111,3 +111,5 @@ export default function InputShell() {
     </div>
   );
 }
+
+export default InputShell;

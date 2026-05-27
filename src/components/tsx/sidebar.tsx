@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import styles from "./components.module.css";
 import Footer from "./footer";
 import { useSidebar } from "../../context/sidebar_context";
@@ -54,7 +54,7 @@ const navItems: NavItem[] = [
   { name: "2019", subItems: generateSubItems("2019") },
 ];
 
-const AppSidebar: React.FC = () => {
+function AppSidebar() {
   const pathname = usePathname();
   const isActive = useCallback((path: string) => path === pathname, [pathname]);
   const { isMobileOpen, isMobile, toggleMobileSidebar } = useSidebar();
@@ -201,6 +201,6 @@ const AppSidebar: React.FC = () => {
       </div>
     </aside>
   );
-};
+}
 
 export default AppSidebar;

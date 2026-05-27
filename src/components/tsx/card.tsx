@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import styles from "./components.module.css";
 import { useSidebar } from "../../context/sidebar_context";
@@ -7,7 +9,7 @@ interface CardProps {
   className?: string;
 }
 
-export default function Card({ children, className }: CardProps) {
+function Card({ children, className }: CardProps) {
   const { isExpanded } = useSidebar();
 
   return (
@@ -20,3 +22,4 @@ export default function Card({ children, className }: CardProps) {
   );
 }
 
+export default Card;

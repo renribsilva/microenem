@@ -1,37 +1,27 @@
 "use client";
 
-import styles from "./dados-dos-itens.module.css"
-import { TabsNavigation } from "../../../../components/tsx/tab_navigation";
+import styles from "./dados-dos-itens.module.css";
 import Card from "../../../../components/tsx/card";
 import ItensButtons from "../../../../components/tsx/itens_buttons";
 import dynamic from "next/dynamic";
 import { useHomeData } from "../../../../context/home_context";
 
 // Imports dinâmicos
-const ICCChart = dynamic(() => import("./components/graphs/icc"), { ssr: false })
-const InfoChart = dynamic(() => import("./components/graphs/info"), { ssr: false })
-const ProbsInfoTable = dynamic(() => import("./components/tables/prob_info"), { ssr: false })
-
-const menuItems = [
-  { id: 'LC', label: 'Linguagens' },
-  { id: 'CH', label: 'Humanas' },
-  { id: 'CN', label: 'Natureza' },
-  { id: 'MT', label: 'Matemática' },
-];
+const ICCChart = dynamic(() => import("./components/graphs/icc"), {
+  ssr: false,
+});
+const InfoChart = dynamic(() => import("./components/graphs/info"), {
+  ssr: false,
+});
+const ProbsInfoTable = dynamic(() => import("./components/tables/prob_info"), {
+  ssr: false,
+});
 
 export default function DadosDoExame() {
-
-  const { deferredArea, handleTabChange } = useHomeData();
+  const { deferredArea } = useHomeData();
 
   return (
-    <main className={styles.main}>   
-      <nav className={styles.nav}>
-        <TabsNavigation 
-          items={menuItems} 
-          activeId={deferredArea} 
-          onTabChange={handleTabChange} 
-        />
-      </nav>  
+    <main className={styles.main}>
       <div className={styles.main_top}>
         <div className={styles.main_top_left}>
           <Card>
@@ -40,7 +30,7 @@ export default function DadosDoExame() {
           </Card>
         </div>
         <div className={styles.main_top_right}>
-          <Card >
+          <Card>
             <ProbsInfoTable />
           </Card>
         </div>
@@ -52,7 +42,7 @@ export default function DadosDoExame() {
         <Card>
           <InfoChart />
         </Card>
-      </div> 
+      </div>
     </main>
   );
 }

@@ -76,6 +76,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
 
   // Importa um novo JSON sempre que o parâmentro currentYear for alterado
   useEffect(() => {
+    if (!currentYear) return;
     async function loadYearlyData() {
       setLoading(true);
       try {

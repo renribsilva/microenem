@@ -43,10 +43,6 @@ export default function ItensButtons() {
     (_, i) => start + i,
   );
 
-  const bd1 = backdropAlert.limitLeft;
-  const bd2 = backdropAlert.x;
-  const bd3 = backdropAlert.limitRight;
-
   const onButtonClick: onButtonClickType = (num, e) => {
     const codeItem = getCodeByLabel(num, selectedLabel);
     if (!codeItem) return;
@@ -146,29 +142,35 @@ export default function ItensButtons() {
         <br></br>
         <span>3º clique (sem cor): indica item em branco</span>
       </div>
-      {backdropAlert && (
-        <>
-          <div
-            className={`${styles.backdrop} ${styles.backdrop_active}`}
-            onClick={() => setBackdropAlert(null)}
-          />
-          <div
-            className={styles.backdrop_msg}
-            style={{
-              left: `clamp(${bd1}px, ${bd2}px, ${bd3}px)`,
-              top: backdropAlert.y - 10,
-              transform: "translate(-50%, -100%)",
-            }}
-          >
-            <strong>Item {backdropAlert.num} abandonado.</strong>
-            <p style={{ margin: 0, fontSize: "0.7rem", opacity: 0.9 }}>
-              Não teve participação no <br /> cálculo da nota final.
-            </p>
-            {/* SETINHA */}
-            <div className={styles.backdrop_msg_arrow} />
-          </div>
-        </>
-      )}
+      {backdropAlert &&
+        (() => {
+          const bd1 = backdropAlert.limitLeft;
+          const bd2 = backdropAlert.x;
+          const bd3 = backdropAlert.limitRight;
+          return (
+            <>
+              <div
+                className={`${styles.backdrop} ${styles.backdrop_active}`}
+                onClick={() => setBackdropAlert(null)}
+              />
+              <div
+                className={styles.backdrop_msg}
+                style={{
+                  left: `clamp(${bd1}px, ${bd2}px, ${bd3}px)`,
+                  top: backdropAlert.y - 10,
+                  transform: "translate(-50%, -100%)",
+                }}
+              >
+                <strong>Item {backdropAlert.num} abandonado.</strong>
+                <p style={{ margin: 0, fontSize: "0.7rem", opacity: 0.9 }}>
+                  Não teve participação no <br /> cálculo da nota final.
+                </p>
+                {/* SETINHA */}
+                <div className={styles.backdrop_msg_arrow} />
+              </div>
+            </>
+          );
+        })()}
     </section>
   );
 }

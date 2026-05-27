@@ -9,7 +9,7 @@ import Dropdown from "../../../../../../components/tsx/dropdown";
 
 export default function TCCChart() {
   const { chartProps, activeTCC } = useHomeData();
-  const { gridColor, axisColor } = useChartTheme();
+  const { panelColor, gridColor, axisColor } = useChartTheme();
 
   const { chartColor, xMin, xMax, bMedio, proficienciaAtual, resultadoAtual } =
     chartProps;
@@ -59,7 +59,7 @@ export default function TCCChart() {
         type: "line",
         toolbar: {
           offsetX: 0,
-          offsetY: 0,
+          offsetY: -10,
           show: true,
         },
         zoom: { enabled: false },
@@ -120,18 +120,41 @@ export default function TCCChart() {
         enabled: true,
         marker: { show: true },
         x: {
-          show: true,
-          formatter: (val) => "\u00A0\u00A0Proficiência: " + val,
+          formatter: function (value: number) {
+            const css = {
+              label: [
+                "font-weight: 300",
+                "margin-left: 4px",
+                `color: ${panelColor}`,
+              ].join("; "),
+              value: ["font-weight: bold"].join("; "),
+            };
+            return `
+             <div style="margin-top: 2px;">
+                <span style="${css.label}">Proficiência: </span>
+                <span style="${css.value}">${value}</span>
+              </div>
+            `;
+          },
         },
         y: {
           formatter: function (val, { series, seriesIndex, dataPointIndex }) {
-            // Se o valor atual já existe, retorna ele
+            const css = {
+              value: [
+                "font-weight: bold",
+                `color: ${axisColor}`,
+                "margin: 0px",
+                "padding: 0px",
+              ].join("; "),
+            };
             if (val !== null && val !== undefined) {
-              return Number(val).toFixed(0);
+              return `
+                <span style="${css.value}">
+                  ${Number(val).toFixed(0)}
+                </span>
+            `;
             }
-
             const currentSeries = series[seriesIndex];
-
             // Busca para trás (valor anterior mais próximo)
             let closestVal = null;
             for (let i = dataPointIndex; i >= 0; i--) {
@@ -140,7 +163,6 @@ export default function TCCChart() {
                 break;
               }
             }
-
             // Se não achou para trás, busca para frente
             if (closestVal === null) {
               for (let i = dataPointIndex; i < currentSeries.length; i++) {
@@ -153,13 +175,13 @@ export default function TCCChart() {
                 }
               }
             }
-
-            return closestVal !== null
-              ? `${Number(closestVal).toFixed(0)}`
-              : "N/A";
-          },
-          title: {
-            formatter: (seriesName) => seriesName + ": ",
+            return `
+             <div>
+                <p style="${css.value}">
+                  ${Number(closestVal).toFixed(0)}
+                </p>
+              </div>
+            `;
           },
         },
       },
@@ -205,6 +227,7 @@ export default function TCCChart() {
       axisColor,
       xMin,
       xMax,
+      panelColor,
       yBMedio,
       bMedio,
       proficienciaAtual,

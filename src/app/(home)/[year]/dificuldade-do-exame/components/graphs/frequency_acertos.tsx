@@ -7,6 +7,14 @@ import { useHomeData } from "../../../../../../context/home_context";
 import { useYearData } from "../../../../../../context/year_context";
 import styles from "./graphs.module.css";
 
+interface FreqItem {
+  x: number;
+  y: number;
+  fillColor: string;
+  strokeColor: string;
+  abs: number;
+}
+
 export default function FrequencyAcertosChart() {
   // Contexto necessário
   const { deferredArea } = useHomeData();
@@ -14,7 +22,7 @@ export default function FrequencyAcertosChart() {
   const activeSelectedRow = dificuldadeDoExameAux.activeSelectedRow;
   const describeDifData = dificuldadeDoExame.describeDifData;
   const frequencyDifData = dificuldadeDoExame.frequencyDifData;
-  const { acertosColor, gridColor, axisColor } = useChartTheme();
+  const { acertosColor, gridColor, axisColor, panelColor } = useChartTheme();
 
   const xMin = 0;
   const xMax = 45;
@@ -37,12 +45,13 @@ export default function FrequencyAcertosChart() {
 
   const series = useMemo(() => {
     if (!frequencyDifData) return [];
-    const rawDataArray = frequencyDifData.datasets?.[1]?.data;
-    const rawData = Array.isArray(rawDataArray) ? rawDataArray : [];
+    const percentData = frequencyDifData.datasets?.[1]?.data;
+    const absoluteData = frequencyDifData.datasets?.[0]?.data;
+    const perData = Array.isArray(percentData) ? percentData : [];
 
     const fillIds = ["sd", "q1", "q3", "p99"];
 
-    const dataWithColors = rawData.map((p) => {
+    const dataWithColors = perData.map((p, index) => {
       let pointColor = acertosColor["bar"];
       if (
         activeSelectedRow &&
@@ -78,6 +87,7 @@ export default function FrequencyAcertosChart() {
         y: p.y,
         fillColor: pointColor,
         strokeColor: pointColor,
+        abs: absoluteData[index]?.y,
       };
     });
     return [
@@ -167,16 +177,45 @@ export default function FrequencyAcertosChart() {
         followCursor: true,
         x: {
           formatter: function (value: number) {
-            return "Acertos: " + value;
+            const css = {
+              label: [
+                "font-weight: 300",
+                "margin-left: 4px",
+                `color: ${panelColor}`,
+              ].join("; "),
+              value: ["font-weight: bold"].join("; "),
+            };
+            return `
+             <div style="margin-top: 2px;">
+                <span style="${css.label}">Acertos:</span>
+                <span style="${css.value}">${value}</span>
+              </div>
+            `;
           },
         },
         y: {
-          formatter: function (value: number) {
-            return value.toFixed(2) + "%";
+          formatter: function (val, { seriesIndex, dataPointIndex, w }) {
+            const series = w.config.series as { data: FreqItem[] }[];
+            const item = series[seriesIndex].data[dataPointIndex];
+            const absoluto = item.abs.toLocaleString("pt-BR");
+            const css = {
+              label: ["font-weight: 300", "opacity: 0.7"].join("; "),
+              value: ["font-weight: bold"].join("; "),
+            };
+            return `
+              <div>
+                <span style="${css.label}">Porcentagem:</span>
+                <span style="${css.value}">${val.toFixed(2)}%</span>
+              </div>
+              <div style="margin-top: 2px;">
+                <span style="${css.label}">Total:</span>
+                <span style="${css.value}">${absoluto}</span>
+              </div>
+            `;
           },
           title: {
             formatter: function () {
-              return "Porcentagem: ";
+              return "";
             },
           },
         },
@@ -240,6 +279,7 @@ export default function FrequencyAcertosChart() {
     describeDifData,
     frequencyDifData,
     activeSelectedRow,
+    panelColor,
     acertosColor,
     axisColor,
     gridColor,

@@ -1,30 +1,30 @@
 :root {
   /* --- TEMA LIGHT --- */
-  --color-fill-light: hsl(0, 0%, 95%);        
-  --color-text-base-light: hsl(240, 2%, 10%);   
-  --color-panel-light: hsl(0, 0%, 100%);       
-  --color-grid-light: rgba(0, 0, 0, 0.05); 
+  --color-fill-light: hsl(0, 0%, 95%);
+  --color-text-base-light: hsl(240, 2%, 10%);
+  --color-panel-light: hsl(0, 0%, 100%);
+  --color-grid-light: rgba(0, 0, 0, 0.05);
   --color-tick-light: rgb(121, 119, 119);
   --color-axis-label-light: hsl(240, 4%, 46%);
-  
+
   --color-tab-background-light: hsl(240, 23%, 97%);
-  --color-tab-border-light: hsl(240, 4%, 86%);     
-  --color-tab-text-light: hsl(240, 4%, 46%);       
+  --color-tab-border-light: hsl(240, 4%, 86%);
+  --color-tab-text-light: hsl(240, 4%, 46%);
   --color-tab-hover-light: hsl(216, 17%, 94%);
-  --color-tab-indicator-light:  hsl(221, 71%, 19%);
+  --color-tab-indicator-light: hsl(221, 71%, 19%);
 
   /* --- TEMA DARK --- */
-  --color-fill-dark: hsl(240, 10%, 4%);            
-  --color-text-base-dark: hsl(0, 0%, 98%);       
-  --color-panel-dark: hsl(240, 8%, 16%);           
+  --color-fill-dark: hsl(240, 10%, 4%);
+  --color-text-base-dark: hsl(0, 0%, 98%);
+  --color-panel-dark: hsl(240, 8%, 16%);
   --color-grid-dark: rgba(255, 255, 255, 0.05);
   --color-tick-dark: rgba(102, 102, 102);
-  
-  --color-tab-background-dark: #27272a;  
-  --color-tab-border-dark: #3f3f46;      
-  --color-tab-text-dark: #a1a1aa;        
+
+  --color-tab-background-dark: #27272a;
+  --color-tab-border-dark: #3f3f46;
+  --color-tab-text-dark: #a1a1aa;
   --color-tab-hover-dark: #3f3f46;
-  --color-tab-indicator-dark:  hsl(219, 31%, 82%);
+  --color-tab-indicator-dark: hsl(219, 31%, 82%);
   --color-axis-label-dark: hsl(240, 11%, 74%);
 }
 
@@ -49,8 +49,8 @@
   --foreground: var(--color-text-base-light);
   --panel: var(--color-panel-light);
   --logo: #1a1a1b;
-  --shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px; 
-  --grid: var(--color-grid-light);        /* Corrigido: era ligth */
+  --shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px;
+  --grid: var(--color-grid-light); /* Corrigido: era ligth */
   --tab-background: var(--color-tab-background-light);
   --tab-border: var(--color-tab-border-light);
   --tab-text: var(--color-tab-text-light);
@@ -60,15 +60,16 @@
   --axis-label: var(--color-axis-label-light);
 }
 
-html, body {
+html,
+body {
   background-color: var(--background);
   margin: 0;
   height: 100%;
-  min-width: 340px
+  min-width: 340px;
 }
 
 .apexcharts-menu {
-  background: var(--tab-background) !important; 
+  background: var(--tab-background) !important;
   border: 1px solid var(--tab-border) !important;
   color: var(--foreground) !important;
   /* box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important; */
@@ -83,3 +84,4 @@ html, body {
 .apexcharts-toolbar svg {
   fill: var(--foreground) !important;
 }
+

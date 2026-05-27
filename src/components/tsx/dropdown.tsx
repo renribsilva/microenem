@@ -12,8 +12,8 @@ export default function Dropdown() {
     setSelectedLabel,
     getMetadata,
   } = useHomeData();
-  const { chartColor } = chartProps;
 
+  const { chartColor } = chartProps;
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { colorMap, gridColor, tickColor } = useChartTheme();

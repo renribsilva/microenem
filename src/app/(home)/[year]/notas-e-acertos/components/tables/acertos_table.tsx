@@ -13,8 +13,6 @@ import {
 
 import styles from "./tables.module.css";
 import { useYearData } from "../../../../../../context/year_context";
-import { useHomeData } from "../../../../../../context/home_context";
-import Dropdown from "../../../../../../components/tsx/dropdown";
 
 type TableRow = {
   id: number;

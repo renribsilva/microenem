@@ -1,4 +1,3 @@
-// components/tsx/tabs_navigation.tsx
 import styles from "./components.module.css";
 
 interface TabItem {
@@ -12,7 +11,11 @@ interface TabsNavigationProps {
   onTabChange: (id: string) => void;
 }
 
-export function TabsNavigation({ items, activeId, onTabChange }: TabsNavigationProps) {
+export function TabsNavigation({
+  items,
+  activeId,
+  onTabChange,
+}: TabsNavigationProps) {
   return (
     <div className={styles.tab_container}>
       {items.map((tab) => (
@@ -28,3 +31,4 @@ export function TabsNavigation({ items, activeId, onTabChange }: TabsNavigationP
     </div>
   );
 }
+

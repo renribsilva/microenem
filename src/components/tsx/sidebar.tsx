@@ -1,34 +1,39 @@
-'use client'
+"use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react"
-import styles from "./components.module.css"
-import Footer from "./footer"
+import React, { useCallback, useLayoutEffect, useRef, useState } from "react";
+import styles from "./components.module.css";
+import Footer from "./footer";
 import { useSidebar } from "../../context/sidebar_context";
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import Circle from "../svg/circle";
 import CircleFulfill from "../svg/circle_check";
 import ArrowDown from "../svg/arrow_down";
 import ArrowUp from "../svg/arrow_up";
 
+interface SubItemsItem {
+  name: string;
+  path: string;
+}
+
+type GenerateSubItemsType = (year: string) => SubItemsItem[];
+
 type NavItem = {
   name: string;
-  // icon: React.ReactNode;
-  path?: string;
-  subItems?: { name: string; path: string }[];
+  subItems: SubItemsItem[];
 };
 
 const icons = {
   circle_check: CircleFulfill,
   circle: Circle,
   arrow_down: ArrowDown,
-  arrow_up: ArrowUp
-}
+  arrow_up: ArrowUp,
+};
 
 const anosPermitidos = ["2019", "2020", "2021", "2022", "2023", "2024"];
 
 // Função auxiliar para gerar sub-itens com base no ano
-const generateSubItems = (year: string) => [
+const generateSubItems: GenerateSubItemsType = (year) => [
   { name: "Visão geral", path: `/${year}/visao-geral` },
   { name: "Dificuldade do exame", path: `/${year}/dificuldade-do-exame` },
   { name: "Probabilidade e Info", path: `/${year}/probabilidade-e-info` },
@@ -50,24 +55,22 @@ const navItems: NavItem[] = [
 ];
 
 const AppSidebar: React.FC = () => {
-
   const pathname = usePathname();
   const isActive = useCallback((path: string) => path === pathname, [pathname]);
-  const { isMobileOpen, isMobile, toggleMobileSidebar} = useSidebar();
-  const [openSubmenu, setOpenSubmenu] = useState<number | null>(null);
+  const { isMobileOpen, isMobile, toggleMobileSidebar } = useSidebar();
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
-  const [subMenuHeight, setSubMenuHeight] = useState<Record<string, number>>({});
+  const [subMenuHeight, setSubMenuHeight] = useState<Record<string, number>>(
+    {},
+  );
 
-  const sidebarClass = isMobile && isMobileOpen 
-    ? `${styles.appsidebar_container} ${styles.appsidebar_mobile_open}` 
-    : styles.appsidebar_container;
+  const sidebarClass =
+    isMobile && isMobileOpen
+      ? `${styles.appsidebar_container} ${styles.appsidebar_mobile_open}`
+      : styles.appsidebar_container;
 
   const handleSubmenuToggle = (index: number) => {
     setOpenSubmenu((prevOpenSubmenu) => {
-      if (
-        prevOpenSubmenu &&
-        prevOpenSubmenu === index
-      ) {
+      if (prevOpenSubmenu && prevOpenSubmenu === index) {
         return null;
       }
       return index;
@@ -80,35 +83,29 @@ const AppSidebar: React.FC = () => {
     }
   };
 
-  const renderMenuItems = (
-    navItems: NavItem[]
-  ) => (
+  const renderMenuItems = (navItems: NavItem[]) => (
     <>
       <ul className={styles.navbar_list}>
         {navItems.map((nav, index) => (
           <li key={nav.name} className={styles.navbar_years}>
-            {!nav.path ? (
+            {nav.name && (
               <button
                 onClick={() => handleSubmenuToggle(index)}
-                className={`${styles.navbar_button} ${openSubmenu === index ? styles.navbar_button_active : ""}`}
+                className={
+                  `${styles.navbar_button} ` +
+                  `${openSubmenu === index ? styles.navbar_button_active : ""}`
+                }
               >
                 <div className={styles.navbar_button_1}>
-                  {/* {nav.subItems ? (
-                    <icons.circle_check width="20px" height="20px"/>
-                  ) : (
-                    <icons.circle width="20px" height="20px"/>
-                  )} */}
-                  <span>
-                    {nav.name}
-                  </span>
+                  <span>{nav.name}</span>
                 </div>
                 <div className={styles.navbar_button_2}>
                   {nav.subItems && anosPermitidos.includes(nav.name) ? (
                     <>
                       {openSubmenu === index ? (
-                        <icons.arrow_up width='20px' height="20px" />
-                      ): (
-                        <icons.arrow_down width='20px' height="20px" />
+                        <icons.arrow_up width="20px" height="20px" />
+                      ) : (
+                        <icons.arrow_down width="20px" height="20px" />
                       )}
                     </>
                   ) : (
@@ -116,17 +113,6 @@ const AppSidebar: React.FC = () => {
                   )}
                 </div>
               </button>
-            ) : (
-              nav.path && (
-                <Link 
-                  href={nav.path}
-                  onClick={handleItemClick}
-                >
-                  <span>
-                    {nav.name}
-                  </span>
-                </Link>
-              )
             )}
             {nav.subItems && anosPermitidos.includes(nav.name) && (
               <div
@@ -143,9 +129,14 @@ const AppSidebar: React.FC = () => {
               >
                 <ul className={styles.navbar_subitems_list}>
                   {nav.subItems.map((subItem) => (
-                    <li 
+                    <li
                       key={subItem.name}
-                      className={`${styles.navbar_subitems_items} ${isActive(subItem.path) ? styles.navbar_subitems_items_active : ""}`}
+                      className={[
+                        styles.navbar_subitems_items,
+                        isActive(subItem.path)
+                          ? styles.navbar_subitems_items_active
+                          : "",
+                      ].join(" ")}
                     >
                       <Link
                         href={subItem.path}
@@ -163,37 +154,34 @@ const AppSidebar: React.FC = () => {
         ))}
       </ul>
     </>
-  )
+  );
 
-  useEffect(() => {
-    // Check if the current path matches any submenu item
-    let submenuMatched = false;
-    const items = navItems
-    items.forEach((nav, index) => {
-      if (nav.subItems) {
-        nav.subItems.forEach((subItem) => {
-          if (isActive(subItem.path)) {
-            setOpenSubmenu(index);
-            submenuMatched = true;
-          }
-        });
-      }
-    });
-    if (!submenuMatched) {
-      setOpenSubmenu(null);
-    }
-  }, [pathname, isActive]);
+  const [openSubmenu, setOpenSubmenu] = useState(() => {
+    const idx = navItems.findIndex((nav) =>
+      nav.subItems?.some((sub) => sub.path === pathname),
+    );
+    return idx !== -1 ? idx : null;
+  });
 
-  useEffect(() => {
-    // Set the height of the submenu items when the submenu is opened
-    if (openSubmenu !== null) {
-      const key = `${openSubmenu}`;
-      if (subMenuRefs.current[key]) {
-        setSubMenuHeight((prevHeights) => ({
-          ...prevHeights,
-          [key]: subMenuRefs.current[key]?.scrollHeight || 0,
-        }));
-      }
+  const [prevPathname, setPrevPathname] = useState(pathname);
+
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
+    const idx = navItems.findIndex((nav) =>
+      nav.subItems?.some((sub) => sub.path === pathname),
+    );
+    setOpenSubmenu(idx !== -1 ? idx : null);
+  }
+
+  useLayoutEffect(() => {
+    if (openSubmenu === null) return;
+    const key = `${openSubmenu}`;
+    const element = subMenuRefs.current[key];
+    if (element) {
+      setSubMenuHeight((prev) => ({
+        ...prev,
+        [key]: element.scrollHeight || 0,
+      }));
     }
   }, [openSubmenu]);
 
@@ -212,7 +200,8 @@ const AppSidebar: React.FC = () => {
         </div>
       </div>
     </aside>
-  )
-}
+  );
+};
 
-export default AppSidebar
+export default AppSidebar;
+

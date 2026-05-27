@@ -294,7 +294,7 @@ export default function ScoreTable() {
   return (
     <section className={styles.probtable_container}>
       <div className={styles.probtable_cabecalho}>
-        <div>
+        <div className={styles.probtable_title}>
           <h3 className={styles.card_title}>
             Tabela de frequência de respostas
           </h3>
@@ -303,7 +303,9 @@ export default function ScoreTable() {
             exames.
           </p>
         </div>
-        <Dropdown />
+        <div className={styles.probtable_dropdown}>
+          <Dropdown />
+        </div>
       </div>
       <table className={styles.probtable_table}>
         <thead className={styles.probtable_thead}>

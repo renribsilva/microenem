@@ -15,7 +15,7 @@ export default function DensityNotasChart() {
   const activeSelectedRow = dificuldadeDoExameAux.activeSelectedRow;
   const densityDifData = dificuldadeDoExame.densityDifData;
   const describeDifData = dificuldadeDoExame.describeDifData;
-  const { densidadeColor, gridColor, axisColor } = useChartTheme();
+  const { panelColor, densidadeColor, gridColor, axisColor } = useChartTheme();
 
   const { xMin, xMax } = useMemo(() => {
     if (!describeDifData?.notas) return { xMin: 0, xMax: 1000 };
@@ -122,7 +122,6 @@ export default function DensityNotasChart() {
         toolbar: { show: true, offsetX: 0, offsetY: 0 },
         zoom: { enabled: false },
         animations: { enabled: false },
-        // background: '#f34'
       },
       colors: chartColors,
       stroke: { curve: "smooth", width: strokeWidths },
@@ -134,6 +133,9 @@ export default function DensityNotasChart() {
         tickAmount: (xMax - xMin) / 200,
         labels: { style: { colors: axisColor } },
         title: { text: "Notas na escala do ENEM", style: { color: axisColor } },
+        tooltip: {
+          enabled: false,
+        },
       },
       yaxis: {
         labels: {
@@ -149,11 +151,46 @@ export default function DensityNotasChart() {
       legend: { show: false },
       dataLabels: { enabled: false },
       tooltip: {
-        enabled: true,
-        shared: true,
-        custom: function () {
-          return "";
+        theme: "dark",
+        y: {
+          formatter: function (val) {
+            const css = {
+              label: ["font-weight: 300", "opacity: 0.7"].join("; "),
+              value: ["font-weight: bold", "margin-left: 4px"].join("; "),
+            };
+            return `
+              <div style="margin-top: 2px;">
+                <span style="${css.label}">Densidade (x100): </span>
+                <span style="${css.value}">${val.toFixed(1)}%</span>
+              </div>
+           `;
+          },
+          title: {
+            formatter: function () {
+              return "";
+            },
+          },
         },
+
+        x: {
+          formatter: function (value: number) {
+            const css = {
+              label: [
+                "font-weight: bold",
+                "margin-left: 4px",
+                `color: ${panelColor}`,
+              ].join("; "),
+              value: ["font-weight: bold"].join("; "),
+            };
+            return `
+             <div style="margin-top: 2px;">
+                <span style="${css.label}">Proficiência: </span>
+                <span style="${css.value}">${value.toFixed(0)}</span>
+              </div>
+            `;
+          },
+        },
+
         marker: {
           show: false,
         },
@@ -214,6 +251,7 @@ export default function DensityNotasChart() {
     };
   }, [
     describeDifData,
+    panelColor,
     axisColor,
     activeSelectedRow,
     densidadeColor,

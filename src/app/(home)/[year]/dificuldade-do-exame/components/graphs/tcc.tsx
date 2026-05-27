@@ -118,13 +118,13 @@ export default function TCCChart() {
         theme: "dark",
         followCursor: true,
         enabled: true,
-        marker: { show: true },
+        enabledOnSeries: [1],
         x: {
           formatter: function (value: number) {
             const css = {
               label: [
-                "font-weight: 300",
-                "margin-left: 4px",
+                "font-weight: bold",
+                "margin-left: 8px",
                 `color: ${panelColor}`,
               ].join("; "),
               value: ["font-weight: bold"].join("; "),
@@ -138,51 +138,72 @@ export default function TCCChart() {
           },
         },
         y: {
-          formatter: function (val, { series, seriesIndex, dataPointIndex }) {
+          formatter: function (_val, { series, dataPointIndex }) {
             const css = {
+              container: ["display: flex", "align-items: center"].join("; "),
               value: [
-                "font-weight: bold",
-                `color: ${axisColor}`,
+                "font-weight: 300",
+                "opacity: 0.7",
+                `color: ${panelColor}`,
                 "margin: 0px",
                 "padding: 0px",
+                "padding: 5px",
+              ].join("; "),
+              marker1: [
+                `width: 10px`,
+                `height: 10px`,
+                `border-radius: 50%`,
+                `background-color: #94a3b8`,
+                `display: inline-block;`,
+                "margin-right: 5px",
+              ].join("; "),
+              marker2: [
+                `width: 10px`,
+                `height: 10px`,
+                `border-radius: 50%`,
+                `background-color: ${chartColor}`,
+                `display: inline-block;`,
+                "margin-right: 5px",
               ].join("; "),
             };
-            if (val !== null && val !== undefined) {
-              return `
-                <span style="${css.value}">
-                  ${Number(val).toFixed(0)}
-                </span>
-            `;
-            }
-            const currentSeries = series[seriesIndex];
-            // Busca para trás (valor anterior mais próximo)
-            let closestVal = null;
-            for (let i = dataPointIndex; i >= 0; i--) {
-              if (currentSeries[i] !== null && currentSeries[i] !== undefined) {
-                closestVal = currentSeries[i];
-                break;
-              }
-            }
-            // Se não achou para trás, busca para frente
-            if (closestVal === null) {
-              for (let i = dataPointIndex; i < currentSeries.length; i++) {
-                if (
-                  currentSeries[i] !== null &&
-                  currentSeries[i] !== undefined
-                ) {
-                  closestVal = currentSeries[i];
+            const val0 = series[0][dataPointIndex];
+            let val1 = series[1][dataPointIndex];
+            const series1 = series[1];
+            if (!val1) {
+              for (let i = dataPointIndex; i >= 0; i--) {
+                if (series1[i] !== null && series1[i] !== undefined) {
+                  val1 = series1[i];
                   break;
                 }
               }
             }
             return `
              <div>
-                <p style="${css.value}">
-                  ${Number(closestVal).toFixed(0)}
-                </p>
+                <div style="${css.container}">
+                  <div style="${css.marker1}"></div>
+                  <div> 
+                    <span style="${css.value}">Média de acertos: </span>
+                    <span>${Number(val1).toFixed(0)}</span>
+                  </div>
+                </div>
+                <div style="${css.container}">
+                  <div style="${css.marker2}"></div>
+                  <div> 
+                    <span style="${css.value}">Acertos esperados: </span>
+                    <span>${Number(val0).toFixed(0)}</span>
+                  </div>
+                </div>
               </div>
             `;
           },
+          title: {
+            formatter: function () {
+              return null;
+            },
+          },
+        },
+        marker: {
+          show: false,
         },
       },
       annotations: {

@@ -179,11 +179,11 @@ export default function FrequencyAcertosChart() {
           formatter: function (value: number) {
             const css = {
               label: [
-                "font-weight: 300",
+                "font-weight: bold",
                 "margin-left: 4px",
                 `color: ${panelColor}`,
               ].join("; "),
-              value: ["font-weight: bold"].join("; "),
+              value: ["font-weight: light"].join("; "),
             };
             return `
              <div style="margin-top: 2px;">
@@ -203,7 +203,7 @@ export default function FrequencyAcertosChart() {
               value: ["font-weight: bold"].join("; "),
             };
             return `
-              <div>
+              <div style="margin-top: 2px;">
                 <span style="${css.label}">Porcentagem:</span>
                 <span style="${css.value}">${val.toFixed(2)}%</span>
               </div>

@@ -89,7 +89,7 @@ export default function COR_RACA() {
               value: ["font-weight: bold", "margin-left: 4px"].join("; "),
             };
             return `
-              <div>
+              <div style="margin-top: 2px;">
                 <span style="${css.label}">Porcentagem:</span>
                 <span style="${css.value}">${val}%</span>
               </div>

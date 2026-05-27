@@ -43,6 +43,10 @@ export default function ItensButtons() {
     (_, i) => start + i,
   );
 
+  const bd1 = backdropAlert.limitLeft;
+  const bd2 = backdropAlert.x;
+  const bd3 = backdropAlert.limitRight;
+
   const onButtonClick: onButtonClickType = (num, e) => {
     const codeItem = getCodeByLabel(num, selectedLabel);
     if (!codeItem) return;
@@ -151,9 +155,7 @@ export default function ItensButtons() {
           <div
             className={styles.backdrop_msg}
             style={{
-              left:
-                `clamp(${backdropAlert.limitLeft}px, ${backdropAlert.x}px, ` +
-                `${backdropAlert.limitRight}px)`,
+              left: `clamp(${bd1}px, ${bd2}px, ${bd3}px)`,
               top: backdropAlert.y - 10,
               transform: "translate(-50%, -100%)",
             }}

@@ -1,6 +1,5 @@
 "use client";
 
-import { Suspense } from "react";
 import dynamic from "next/dynamic";
 import styles from "./visao-geral.module.css";
 import Card from "../../../../components/tsx/card";
@@ -11,13 +10,9 @@ import Treineiros from "./components/tables/treineiros";
 import PersonRemove from "../../../../components/svg/person_remove";
 
 // Imports dinâmicos
-const FX_ETARIA = dynamic(() => import("./components/graphs/fx_etaria"), {
-  ssr: false,
-});
-const SEXO = dynamic(() => import("./components/graphs/sexo"), { ssr: false });
-const COR_RACA = dynamic(() => import("./components/graphs/cor_raca"), {
-  ssr: false,
-});
+const FX_ETARIA = dynamic(() => import("./components/graphs/fx_etaria"));
+const SEXO = dynamic(() => import("./components/graphs/sexo"));
+const COR_RACA = dynamic(() => import("./components/graphs/cor_raca"));
 
 export default function Visao() {
   const { overviewData } = useYearData();
@@ -79,9 +74,7 @@ export default function Visao() {
             style={{ minWidth: 0, minHeight: 0 }}
           >
             <Card className={styles.card_fxetaria}>
-              <Suspense fallback={<p>Carregando gráfico...</p>}>
-                <FX_ETARIA />
-              </Suspense>
+              <FX_ETARIA />
             </Card>
           </div>
           <div
@@ -89,9 +82,7 @@ export default function Visao() {
             style={{ minWidth: 0, minHeight: 0 }}
           >
             <Card className={styles.card_sexo}>
-              <Suspense fallback={<p>Carregando gráfico...</p>}>
-                <SEXO />
-              </Suspense>
+              <SEXO />
             </Card>
           </div>
         </div>
@@ -103,9 +94,7 @@ export default function Visao() {
           style={{ minWidth: 0, minHeight: 0 }}
         >
           <Card className={styles.card_racacor}>
-            <Suspense fallback={<p>Carregando gráfico...</p>}>
-              <COR_RACA />
-            </Suspense>
+            <COR_RACA />
           </Card>
         </div>
       </div>

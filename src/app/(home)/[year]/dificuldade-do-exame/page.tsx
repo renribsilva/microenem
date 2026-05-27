@@ -2,38 +2,17 @@
 
 import { DescribeTable } from "./components/tables/describe";
 import styles from "./dados-do-exame.module.css";
-import { Suspense } from "react";
 import Card from "../../../../components/tsx/card";
 import dynamic from "next/dynamic";
 import { useHomeData } from "../../../../context/home_context";
 
 // Imports dinâmicos mantidos
-const TCCChart = dynamic(() => import("./components/graphs/tcc"), {
-  ssr: false,
-});
+const TCCChart = dynamic(() => import("./components/graphs/tcc"));
 const DensityNotasChart = dynamic(
   () => import("./components/graphs/density_notas"),
-  { ssr: false },
 );
 const FrequencyAcertosChart = dynamic(
   () => import("./components/graphs/frequency_acertos"),
-  { ssr: false },
-);
-
-const Skeleton = () => (
-  <div
-    style={{
-      height: "300px",
-      width: "100%",
-      backgroundColor: "rgba(0,0,0,0.05)",
-      borderRadius: "8px",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-    }}
-  >
-    <span style={{ opacity: 0.5 }}>Carregando gráfico...</span>
-  </div>
 );
 
 export default function DadosDoExame() {
@@ -59,14 +38,10 @@ export default function DadosDoExame() {
             style={{ minWidth: 0, minHeight: 0 }}
           >
             <Card className={styles.card_density}>
-              <Suspense fallback={<Skeleton />}>
-                <DensityNotasChart />
-              </Suspense>
+              <DensityNotasChart />
             </Card>
             <Card className={styles.card_frequency}>
-              <Suspense fallback={<Skeleton />}>
-                <FrequencyAcertosChart />
-              </Suspense>
+              <FrequencyAcertosChart />
             </Card>
           </div>
           <div
@@ -74,9 +49,7 @@ export default function DadosDoExame() {
             style={{ minWidth: 0, minHeight: 0 }}
           >
             <Card className={styles.card_tcc}>
-              <Suspense fallback={<Skeleton />}>
-                <TCCChart />
-              </Suspense>
+              <TCCChart />
             </Card>
           </div>
         </div>

@@ -151,10 +151,9 @@ export default function ItensButtons() {
           <div
             className={styles.backdrop_msg}
             style={{
-              left: [
-                `clamp(${backdropAlert.limitLeft}px, `,
-                `${backdropAlert.x}px, ${backdropAlert.limitRight}px)`,
-              ].join(""),
+              left:
+                `clamp(${backdropAlert.limitLeft}px, ${backdropAlert.x}px, ` +
+                `${backdropAlert.limitRight}px)`,
               top: backdropAlert.y - 10,
               transform: "translate(-50%, -100%)",
             }}

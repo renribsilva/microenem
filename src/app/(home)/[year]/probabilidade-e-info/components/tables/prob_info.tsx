@@ -189,9 +189,11 @@ export default function ProbsInfoTable() {
         Tabela de probabilidade e informação do item
       </h3>
       <p className={styles.card_subtitle_p}>
-        {`Probabilidade¹ e informação² estimadas do item ` +
-          `para a proficiência ${proficienciaAtual}, segundo ` +
-          `os parâmetros de chute, dificuldade e discriminação.`}
+        {[
+          `Probabilidade¹ e informação² estimadas do item `,
+          `para a proficiência ${proficienciaAtual}, segundo `,
+          `os parâmetros de chute, dificuldade e discriminação.`,
+        ].join("")}
       </p>
       <InputShell />
       <table className={styles.probtable_table}>
@@ -208,10 +210,10 @@ export default function ProbsInfoTable() {
                     key={header.id}
                     colSpan={header.colSpan}
                     /* Aplica a classe da linha apenas se for grupo */
-                    className={
-                      `${styles.probtable_th} ` +
-                      `${isGroup ? styles.probtable_group_th : ""}`
-                    }
+                    className={[
+                      `${styles.probtable_th} `,
+                      `${isGroup ? styles.probtable_group_th : ""}`,
+                    ].join("")}
                     onClick={
                       canSort
                         ? header.column.getToggleSortingHandler()

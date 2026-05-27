@@ -640,8 +640,10 @@ export function YearProvider({ children }: { children: ReactNode }) {
       const codeItem = getCodeByLabel(num, selectedLabel);
       if (!codeItem) {
         console.warn(
-          `Não foi possível encontrar o código para a posição ` +
+          [
+            `Não foi possível encontrar o código para a posição `,
             `${num} na prova ${selectedLabel}`,
+          ].join(""),
         );
         return;
       }
@@ -700,8 +702,10 @@ export function YearProvider({ children }: { children: ReactNode }) {
     // e o score não pode ser mapeado com segurança.
     if (indicesFiltrados.length !== 45) {
       console.error(
-        `Erro de integridade: Esperados 45 itens, ` +
+        [
+          `Erro de integridade: Esperados 45 itens, `,
           `encontrados ${indicesFiltrados.length} para a prova ${codProva}.`,
+        ].join(""),
       );
       return [];
     }

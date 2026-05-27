@@ -91,10 +91,10 @@ const AppSidebar: React.FC = () => {
             {nav.name && (
               <button
                 onClick={() => handleSubmenuToggle(index)}
-                className={
-                  `${styles.navbar_button} ` +
-                  `${openSubmenu === index ? styles.navbar_button_active : ""}`
-                }
+                className={[
+                  `${styles.navbar_button} `,
+                  `${openSubmenu === index ? styles.navbar_button_active : ""}`,
+                ].join("")}
               >
                 <div className={styles.navbar_button_1}>
                   <span>{nav.name}</span>
@@ -204,4 +204,3 @@ const AppSidebar: React.FC = () => {
 };
 
 export default AppSidebar;
-

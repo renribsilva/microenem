@@ -1,4 +1,3 @@
-// app/api/probtrace/route.ts
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
@@ -9,7 +8,10 @@ export async function GET(request: Request) {
   const year = searchParams.get("year");
 
   if (!year) {
-    return NextResponse.json({ error: "year obrigatório" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Informe o parâmetro: year" },
+      { status: 400 },
+    );
   }
 
   try {
@@ -29,14 +31,11 @@ export async function GET(request: Request) {
     const fullJson = JSON.parse(fileContent);
 
     // Mapeia para retornar um objeto com Ranking e Média
-    // Como o R já ordenou e você adicionou a coluna RANKING,
-    // apenas limpamos os dados extras (scores, notas por área, etc)
     const result = fullJson.map((item: CandidateDataType) => ({
       ranking: item.RANKING,
       media: item.MEDIA_GERAL,
     }));
 
-    // Caso queira garantir a ordenação por ranking (1 ao 2500)
     result.sort(
       (a: { ranking: number }, b: { ranking: number }) => a.ranking - b.ranking,
     );
@@ -50,4 +49,3 @@ export async function GET(request: Request) {
     );
   }
 }
-

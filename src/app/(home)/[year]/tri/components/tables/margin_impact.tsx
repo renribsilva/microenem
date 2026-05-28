@@ -1,34 +1,19 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useHomeData } from "../../../../../../context/home_context";
 import { useYearData } from "../../../../../../context/year_context";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import styles from "./tables.module.css";
+import { useSidebar } from "../../../../../../context/sidebar_context";
 
 export default function MarginImpactTable() {
   const { deferredArea, selectedLabel, currentYear } = useHomeData();
-  const {
-    EAPData,
-    selectedItems,
-    setSampleEAP,
-    intervalData,
-    setUpdateTrigger,
-    getParamByLabel,
-    getCodeByLabel,
-  } = useYearData();
+  const { isMobile } = useSidebar();
+  const { EAPData, selectedItems, getParamByLabel, getCodeByLabel } =
+    useYearData();
 
   const { textColor, isDark } = useChartTheme();
-  const [impactoDesatualizado, setImpactoDesatualizado] = useState(false);
-  const [isMobile, setIsMobile] = useState(
-    typeof window !== "undefined" ? window.innerWidth < 800 : false,
-  );
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 800);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   // Estado para o Sort
   const [sortConfig, setSortConfig] = useState<{
@@ -63,28 +48,12 @@ export default function MarginImpactTable() {
     return map;
   }, [deferredArea, selectedLabel, getCodeByLabel, getParamByLabel]);
 
-  const handleUpdateChart = () => {
-    if (Object.entries(selectedItems).length === 0) return;
-    setSampleEAP(intervalData);
-    setUpdateTrigger((prev) => !prev);
-  };
-
-  useEffect(() => {
-    if (Object.keys(selectedItems || {}).length > 0) {
-      setImpactoDesatualizado(true);
-    }
-  }, [selectedItems, deferredArea, selectedLabel]);
-
-  useEffect(() => {
-    setImpactoDesatualizado(false);
-  }, [EAPData]);
-
   // Lógica de ordenação REVISADA
   const impactosArray = useMemo(() => {
     if (!EAPData?.impacto_individual) return [];
-
+    console.log(EAPData.impacto_individual);
     const baseArray = Object.entries(EAPData.impacto_individual).map(
-      ([codigo, info]: [string, any]) => {
+      ([codigo, info]) => {
         const params = paramsPorCodigo[codigo];
         const valRaw = info.valor;
         const valNum =
@@ -174,16 +143,6 @@ export default function MarginImpactTable() {
             &quot Qual seria o impacto na nota final se um item tivesse o seu
             status invertido, mantidos os outros status inalterados?&quot
           </p>
-        </div>
-        <div className={styles.tcc_impacto}>
-          {impactoDesatualizado && temImpacto && (
-            <button
-              onClick={handleUpdateChart}
-              className={styles.update_button}
-            >
-              Recalcular Impactos
-            </button>
-          )}
         </div>
       </div>
 
@@ -309,7 +268,7 @@ export default function MarginImpactTable() {
                         textAlign: "right",
                         fontWeight: "500",
                         color:
-                          isAnulado || impactoDesatualizado || isTRIDivergente
+                          isAnulado || isTRIDivergente
                             ? "#64748b"
                             : valNum > 0
                               ? "#10b981"
@@ -318,15 +277,13 @@ export default function MarginImpactTable() {
                         fontSize: "13px",
                       }}
                     >
-                      {impactoDesatualizado
-                        ? "---"
-                        : isAnulado
-                          ? "N/A"
-                          : isTRIDivergente
-                            ? "---"
-                            : valNum > 0
-                              ? `+${valNum.toFixed(1)}`
-                              : `${valNum.toFixed(1)}`}
+                      {isAnulado
+                        ? "N/A"
+                        : isTRIDivergente
+                          ? "---"
+                          : valNum > 0
+                            ? `+${valNum.toFixed(1)}`
+                            : `${valNum.toFixed(1)}`}
                     </td>
                   </tr>
                 );

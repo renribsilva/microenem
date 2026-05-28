@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { useYearData } from "../../../../../../context/year_context";
 import { useHomeData } from "../../../../../../context/home_context";
 import Chart from "react-apexcharts";
@@ -17,46 +17,19 @@ export default function ProdProbChart() {
     activeCodes,
     intervalData,
   } = useYearData();
-  const { deferredArea, selectedLabel, currentYear } = useHomeData();
+  const { deferredArea, currentYear } = useHomeData();
   const [isUpdating, setIsUpdating] = useState(false);
-  const [showRenderWarning, setShowRenderWarning] = useState(false);
   const { axisColor, textColor, gridColor } = useChartTheme();
-  const [EAPDesatualizado, setEAPDesatualizado] = useState<boolean>(false);
 
   const isTRIDivergente =
     (deferredArea === "MT" && currentYear === "2009") ||
     (deferredArea === "MT" && currentYear === "2019");
-  // || (deferredArea === "CN" && currentYear === "2021")
-
-  useEffect(() => {
-    setIsUpdating(false);
-    setShowRenderWarning(false);
-    setEAPDesatualizado(false);
-  }, [EAPData]);
-
-  useEffect(() => {
-    if (Object.keys(selectedItems || {}).length > 0) {
-      setEAPDesatualizado(true);
-    }
-  }, [selectedItems, selectedLabel]);
-
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (isUpdating) {
-      timer = setTimeout(() => {
-        setShowRenderWarning(true);
-      }, 3000);
-    } else {
-      setShowRenderWarning(false);
-    }
-    return () => clearTimeout(timer);
-  }, [isUpdating]);
 
   const handleUpdateChart = () => {
     if (Object.entries(selectedItems).length === 0) return;
     setIsUpdating(true);
     setSampleEAP(intervalData);
-    setUpdateTrigger((prev: any) => !prev);
+    setUpdateTrigger((prev: boolean) => !prev);
   };
 
   const series = useMemo(() => {
@@ -155,7 +128,7 @@ export default function ProdProbChart() {
                 text: [
                   "O método (não oficial) de transformação da escala",
                   `apresentou divergência na nota de ${deferredArea}.`,
-                ] as any,
+                ],
                 orientation: "horizontal",
                 offsetY: 80,
               },
@@ -173,7 +146,7 @@ export default function ProdProbChart() {
                   background: "#f43f5e",
                   fontWeight: "bold",
                 },
-                text: [`Nota mais provável`, `${EAPData?.eap || 0}`] as any,
+                text: [`Nota mais provável`, `${EAPData?.eap || 0}`],
                 orientation: "horizontal",
                 offsetY: 50,
               },
@@ -225,26 +198,10 @@ export default function ProdProbChart() {
             transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
           }}
         >
-          {isUpdating
-            ? "⏳ PROCESSANDO..."
-            : EAPDesatualizado && EAPData
-              ? "🔄 RECALCULAR DESEMPENHO TRI"
-              : "🚀 CALCULAR DESEMPENHO TRI"}
+          {isUpdating ? "⏳ PROCESSANDO..." : "🚀 CALCULAR DESEMPENHO TRI"}
         </button>
-        {showRenderWarning && (
-          <p
-            style={{
-              color: "#f43f5e",
-              fontSize: "12px",
-              fontWeight: "600",
-              animation: "pulse 2s infinite",
-            }}
-          >
-            ⚠️ O servidor está acordando no Render, aguarde cerca de 30s...
-          </p>
-        )}
       </div>
-      {series.length > 0 && EAPData && !EAPDesatualizado ? (
+      {series.length > 0 && EAPData ? (
         <>
           <Chart options={options} series={series} type="area" height={350} />
           <div

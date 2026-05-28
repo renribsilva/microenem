@@ -79,7 +79,7 @@ export function DescribeTable() {
           <tbody>
             {table.getRowModel().rows.map((row) => (
               <tr
-                key={row.id}
+                key={`${deferredArea}-${row.id}`}
                 className={clsx(
                   styles.describe_tr,
                   selectedRowId === row.original.id && styles.row_selected,

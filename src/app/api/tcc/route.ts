@@ -8,16 +8,11 @@ export async function GET(request: Request) {
   const label = searchParams.get("co_p");
   const year = searchParams.get("year");
 
-  if (!area || area === "undefined") {
-    return NextResponse.json({ error: "Área é obrigatória" }, { status: 400 });
-  }
-
-  if (!year || year === "undefined") {
-    return NextResponse.json({ error: "Ano é obrigatório" }, { status: 400 });
-  }
-
-  if (!label || label === "undefined") {
-    return NextResponse.json({ error: "co_p é obrigatório" }, { status: 400 });
+  if (!area || !label || !year) {
+    return NextResponse.json(
+      { error: "Informe os parâmetros: area, label, year" },
+      { status: 400 },
+    );
   }
 
   try {

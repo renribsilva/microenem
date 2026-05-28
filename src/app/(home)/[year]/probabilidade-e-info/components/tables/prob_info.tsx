@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -14,6 +14,7 @@ import styles from "./tables.module.css";
 import InputShell from "../../../../../../components/tsx/input_shell";
 import { useHomeData } from "../../../../../../context/home_context";
 import { useYearData } from "../../../../../../context/year_context";
+import { useSidebar } from "../../../../../../context/sidebar_context";
 
 type TableRow = {
   id: number;
@@ -26,6 +27,7 @@ type TableRow = {
 
 export default function ProbsInfoTable() {
   const { chartProps } = useHomeData();
+  const { isMobile } = useSidebar();
   const { proficienciaAtual } = chartProps;
   const {
     constantesData,
@@ -42,15 +44,6 @@ export default function ProbsInfoTable() {
     { id: "posicao", desc: false },
   ]);
   const columnHelper = createColumnHelper<TableRow>();
-  const [isMobile, setIsMobile] = useState(
-    typeof window !== "undefined" ? window.innerWidth < 800 : false,
-  );
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 800);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   const columns = useMemo(
     () => [

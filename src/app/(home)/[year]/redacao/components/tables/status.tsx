@@ -51,7 +51,7 @@ export default function StatusRedacaoTable() {
       };
     });
     return [firstRow, ...rows];
-  }, []);
+  }, [statusData.datasets, statusData.labels]);
 
   const columns = useMemo<ColumnDef<StatusRow>[]>(
     () => [
@@ -62,12 +62,11 @@ export default function StatusRedacaoTable() {
           const val = getValue() as string;
           return (
             <div
-              title={val} // Mostra o texto completo ao pairar o mouse
+              title={val}
               style={{
                 paddingLeft: `${row.depth * 2}rem`,
                 fontWeight: "300",
-                // Estilo para Ellipsis:
-                maxWidth: "180px", // Limita a largura no mobile
+                maxWidth: "180px",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
@@ -102,6 +101,7 @@ export default function StatusRedacaoTable() {
     [],
   );
 
+  // eslint-disable-next-line
   const table = useReactTable({
     data: tableData,
     columns,
@@ -119,10 +119,7 @@ export default function StatusRedacaoTable() {
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header, i) => (
-                <th
-                  key={header.id}
-                  style={{ width: i === 0 ? "50%" : "25%" }} // Dá mais espaço para a primeira coluna
-                >
+                <th key={header.id} style={{ width: i === 0 ? "50%" : "25%" }}>
                   {flexRender(
                     header.column.columnDef.header,
                     header.getContext(),
@@ -144,7 +141,6 @@ export default function StatusRedacaoTable() {
           ))}
         </tbody>
       </table>
-
       <div className={styles.table_footer}>
         * Recorte de análise do gráfico e tabela de competências.
       </div>

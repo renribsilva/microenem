@@ -1,4 +1,3 @@
-// app/api/probtrace/route.ts
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
@@ -8,8 +7,11 @@ export async function GET(request: Request) {
   const code = searchParams.get("code");
   const year = searchParams.get("year");
 
-  if (!code) {
-    return NextResponse.json({ error: "code obrigatório" }, { status: 400 });
+  if (!code || !year) {
+    return NextResponse.json(
+      { error: "Informe os parâmetros obrigatórios: code, year" },
+      { status: 400 },
+    );
   }
 
   try {
@@ -20,7 +22,6 @@ export async function GET(request: Request) {
     const fileContent = fs.readFileSync(filePath, "utf8");
     const fullJson = JSON.parse(fileContent);
 
-    // Retornamos apenas a fatia necessária
     return NextResponse.json({
       dataset: fullJson[code] || null,
     });
@@ -32,4 +33,3 @@ export async function GET(request: Request) {
     );
   }
 }
-

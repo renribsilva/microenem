@@ -1,17 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styles from "./tables.module.css";
 import { useYearData } from "../../../../../../context/year_context";
 import { useHomeData } from "../../../../../../context/home_context";
+import { useSidebar } from "../../../../../../context/sidebar_context";
 
 export default function CandidateFullDetail() {
   const { dicData } = useHomeData();
   const { meanData, getAreaMap } = useYearData();
   const [activeTab, setActiveTab] = useState<"geral" | "scores">("geral");
-  const [isMobile, setIsMobile] = useState(
-    typeof window !== "undefined" ? window.innerWidth < 800 : false,
-  );
+  const { isMobile } = useSidebar();
+
   const [tooltip, setTooltip] = useState<{
     text: string;
     x: number;
@@ -25,12 +25,6 @@ export default function CandidateFullDetail() {
   });
 
   const candidateData = meanData.candidateData;
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 800);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   const handleMouseMove = (e: React.MouseEvent, text: string) => {
     const isRightSide = e.clientX > window.innerWidth / 2;

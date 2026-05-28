@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, memo, useState, useEffect } from "react";
+import { useMemo } from "react";
 import {
   createColumnHelper,
   flexRender,
@@ -10,50 +10,27 @@ import {
 import styles from "./tables.module.css";
 import { useHomeData } from "../../../../../../context/home_context";
 import { useYearData } from "../../../../../../context/year_context";
+import { CompetenciaRowType } from "../../../../../../types/year_types";
+import clsx from "clsx";
+import { useSidebar } from "../../../../../../context/sidebar_context";
 
-const columnHelper = createColumnHelper<any>();
-
-const TableRow = memo(({ row, selectedRowId, onRowClick }: any) => {
-  // A comparação agora é exata com o ID 'media'
-  const isSelected = selectedRowId === row.original.id;
-
-  return (
-    <tr
-      className={`${styles.describe_tr} ${isSelected ? styles.row_selected : ""}`}
-      onClick={() => onRowClick(row.original.id)}
-      style={{ cursor: "pointer" }}
-    >
-      {row.getVisibleCells().map((cell: any) => (
-        <td key={cell.id} className={styles.describe_td}>
-          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-        </td>
-      ))}
-    </tr>
-  );
-});
-
-TableRow.displayName = "TableRow";
+interface TableDataItem {
+  id: string;
+  metric: string;
+  comp1: string;
+  comp2: string;
+  comp3: string;
+  comp4: string;
+  comp5: string;
+  total: string;
+}
 
 export default function NotasRedacaoTable() {
   const { redacaoData } = useYearData();
+  const { isMobile } = useSidebar();
   const { deferredArea, selectedRowId, setSelectedRowId } = useHomeData();
-  const [isMobile, setIsMobile] = useState(
-    typeof window !== "undefined" ? window.innerWidth < 800 : false,
-  );
 
-  const competenciaRowData = redacaoData.competenciaRowData;
-
-  useEffect(() => {
-    if (!selectedRowId || selectedRowId === "mean") {
-      setSelectedRowId("media");
-    }
-  }, [selectedRowId, setSelectedRowId]);
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 800);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const competenciaRowData: CompetenciaRowType = redacaoData.competenciaRowData;
 
   const formatValue = (id: string, value: number) => {
     if (value === undefined || value === null) return "-";
@@ -69,7 +46,7 @@ export default function NotasRedacaoTable() {
     });
   };
 
-  const tableData = useMemo(() => {
+  const tableData = useMemo<TableDataItem[]>(() => {
     const metrics = [
       { id: "media", label: "Média" }, // O ID aqui é 'media'
       { id: "mediana", label: isMobile ? "Media." : "Mediana" },
@@ -87,30 +64,32 @@ export default function NotasRedacaoTable() {
       metric: m.label,
       comp1: formatValue(
         m.id,
-        (competenciaRowData as any).NU_NOTA_COMP1.estatisticas[m.id],
+        competenciaRowData.NU_NOTA_COMP1.estatisticas[m.id],
       ),
       comp2: formatValue(
         m.id,
-        (competenciaRowData as any).NU_NOTA_COMP2.estatisticas[m.id],
+        competenciaRowData.NU_NOTA_COMP2.estatisticas[m.id],
       ),
       comp3: formatValue(
         m.id,
-        (competenciaRowData as any).NU_NOTA_COMP3.estatisticas[m.id],
+        competenciaRowData.NU_NOTA_COMP3.estatisticas[m.id],
       ),
       comp4: formatValue(
         m.id,
-        (competenciaRowData as any).NU_NOTA_COMP4.estatisticas[m.id],
+        competenciaRowData.NU_NOTA_COMP4.estatisticas[m.id],
       ),
       comp5: formatValue(
         m.id,
-        (competenciaRowData as any).NU_NOTA_COMP5.estatisticas[m.id],
+        competenciaRowData.NU_NOTA_COMP5.estatisticas[m.id],
       ),
       total: formatValue(
         m.id,
-        (competenciaRowData as any).NU_NOTA_REDACAO.estatisticas[m.id],
+        competenciaRowData.NU_NOTA_REDACAO.estatisticas[m.id],
       ),
     }));
-  }, [isMobile]);
+  }, [isMobile, competenciaRowData]);
+
+  const columnHelper = createColumnHelper<TableDataItem>();
 
   const columns = useMemo(
     () => [
@@ -130,9 +109,10 @@ export default function NotasRedacaoTable() {
         cell: (info) => <strong>{info.getValue()}</strong>,
       }),
     ],
-    [isMobile],
+    [isMobile, columnHelper],
   );
 
+  // eslint-disable-next-line
   const table = useReactTable({
     data: tableData,
     columns,
@@ -159,12 +139,21 @@ export default function NotasRedacaoTable() {
           </thead>
           <tbody>
             {table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={`${deferredArea}-${row.original.id}`}
-                row={row}
-                selectedRowId={selectedRowId}
-                onRowClick={setSelectedRowId}
-              />
+              <tr
+                key={`${deferredArea}-${row.id}`}
+                className={clsx(
+                  styles.describe_tr,
+                  selectedRowId === row.original.id && styles.row_selected,
+                )}
+                onClick={() => setSelectedRowId(row.original.id)}
+                style={{ cursor: "pointer" }}
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id} className={styles.describe_td}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
             ))}
           </tbody>
         </table>

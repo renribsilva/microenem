@@ -104,6 +104,8 @@ export function YearProvider({ children }: { children: ReactNode }) {
   // ---------------------------------------------------------------------------
 
   const [lastItemActivate, setLastItemActivate] = useState<number>(0);
+  const [lastItemActivateNum, setLastItemActivateNum] = useState<number>(0);
+
   const [selectedItems, setSelectedItems] = useState<
     SelectedItemsType | object
   >({});
@@ -693,7 +695,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
         return matchProva && matchLingua && matchDigital;
       });
 
-    // 2. ORDENAÇÃO por posição (essencial para parear com a string do score)
+    // Ordenação por posição (essencial para parear com a string do score)
     indicesFiltrados.sort(
       (a, b) => itensData.CO_POSICAO[a] - itensData.CO_POSICAO[b],
     );
@@ -780,10 +782,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
     describeRowData,
     activeSelectedRow,
   };
-
-  //-----------------------------RESPOSTA AO ITEM-------------------------------
-
-  const [lastItemActivateNum, setLastItemActivateNum] = useState<number>(0);
 
   //---------------------------PROBABILIDADE E INFO-----------------------------
 

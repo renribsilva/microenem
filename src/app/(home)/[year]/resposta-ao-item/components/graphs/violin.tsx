@@ -1,27 +1,20 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import Chart from "react-apexcharts";
 import { useYearData } from "../../../../../../context/year_context";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import { useHomeData } from "../../../../../../context/home_context";
+import { useSidebar } from "../../../../../../context/sidebar_context";
 
 export default function ViolinBinsChart() {
   const { respostaAoItemData, lastItemActivate, lastItemActivateNum } =
     useYearData();
-  const { textColor, axisColor, gridColor } = useChartTheme();
+  const { panelColor, textColor, axisColor, gridColor } = useChartTheme();
   const { activeTCC } = useHomeData();
-  const [isMobile, setIsMobile] = useState(
-    typeof window !== "undefined" ? window.innerWidth < 800 : false,
-  );
+  const { isMobile } = useSidebar();
 
   const scoreData = respostaAoItemData.scoreData;
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 800);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   const binsData = useMemo(() => {
     if (!scoreData || !lastItemActivate || !scoreData[lastItemActivate])
@@ -70,6 +63,9 @@ export default function ViolinBinsChart() {
     ];
   }, [binsData]);
 
+  const erroColor = "#FF4560";
+  const acertoColor = "#00E396";
+
   const options: ApexCharts.ApexOptions = useMemo(
     () => ({
       chart: {
@@ -78,7 +74,7 @@ export default function ViolinBinsChart() {
         toolbar: { show: true },
         animations: { enabled: false },
       },
-      colors: ["#00E396", "#FF4560"],
+      colors: [acertoColor, erroColor],
       plotOptions: {
         bar: {
           horizontal: true,
@@ -90,11 +86,6 @@ export default function ViolinBinsChart() {
         colors: [gridColor],
       },
       dataLabels: { enabled: false },
-      grid: {
-        padding: {
-          bottom: 40,
-        },
-      },
       yaxis: {
         labels: {
           style: { colors: axisColor },
@@ -102,12 +93,111 @@ export default function ViolinBinsChart() {
       },
       tooltip: {
         theme: "dark",
+        followCursor: true,
         shared: true,
         intersect: false,
-        followCursor: true,
+        enabledOnSeries: [1],
+        x: {
+          formatter: function (value: number) {
+            const css = {
+              label: [
+                "font-weight: bold",
+                "margin-left: 8px",
+                `color: ${panelColor}`,
+              ].join("; "),
+              value: ["font-weight: bold"].join("; "),
+            };
+            return `
+             <div style="margin-top: 2px;">
+                <span style="${css.label}">Proficiência: </span>
+                <span style="${css.value}">${value}</span>
+              </div>
+            `;
+          },
+        },
+        y: {
+          formatter: function (_val, { series, dataPointIndex }) {
+            const css = {
+              container: ["display: flex", "align-items: center"].join("; "),
+              value: [
+                "font-weight: 300",
+                "opacity: 0.7",
+                `color: ${panelColor}`,
+                "margin: 0px",
+                "padding: 0px",
+                "padding: 5px",
+              ].join("; "),
+              marker1: [
+                `width: 10px`,
+                `height: 10px`,
+                `border-radius: 50%`,
+                `background-color: ${erroColor}`,
+                `display: inline-block;`,
+                "margin-right: 5px",
+              ].join("; "),
+              marker2: [
+                `width: 10px`,
+                `height: 10px`,
+                `border-radius: 50%`,
+                `background-color: ${acertoColor}`,
+                `display: inline-block;`,
+                "margin-right: 5px",
+              ].join("; "),
+            };
+            const val0 = series[0][dataPointIndex];
+            let val1 = series[1][dataPointIndex];
+            const series1 = series[1];
+            if (!val1) {
+              for (let i = dataPointIndex; i >= 0; i--) {
+                if (series1[i] !== null && series1[i] !== undefined) {
+                  val1 = series1[i];
+                  break;
+                }
+              }
+            }
+            return `
+             <div>
+                <div style="${css.container}">
+                  <div style="${css.marker1}"></div>
+                  <div> 
+                    <span style="${css.value}">Erraram: </span>
+                    <span>
+                      ${Math.abs(Number(val1)).toLocaleString("pt-BR", {
+                        maximumFractionDigits: 0,
+                      })}
+                    </span>
+                  </div>
+                </div>
+                <div style="${css.container}">
+                  <div style="${css.marker2}"></div>
+                  <div> 
+                    <span style="${css.value}">Acertaram: </span>
+                    <span>
+                      ${Number(val0).toLocaleString("pt-BR", {
+                        maximumFractionDigits: 0,
+                      })}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            `;
+          },
+          title: {
+            formatter: function () {
+              return null;
+            },
+          },
+        },
+        marker: {
+          show: false,
+        },
+      },
+      grid: {
+        padding: {
+          bottom: 20,
+        },
       },
       xaxis: {
-        // CORREÇÃO: Removido o aninhamento duplicado de xaxis
         categories: binsData?.labels || [],
         min: -maxAbsValue,
         max: maxAbsValue,
@@ -115,7 +205,8 @@ export default function ViolinBinsChart() {
         title: {
           text: "Quantidade de Alunos",
           style: { color: axisColor },
-        },
+          // eslint-disable-next-line
+        } as any,
         labels: {
           style: { colors: axisColor },
           formatter: function (val): string {
@@ -134,6 +225,7 @@ export default function ViolinBinsChart() {
       legend: {
         labels: { colors: textColor },
         floating: true,
+        offsetX: 20,
       },
       title: {
         text: `Frequência de resposta ao item ${lastItemActivateNum}`,
@@ -157,6 +249,7 @@ export default function ViolinBinsChart() {
       maxAbsValue,
       textColor,
       axisColor,
+      panelColor,
       lastItemActivateNum,
       gridColor,
     ],

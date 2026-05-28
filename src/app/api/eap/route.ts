@@ -10,34 +10,30 @@ export async function GET(request: Request) {
   const codigo = searchParams.get("codigo");
   const lingua = searchParams.get("lingua");
 
-  if (!area || !sample) {
+  if (!area || !ano || !sample || !codigo || !lingua) {
     return NextResponse.json(
-      { error: "Parâmetros insuficientes" },
+      {
+        error: "Informe os parâmetros: area, ano, sample, codigo, lingua",
+      },
       { status: 400 },
     );
   }
 
   try {
-    // 1. Fazemos o fetch para a API externa (o servidor não tem trava de CORS)
     const externalApiUrl = `https://microenemapi.onrender.com/calc?sample=${sample}&area=${area}&ano=${ano}&codigo=${codigo}&lingua=${lingua}`;
-
     const res = await fetch(externalApiUrl, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
     });
-
     if (!res.ok) {
       return NextResponse.json(
         { error: "Erro na API externa" },
         { status: res.status },
       );
     }
-
     const data = await res.json();
-
-    // 2. Retornamos os dados para o seu front-end
     return NextResponse.json(data);
   } catch (error) {
     console.error("ERRO NA ROTA DE API:", error);
@@ -47,4 +43,3 @@ export async function GET(request: Request) {
     );
   }
 }
-

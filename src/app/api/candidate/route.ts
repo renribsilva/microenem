@@ -1,4 +1,3 @@
-// app/api/probtrace/route.ts
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
@@ -9,12 +8,11 @@ export async function GET(request: Request) {
   const year = searchParams.get("year");
   const rank = searchParams.get("rank");
 
-  if (!year) {
-    return NextResponse.json({ error: "year obrigatório" }, { status: 400 });
-  }
-
-  if (!rank) {
-    return NextResponse.json({ error: "rank obrigatório" }, { status: 400 });
+  if (!year || !rank) {
+    return NextResponse.json(
+      { error: "Informe os parâmetros obrigatórios: year, rank" },
+      { status: 400 },
+    );
   }
 
   try {
@@ -51,4 +49,3 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }
-

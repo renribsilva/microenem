@@ -7,8 +7,11 @@ export async function GET(request: Request) {
   const area = searchParams.get("area") || "LC";
   const year = searchParams.get("year");
 
-  if (!area) {
-    return NextResponse.json({ error: "Área é obrigatória" }, { status: 400 });
+  if (!area || !year) {
+    return NextResponse.json(
+      { error: "Informe os parâmetros obrigatórios: area, year" },
+      { status: 400 },
+    );
   }
 
   try {
@@ -39,4 +42,3 @@ export async function GET(request: Request) {
     );
   }
 }
-

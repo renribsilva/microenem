@@ -14,6 +14,8 @@ import styles from "./tables.module.css";
 import { useHomeData } from "../../../../../../context/home_context";
 import { useYearData } from "../../../../../../context/year_context";
 import Dropdown from "../../../../../../components/tsx/dropdown";
+import clsx from "clsx";
+import { useSidebar } from "../../../../../../context/sidebar_context";
 
 type TableRow = {
   id: number;
@@ -29,6 +31,7 @@ type TableRow = {
 
 export default function ScoreTable() {
   const { selectedLabel, deferredArea } = useHomeData();
+  const { isMobile } = useSidebar();
   const {
     respostaAoItemData,
     getCodeByLabel,
@@ -45,15 +48,6 @@ export default function ScoreTable() {
     { id: "posicao", desc: false },
   ]);
   const columnHelper = createColumnHelper<TableRow>();
-  const [isMobile, setIsMobile] = useState(
-    typeof window !== "undefined" ? window.innerWidth < 800 : false,
-  );
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 800);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   const columns = useMemo(() => {
     // Definimos as sub-colunas de Identificação
@@ -261,17 +255,12 @@ export default function ScoreTable() {
     scoreData,
     deferredArea,
     selectedLabel,
+    getParamByLabel,
     getCodeByLabel,
     abandonadosCodes,
   ]);
 
-  useEffect(() => {
-    if (data.length > 0) {
-      setLastItemActivate(data[0].id);
-      setLastItemActivateNum(data[0].posicao);
-    }
-  }, [deferredArea, selectedLabel]);
-
+  // eslint-disable-next-line
   const table = useReactTable({
     data,
     columns,
@@ -281,15 +270,13 @@ export default function ScoreTable() {
     getSortedRowModel: getSortedRowModel(),
   });
 
-  // — LÓGICA PARA INICIAR COM O PRIMEIRO ATIVO —
+  // INICIA COM O PRIMEIRO ITEM
   useEffect(() => {
     if (data.length > 0 && !lastItemActivate) {
       setLastItemActivate(data[0].id);
       setLastItemActivateNum(1);
     }
   }, [data, lastItemActivate, setLastItemActivate, setLastItemActivateNum]);
-
-  // if (activeCodes.length === 0) return <section className={styles.probtable_fallback}>Selecione itens na tabela para vizualizar suas probabilidades e desempenho.</section>;
 
   return (
     <section className={styles.probtable_container}>
@@ -320,7 +307,10 @@ export default function ScoreTable() {
                   <th
                     key={header.id}
                     colSpan={header.colSpan}
-                    className={`${styles.probtable_th} ${isGroup ? styles.probtable_group_th : ""}`}
+                    className={clsx(
+                      styles.probtable_th,
+                      isGroup && styles.probtable_group_th,
+                    )}
                     onClick={
                       canSort
                         ? header.column.getToggleSortingHandler()
@@ -372,7 +362,6 @@ export default function ScoreTable() {
                   ${isAbandonado ? styles.row_abandonado : ""} 
                   ${isActive ? styles.row_active : ""}
                 `}
-                // 1. CONDICIONAL NO CLICK: Só executa se NÃO for abandonado
                 onClick={() => {
                   if (!isAbandonado) {
                     setLastItemActivate(itemId);
@@ -390,10 +379,8 @@ export default function ScoreTable() {
                     : isAbandonado
                       ? "4px solid #ff4b4b"
                       : "4px solid transparent",
-                  // 2. CURSOR CONDICIONAL: 'default' ou 'not-allowed' para abandonados
                   cursor: isAbandonado ? "not-allowed" : "pointer",
                   transition: "all 0.2s ease",
-                  // 3. OPACIDADE (Opcional): ajuda visualmente a indicar que está desativado
                   opacity: isAbandonado ? 0.7 : 1,
                 }}
               >

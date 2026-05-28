@@ -7,29 +7,16 @@ import { useHomeData } from "../../../../../../context/home_context";
 import { useYearData } from "../../../../../../context/year_context";
 import { useSidebar } from "../../../../../../context/sidebar_context";
 
-function transformTheta(theta: number, k: number, d: number) {
-  return theta * k + d;
-}
-
 export default function AcertosChart() {
   const { chartProps, activeTCC } = useHomeData();
   const { isMobile } = useSidebar();
   const { panelColor, axisColor, textColor } = useChartTheme();
-  const {
-    lastItemActivate,
-    lastItemActivateNum,
-    probInfoData,
-    constantesData,
-    itemGraphData,
-  } = useYearData();
+  const { lastItemActivate, lastItemActivateNum, probInfoData, itemGraphData } =
+    useYearData();
 
   const { chartColor } = chartProps;
-
-  // Refs e Estados para controle de renderização por tamanho
-  const probLabels = probInfoData.probLabels;
   const probData = probInfoData.probData;
   const parentRef = useRef<HTMLDivElement>(null);
-
   const { xMin, xMax } = chartProps;
 
   const series = useMemo(() => {
@@ -48,27 +35,8 @@ export default function AcertosChart() {
           y: itemGraphData.y[index],
         })),
       },
-      {
-        name: "Curva característica do item",
-        type: "line",
-        data: probData[lastItemActivate].map((yValue, idx) => ({
-          x: transformTheta(
-            probLabels[idx],
-            constantesData.k,
-            constantesData.d,
-          ),
-          y: Number(yValue),
-        })),
-      },
     ];
-  }, [
-    itemGraphData,
-    constantesData.k,
-    constantesData.d,
-    lastItemActivate,
-    probData,
-    probLabels,
-  ]);
+  }, [itemGraphData, lastItemActivate, probData]);
 
   const options: ApexCharts.ApexOptions = useMemo(() => {
     return {
@@ -94,16 +62,11 @@ export default function AcertosChart() {
         hover: {
           size: 6,
         },
+        colors: chartColor,
       },
       stroke: {
         curve: "straight",
         width: [0, 1],
-        // colors: [chartColor, chartColor]
-      },
-      grid: {
-        padding: {
-          bottom: 50,
-        },
       },
       xaxis: {
         type: "numeric",
@@ -122,43 +85,25 @@ export default function AcertosChart() {
           style: { color: axisColor, fontWeight: "bold" },
         },
       },
-      yaxis: [
-        {
-          min: 0,
-          max: 1,
-          tickAmount: 10,
-          labels: {
-            style: { colors: axisColor },
-            // Proteção aqui:
-            formatter: (val) =>
-              val !== undefined && val !== null
-                ? Number(val).toFixed(1)
-                : "0.0",
-          },
-          title: {
-            text: "Frequência de acertos",
-            style: { color: axisColor, fontWeight: "bold" },
-          },
+      yaxis: {
+        min: 0,
+        max: 1,
+        tickAmount: 10,
+        labels: {
+          style: { colors: axisColor },
+          formatter: (val) =>
+            val !== undefined && val !== null ? Number(val).toFixed(1) : "0.0",
         },
-        {
-          opposite: true,
-          min: 0,
-          max: 1,
-          tickAmount: 10,
-          labels: {
-            style: { colors: axisColor },
-            // Proteção aqui:
-            formatter: (val) =>
-              val !== undefined && val !== null
-                ? Number(val).toFixed(1)
-                : "0.0",
-          },
-          title: {
-            text: "Probabilidade de acerto",
-            style: { color: axisColor, fontWeight: "bold" },
-          },
+        title: {
+          text: "Frequência de acertos",
+          style: { color: axisColor, fontWeight: "bold" },
         },
-      ],
+      },
+      grid: {
+        padding: {
+          bottom: 30,
+        },
+      },
       tooltip: {
         enabled: false,
         shared: false,
@@ -198,7 +143,6 @@ export default function AcertosChart() {
                 "margin-right: 5px",
               ].join("; "),
             };
-            console.log("dpi", dataPointIndex);
             let val0 = series[0][dataPointIndex];
             const series0 = series[0];
             if (!val0) {
@@ -217,7 +161,6 @@ export default function AcertosChart() {
                 }
               }
             }
-            console.log("val0:", val0);
             return `
              <div>
                 <div style="${css.container}">

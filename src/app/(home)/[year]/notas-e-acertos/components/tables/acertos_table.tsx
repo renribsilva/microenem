@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -8,11 +8,11 @@ import {
   SortingState,
   flexRender,
   createColumnHelper,
-  VisibilityState,
 } from "@tanstack/react-table";
 
 import styles from "./tables.module.css";
 import { useYearData } from "../../../../../../context/year_context";
+import { useSidebar } from "../../../../../../context/sidebar_context";
 
 type TableRow = {
   id: number;
@@ -26,35 +26,15 @@ type TableRow = {
 };
 
 export default function AcertosTable() {
-  const { acertosData, acertosNum, setAcertosNum } = useYearData();
+  const { acertosData, acertosNum: acertosNum, setAcertosNum } = useYearData();
+  const { isMobile } = useSidebar();
   const [sorting, setSorting] = useState<SortingState>([
     { id: "id", desc: false },
   ]);
 
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-
-  useEffect(() => {
-    const handleResize = () => {
-      const isMobile = window.innerWidth < 800;
-      setColumnVisibility({
-        n: !isMobile, // Adicionado N aqui
-        skew: !isMobile,
-        kurtosis: !isMobile,
-      });
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
   const columnHelper = createColumnHelper<TableRow>();
 
-  useEffect(() => {
-    if (acertosNum === null || acertosNum === undefined) {
-      setAcertosNum(0);
-    }
-  }, [setAcertosNum, acertosNum]);
+  const safeAcertosNum = acertosNum ?? 0;
 
   const columns = useMemo(
     () => [
@@ -67,7 +47,7 @@ export default function AcertosTable() {
             cell: (info) => <strong>{info.getValue()}</strong>,
           }),
           columnHelper.accessor("n", {
-            id: "n", // ID necessário para a visibilidade
+            id: "n",
             header: "n",
             cell: (info) => {
               const val = info.getValue();
@@ -163,9 +143,15 @@ export default function AcertosTable() {
   const table = useReactTable({
     data,
     columns,
-    state: { sorting, columnVisibility },
+    state: {
+      sorting,
+      columnVisibility: {
+        n: !isMobile,
+        skew: !isMobile,
+        kurtosis: !isMobile,
+      },
+    },
     onSortingChange: setSorting,
-    onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
@@ -227,7 +213,7 @@ export default function AcertosTable() {
           </thead>
           <tbody>
             {table.getRowModel().rows.map((row) => {
-              const isActive = acertosNum === row.original.id;
+              const isActive = safeAcertosNum === row.original.id;
               return (
                 <tr
                   key={row.id}

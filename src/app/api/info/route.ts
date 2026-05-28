@@ -1,4 +1,3 @@
-// app/api/probtrace/route.ts
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
@@ -8,8 +7,11 @@ export async function GET(request: Request) {
   const co_p = searchParams.get("co_p");
   const year = searchParams.get("year");
 
-  if (!co_p) {
-    return NextResponse.json({ error: "ID obrigatório" }, { status: 400 });
+  if (!co_p || !year) {
+    return NextResponse.json(
+      { error: "Informe os parâmetros obrigatórios: co_p, year" },
+      { status: 400 },
+    );
   }
 
   try {
@@ -20,7 +22,6 @@ export async function GET(request: Request) {
     const fileContent = fs.readFileSync(filePath, "utf8");
     const fullJson = JSON.parse(fileContent);
 
-    // Retornamos apenas a fatia necessária
     return NextResponse.json({
       dataset: fullJson.datasets[co_p] || null,
       theta_labels: fullJson.theta_labels,
@@ -33,4 +34,3 @@ export async function GET(request: Request) {
     );
   }
 }
-

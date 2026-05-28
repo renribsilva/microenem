@@ -46,7 +46,7 @@ export default function ICCChart() {
         const colorIndex = allItemsInProva.indexOf(itemKey);
         return {
           item: code,
-          name: `Item ${code}`, // Nomeclatura para o motor do gráfico
+          name: `Item ${code}`,
           data: rawPoints.map((yValue, idx) => ({
             x: transformTheta(
               probLabels[idx],

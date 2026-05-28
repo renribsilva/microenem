@@ -6,6 +6,8 @@ import { useChartTheme } from "../../hooks/use_chart_theme";
 import { useHomeData } from "../../context/home_context";
 import { useYearData } from "../../context/year_context";
 import Dropdown from "./dropdown";
+import { usePathname } from "next/navigation";
+import EAPButton from "./eap_button";
 
 type onButtonClickType = (
   num: number,
@@ -29,10 +31,17 @@ const ranges: Record<string, { start: number; end: number }> = {
 
 function ItensButtons() {
   const { chartProps, deferredArea, selectedLabel } = useHomeData();
-  const { abandonadosCodes, selectedItems, handleToggle, getCodeByLabel } =
-    useYearData();
+  const {
+    abandonadosCodes,
+    selectedItems,
+    handleToggle,
+    getCodeByLabel,
+    setNeedUpdateEAP,
+  } = useYearData();
   const { panelColor, textColor, gridColor, isDark } = useChartTheme();
   const { chartColor } = chartProps;
+  const pathName = usePathname();
+
   const [backdropAlert, setBackdropAlert] = useState<BackdropAlertType | null>(
     null,
   );
@@ -60,12 +69,16 @@ function ItensButtons() {
     } else {
       setBackdropAlert(null);
     }
+    setNeedUpdateEAP(true);
     handleToggle(num, isAbandoned);
   };
 
   return (
     <section>
       <Dropdown />
+      <div className={styles.EAPButton_container}>
+        {pathName.endsWith("tri") && <EAPButton />}
+      </div>
       <div ref={containerRef} className={styles.itens_container}>
         {questions.map((num) => {
           const thisCodeItem = getCodeByLabel(num, selectedLabel);

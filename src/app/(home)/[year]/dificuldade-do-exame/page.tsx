@@ -16,13 +16,13 @@ const FrequencyAcertosChart = dynamic(
 );
 
 export default function DadosDoExame() {
-  const { isUpdating } = useHomeData();
+  const { isFetchingBI } = useHomeData();
 
   return (
     <section
       className={styles.main}
       style={{
-        opacity: isUpdating ? 0.7 : 1,
+        opacity: isFetchingBI ? 0.7 : 1,
         transition: "opacity 0.5s ease",
       }}
     >

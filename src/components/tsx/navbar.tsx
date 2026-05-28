@@ -4,6 +4,7 @@ import { useHomeData } from "../../context/home_context";
 import TabsNavigation from "./tab_navigation";
 import styles from "./components.module.css";
 import { usePathname } from "next/navigation";
+import { useYearData } from "../../context/year_context";
 
 const menuItems = [
   { id: "LC", label: "Linguagens" },
@@ -14,7 +15,8 @@ const menuItems = [
 
 function Navbar() {
   const pathName = usePathname();
-  const { deferredArea, handleTabChange } = useHomeData();
+  const { deferredArea } = useHomeData();
+  const { handleTabChange } = useYearData();
 
   const allowedPaths = [
     "dificuldade-do-exame",

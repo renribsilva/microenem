@@ -96,12 +96,18 @@ export function YearProvider({ children }: { children: ReactNode }) {
   // ---------------------- CONTEXTOS NECESSÁRIOS ------------------------------
   // ---------------------------------------------------------------------------
 
-  const { currentYear, deferredArea, selectedRowId, selectedLabel } =
-    useHomeData();
+  const {
+    setActiveArea,
+    currentYear,
+    deferredArea,
+    selectedRowId,
+    selectedLabel,
+  } = useHomeData();
 
   // ---------------------------------------------------------------------------
   // ------------------------ DEFINIÇÕES INICIAIS ------------------------------
   // ---------------------------------------------------------------------------
+  //
 
   const [lastItemActivate, setLastItemActivate] = useState<number>(0);
   const [lastItemActivateNum, setLastItemActivateNum] = useState<number>(0);
@@ -120,13 +126,17 @@ export function YearProvider({ children }: { children: ReactNode }) {
     "000000000000000000000000000000000000000000000",
   );
 
-  const [updateTrigger, setUpdateTrigger] = useState<boolean>(false);
+  const [needUpdateEAP, setNeedUpdateEAP] = useState<boolean>(false);
 
   const fixedPalette = useMemo<Record<number, string>>(
     () =>
       Array.from({ length: 45 }, (_, i) => `hsl(${(i * 360) / 45}, 70%, 50%)`),
     [],
   );
+
+  const [isFetchingEAP, setIsFetchingEAP] = useState<boolean>(false);
+
+  const [isInitialRender, setIsInitialRender] = useState<boolean>(true);
 
   // ---------------------------------------------------------------------------
   // ------------ CARGA ESTÁTICA DE JSON POR ANO (BUNDLE INICIAL) --------------
@@ -554,6 +564,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
         const json = await res.json();
         if (json) {
           setEAPData(json);
+          setIsFetchingEAP(false);
         }
       } catch (err) {
         console.error("Erro ao carregar EAPdata:", err);
@@ -561,9 +572,9 @@ export function YearProvider({ children }: { children: ReactNode }) {
     }
     if (Object.entries(selectedItems).length !== 0) fetchEAPData();
   }, [
-    updateTrigger,
     deferredArea,
     sampleEAP,
+    needUpdateEAP,
     selectedItems,
     selectedLabel,
     currentYear,
@@ -574,6 +585,14 @@ export function YearProvider({ children }: { children: ReactNode }) {
   //----------------------------------------------------------------------------
 
   //---------------------------FUNÇÕES AUXILIARES-------------------------------
+
+  // Função auxiliar para atualizar estado da área ativa
+  const handleTabChange = (id: string) => {
+    setActiveArea(id);
+    setEAPData(null);
+    setIsInitialRender(true);
+    setNeedUpdateEAP(true);
+  };
 
   const formatValue: FormatValueType = (key, val, type) => {
     if (typeof val !== "number") return val;
@@ -865,8 +884,9 @@ export function YearProvider({ children }: { children: ReactNode }) {
         selectedItems,
         acertosNum,
         sampleEAP,
-        updateTrigger,
+        needUpdateEAP,
         fixedPalette,
+        isInitialRender,
 
         // Carga estática no server (bundle inicial)
         constantesData,
@@ -886,6 +906,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
 
         // Carga solicitada pelo cliente (API externa: render)
         EAPData,
+        isFetchingEAP,
 
         // Transformação de dados
         abandonadosCodes,
@@ -904,7 +925,10 @@ export function YearProvider({ children }: { children: ReactNode }) {
         setActiveRanking,
         setAcertosNum,
         setSampleEAP,
-        setUpdateTrigger,
+        setNeedUpdateEAP,
+        setIsFetchingEAP,
+        setIsInitialRender,
+        handleTabChange,
       }}
     >
       {children}

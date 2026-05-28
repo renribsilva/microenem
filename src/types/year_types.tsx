@@ -380,8 +380,9 @@ export type YearContextType = {
   selectedItems: SelectedItemsType | object;
   acertosNum: number;
   sampleEAP: string;
-  updateTrigger: boolean;
+  needUpdateEAP: boolean;
   fixedPalette: Record<number, string>;
+  isInitialRender: boolean;
 
   // Carga estática no server
   constantesData: ConstantesType;
@@ -401,6 +402,7 @@ export type YearContextType = {
 
   // Carga solicitada pelo cliente (API externa: Render)
   EAPData: EAPDataType | null;
+  isFetchingEAP: boolean;
 
   // Transformação de dados
   abandonadosCodes: Set<number>;
@@ -414,10 +416,13 @@ export type YearContextType = {
   getParamByLabel: GetParamByLabelType;
   handleToggle: HandleToggleType;
   getAreaMap: GetAreaMapType;
-  setUpdateTrigger: React.Dispatch<React.SetStateAction<boolean>>;
+  setNeedUpdateEAP: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsFetchingEAP: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsInitialRender: React.Dispatch<React.SetStateAction<boolean>>;
   setSampleEAP: React.Dispatch<React.SetStateAction<string>>;
   setAcertosNum: React.Dispatch<React.SetStateAction<number | null>>;
   setLastItemActivateNum: React.Dispatch<React.SetStateAction<number>>;
   setActiveRanking: React.Dispatch<React.SetStateAction<number | null>>;
   setLastItemActivate: React.Dispatch<React.SetStateAction<number>>;
+  handleTabChange: React.Dispatch<React.SetStateAction<string | null>>;
 };

@@ -555,3 +555,14 @@
   padding: 10px;
   padding-bottom: 0px;
 }
+
+/**********************************************************/
+/***********************EAPBUTTON**************************/
+/**********************************************************/
+
+.EAPButton_container {
+  display: flex;
+  justify-content: center;
+  padding-top: 13px;
+  padding-bottom: 10px;
+}

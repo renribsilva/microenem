@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useYearData } from "../../../../../../context/year_context";
 import { useHomeData } from "../../../../../../context/home_context";
 import Chart from "react-apexcharts";
@@ -9,35 +9,29 @@ import styles from "./graphs.module.css";
 
 export default function ProdProbChart() {
   const {
-    selectedItems,
-    setSampleEAP,
     EAPData,
     constantesData,
-    setUpdateTrigger,
     activeCodes,
-    intervalData,
+    needUpdateEAP,
+    isFetchingEAP,
+    isInitialRender,
   } = useYearData();
-  const { deferredArea, currentYear } = useHomeData();
-  const [isUpdating, setIsUpdating] = useState(false);
+
+  const { chartProps, deferredArea, currentYear } = useHomeData();
   const { axisColor, textColor, gridColor } = useChartTheme();
+  const { chartColor } = chartProps;
 
   const isTRIDivergente =
     (deferredArea === "MT" && currentYear === "2009") ||
     (deferredArea === "MT" && currentYear === "2019");
-
-  const handleUpdateChart = () => {
-    if (Object.entries(selectedItems).length === 0) return;
-    setIsUpdating(true);
-    setSampleEAP(intervalData);
-    setUpdateTrigger((prev: boolean) => !prev);
-  };
 
   const series = useMemo(() => {
     if (
       !EAPData?.theta ||
       !EAPData?.posterior ||
       !constantesData.k ||
-      !constantesData.d
+      !constantesData.d ||
+      isInitialRender
     )
       return [];
 
@@ -49,11 +43,12 @@ export default function ProdProbChart() {
     ]);
 
     return [{ name: "Log-Likelihood", data: chartPoints }];
-  }, [EAPData, constantesData, isTRIDivergente]);
+  }, [EAPData, isInitialRender, constantesData, isTRIDivergente]);
 
   const valorEAP = Array.isArray(EAPData?.eap)
     ? EAPData.eap[0]
     : (EAPData?.eap ?? 0);
+
   const options: ApexCharts.ApexOptions = {
     chart: {
       type: "area",
@@ -63,7 +58,7 @@ export default function ProdProbChart() {
       animations: { enabled: true, speed: 800 },
     },
     dataLabels: { enabled: false },
-    stroke: { curve: "smooth", width: 3, colors: ["#6366f1"] },
+    stroke: { curve: "smooth", width: 3, colors: [chartColor] },
     fill: {
       type: "gradient",
       gradient: {
@@ -72,8 +67,8 @@ export default function ProdProbChart() {
         opacityTo: 0.05,
         stops: [20, 100],
         colorStops: [
-          { offset: 0, color: "#6366f1", opacity: 0.4 },
-          { offset: 100, color: "#6366f1", opacity: 0.05 },
+          { offset: 0, color: chartColor, opacity: 0.4 },
+          { offset: 100, color: chartColor, opacity: 0.05 },
         ],
       },
     },
@@ -163,11 +158,11 @@ export default function ProdProbChart() {
       xaxis: { lines: { show: false } },
       yaxis: { lines: { show: false } },
     },
-    colors: ["#6366f1"],
+    colors: [chartColor],
   };
 
   return (
-    <div className={styles.eap_container}>
+    <div key={deferredArea} className={styles.eap_container}>
       <div className={styles.eap_button_container}>
         <div className={styles.tcc_cabecalho}>
           <div className={styles.tcc_title}>
@@ -180,30 +175,22 @@ export default function ProdProbChart() {
             </p>
           </div>
         </div>
-        <button
-          onClick={handleUpdateChart}
-          disabled={isUpdating}
-          style={{
-            padding: "12px 28px",
-            backgroundColor: isUpdating ? "#e2e8f0" : "#4f46e5",
-            color: isUpdating ? "#94a3b8" : "white",
-            border: "none",
-            borderRadius: "12px",
-            cursor: isUpdating ? "not-allowed" : "pointer",
-            fontWeight: "700",
-            fontSize: "14px",
-            boxShadow: isUpdating
-              ? "none"
-              : "0 10px 15px -3px rgba(79, 70, 229, 0.3)",
-            transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-          }}
-        >
-          {isUpdating ? "⏳ PROCESSANDO..." : "🚀 CALCULAR DESEMPENHO TRI"}
-        </button>
       </div>
       {series.length > 0 && EAPData ? (
         <>
-          <Chart options={options} series={series} type="area" height={350} />
+          <Chart
+            style={{
+              opacity: needUpdateEAP ? 0.2 : 1,
+              transitionProperty: "opacity",
+              transitionDuration: "0.4s",
+              transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
+              transitionDelay: needUpdateEAP ? "0s" : "0.5s",
+            }}
+            options={options}
+            series={series}
+            type="area"
+            height={350}
+          />
           <div
             style={{ fontSize: "0.75rem", fontWeight: "300", color: "#888" }}
           >
@@ -215,7 +202,7 @@ export default function ProdProbChart() {
       ) : (
         <div className={styles.eap_initial}>
           <p style={{ fontSize: "16px", fontWeight: 500 }}>
-            {isUpdating && activeCodes.length === 0
+            {isFetchingEAP && activeCodes.length === 0
               ? "Iniciando cálculos..."
               : "Marque as respostas e clique no botão para calcular."}
           </p>

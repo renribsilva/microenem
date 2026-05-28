@@ -82,7 +82,7 @@ export type HomeContextType = {
   deferredArea: SelectionsByAreaType["LC"];
   selectedLabel: SelectionsByAreaType["LC"];
   selectedRowId: SelectedRowIdType;
-  isUpdating: boolean;
+  isFetchingBI: boolean;
 
   // Carga dinâmica do dicionário no server (bundle inicial)
   dicData: DicDataType;
@@ -97,7 +97,7 @@ export type HomeContextType = {
 
   // Funções
   setSelectedRowId: React.Dispatch<React.SetStateAction<string | null>>;
-  handleTabChange: React.Dispatch<React.SetStateAction<string | null>>;
   getMetadata: GetMetadataType;
   setSelectedLabel: React.Dispatch<React.SetStateAction<string | null>>;
+  setActiveArea: React.Dispatch<React.SetStateAction<string | null>>;
 };

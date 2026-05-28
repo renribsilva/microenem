@@ -35,11 +35,6 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   const [activeArea, setActiveArea] = useState<string>("LC");
   const deferredArea = useDeferredValue<string | null>(activeArea);
 
-  // Função auxiliar para atualizar estado da área ativa
-  const handleTabChange = (id: string) => {
-    setActiveArea(id);
-  };
-
   // Medida de centralidade inicial é média
   const [selectedRowId, setSelectedRowId] = useState<string>("mean");
 
@@ -233,7 +228,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
         deferredArea,
         selectedLabel,
         selectedRowId,
-        isUpdating: activeArea !== deferredArea || loading,
+        isFetchingBI: activeArea !== deferredArea || loading,
 
         // Carga dinâmica do dicionário no server (bundle inicial)
         dicData,
@@ -249,8 +244,8 @@ export function HomeProvider({ children }: { children: ReactNode }) {
         // Funções
         getMetadata,
         setSelectedRowId,
-        handleTabChange,
         setSelectedLabel,
+        setActiveArea,
       }}
     >
       {children}

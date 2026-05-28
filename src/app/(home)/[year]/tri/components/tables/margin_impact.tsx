@@ -51,7 +51,6 @@ export default function MarginImpactTable() {
   // Lógica de ordenação REVISADA
   const impactosArray = useMemo(() => {
     if (!EAPData?.impacto_individual) return [];
-    console.log(EAPData.impacto_individual);
     const baseArray = Object.entries(EAPData.impacto_individual).map(
       ([codigo, info]) => {
         const params = paramsPorCodigo[codigo];

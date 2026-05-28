@@ -114,7 +114,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
 
   const [co_p_selected] = selectedLabel.split("_");
 
-  const [acertosNum, setAcertosNum] = useState<number | null>(null);
+  const [acertosNum, setAcertosNum] = useState<number>(0);
 
   const [sampleEAP, setSampleEAP] = useState<string>(
     "000000000000000000000000000000000000000000000",

@@ -26,15 +26,13 @@ type TableRow = {
 };
 
 export default function AcertosTable() {
-  const { acertosData, acertosNum: acertosNum, setAcertosNum } = useYearData();
+  const { acertosData, acertosNum, setAcertosNum } = useYearData();
   const { isMobile } = useSidebar();
   const [sorting, setSorting] = useState<SortingState>([
     { id: "id", desc: false },
   ]);
 
   const columnHelper = createColumnHelper<TableRow>();
-
-  const safeAcertosNum = acertosNum ?? 0;
 
   const columns = useMemo(
     () => [
@@ -213,7 +211,7 @@ export default function AcertosTable() {
           </thead>
           <tbody>
             {table.getRowModel().rows.map((row) => {
-              const isActive = safeAcertosNum === row.original.id;
+              const isActive = acertosNum === row.original.id;
               return (
                 <tr
                   key={row.id}

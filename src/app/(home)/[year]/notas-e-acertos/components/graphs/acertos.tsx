@@ -11,7 +11,6 @@ export default function DensityNotasChart() {
   const { isMobile } = useSidebar();
   const { acertosData, acertosNum } = useYearData();
   const { gridColor, textColor, axisColor } = useChartTheme();
-
   const chartData = useMemo(() => {
     if (!acertosData || acertosNum === null) return null;
     const current = acertosData[String(acertosNum)];

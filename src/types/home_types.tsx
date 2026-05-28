@@ -73,13 +73,15 @@ export type chartPropsType = {
   bMedio: number;
 };
 
+export type SelectedRowIdType = string;
+
 export type HomeContextType = {
   // Definições iniciais
   currentYear: ParamValue;
   activeArea: SelectionsByAreaType["LC"];
   deferredArea: SelectionsByAreaType["LC"];
   selectedLabel: SelectionsByAreaType["LC"];
-  selectedRowId: string;
+  selectedRowId: SelectedRowIdType;
   isUpdating: boolean;
 
   // Carga dinâmica do dicionário no server (bundle inicial)

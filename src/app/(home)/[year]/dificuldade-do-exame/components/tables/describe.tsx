@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, memo } from "react";
+import { useMemo } from "react";
 import {
   createColumnHelper,
   flexRender,
@@ -10,34 +10,14 @@ import {
 import styles from "./tables.module.css";
 import { useHomeData } from "../../../../../../context/home_context";
 import { useYearData } from "../../../../../../context/year_context";
+import { TableDataItem } from "../../../../../../types/year_types";
+import { clsx } from "clsx";
 
-const columnHelper = createColumnHelper<any>();
-
-const TableRow = memo(({ row, selectedRowId, onRowClick }: any) => {
-  const isSelected = selectedRowId === row.original.id;
-
-  return (
-    <tr
-      className={`${styles.describe_tr} ${isSelected ? styles.row_selected : ""}`}
-      // Alterado para passar apenas o ID da linha clicada
-      onClick={() => onRowClick(row.original.id)}
-      style={{ cursor: "pointer" }}
-    >
-      {row.getVisibleCells().map((cell: any) => (
-        <td key={cell.id} className={styles.describe_td}>
-          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-        </td>
-      ))}
-    </tr>
-  );
-});
-
-TableRow.displayName = "TableRow";
+const columnHelper = createColumnHelper<TableDataItem>();
 
 export function DescribeTable() {
   const { deferredArea, selectedRowId, setSelectedRowId } = useHomeData();
   const { dificuldadeDoExameAux } = useYearData();
-
   const describeRowData = dificuldadeDoExameAux.describeRowData;
 
   const columns = useMemo(
@@ -64,14 +44,13 @@ export function DescribeTable() {
     [],
   );
 
+  // eslint-disable-next-line
   const table = useReactTable({
-    // Usamos os dados que já vêm mastigados do provider
     data: describeRowData.data,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
-  // Proteção contra dados nulos
   if (!describeRowData.data.length) return null;
 
   return (
@@ -99,13 +78,21 @@ export function DescribeTable() {
           </thead>
           <tbody>
             {table.getRowModel().rows.map((row) => (
-              <TableRow
-                // O ID da linha concatenado com a área garante o re-render correto no React
-                key={`${deferredArea}-${row.original.id}`}
-                row={row}
-                selectedRowId={selectedRowId}
-                onRowClick={setSelectedRowId}
-              />
+              <tr
+                key={row.id}
+                className={clsx(
+                  styles.describe_tr,
+                  selectedRowId === row.original.id && styles.row_selected,
+                )}
+                onClick={() => setSelectedRowId(row.original.id)}
+                style={{ cursor: "pointer" }}
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id} className={styles.describe_td}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
             ))}
           </tbody>
         </table>

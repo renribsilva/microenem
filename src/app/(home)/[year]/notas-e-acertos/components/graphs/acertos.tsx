@@ -48,7 +48,6 @@ export default function DensityNotasChart() {
     if (!chartData) return {};
     return {
       chart: {
-        id: `density-x-dashed-${acertosNum}`,
         type: "area",
         toolbar: { show: true },
         animations: { enabled: true, speed: 400 },

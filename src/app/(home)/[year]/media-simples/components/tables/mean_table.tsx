@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -40,9 +40,10 @@ export default function RankingTable() {
         ),
       }),
     ],
-    [],
+    [columnHelper, textColor],
   );
 
+  // eslint-disable-next-line
   const table = useReactTable({
     data: top2000Data || [],
     columns,
@@ -54,7 +55,6 @@ export default function RankingTable() {
       <div className={styles.meantable_cabecalho}>
         <div>
           <h3 className={styles.card_title}>Top 2.500 Médias Simples</h3>
-          {/*   <p className={styles.card_subtitle_p}>Média simples das 5 áreas do conhecimento.</p> */}
         </div>
       </div>
 
@@ -85,8 +85,10 @@ export default function RankingTable() {
               return (
                 <tr
                   key={row.id}
-                  className={`${styles.meantable_tr} ${isSelected ? styles.row_active : ""}`}
-                  // Aqui a mágica acontece: clicou, salvou o rank no state
+                  className={[
+                    `${styles.meantable_tr} `,
+                    `${isSelected ? styles.row_active : ""}`,
+                  ].join("")}
                   onClick={() => setActiveRanking(currentRank)}
                 >
                   {row.getVisibleCells().map((cell) => (

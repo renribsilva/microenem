@@ -66,7 +66,7 @@ export default function MarginImpactTable() {
   const handleUpdateChart = () => {
     if (Object.entries(selectedItems).length === 0) return;
     setSampleEAP(intervalData);
-    setUpdateTrigger((prev: any) => !prev);
+    setUpdateTrigger((prev) => !prev);
   };
 
   useEffect(() => {
@@ -105,8 +105,8 @@ export default function MarginImpactTable() {
 
     if (sortConfig.direction) {
       baseArray.sort((a, b) => {
-        let valA: any = a[sortConfig.key as keyof typeof a];
-        let valB: any = b[sortConfig.key as keyof typeof b];
+        let valA = a[sortConfig.key as keyof typeof a];
+        let valB = b[sortConfig.key as keyof typeof b];
 
         // Força ordenação numérica para chaves conhecidas
         if (["posicao", "a", "b", "c"].includes(sortConfig.key)) {
@@ -171,8 +171,8 @@ export default function MarginImpactTable() {
             Impacto virtual do item
           </h3>
           <p className={styles.tcc_subtitle_p}>
-            "Qual seria o impacto na nota final se um item tivesse o seu status
-            invertido, mantidos os outros status inalterados?"
+            &quot Qual seria o impacto na nota final se um item tivesse o seu
+            status invertido, mantidos os outros status inalterados?&quot
           </p>
         </div>
         <div className={styles.tcc_impacto}>
@@ -244,7 +244,7 @@ export default function MarginImpactTable() {
           </thead>
           <tbody>
             {temImpacto &&
-              impactosArray.map((itemData: any) => {
+              impactosArray.map((itemData) => {
                 const codigoItem = itemData.codigo;
                 const params = paramsPorCodigo[codigoItem];
                 const valRaw = itemData.valor;

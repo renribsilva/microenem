@@ -159,6 +159,7 @@ export default function AcertosTable() {
     });
   }, [acertosData]);
 
+  // eslint-disable-next-line
   const table = useReactTable({
     data,
     columns,
@@ -194,7 +195,10 @@ export default function AcertosTable() {
                     <th
                       key={header.id}
                       colSpan={header.colSpan}
-                      className={`${styles.probtable_th} ${isGroup ? styles.probtable_group_th : ""}`}
+                      className={[
+                        `${styles.probtable_th} `,
+                        `${isGroup ? styles.probtable_group_th : ""}`,
+                      ].join("")}
                       onClick={
                         canSort
                           ? header.column.getToggleSortingHandler()
@@ -227,7 +231,10 @@ export default function AcertosTable() {
               return (
                 <tr
                   key={row.id}
-                  className={`${styles.probtable_tr} ${isActive ? styles.row_active : ""}`}
+                  className={[
+                    `${styles.probtable_tr} `,
+                    `${isActive ? styles.row_active : ""}`,
+                  ].join("")}
                   onClick={() => setAcertosNum(row.original.id)}
                   style={{
                     backgroundColor: isActive

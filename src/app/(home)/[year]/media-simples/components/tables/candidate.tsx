@@ -123,13 +123,19 @@ export default function CandidateFullDetail() {
       <div className={styles.tabs}>
         <button
           onClick={() => setActiveTab("geral")}
-          className={`${styles.tab_btn} ${activeTab === "geral" ? styles.active : ""}`}
+          className={[
+            `${styles.tab_btn} `,
+            `${activeTab === "geral" ? styles.active : ""}`,
+          ].join("")}
         >
           Resumo de Notas
         </button>
         <button
           onClick={() => setActiveTab("scores")}
-          className={`${styles.tab_btn} ${activeTab === "scores" ? styles.active : ""}`}
+          className={[
+            `${styles.tab_btn} `,
+            `${activeTab === "scores" ? styles.active : ""}`,
+          ].join("")}
         >
           Mapa de Acertos
         </button>
@@ -259,15 +265,13 @@ export default function CandidateFullDetail() {
                           : item.status === "wrong"
                             ? "Erro"
                             : "Anulada";
-                      const tooltipContent = `Questão ${item.pos}: ${statusText}`;
+                      const tpContent = `Questão ${item.pos}: ${statusText}`;
 
                       return (
                         <div
                           key={idx}
                           className={`${styles.dot} ${styles[item.status]}`}
-                          onMouseMove={(e) =>
-                            handleMouseMove(e, tooltipContent)
-                          }
+                          onMouseMove={(e) => handleMouseMove(e, tpContent)}
                           onMouseLeave={() =>
                             setTooltip({ ...tooltip, visible: false })
                           }

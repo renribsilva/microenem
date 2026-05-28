@@ -90,7 +90,11 @@ export default function ViolinBinsChart() {
         colors: [gridColor],
       },
       dataLabels: { enabled: false },
-      grid: { show: false },
+      grid: {
+        padding: {
+          bottom: 40,
+        },
+      },
       yaxis: {
         labels: {
           style: { colors: axisColor },
@@ -101,13 +105,6 @@ export default function ViolinBinsChart() {
         shared: true,
         intersect: false,
         followCursor: true,
-        x: {
-          formatter: (val) => `Proficiência: ${val}`,
-        },
-        y: {
-          formatter: (val) =>
-            String(Math.abs(Number(val)).toLocaleString("pt-BR")),
-        },
       },
       xaxis: {
         // CORREÇÃO: Removido o aninhamento duplicado de xaxis
@@ -123,9 +120,7 @@ export default function ViolinBinsChart() {
           style: { colors: axisColor },
           formatter: function (val): string {
             const absoluteVal = Math.abs(Number(val));
-
             if (absoluteVal >= 1000) {
-              // Divide por 1000 e fixa 1 casa decimal se não for inteiro (ex: 1.5k)
               const formatted = (absoluteVal / 1000).toLocaleString("pt-BR", {
                 maximumFractionDigits: 1,
               });
@@ -138,9 +133,10 @@ export default function ViolinBinsChart() {
       },
       legend: {
         labels: { colors: textColor },
+        floating: true,
       },
       title: {
-        text: [`Frequência de resposta ao item ${lastItemActivateNum}`] as any,
+        text: `Frequência de resposta ao item ${lastItemActivateNum}`,
         style: { color: textColor, fontSize: "16px", fontWeight: "bold" },
       },
       subtitle: {
@@ -148,6 +144,7 @@ export default function ViolinBinsChart() {
           `Frequência absoluta de acertos e erros`,
           `por faixa de proficiência`,
           `(cod: ${lastItemActivate}; p: ${activeTCC?.metadata?.cor || ""}).`,
+          // eslint-disable-next-line
         ] as any,
         style: { color: textColor, fontSize: "13px" },
       },

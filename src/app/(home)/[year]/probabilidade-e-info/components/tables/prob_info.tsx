@@ -174,6 +174,7 @@ export default function ProbsInfoTable() {
     probLabels,
   ]);
 
+  // eslint-disable-next-line
   const table = useReactTable({
     data,
     columns,

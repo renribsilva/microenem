@@ -187,13 +187,7 @@ export default function ICCChart() {
           </p>
         </div>
       </div>
-      <Chart
-        options={options}
-        series={series}
-        type="line"
-        height="100%"
-        // width="100%"
-      />
+      <Chart options={options} series={series} type="line" height="100%" />
     </div>
   );
 }

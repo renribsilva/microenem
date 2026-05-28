@@ -7,10 +7,14 @@ import { useYearData } from "../../../../../../context/year_context";
 import { useHomeData } from "../../../../../../context/home_context";
 import styles from "./graphs.module.css";
 
+function transformTheta(theta: number, k: number, d: number) {
+  return theta * k + d;
+}
+
 export default function InfoChart() {
   const { chartProps, deferredArea } = useHomeData();
   const { chartColor, proficienciaAtual, xMin, xMax } = chartProps;
-  const { gridColor, axisColor, textColor } = useChartTheme();
+  const { gridColor, axisColor } = useChartTheme();
   const {
     abandonadosCodes,
     fixedPalette,
@@ -22,11 +26,9 @@ export default function InfoChart() {
 
   const infoLabels = probInfoData.infoLabels;
   const infoData = probInfoData.infoData;
-  const transformTheta = (theta: number) =>
-    theta * constantesData.k + constantesData.d;
 
   // --- PROCESSAMENTO DE DADOS PARA APEXCHARTS ---
-  const { series, hasAbandonedItem, ymax } = useMemo(() => {
+  const { series, ymax } = useMemo(() => {
     let abandonedFound = false;
     let currentMax = 0; // Inicializa o rastreador do valor máximo
 
@@ -49,16 +51,14 @@ export default function InfoChart() {
         const colorIndex = allItemsInProva.indexOf(itemKey);
 
         const dataPoints = rawPoints.map((yValue, idx) => {
-          // Lógica de inversão se for erro (cuidado: na TRI a info
-          // do erro é a mesma do acerto,
-          // mas mantive sua lógica de 1 - yValue se for requisito de UI)
           const finalY = yValue || 0;
-
-          // Atualiza o valor máximo global da série
           if (finalY > currentMax) currentMax = finalY;
-
           return {
-            x: transformTheta(infoLabels[idx]),
+            x: transformTheta(
+              infoLabels[idx],
+              constantesData.k,
+              constantesData.d,
+            ),
             y: finalY,
           };
         });
@@ -87,13 +87,11 @@ export default function InfoChart() {
     infoData,
     fixedPalette,
     infoLabels,
-    transformTheta,
+    constantesData.k,
+    constantesData.d,
     abandonadosCodes,
     lastItemActivate,
   ]);
-
-  // const xMin = Math.floor(transformTheta(-6) / 100) * 100;
-  // const xMax = Math.ceil(transformTheta(6) / 100) * 100;
 
   // --- CONFIGURAÇÕES DO APEXCHARTS ---
   const options: ApexCharts.ApexOptions = useMemo(() => {
@@ -116,16 +114,16 @@ export default function InfoChart() {
         curve: "monotoneCubic",
         width: 2,
         lineCap: "round",
-        dashArray: series.map((s: any) => s.strokeDashArray),
+        dashArray: series.map((s) => s.strokeDashArray),
       },
-      colors: series.map((s: any) => s.color),
+      colors: series.map((s) => s.color),
       xaxis: {
         type: "numeric",
         min: xMin,
         max: xMax,
         labels: {
           style: { colors: axisColor },
-          formatter: (val: any) => parseFloat(val).toFixed(0),
+          formatter: (val: string) => parseFloat(val).toFixed(0),
         },
         title: {
           text: `Notas na escala do Enem (${deferredArea})`,
@@ -212,7 +210,7 @@ export default function InfoChart() {
       </div>
       <Chart
         options={options}
-        series={series as any}
+        series={series}
         type="line"
         height="100%"
         // width="100%"

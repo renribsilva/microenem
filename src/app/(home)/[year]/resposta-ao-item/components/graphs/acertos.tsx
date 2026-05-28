@@ -1,14 +1,20 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef } from "react";
 import Chart from "react-apexcharts";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import { useHomeData } from "../../../../../../context/home_context";
 import { useYearData } from "../../../../../../context/year_context";
+import { useSidebar } from "../../../../../../context/sidebar_context";
+
+function transformTheta(theta: number, k: number, d: number) {
+  return theta * k + d;
+}
 
 export default function AcertosChart() {
   const { chartProps, activeTCC } = useHomeData();
-  const { gridColor, axisColor, textColor } = useChartTheme();
+  const { isMobile } = useSidebar();
+  const { panelColor, axisColor, textColor } = useChartTheme();
   const {
     lastItemActivate,
     lastItemActivateNum,
@@ -17,59 +23,22 @@ export default function AcertosChart() {
     itemGraphData,
   } = useYearData();
 
+  const { chartColor } = chartProps;
+
   // Refs e Estados para controle de renderização por tamanho
   const probLabels = probInfoData.probLabels;
   const probData = probInfoData.probData;
   const parentRef = useRef<HTMLDivElement>(null);
-  const [dimensionsReady, setDimensionsReady] = useState(false);
-  const [isMobile, setIsMobile] = useState(
-    typeof window !== "undefined" ? window.innerWidth < 800 : false,
-  );
-
-  // Estado para disparar a segunda renderização
-  const [refreshKey, setRefreshKey] = useState(0);
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 800);
-    window.addEventListener("resize", handleResize);
-    const observer = new ResizeObserver((entries) => {
-      for (let entry of entries) {
-        if (entry.contentRect.width > 0) {
-          setDimensionsReady(true);
-        }
-      }
-    });
-    if (parentRef.current) {
-      observer.observe(parentRef.current);
-    }
-    const timer = setTimeout(() => {
-      setRefreshKey((prev) => prev + 1);
-    }, 500);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      observer.disconnect();
-      clearTimeout(timer);
-    };
-  }, []);
 
   const { xMin, xMax } = chartProps;
-  const transformTheta = (theta: number) =>
-    theta * constantesData.k + constantesData.d;
 
-  // --- CONFIGURAÇÃO DE DADOS ---
   const series = useMemo(() => {
-    // ✅ PROTEÇÃO: Se probData for null, ou não houver item selecionado,
-    // ou o item selecionado não existir dentro do probData, retorne vazio.
     if (!probData || !lastItemActivate || !probData[lastItemActivate]) {
       return [];
     }
-
-    // ✅ PROTEÇÃO: Garanta que itemGraphData também está pronto
     if (!itemGraphData || !Array.isArray(itemGraphData.x)) {
       return [];
     }
-
     return [
       {
         name: "Frequência de acertos",
@@ -83,16 +52,26 @@ export default function AcertosChart() {
         name: "Curva característica do item",
         type: "line",
         data: probData[lastItemActivate].map((yValue, idx) => ({
-          x: transformTheta(probLabels[idx]),
+          x: transformTheta(
+            probLabels[idx],
+            constantesData.k,
+            constantesData.d,
+          ),
           y: Number(yValue),
         })),
       },
     ];
-  }, [itemGraphData, lastItemActivate, transformTheta, probData, probLabels]);
+  }, [
+    itemGraphData,
+    constantesData.k,
+    constantesData.d,
+    lastItemActivate,
+    probData,
+    probLabels,
+  ]);
 
-  // --- CONFIGURAÇÕES DO APEXCHARTS ---
-  const options: ApexCharts.ApexOptions = useMemo(
-    () => ({
+  const options: ApexCharts.ApexOptions = useMemo(() => {
+    return {
       chart: {
         id: "tcc-chart",
         type: "line",
@@ -121,7 +100,11 @@ export default function AcertosChart() {
         width: [0, 1],
         // colors: [chartColor, chartColor]
       },
-      grid: { borderColor: gridColor },
+      grid: {
+        padding: {
+          bottom: 50,
+        },
+      },
       xaxis: {
         type: "numeric",
         min: xMin,
@@ -177,19 +160,84 @@ export default function AcertosChart() {
         },
       ],
       tooltip: {
-        enabled: true,
-        shared: true,
+        enabled: false,
+        shared: false,
         intersect: false,
         theme: "dark",
-        fixed: {
-          enabled: false,
-        },
+        enabledOnSeries: [0],
         x: {
           show: true,
           formatter: (val) => `Proficiência: ${Number(val).toFixed(0)}`,
         },
         y: {
-          formatter: (val) => (val !== undefined ? Number(val).toFixed(2) : ""),
+          formatter: function (_val, { series, dataPointIndex }) {
+            const css = {
+              container: ["display: flex", "align-items: center"].join("; "),
+              value: [
+                "font-weight: 300",
+                "opacity: 0.7",
+                `color: ${panelColor}`,
+                "margin: 0px",
+                "padding: 0px",
+                "padding: 5px",
+              ].join("; "),
+              marker1: [
+                `width: 10px`,
+                `height: 10px`,
+                `border-radius: 50%`,
+                `background-color: #94a3b8`,
+                `display: inline-block;`,
+                "margin-right: 5px",
+              ].join("; "),
+              marker2: [
+                `width: 10px`,
+                `height: 10px`,
+                `border-radius: 50%`,
+                `background-color: ${chartColor}`,
+                `display: inline-block;`,
+                "margin-right: 5px",
+              ].join("; "),
+            };
+            console.log("dpi", dataPointIndex);
+            let val0 = series[0][dataPointIndex];
+            const series0 = series[0];
+            if (!val0) {
+              for (let i = dataPointIndex; i >= 0; i--) {
+                if (series0[i] !== null || series0[i] !== undefined) {
+                  val0 = series0[i];
+                  break;
+                }
+              }
+            }
+            if (!val0) {
+              for (let i = dataPointIndex; i >= 0; i--) {
+                if (series0[i] !== null || series0[i] !== undefined) {
+                  val0 = series0[i];
+                  break;
+                }
+              }
+            }
+            console.log("val0:", val0);
+            return `
+             <div>
+                <div style="${css.container}">
+                  <div style="${css.marker2}"></div>
+                  <div> 
+                    <span style="${css.value}">Frequência de acertos: </span>
+                    <span>${Number(val0).toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+            `;
+          },
+          title: {
+            formatter: function () {
+              return null;
+            },
+          },
+        },
+        marker: {
+          show: false,
         },
       },
       title: {
@@ -201,39 +249,38 @@ export default function AcertosChart() {
           `Frequência relativa de acertos observados em cada`,
           `faixa de proficiência`,
           `(cod: ${lastItemActivate}; p: ${activeTCC?.metadata?.cor}).`,
+          // eslint-disable-next-line
         ] as any,
         style: { color: textColor, fontSize: "13px" },
       },
       legend: {
         position: "bottom",
         labels: { colors: textColor },
+        floating: true,
       },
-    }),
-    [
-      activeTCC,
-      gridColor,
-      axisColor,
-      xMin,
-      xMax,
-      lastItemActivate,
-      lastItemActivateNum,
-      isMobile,
-      textColor,
-    ],
-  );
+    };
+  }, [
+    activeTCC,
+    axisColor,
+    xMin,
+    chartColor,
+    panelColor,
+    xMax,
+    lastItemActivate,
+    lastItemActivateNum,
+    isMobile,
+    textColor,
+  ]);
 
   return (
     <div ref={parentRef} style={{ height: "350px", width: "100%" }}>
-      {dimensionsReady && (
-        <Chart
-          key={refreshKey}
-          options={options}
-          series={series}
-          type="line"
-          height="100%"
-          width="100%"
-        />
-      )}
+      <Chart
+        options={options}
+        series={series}
+        type="line"
+        height="100%"
+        width="100%"
+      />
     </div>
   );
 }

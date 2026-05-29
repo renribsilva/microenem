@@ -121,7 +121,12 @@ export default function DensityNotasChart() {
         type: "area" as const,
         toolbar: { show: true, offsetX: 0, offsetY: 0 },
         zoom: { enabled: false },
-        animations: { enabled: false },
+        animations: {
+          enabled: false,
+          dynamicAnimation: {
+            enabled: false,
+          },
+        },
       },
       colors: chartColors,
       stroke: { curve: "smooth", width: strokeWidths },

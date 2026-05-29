@@ -87,7 +87,12 @@ export default function NotasRedacaoChart() {
     return {
       chart: {
         type: "bar",
-        animations: { enabled: false },
+        animations: {
+          enabled: false,
+          dynamicAnimation: {
+            enabled: false,
+          },
+        },
         toolbar: { show: false },
       },
       plotOptions: {

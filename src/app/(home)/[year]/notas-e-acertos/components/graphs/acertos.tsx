@@ -49,7 +49,12 @@ export default function DensityNotasChart() {
       chart: {
         type: "area",
         toolbar: { show: true },
-        animations: { enabled: true, speed: 400 },
+        animations: {
+          enabled: false,
+          dynamicAnimation: {
+            enabled: false,
+          },
+        },
         zoom: {
           enabled: false,
         },

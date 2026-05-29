@@ -5,9 +5,9 @@ import styles from "./components.module.css";
 import Footer from "./footer";
 import { useSidebar } from "../../context/sidebar_context";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import ArrowDown from "../svg/arrow_down";
 import ArrowUp from "../svg/arrow_up";
+import { useHomeData } from "../../context/home_context";
 
 interface SubItemsItem {
   name: string;
@@ -51,8 +51,8 @@ const navItems: NavItem[] = [
 ];
 
 function AppSidebar() {
-  const pathname = usePathname();
-  const isActive = useCallback((path: string) => path === pathname, [pathname]);
+  const { pathName } = useHomeData();
+  const isActive = useCallback((path: string) => path === pathName, [pathName]);
   const { isMobileOpen, isMobile, toggleMobileSidebar } = useSidebar();
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [subMenuHeight, setSubMenuHeight] = useState<Record<string, number>>(
@@ -154,17 +154,17 @@ function AppSidebar() {
 
   const [openSubmenu, setOpenSubmenu] = useState(() => {
     const idx = navItems.findIndex((nav) =>
-      nav.subItems?.some((sub) => sub.path === pathname),
+      nav.subItems?.some((sub) => sub.path === pathName),
     );
     return idx !== -1 ? idx : null;
   });
 
-  const [prevPathname, setPrevPathname] = useState(pathname);
+  const [prevPathname, setPrevPathname] = useState(pathName);
 
-  if (pathname !== prevPathname) {
-    setPrevPathname(pathname);
+  if (pathName !== prevPathname) {
+    setPrevPathname(pathName);
     const idx = navItems.findIndex((nav) =>
-      nav.subItems?.some((sub) => sub.path === pathname),
+      nav.subItems?.some((sub) => sub.path === pathName),
     );
     setOpenSubmenu(idx !== -1 ? idx : null);
   }

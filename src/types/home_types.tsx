@@ -83,6 +83,7 @@ export type HomeContextType = {
   selectedLabel: SelectionsByAreaType["LC"];
   selectedRowId: SelectedRowIdType;
   isFetchingBI: boolean;
+  pathName: string;
 
   // Carga dinâmica do dicionário no server (bundle inicial)
   dicData: DicDataType;

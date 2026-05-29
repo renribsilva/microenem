@@ -566,3 +566,23 @@
   padding-top: 13px;
   padding-bottom: 10px;
 }
+
+.dots::after {
+  content: ".";
+  animation: loadingDots 1.5s steps(5, end) infinite;
+}
+
+@keyframes loadingDots {
+  0% {
+    content: ".";
+  }
+  33% {
+    content: "..";
+  }
+  66% {
+    content: "...";
+  }
+  100% {
+    content: ".";
+  }
+}

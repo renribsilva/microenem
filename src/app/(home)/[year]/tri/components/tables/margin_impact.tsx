@@ -37,6 +37,7 @@ export default function MarginImpactTable() {
     getCodeByLabel,
     needUpdateEAP,
     isInitialRender,
+    abandonadosCodes,
   } = useYearData();
 
   const { textColor } = useChartTheme();
@@ -77,11 +78,16 @@ export default function MarginImpactTable() {
     const baseArray = Object.entries(EAPData.impacto_individual).map(
       ([codigo, info]) => {
         const params = paramsPorCodigo[codigo];
-        const statusOriginal = selectedItems[codigo]?.status || "erro";
+        const isAbandonado = abandonadosCodes?.has(Number(codigo));
+        const status = selectedItems[codigo]?.status
+          ? selectedItems[codigo].status
+          : isAbandonado
+            ? "anulado"
+            : "erro";
         const valRaw = info.valor;
         const valNum =
           valRaw === null || (Array.isArray(valRaw) && valRaw[0] === null)
-            ? -999
+            ? NaN
             : Number(Array.isArray(valRaw) ? valRaw[0] : valRaw);
         const posRaw = info.posicao;
         const posNum = Number(Array.isArray(posRaw) ? posRaw[0] : posRaw);
@@ -89,17 +95,23 @@ export default function MarginImpactTable() {
         return {
           id: posNum,
           codigo,
-          status: statusOriginal,
-          a: params?.a ?? 0,
-          b: params?.b ?? 0,
-          c: params?.c ?? 0,
+          status: status,
+          a: isAbandonado ? NaN : params?.a,
+          b: isAbandonado ? NaN : params?.b,
+          c: isAbandonado ? NaN : params?.c,
           impacto: valNum,
         };
       },
     );
 
     return baseArray;
-  }, [EAPData, paramsPorCodigo, selectedItems, isInitialRender]);
+  }, [
+    EAPData,
+    abandonadosCodes,
+    paramsPorCodigo,
+    selectedItems,
+    isInitialRender,
+  ]);
 
   const columnHelper = createColumnHelper<ImpactoRow>();
 
@@ -119,15 +131,15 @@ export default function MarginImpactTable() {
       }),
       columnHelper.accessor("a", {
         header: "a¹",
-        cell: (info) => info.getValue(),
+        cell: (info) => info.getValue().toFixed(3),
       }),
       columnHelper.accessor("b", {
         header: "b²",
-        cell: (info) => info.getValue(),
+        cell: (info) => info.getValue().toFixed(3),
       }),
       columnHelper.accessor("c", {
         header: "c³",
-        cell: (info) => info.getValue(),
+        cell: (info) => info.getValue().toFixed(3),
       }),
       columnHelper.accessor("impacto", {
         header: "Impacto",
@@ -135,7 +147,11 @@ export default function MarginImpactTable() {
           const value = info.getValue();
           if (isTRIDivergente) return <span>---</span>;
           const formatted =
-            value > 0 ? `+${value.toFixed(2)}` : value.toFixed(2);
+            value > 0
+              ? `+${value.toFixed(2)}`
+              : isNaN(value)
+                ? String(value)
+                : value.toFixed(2);
           return (
             <span
               style={{
@@ -177,7 +193,7 @@ export default function MarginImpactTable() {
             Impacto virtual do item
           </h3>
           <p className={styles.tcc_subtitle_p}>
-            Qual seria o impacto na nota final se um item tivesse o seu status
+            Qual seria o impacto na nota final se o item tivesse o seu status
             invertido, mantidos os outros status inalterados?
           </p>
         </div>

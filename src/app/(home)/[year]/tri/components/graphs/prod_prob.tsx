@@ -52,10 +52,14 @@ export default function ProdProbChart() {
   const options: ApexCharts.ApexOptions = {
     chart: {
       type: "area",
-      height: 350,
       zoom: { enabled: false },
       toolbar: { show: false },
-      animations: { enabled: true, speed: 800 },
+      animations: {
+        enabled: false,
+        dynamicAnimation: {
+          enabled: false,
+        },
+      },
     },
     dataLabels: { enabled: false },
     stroke: { curve: "smooth", width: 3, colors: [chartColor] },
@@ -118,7 +122,7 @@ export default function ProdProbChart() {
                   color: textColor,
                   background: gridColor,
                   fontWeight: "bold",
-                  padding: { left: 10, right: 10, top: 10, bottom: 10 },
+                  padding: { left: 15, right: 15, top: 15, bottom: 15 },
                 },
                 text: [
                   "O método (não oficial) de transformação da escala",
@@ -132,14 +136,14 @@ export default function ProdProbChart() {
         : [
             {
               x: valorEAP || 0,
-              borderColor: "#f43f5e",
               strokeDashArray: 4,
               label: {
-                borderColor: "#f43f5e",
+                borderColor: chartColor,
                 style: {
                   color: "#fff",
-                  background: "#f43f5e",
+                  background: chartColor,
                   fontWeight: "bold",
+                  padding: { left: 15, right: 15, top: 15, bottom: 15 },
                 },
                 text: [`Nota mais provável`, `${EAPData?.eap || 0}`],
                 orientation: "horizontal",
@@ -195,8 +199,8 @@ export default function ProdProbChart() {
             style={{ fontSize: "0.75rem", fontWeight: "300", color: "#888" }}
           >
             A nota mais provável é a média ponderada de todas as proficiências
-            sob a curva, tendo como peso as probabilidades ajustadas à normal
-            N(0,1).
+            sob a curva, tendo como peso as suas respectivas probabilidades
+            ajustadas à normal N(0,1).
           </div>
         </>
       ) : (

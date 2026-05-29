@@ -11,7 +11,7 @@ import {
   useRef,
 } from "react";
 import { useChartTheme } from "../hooks/use_chart_theme";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import {
   ActiveTCCType,
   AvailableTCCType,
@@ -61,6 +61,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   // Parâmetro para carga dinâmica
   const params = useParams();
   const currentYear = params.year;
+  const pathName = usePathname();
 
   // --------------------------------------------------------------------------
   // ---------- CARGA DINÂMICA DO DICIONÁRIO POR ANO (BUNDLE INICIAL) ---------
@@ -229,6 +230,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
         selectedLabel,
         selectedRowId,
         isFetchingBI: activeArea !== deferredArea || loading,
+        pathName,
 
         // Carga dinâmica do dicionário no server (bundle inicial)
         dicData,

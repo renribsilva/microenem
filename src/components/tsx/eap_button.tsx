@@ -1,5 +1,6 @@
 import { useHomeData } from "../../context/home_context";
 import { useYearData } from "../../context/year_context";
+import styles from "./components.module.css";
 
 function EAPButton() {
   const {
@@ -30,6 +31,7 @@ function EAPButton() {
       disabled={isFetchingEAP}
       style={{
         padding: "12px 28px",
+        width: "100%",
         backgroundColor: isFetchingEAP ? "#e2e8f0" : chartColor,
         color: isFetchingEAP ? "#94a3b8" : "white",
         border: "none",
@@ -40,14 +42,16 @@ function EAPButton() {
         boxShadow: isFetchingEAP
           ? "none"
           : "0 10px 15px -3px rgba(79, 70, 229, 0.3)",
-        transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
       }}
     >
-      {isFetchingEAP
-        ? "⏳ PROCESSANDO..."
-        : needUpdateEAP && !isInitialRender
-          ? "🚀 RECALCULAR DESEMPENHO TRI"
-          : "🚀 CALCULAR DESEMPENHO TRI"}
+      {isFetchingEAP ? (
+        <span className={styles.dots}>PROCESSANDO</span>
+      ) : needUpdateEAP && !isInitialRender ? (
+        "🚀 RECALCULAR DESEMPENHO TRI"
+      ) : (
+        "🚀 CALCULAR DESEMPENHO TRI"
+      )}
     </button>
   );
 }

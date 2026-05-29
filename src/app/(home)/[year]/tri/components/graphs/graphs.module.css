@@ -15,6 +15,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  text-align: center;
   min-height: 350px;
   color: var(--tick);
 }
@@ -89,3 +90,4 @@
   /* height: 100%; */
   flex: 1;
 }
+

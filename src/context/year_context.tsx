@@ -12,7 +12,6 @@ import {
   useEffect,
 } from "react";
 import { useHomeData } from "./home_context";
-import { usePathname } from "next/navigation";
 import constantes from "../app/(home)/JSON/constantes.json";
 import {
   AbstencaoType,
@@ -97,6 +96,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
   // ---------------------------------------------------------------------------
 
   const {
+    pathName,
     setActiveArea,
     currentYear,
     deferredArea,
@@ -457,7 +457,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const tipo = "regular";
-
     if (
       acertosCache.current?.area === deferredArea &&
       acertosCache.current?.versao === tipo
@@ -494,10 +493,9 @@ export function YearProvider({ children }: { children: ReactNode }) {
   const [activeRanking, setActiveRanking] = useState<number | null>(1);
   const [top2000Data, setTop2000Data] = useState<Top2000Type>();
   const [candidateData, setCandidateData] = useState<CandidateDataType>();
-  const pathname = usePathname();
 
   useEffect(() => {
-    const isMediaSimplesPage = pathname?.endsWith("/media-simples");
+    const isMediaSimplesPage = pathName?.endsWith("/media-simples");
     async function fetchTop2000Data() {
       if (!isMediaSimplesPage || !currentYear) return;
       try {
@@ -509,10 +507,10 @@ export function YearProvider({ children }: { children: ReactNode }) {
       }
     }
     fetchTop2000Data();
-  }, [pathname, currentYear]);
+  }, [pathName, currentYear]);
 
   useEffect(() => {
-    const isMediaSimplesPage = pathname?.endsWith("/media-simples");
+    const isMediaSimplesPage = pathName?.endsWith("/media-simples");
     async function fetchCandidateData() {
       if (!isMediaSimplesPage || !currentYear) return;
       try {
@@ -526,7 +524,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
       }
     }
     fetchCandidateData();
-  }, [pathname, currentYear, activeRanking]);
+  }, [pathName, currentYear, activeRanking]);
 
   // ---------------------------------------------------------------------------
   // ------------ AGRUPAMENTO DE DADOS SOCILITIDADOS PELO CLIENTE --------------
@@ -552,7 +550,8 @@ export function YearProvider({ children }: { children: ReactNode }) {
   const [EAPData, setEAPData] = useState<EAPDataType | null>(null);
 
   useEffect(() => {
-    if (!selectedLabel) return null;
+    const isPathOfInterest = pathName.endsWith("tri");
+    if (!isPathOfInterest) return;
     const [codigo, lingua] = selectedLabel.split("_");
     async function fetchEAPData() {
       try {
@@ -570,15 +569,8 @@ export function YearProvider({ children }: { children: ReactNode }) {
         console.error("Erro ao carregar EAPdata:", err);
       }
     }
-    if (Object.entries(selectedItems).length !== 0) fetchEAPData();
-  }, [
-    deferredArea,
-    sampleEAP,
-    needUpdateEAP,
-    selectedItems,
-    selectedLabel,
-    currentYear,
-  ]);
+    if (isPathOfInterest) fetchEAPData();
+  }, [deferredArea, sampleEAP, pathName, selectedLabel, currentYear]);
 
   //----------------------------------------------------------------------------
   //---------------------------TRANSFORMAÇÃO DE DADOS---------------------------

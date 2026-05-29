@@ -72,7 +72,12 @@ export default function ViolinBinsChart() {
         type: "bar",
         stacked: true,
         toolbar: { show: true },
-        animations: { enabled: false },
+        animations: {
+          enabled: false,
+          dynamicAnimation: {
+            enabled: false,
+          },
+        },
       },
       colors: [acertoColor, erroColor],
       plotOptions: {

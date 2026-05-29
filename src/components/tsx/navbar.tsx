@@ -3,7 +3,6 @@
 import { useHomeData } from "../../context/home_context";
 import TabsNavigation from "./tab_navigation";
 import styles from "./components.module.css";
-import { usePathname } from "next/navigation";
 import { useYearData } from "../../context/year_context";
 
 const menuItems = [
@@ -14,8 +13,7 @@ const menuItems = [
 ];
 
 function Navbar() {
-  const pathName = usePathname();
-  const { deferredArea } = useHomeData();
+  const { pathName, deferredArea } = useHomeData();
   const { handleTabChange } = useYearData();
 
   const allowedPaths = [

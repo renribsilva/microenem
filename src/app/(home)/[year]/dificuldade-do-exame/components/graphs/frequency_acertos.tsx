@@ -135,7 +135,12 @@ export default function FrequencyAcertosChart() {
         type: "bar",
         toolbar: { show: true, offsetX: 0, offsetY: 0 },
         zoom: { enabled: false },
-        animations: { enabled: false },
+        animations: {
+          enabled: false,
+          dynamicAnimation: {
+            enabled: false,
+          },
+        },
       },
       plotOptions: {
         bar: {

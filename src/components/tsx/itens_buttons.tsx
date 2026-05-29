@@ -6,7 +6,6 @@ import { useChartTheme } from "../../hooks/use_chart_theme";
 import { useHomeData } from "../../context/home_context";
 import { useYearData } from "../../context/year_context";
 import Dropdown from "./dropdown";
-import { usePathname } from "next/navigation";
 import EAPButton from "./eap_button";
 
 type onButtonClickType = (
@@ -30,7 +29,7 @@ const ranges: Record<string, { start: number; end: number }> = {
 };
 
 function ItensButtons() {
-  const { chartProps, deferredArea, selectedLabel } = useHomeData();
+  const { pathName, chartProps, deferredArea, selectedLabel } = useHomeData();
   const {
     abandonadosCodes,
     selectedItems,
@@ -40,7 +39,6 @@ function ItensButtons() {
   } = useYearData();
   const { panelColor, textColor, gridColor, isDark } = useChartTheme();
   const { chartColor } = chartProps;
-  const pathName = usePathname();
 
   const [backdropAlert, setBackdropAlert] = useState<BackdropAlertType | null>(
     null,

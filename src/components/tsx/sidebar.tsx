@@ -6,8 +6,6 @@ import Footer from "./footer";
 import { useSidebar } from "../../context/sidebar_context";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import Circle from "../svg/circle";
-import CircleFulfill from "../svg/circle_check";
 import ArrowDown from "../svg/arrow_down";
 import ArrowUp from "../svg/arrow_up";
 
@@ -24,8 +22,6 @@ type NavItem = {
 };
 
 const icons = {
-  circle_check: CircleFulfill,
-  circle: Circle,
   arrow_down: ArrowDown,
   arrow_up: ArrowUp,
 };

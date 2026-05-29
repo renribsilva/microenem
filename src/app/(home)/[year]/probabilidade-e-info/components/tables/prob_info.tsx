@@ -15,6 +15,8 @@ import InputShell from "../../../../../../components/tsx/input_shell";
 import { useHomeData } from "../../../../../../context/home_context";
 import { useYearData } from "../../../../../../context/year_context";
 import { useSidebar } from "../../../../../../context/sidebar_context";
+import Sort from "../../../../../../components/svg/sort";
+import clsx from "clsx";
 
 type TableRow = {
   id: number;
@@ -175,6 +177,7 @@ export default function ProbsInfoTable() {
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    enableSortingRemoval: false,
   });
 
   return (
@@ -195,15 +198,13 @@ export default function ProbsInfoTable() {
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id} className={styles.probtable_tr}>
               {headerGroup.headers.map((header) => {
-                // É um grupo se tiver colunas filhas
                 const isGroup = header.column.columns.length > 0;
                 const canSort = header.column.getCanSort() && !isGroup;
-
+                const isSorted = header.column.getIsSorted();
                 return (
                   <th
                     key={header.id}
                     colSpan={header.colSpan}
-                    /* Aplica a classe da linha apenas se for grupo */
                     className={[
                       `${styles.probtable_th} `,
                       `${isGroup ? styles.probtable_group_th : ""}`,
@@ -215,25 +216,36 @@ export default function ProbsInfoTable() {
                     }
                   >
                     <div
-                      className={styles.probtable_th_item}
+                      className={clsx(
+                        styles.probtable_th_item,
+                        canSort && styles.sortable,
+                        isSorted && styles.sorted,
+                      )}
                       style={{
                         cursor: canSort ? "pointer" : "default",
                       }}
                     >
+                      {" "}
                       {!header.isPlaceholder &&
                         flexRender(
                           header.column.columnDef.header,
                           header.getContext(),
                         )}
-
                       {canSort && (
-                        <span style={{ fontSize: "10px" }}>
-                          {{ asc: " 🔼", desc: " 🔽" }[
-                            header.column.getIsSorted() as string
-                          ] ?? null}
+                        <span
+                          style={{
+                            fontSize: "10px",
+                          }}
+                        >
+                          {{
+                            asc: <Sort height="20px" />,
+                            desc: <Sort height="20px" />,
+                          }[header.column.getIsSorted() as string] ?? (
+                            <Sort height="20px" />
+                          )}
                         </span>
                       )}
-                    </div>
+                    </div>{" "}
                   </th>
                 );
               })}

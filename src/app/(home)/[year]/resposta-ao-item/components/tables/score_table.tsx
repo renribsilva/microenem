@@ -16,6 +16,7 @@ import { useYearData } from "../../../../../../context/year_context";
 import Dropdown from "../../../../../../components/tsx/dropdown";
 import clsx from "clsx";
 import { useSidebar } from "../../../../../../context/sidebar_context";
+import Sort from "../../../../../../components/svg/sort";
 
 type TableRow = {
   id: number;
@@ -47,6 +48,7 @@ export default function ScoreTable() {
   const [sorting, setSorting] = useState<SortingState>([
     { id: "posicao", desc: false },
   ]);
+
   const columnHelper = createColumnHelper<TableRow>();
 
   const columns = useMemo(() => {
@@ -301,8 +303,7 @@ export default function ScoreTable() {
               {headerGroup.headers.map((header) => {
                 const isGroup = header.column.columns.length > 0;
                 const canSort = header.column.getCanSort() && !isGroup;
-                const sortedState = header.column.getIsSorted();
-
+                const isSorted = header.column.getIsSorted();
                 return (
                   <th
                     key={header.id}
@@ -318,30 +319,36 @@ export default function ScoreTable() {
                     }
                   >
                     <div
-                      className={styles.probtable_th_item}
-                      style={{ cursor: canSort ? "pointer" : "default" }}
+                      className={clsx(
+                        styles.probtable_th_item,
+                        canSort && styles.sortable,
+                        isSorted && styles.sorted,
+                      )}
+                      style={{
+                        cursor: canSort ? "pointer" : "default",
+                      }}
                     >
+                      {" "}
                       {!header.isPlaceholder &&
                         flexRender(
                           header.column.columnDef.header,
                           header.getContext(),
                         )}
-
                       {canSort && (
                         <span
                           style={{
                             fontSize: "10px",
-                            marginLeft: "4px",
-                            opacity: sortedState ? 1 : 0.5,
                           }}
                         >
                           {{
-                            asc: " 🔼",
-                            desc: " 🔽",
-                          }[sortedState as string] ?? " ↕️"}
+                            asc: <Sort height="20px" />,
+                            desc: <Sort height="20px" />,
+                          }[header.column.getIsSorted() as string] ?? (
+                            <Sort height="20px" />
+                          )}
                         </span>
                       )}
-                    </div>
+                    </div>{" "}
                   </th>
                 );
               })}
@@ -358,7 +365,7 @@ export default function ScoreTable() {
               <tr
                 key={row.id}
                 className={`
-                  ${styles.probtable_tr} 
+                  ${styles.probtable_tr1} 
                   ${isAbandonado ? styles.row_abandonado : ""} 
                   ${isActive ? styles.row_active : ""}
                 `}
@@ -370,12 +377,12 @@ export default function ScoreTable() {
                 }}
                 style={{
                   backgroundColor: isActive
-                    ? "rgba(0, 227, 150, 0.1)"
+                    ? "rgba(0, 0, 0, 0.03)"
                     : isAbandonado
                       ? "rgba(255, 75, 75, 0.05)"
                       : "transparent",
                   borderLeft: isActive
-                    ? "4px solid #00E396"
+                    ? "4px solid rgba(0, 0, 0, 0.5)"
                     : isAbandonado
                       ? "4px solid #ff4b4b"
                       : "4px solid transparent",

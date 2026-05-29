@@ -6,6 +6,26 @@ import { useYearData } from "../../../../../../context/year_context";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import styles from "./tables.module.css";
 import { useSidebar } from "../../../../../../context/sidebar_context";
+import Sort from "../../../../../../components/svg/sort";
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  getSortedRowModel,
+  SortingState,
+  useReactTable,
+} from "@tanstack/react-table";
+import clsx from "clsx";
+
+type ImpactoRow = {
+  id: number;
+  codigo: string;
+  status: string;
+  a: number;
+  b: number;
+  c: number;
+  impacto: number;
+};
 
 export default function MarginImpactTable() {
   const { currentYear, deferredArea, selectedLabel } = useHomeData();
@@ -19,16 +39,14 @@ export default function MarginImpactTable() {
     isInitialRender,
   } = useYearData();
 
-  const { textColor, isDark } = useChartTheme();
+  const { textColor } = useChartTheme();
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: "id", desc: false },
+  ]);
 
-  // Estado para o Sort
-  const [sortConfig, setSortConfig] = useState<{
-    key: string;
-    direction: "asc" | "desc" | null;
-  }>({
-    key: "posicao",
-    direction: "asc",
-  });
+  const isTRIDivergente =
+    (deferredArea === "MT" && currentYear === "2009") ||
+    (deferredArea === "MT" && currentYear === "2019");
 
   const paramsPorCodigo = useMemo(() => {
     const ranges = {
@@ -54,89 +72,102 @@ export default function MarginImpactTable() {
     return map;
   }, [deferredArea, selectedLabel, getCodeByLabel, getParamByLabel]);
 
-  // Lógica de ordenação REVISADA
   const impactosArray = useMemo(() => {
     if (!EAPData?.impacto_individual || isInitialRender) return [];
-
     const baseArray = Object.entries(EAPData.impacto_individual).map(
       ([codigo, info]) => {
         const params = paramsPorCodigo[codigo];
+        const statusOriginal = selectedItems[codigo]?.status || "erro";
         const valRaw = info.valor;
         const valNum =
           valRaw === null || (Array.isArray(valRaw) && valRaw[0] === null)
             ? -999
             : Number(Array.isArray(valRaw) ? valRaw[0] : valRaw);
+        const posRaw = info.posicao;
+        const posNum = Number(Array.isArray(posRaw) ? posRaw[0] : posRaw);
 
         return {
+          id: posNum,
           codigo,
-          ...info,
+          status: statusOriginal,
           a: params?.a ?? 0,
           b: params?.b ?? 0,
           c: params?.c ?? 0,
-          valorNum: valNum,
+          impacto: valNum,
         };
       },
     );
 
-    if (sortConfig.direction) {
-      baseArray.sort((a, b) => {
-        let valA = a[sortConfig.key as keyof typeof a];
-        let valB = b[sortConfig.key as keyof typeof b];
-
-        // Força ordenação numérica para chaves conhecidas
-        if (["posicao", "a", "b", "c"].includes(sortConfig.key)) {
-          valA = Number(valA);
-          valB = Number(valB);
-        }
-
-        if (sortConfig.key === "impacto") {
-          valA = a.valorNum;
-          valB = b.valorNum;
-        }
-
-        if (valA < valB) return sortConfig.direction === "asc" ? -1 : 1;
-        if (valA > valB) return sortConfig.direction === "asc" ? 1 : -1;
-        return 0;
-      });
-    }
-
     return baseArray;
-  }, [EAPData, paramsPorCodigo, isInitialRender, sortConfig]);
+  }, [EAPData, paramsPorCodigo, selectedItems, isInitialRender]);
 
-  const requestSort = (key: string) => {
-    let direction: "asc" | "desc" | null = "asc";
-    if (sortConfig.key === key && sortConfig.direction === "asc") {
-      direction = "desc";
-    } else if (sortConfig.key === key && sortConfig.direction === "desc") {
-      direction = null;
-    }
-    setSortConfig({ key, direction });
-  };
+  const columnHelper = createColumnHelper<ImpactoRow>();
 
-  const renderSortIcon = (key: string) => {
-    const sortedState = sortConfig.key === key ? sortConfig.direction : null;
-    return (
-      <span
-        style={{
-          fontSize: "10px",
-          marginLeft: "4px",
-          opacity: sortedState ? 1 : 0.5,
-        }}
-      >
-        {{
-          asc: " 🔼",
-          desc: " 🔽",
-        }[sortedState as string] ?? " ↕️"}
-      </span>
-    );
-  };
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor("id", {
+        header: "Item",
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor("codigo", {
+        header: "Código",
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor("status", {
+        header: "Status",
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor("a", {
+        header: "a¹",
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor("b", {
+        header: "b²",
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor("c", {
+        header: "c³",
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor("impacto", {
+        header: "Impacto",
+        cell: (info) => {
+          const value = info.getValue();
+          if (isTRIDivergente) return <span>---</span>;
+          const formatted =
+            value > 0 ? `+${value.toFixed(2)}` : value.toFixed(2);
+          return (
+            <span
+              style={{
+                color: value < 0 ? "#ef4444" : "inherit",
+                fontWeight: value < 0 ? 500 : 400,
+              }}
+            >
+              {formatted}
+            </span>
+          );
+        },
+      }),
+    ],
+    [columnHelper, isTRIDivergente],
+  );
 
-  const temImpacto = impactosArray.length > 0;
-
-  const isTRIDivergente =
-    (deferredArea === "MT" && currentYear === "2009") ||
-    (deferredArea === "MT" && currentYear === "2019");
-  // || (deferredArea === "CN" && currentYear === "2021")
+  // eslint-disable-next-line
+  const table = useReactTable({
+    data: impactosArray,
+    columns,
+    state: {
+      sorting,
+      columnVisibility: {
+        codigo: !isMobile,
+        b: !isMobile,
+        c: !isMobile,
+      },
+    },
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+  });
 
   return (
     <div className={styles.impact_container}>
@@ -151,162 +182,83 @@ export default function MarginImpactTable() {
           </p>
         </div>
       </div>
-
       <div className={styles.margin_container}>
         {EAPData && (
           <table className={styles.margin_table}>
             <thead className={styles.margin_thead}>
-              <tr className={styles.margin_tr}>
-                <th
-                  className={styles.margin_th}
-                  onClick={() => requestSort("posicao")}
-                  style={{ cursor: "pointer" }}
-                >
-                  ITEM {renderSortIcon("posicao")}
-                </th>
-                {!isMobile && (
-                  <th
-                    className={styles.margin_th}
-                    onClick={() => requestSort("codigo")}
-                    style={{ cursor: "pointer" }}
-                  >
-                    CÓDIGO {renderSortIcon("codigo")}
-                  </th>
-                )}
-                <th className={styles.margin_th}>STATUS</th>
-                <th
-                  className={styles.margin_th}
-                  onClick={() => requestSort("a")}
-                  style={{ cursor: "pointer" }}
-                >
-                  a¹ {renderSortIcon("a")}
-                </th>
-                {!isMobile && (
-                  <th
-                    className={styles.margin_th}
-                    onClick={() => requestSort("b")}
-                    style={{ cursor: "pointer" }}
-                  >
-                    b² {renderSortIcon("b")}
-                  </th>
-                )}
-                {!isMobile && (
-                  <th
-                    className={styles.margin_th}
-                    onClick={() => requestSort("c")}
-                    style={{ cursor: "pointer" }}
-                  >
-                    c³ {renderSortIcon("c")}
-                  </th>
-                )}
-                <th
-                  className={styles.margin_th}
-                  onClick={() => requestSort("impacto")}
-                  style={{ cursor: "pointer", textAlign: "right" }}
-                >
-                  IMPACTO {renderSortIcon("impacto")}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {temImpacto &&
-                !isInitialRender &&
-                impactosArray.map((itemData) => {
-                  const codigoItem = itemData.codigo;
-                  const params = paramsPorCodigo[codigoItem];
-                  const valRaw = itemData.valor;
-                  const isAnulado =
-                    valRaw === null ||
-                    (Array.isArray(valRaw) && valRaw[0] === null);
-                  const valNum = isAnulado
-                    ? 0
-                    : Number(Array.isArray(valRaw) ? valRaw[0] : valRaw);
-                  const statusOriginal =
-                    selectedItems[codigoItem]?.status || "erro";
-                  const labelStatus = isAnulado ? "anulado" : statusOriginal;
-
-                  let bgColor = isDark ? "#452727" : "#fef2f2";
-                  let fontColor = isDark ? "#f89393" : "#dc2626";
-
-                  if (labelStatus === "anulado") {
-                    bgColor = isDark ? "#1e293b" : "#f1f5f9";
-                    fontColor = isDark ? "#94a3b8" : "#64748b";
-                  } else if (labelStatus === "acerto") {
-                    bgColor = isDark ? "#064e3b" : "#ecfdf5";
-                    fontColor = isDark ? "#6ee7b7" : "#059669";
-                  }
-
-                  return (
-                    <tr
-                      key={codigoItem}
-                      style={{
-                        opacity: needUpdateEAP ? 0.2 : 1,
-                        transitionProperty: "opacity",
-                        transitionDuration: "0.4s",
-                        transitionTimingFunction:
-                          "cubic-bezier(0.4, 0, 0.2, 1)",
-                        transitionDelay: needUpdateEAP ? "0s" : "0.5s",
-                      }}
-                      className={styles.margin_tr}
-                    >
-                      <td className={styles.margin_td}>{itemData.posicao}</td>
-                      {!isMobile && (
-                        <td className={styles.margin_td}>{codigoItem}</td>
-                      )}
-                      <td className={styles.margin_td}>
-                        <span
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id} className={styles.margin_tr}>
+                  {headerGroup.headers.map((header) => {
+                    const canSort = header.column.getCanSort();
+                    const isSorted = header.column.getIsSorted();
+                    return (
+                      <th
+                        key={header.id}
+                        colSpan={header.colSpan}
+                        className={styles.margin_th}
+                        onClick={
+                          canSort
+                            ? header.column.getToggleSortingHandler()
+                            : undefined
+                        }
+                      >
+                        <div
+                          className={clsx(
+                            styles.margin_th_item,
+                            canSort && styles.sortable,
+                            isSorted && styles.sorted,
+                          )}
                           style={{
-                            padding: "4px 8px",
-                            fontSize: "11px",
-                            textTransform: "uppercase",
-                            fontWeight: "600",
-                            background: bgColor,
-                            color: fontColor,
-                            borderRadius: "4px",
+                            cursor: canSort ? "pointer" : "default",
                           }}
                         >
-                          {labelStatus}
-                        </span>
+                          {!header.isPlaceholder &&
+                            flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
+
+                          {canSort && (
+                            <span
+                              style={{
+                                fontSize: "10px",
+                              }}
+                            >
+                              {{
+                                asc: <Sort height="20px" />,
+                                desc: <Sort height="20px" />,
+                              }[header.column.getIsSorted() as string] ?? (
+                                <Sort height="20px" />
+                              )}
+                            </span>
+                          )}
+                        </div>
+                      </th>
+                    );
+                  })}
+                </tr>
+              ))}
+            </thead>
+            <tbody>
+              {table.getRowModel().rows.map((row) => {
+                return (
+                  <tr
+                    key={row.id}
+                    className={clsx(styles.margin_tr1)}
+                    style={needUpdateEAP ? { opacity: 0.2 } : {}}
+                  >
+                    {" "}
+                    {row.getVisibleCells().map((cell) => (
+                      <td key={cell.id} className={styles.margin_td}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
                       </td>
-                      <td className={styles.margin_td}>
-                        {params?.a?.toFixed(3) ?? "—"}
-                      </td>
-                      {!isMobile && (
-                        <td className={styles.margin_td}>
-                          {params?.b?.toFixed(3) ?? "—"}
-                        </td>
-                      )}
-                      {!isMobile && (
-                        <td className={styles.margin_td}>
-                          {params?.c?.toFixed(3) ?? "—"}
-                        </td>
-                      )}
-                      <td
-                        style={{
-                          padding: "8px",
-                          textAlign: "right",
-                          fontWeight: "500",
-                          color:
-                            isAnulado || isTRIDivergente
-                              ? "#64748b"
-                              : valNum > 0
-                                ? "#10b981"
-                                : "#f43f5e",
-                          fontFamily: "monospace",
-                          fontSize: "13px",
-                        }}
-                      >
-                        {isAnulado
-                          ? "N/A"
-                          : isTRIDivergente
-                            ? "---"
-                            : valNum > 0
-                              ? `+${valNum.toFixed(1)}`
-                              : `${valNum.toFixed(1)}`}
-                      </td>
-                    </tr>
-                  );
-                })}
+                    ))}
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         )}

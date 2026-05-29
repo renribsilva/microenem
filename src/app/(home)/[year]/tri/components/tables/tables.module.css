@@ -3,7 +3,6 @@
 /*******************************************/
 
 .impact_container {
-
   /* style={{ display: 'flex', flexDirection: 'column', height: '100%' }} */
 }
 
@@ -20,10 +19,6 @@
   align-items: flex-start;
   flex-wrap: wrap;
   margin-bottom: 16px;
-}
-
-.tcc_impacto {
-  
 }
 
 @media (max-width: 800px) {
@@ -77,18 +72,10 @@
   flex: 1;
 }
 
-.margin_initial {
-  display: flex;
-  text-align: center;
-  align-items: center;
-  min-height: 150px;
-  color: var(--tick);
-}
-
 .margin_container {
   overflow-y: auto;
   flex: 1;
-  margin-top: 20px; 
+  margin-top: 20px;
   display: flex;
   flex-direction: column;
 }
@@ -97,62 +84,12 @@
   /* width: 100%; */
   border-collapse: collapse;
   font-size: 0.875rem;
-  table-layout: fixed; 
+  table-layout: fixed;
 }
 
 .margin_thead {
   background-color: var(--tab-background);
   /* text-transform: uppercase; */
-  color:var(--tab-text);
-}
-
-.margin_tr {
-  transition: background-color 0.2s;
-  font-weight: 300;
-  text-align: left;
-  border-bottom:  1px solid var(--tab-background);
-}
-
-.margin_th {
-  font-weight: 400;
-  position: relative;
-  padding: 12px 8px;
-}
-
-.margin_td {
-  padding: 5px 8px;
-  color: var(--tab-text);
-}
-
-.update_button {
-  /* display: inline-flex; */
-  /* align-items: center; */
-  /* justify-content: center; */
-  margin-top: 10px;
-  padding: 6px 14px;
-  background-color: #3b82f6; /* Azul moderno */
-  color: #ffffff;
-  border: none;
-  /* border-radius: 6px; */
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  /* letter-spacing: 0.5px; */
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
-  /* margin-top: 8px; */
-}
-
-.update_button:hover {
-  background-color: #2563eb;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
-}
-
-.update_button:active {
-  transform: translateY(0);
-  box-shadow: 0 1px 2px rgba(59, 130, 246, 0.2);
 }
 
 .eap_initial {
@@ -165,6 +102,33 @@
   color: var(--tick);
 }
 
+.margin_tr,
+.margin_tr1 {
+  background-color: transparent; /* Movemos do inline para cá */
+  font-weight: 300;
+  transition: background-color 0.2s;
+}
+
+.margin_th {
+  font-weight: 400;
+  padding: 12px 8px;
+}
+
+.margin_td {
+  padding: 5px 8px;
+  color: var(--tab-text);
+  text-align: center;
+}
+
+.margin_th_item {
+  display: flex;
+  align-items: top;
+  justify-content: center; /* Garante que tudo no header nasça centralizado por padrão */
+  padding: 10px 8px;
+  gap: 4px;
+  transition: all 0.3s ease;
+}
+
 .table_footer {
   padding-inline: 10px;
   padding-bottom: 10px;
@@ -172,4 +136,16 @@
   font-size: 0.75rem; /* 12px */
   font-weight: 300;
   color: #888;
+}
+
+.sortable {
+  opacity: 0.5;
+}
+
+.sortable:hover {
+  opacity: 1 !important;
+}
+
+.sorted {
+  opacity: 1 !important;
 }

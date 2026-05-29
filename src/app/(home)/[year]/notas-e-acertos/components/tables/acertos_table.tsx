@@ -13,6 +13,8 @@ import {
 import styles from "./tables.module.css";
 import { useYearData } from "../../../../../../context/year_context";
 import { useSidebar } from "../../../../../../context/sidebar_context";
+import clsx from "clsx";
+import Sort from "../../../../../../components/svg/sort";
 
 type TableRow = {
   id: number;
@@ -174,7 +176,7 @@ export default function AcertosTable() {
                 {headerGroup.headers.map((header) => {
                   const isGroup = header.column.columns.length > 0;
                   const canSort = header.column.getCanSort() && !isGroup;
-
+                  const isSorted = header.column.getIsSorted();
                   return (
                     <th
                       key={header.id}
@@ -189,20 +191,37 @@ export default function AcertosTable() {
                           : undefined
                       }
                     >
-                      <div className={styles.probtable_th_item}>
+                      <div
+                        className={clsx(
+                          styles.probtable_th_item,
+                          canSort && styles.sortable,
+                          isSorted && styles.sorted,
+                        )}
+                        style={{
+                          cursor: canSort ? "pointer" : "default",
+                        }}
+                      >
+                        {" "}
                         {!header.isPlaceholder &&
                           flexRender(
                             header.column.columnDef.header,
                             header.getContext(),
                           )}
                         {canSort && (
-                          <span style={{ fontSize: "10px" }}>
-                            {{ asc: " 🔼", desc: " 🔽" }[
-                              header.column.getIsSorted() as string
-                            ] ?? null}
+                          <span
+                            style={{
+                              fontSize: "10px",
+                            }}
+                          >
+                            {{
+                              asc: <Sort height="20px" />,
+                              desc: <Sort height="20px" />,
+                            }[header.column.getIsSorted() as string] ?? (
+                              <Sort height="20px" />
+                            )}
                           </span>
                         )}
-                      </div>
+                      </div>{" "}
                     </th>
                   );
                 })}
@@ -216,16 +235,16 @@ export default function AcertosTable() {
                 <tr
                   key={row.id}
                   className={[
-                    `${styles.probtable_tr} `,
+                    `${styles.probtable_tr1} `,
                     `${isActive ? styles.row_active : ""}`,
                   ].join("")}
                   onClick={() => setAcertosNum(row.original.id)}
                   style={{
                     backgroundColor: isActive
-                      ? "rgba(0, 227, 150, 0.1)"
+                      ? "rgba(0, 0, 0, 0.03)"
                       : "transparent",
                     borderLeft: isActive
-                      ? "4px solid #00E396"
+                      ? "4px solid rgba(0, 0, 0, 0.5)"
                       : "4px solid transparent",
                     cursor: "pointer",
                   }}

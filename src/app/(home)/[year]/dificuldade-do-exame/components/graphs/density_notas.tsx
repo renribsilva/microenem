@@ -8,6 +8,14 @@ import { useYearData } from "../../../../../../context/year_context";
 import styles from "./graphs.module.css";
 import { FreqDensityType } from "../../../../../../types/year_types";
 
+const densidadeColor: Record<string, string> = {
+  curve: "#8b5cf6",
+  curve_fill: "rgba(139, 92, 241, 0.1)",
+  line: "#f97316",
+  fill: "rgba(139, 92, 241, 0.45)",
+  border: "rgba(139, 92, 241, 0.6)",
+};
+
 export default function DensityNotasChart() {
   // Constextos necessários
   const { deferredArea } = useHomeData();
@@ -15,7 +23,7 @@ export default function DensityNotasChart() {
   const activeSelectedRow = dificuldadeDoExameAux.activeSelectedRow;
   const densityDifData = dificuldadeDoExame.densityDifData;
   const describeDifData = dificuldadeDoExame.describeDifData;
-  const { panelColor, densidadeColor, gridColor, axisColor } = useChartTheme();
+  const { textColor, gridColor, axisColor } = useChartTheme();
 
   const { xMin, xMax } = useMemo(() => {
     if (!describeDifData?.notas) return { xMin: 0, xMax: 1000 };
@@ -119,13 +127,27 @@ export default function DensityNotasChart() {
       chart: {
         id: `density-${deferredArea}`,
         type: "area" as const,
-        toolbar: { show: true, offsetX: 0, offsetY: 0 },
+        toolbar: { show: true },
         zoom: { enabled: false },
         animations: {
           enabled: false,
           dynamicAnimation: {
             enabled: false,
           },
+        },
+      },
+      title: {
+        text: ["Curva de densidade"],
+        style: {
+          color: textColor,
+          fontSize: 16,
+        },
+      },
+      subtitle: {
+        text: ["Distribuição da densidade das notas."],
+        style: {
+          color: textColor,
+          fontSize: 13,
         },
       },
       colors: chartColors,
@@ -183,7 +205,7 @@ export default function DensityNotasChart() {
               label: [
                 "font-weight: bold",
                 "margin-left: 4px",
-                `color: ${panelColor}`,
+                `color: #fff`,
               ].join("; "),
               value: ["font-weight: bold"].join("; "),
             };
@@ -256,10 +278,9 @@ export default function DensityNotasChart() {
     };
   }, [
     describeDifData,
-    panelColor,
     axisColor,
     activeSelectedRow,
-    densidadeColor,
+    textColor,
     gridColor,
     xMin,
     xMax,
@@ -269,14 +290,6 @@ export default function DensityNotasChart() {
 
   return (
     <div style={{ flex: 1 }}>
-      <div className={styles.tcc_cabecalho}>
-        <div className={styles.tcc_title}>
-          <h3 className={styles.tcc_title_h3}>Curva de densidade das notas</h3>
-          <p className={styles.tcc_subtitle_p}>
-            Pontos da proficiência onde as notas se concentram mais.
-          </p>
-        </div>
-      </div>
       <Chart
         options={options}
         series={series}

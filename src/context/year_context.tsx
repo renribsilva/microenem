@@ -581,9 +581,13 @@ export function YearProvider({ children }: { children: ReactNode }) {
   // Função auxiliar para atualizar estado da área ativa
   const handleTabChange = (id: string) => {
     setActiveArea(id);
+    //EAP handle
     setEAPData(null);
     setIsInitialRender(true);
     setNeedUpdateEAP(true);
+    //Dificuldade do Exame handle
+    // setDensityDifData(null);
+    // setFrequencyDifData(null);
   };
 
   const formatValue: FormatValueType = (key, val, type) => {

@@ -9,7 +9,7 @@ import Dropdown from "../../../../../../components/tsx/dropdown";
 
 export default function TCCChart() {
   const { chartProps, activeTCC } = useHomeData();
-  const { panelColor, gridColor, axisColor } = useChartTheme();
+  const { textColor, gridColor, axisColor } = useChartTheme();
 
   const { chartColor, xMin, xMax, bMedio, proficienciaAtual, resultadoAtual } =
     chartProps;
@@ -125,7 +125,7 @@ export default function TCCChart() {
               label: [
                 "font-weight: bold",
                 "margin-left: 8px",
-                `color: ${panelColor}`,
+                `color: #fff`,
               ].join("; "),
               value: ["font-weight: bold"].join("; "),
             };
@@ -144,7 +144,8 @@ export default function TCCChart() {
               value: [
                 "font-weight: 300",
                 "opacity: 0.7",
-                `color: ${panelColor}`,
+                `color: #fff`,
+                "opacity: 0.7",
                 "margin: 0px",
                 "padding: 0px",
                 "padding: 5px",
@@ -241,6 +242,15 @@ export default function TCCChart() {
           },
         ],
       },
+      legend: {
+        position: "bottom",
+        labels: { colors: textColor },
+        offsetX: 20,
+        markers: {
+          strokeWidth: 0,
+          offsetX: -2,
+        },
+      },
     }),
     [
       chartColor,
@@ -248,9 +258,9 @@ export default function TCCChart() {
       axisColor,
       xMin,
       xMax,
-      panelColor,
       yBMedio,
       bMedio,
+      textColor,
       proficienciaAtual,
       resultadoAtual,
     ],

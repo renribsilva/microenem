@@ -17,7 +17,7 @@ interface TreemapSeries {
 }
 
 export default function FX_ETARIA() {
-  const { panelColor, textColor, gridColor } = useChartTheme();
+  const { textColor, gridColor } = useChartTheme();
   const { overviewData } = useYearData();
   const fxEtariaData = overviewData.fxEtariaData;
   const barColor = "#f0b335ff";
@@ -136,7 +136,7 @@ export default function FX_ETARIA() {
           show: true,
           formatter: function (val) {
             const css = {
-              bg: [`color: ${panelColor}`, "padding-left: 5px"].join("; "),
+              bg: [`color: #fff`, "padding-left: 5px"].join("; "),
             };
             return `<span style="${css.bg}">${val}<span>`;
           },
@@ -155,7 +155,7 @@ export default function FX_ETARIA() {
         show: false,
       },
     }),
-    [textColor, gridColor, panelColor, chartMax],
+    [textColor, gridColor, chartMax],
   );
 
   return (

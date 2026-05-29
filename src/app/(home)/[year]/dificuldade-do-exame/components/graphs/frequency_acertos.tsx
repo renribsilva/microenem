@@ -5,7 +5,6 @@ import Chart from "react-apexcharts";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import { useHomeData } from "../../../../../../context/home_context";
 import { useYearData } from "../../../../../../context/year_context";
-import styles from "./graphs.module.css";
 
 interface FreqItem {
   x: number;
@@ -14,6 +13,11 @@ interface FreqItem {
   strokeColor: string;
   abs: number;
 }
+const acertosColor: Record<string, string> = {
+  bar: "#10b77f33",
+  fill: "#10b77fcc",
+  line: "#f43f5e",
+};
 
 export default function FrequencyAcertosChart() {
   // Contexto necessário
@@ -22,7 +26,7 @@ export default function FrequencyAcertosChart() {
   const activeSelectedRow = dificuldadeDoExameAux.activeSelectedRow;
   const describeDifData = dificuldadeDoExame.describeDifData;
   const frequencyDifData = dificuldadeDoExame.frequencyDifData;
-  const { acertosColor, gridColor, axisColor, panelColor } = useChartTheme();
+  const { textColor, gridColor, axisColor } = useChartTheme();
 
   const xMin = 0;
   const xMax = 45;
@@ -96,13 +100,7 @@ export default function FrequencyAcertosChart() {
         data: dataWithColors,
       },
     ];
-  }, [
-    frequencyDifData,
-    deferredArea,
-    activeSelectedRow,
-    describeDifData,
-    acertosColor,
-  ]);
+  }, [frequencyDifData, deferredArea, activeSelectedRow, describeDifData]);
 
   const options: ApexCharts.ApexOptions = useMemo(() => {
     const isShape = activeSelectedRow
@@ -133,13 +131,28 @@ export default function FrequencyAcertosChart() {
       chart: {
         id: `freq-${deferredArea}`,
         type: "bar",
-        toolbar: { show: true, offsetX: 0, offsetY: 0 },
+        toolbar: { show: true },
         zoom: { enabled: false },
         animations: {
           enabled: false,
           dynamicAnimation: {
             enabled: false,
           },
+        },
+      },
+      title: {
+        text: ["Frequência de acertos"],
+        style: {
+          color: textColor,
+          fontSize: 16,
+        },
+      },
+      subtitle: {
+        text: ["Distribuição da frequência de acertos."],
+        floating: true,
+        style: {
+          color: textColor,
+          fontSize: 13,
         },
       },
       plotOptions: {
@@ -186,7 +199,7 @@ export default function FrequencyAcertosChart() {
               label: [
                 "font-weight: bold",
                 "margin-left: 4px",
-                `color: ${panelColor}`,
+                `color: #fff`,
               ].join("; "),
               value: ["font-weight: light"].join("; "),
             };
@@ -284,8 +297,6 @@ export default function FrequencyAcertosChart() {
     describeDifData,
     frequencyDifData,
     activeSelectedRow,
-    panelColor,
-    acertosColor,
     axisColor,
     gridColor,
     deferredArea,
@@ -293,16 +304,6 @@ export default function FrequencyAcertosChart() {
 
   return (
     <div style={{ flex: 1 }}>
-      <div className={styles.tcc_cabecalho}>
-        <div className={styles.tcc_title}>
-          <h3 className={styles.tcc_title_h3}>
-            Frequência relativa dos acertos
-          </h3>
-          <p className={styles.tcc_subtitle_p}>
-            Distribuição da frequência de acertos.
-          </p>
-        </div>
-      </div>
       <Chart
         options={options}
         series={series}

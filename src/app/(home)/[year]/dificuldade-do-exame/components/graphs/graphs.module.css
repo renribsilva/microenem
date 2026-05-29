@@ -10,10 +10,16 @@
 }
 
 .tcc_cabecalho {
-  /* background-color: aquamarine; */
   display: flex;
   justify-content: space-between;
   align-items: baseline;
+  gap: 30px;
+}
+
+.toolbar_div {
+  width: 40px;
+  height: 40px;
+  color: var(--panel);
 }
 
 @media (max-width: 800px) {
@@ -66,4 +72,3 @@
   /* height: 100%; */
   flex: 1;
 }
-

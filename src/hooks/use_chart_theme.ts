@@ -11,7 +11,7 @@ export function useChartTheme() {
   const [axisColor, setAxisColor] = useState(null);
 
   const colors: Record<string, string> = {
-    azul: "#2563eb",
+    azul: "#3284eb",
     amarela: "#eab308",
     branca: "#94a3b8",
     cinza: "#475569",

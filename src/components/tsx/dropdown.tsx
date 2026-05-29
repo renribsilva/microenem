@@ -18,7 +18,7 @@ function Dropdown() {
   const { chartColor } = chartProps;
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const { colorMap, gridColor, tickColor } = useChartTheme();
+  const { colorMap, gridColor, textColor } = useChartTheme();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -77,7 +77,7 @@ function Dropdown() {
                   backgroundColor: isSelected ? gridColor : "transparent",
                   color: isSelected
                     ? colorMap[info.corNome] || "#475569"
-                    : tickColor,
+                    : textColor,
                   borderLeft:
                     isSelected && colorMap
                       ? `4px solid ${colorMap[info.corNome]}` || "#475569"

@@ -141,18 +141,18 @@ export default function FrequencyAcertosChart() {
         },
       },
       title: {
-        text: ["Frequência de acertos"],
+        text: "Frequência de acertos",
         style: {
           color: textColor,
-          fontSize: 16,
+          fontSize: "16px",
         },
       },
       subtitle: {
-        text: ["Distribuição da frequência de acertos."],
+        text: "Distribuição da frequência de acertos.",
         floating: true,
         style: {
           color: textColor,
-          fontSize: 13,
+          fontSize: "13px",
         },
       },
       plotOptions: {
@@ -187,7 +187,12 @@ export default function FrequencyAcertosChart() {
           style: { color: axisColor, fontWeight: "bold" },
         },
       },
-      grid: { borderColor: gridColor },
+      grid: {
+        borderColor: gridColor,
+        padding: {
+          top: 22,
+        },
+      },
       legend: { show: false },
       tooltip: {
         theme: "dark",
@@ -296,6 +301,7 @@ export default function FrequencyAcertosChart() {
   }, [
     describeDifData,
     frequencyDifData,
+    textColor,
     activeSelectedRow,
     axisColor,
     gridColor,

@@ -5,7 +5,6 @@ import Chart from "react-apexcharts";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import { useHomeData } from "../../../../../../context/home_context";
 import { useYearData } from "../../../../../../context/year_context";
-import styles from "./graphs.module.css";
 import { FreqDensityType } from "../../../../../../types/year_types";
 
 const densidadeColor: Record<string, string> = {
@@ -137,17 +136,17 @@ export default function DensityNotasChart() {
         },
       },
       title: {
-        text: ["Curva de densidade"],
+        text: "Curva de densidade",
         style: {
           color: textColor,
-          fontSize: 16,
+          fontSize: "16px",
         },
       },
       subtitle: {
-        text: ["Distribuição da densidade das notas."],
+        text: "Distribuição da densidade das notas.",
         style: {
           color: textColor,
-          fontSize: 13,
+          fontSize: "13px",
         },
       },
       colors: chartColors,

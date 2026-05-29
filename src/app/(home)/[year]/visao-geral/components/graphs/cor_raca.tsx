@@ -12,9 +12,10 @@ interface CorRacaItem {
 }
 
 export default function COR_RACA() {
-  const { textColor, panelColor } = useChartTheme();
+  const { textColor } = useChartTheme();
   const { overviewData } = useYearData();
   const corRacaData = overviewData.corRacaData;
+
   const series: { data: CorRacaItem[] }[] = [
     {
       data: corRacaData.datasets[0].tree
@@ -32,7 +33,6 @@ export default function COR_RACA() {
       chart: {
         type: "treemap",
         toolbar: { show: true },
-        background: "transparent",
         animations: {
           enabled: false,
           dynamicAnimation: {
@@ -62,6 +62,7 @@ export default function COR_RACA() {
           distributed: true,
           enableShades: false,
           borderRadius: 0,
+          useFillColorAsStroke: true,
         },
       },
       dataLabels: {
@@ -109,7 +110,7 @@ export default function COR_RACA() {
           show: true,
           formatter: function (val) {
             const css = {
-              bg: [`color: ${panelColor}`, "padding-left: 5px"].join("; "),
+              bg: [`color: #fff`, "padding-left: 5px"].join("; "),
             };
             return `<span style="${css.bg}">${val}<span>`;
           },
@@ -119,7 +120,7 @@ export default function COR_RACA() {
         },
       },
     }),
-    [textColor, panelColor],
+    [textColor],
   );
 
   return (

@@ -10,42 +10,41 @@ export function useChartTheme() {
   const [tickColor, setTickColor] = useState(null);
   const [axisColor, setAxisColor] = useState(null);
 
+  const colors: Record<string, string> = {
+    azul: "#2563eb",
+    amarela: "#eab308",
+    branca: "#94a3b8",
+    cinza: "#475569",
+    laranja: "#f97316",
+    verde: "#22c55e",
+    roxa: "#8b5cf6",
+    rosa: "#db2777",
+  };
+
   const colorMap: Record<string, string> = {
-    Azul: "#2563eb",
-    Amarela: "#eab308",
-    Branca: "#94a3b8",
-    Cinza: "#475569",
-    "Laranja - Adaptada Ledor": "#f97316",
-    "Verde - Videoprova - Libras": "#22c55e",
-    "Roxa - Videoprova - Libras": "#8b5cf6",
-    Verde: "#22c55e",
-    "Verde (Ampliada)": "#22c55e",
-    "Verde (Superampliada)": "#22c55e",
-    Rosa: "#db2777",
-    "Rosa (Ampliada)": "#db2777",
-    "Rosa (Superampliada)": "#db2777",
-  };
-
-  const densidadeColor: Record<string, string> = {
-    curve: "#8b5cf6",
-    curve_fill: "rgba(139, 92, 241, 0.1)",
-    line: "#f97316",
-    fill: "rgba(139, 92, 241, 0.45)",
-    border: "rgba(139, 92, 241, 0.6)",
-  };
-
-  const acertosColor: Record<string, string> = {
-    bar: "rgba(16, 185, 129, 0.2)",
-    fill: "rgba(16, 185, 129, 0.8)",
-    line: "#f43f5e",
+    Azul: colors.azul,
+    Amarela: colors.amarela,
+    Branca: colors.branca,
+    Cinza: colors.cinza,
+    "Laranja - Adaptada Ledor": colors.laranja,
+    "Verde - Videoprova - Libras": colors.verde,
+    "Roxa - Videoprova - Libras": colors.roxa,
+    Verde: colors.verde,
+    "Verde (Ampliada)": colors.verde,
+    "Verde (Superampliada)": colors.verde,
+    Rosa: colors.rosa,
+    "Rosa (Ampliada)": colors.rosa,
+    "Rosa (Superampliada)": colors.rosa,
   };
 
   useEffect(() => {
     const updateThemeValues = () => {
+      // Acessa o estilo de um determinado elemento HTML
       const htmlElement = document.documentElement;
       setIsDark(htmlElement.classList.contains("dark"));
-
       const style = getComputedStyle(htmlElement);
+
+      // Extrai as cores definidas de acordo com o tema
       const txt_color = style.getPropertyValue("--foreground").trim();
       const panel_color = style.getPropertyValue("--panel").trim();
       const grid_color = style.getPropertyValue("--grid").trim();
@@ -90,9 +89,7 @@ export function useChartTheme() {
     panelColor,
     gridColor,
     colorMap,
-    densidadeColor,
     tickColor,
     axisColor,
-    acertosColor,
   };
 }

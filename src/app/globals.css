@@ -75,13 +75,11 @@ body {
   /* box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important; */
 }
 
-.apexcharts-menu-item:hover {
-  background: var(--tab-hover) !important;
-  /* color: var(--accent-color, #fff) !important; */
+.apexcharts-menu-icon:hover {
+  color: var(--foreground) !important;
 }
 
 /* Customiza os ícones do toolbar caso o modo dark do Apex não baste */
-.apexcharts-toolbar svg {
-  fill: var(--foreground) !important;
+.apexcharts-toolbar {
+  background: var(--panel) !important;
 }
-

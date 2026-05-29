@@ -16,6 +16,7 @@ export default function Treineiros() {
   const { overviewData } = useYearData();
   const data = overviewData.inscritosData;
 
+  console.log(data);
   const columns = useMemo<ColumnDef<InscritosItem>[]>(
     () => [
       {
@@ -56,11 +57,11 @@ export default function Treineiros() {
   return (
     <div className={styles.table_container}>
       <table className={styles.table_body}>
-        <thead>
+        <thead className={styles.table_thead}>
           {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
+            <tr key={headerGroup.id} className={styles.table_thead_tr}>
               {headerGroup.headers.map((header) => (
-                <th key={header.id}>
+                <th key={header.id} className={styles.table_thead_th}>
                   {flexRender(
                     header.column.columnDef.header,
                     header.getContext(),
@@ -72,9 +73,9 @@ export default function Treineiros() {
         </thead>
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
+            <tr key={row.id} className={styles.table_tbody_tr}>
               {row.getVisibleCells().map((cell) => (
-                <td key={cell.id}>
+                <td key={cell.id} className={styles.table_tbody_td}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}

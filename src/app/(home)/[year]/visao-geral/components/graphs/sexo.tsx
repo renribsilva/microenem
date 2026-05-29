@@ -28,6 +28,9 @@ export default function SEXO() {
         },
       },
       colors: doughnutColors,
+      stroke: {
+        show: false,
+      },
       labels: labels,
       plotOptions: {
         pie: {
@@ -48,7 +51,11 @@ export default function SEXO() {
       legend: {
         position: "top",
         labels: { colors: textColor },
-        offsetY: 0,
+        markers: {
+          strokeWidth: 0,
+          offsetX: -2,
+        },
+        offsetY: -4,
       },
       tooltip: {
         fillSeriesColor: false,

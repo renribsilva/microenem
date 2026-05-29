@@ -20,7 +20,8 @@ export default function FX_ETARIA() {
   const { panelColor, textColor, gridColor } = useChartTheme();
   const { overviewData } = useYearData();
   const fxEtariaData = overviewData.fxEtariaData;
-  const barColor = "rgba(255, 208, 53, 1)";
+  const barColor = "#f0b335ff";
+
   const series: TreemapSeries[] = useMemo(
     () =>
       fxEtariaData.datasets.map((dataset) => ({
@@ -36,12 +37,13 @@ export default function FX_ETARIA() {
 
   const allValues = fxEtariaData.datasets.flatMap((d) => d.data);
   const maxValue = Math.max(...allValues);
-  const chartMax = Math.ceil((maxValue + 10) / 10) * 10;
+  const chartMax = Math.ceil((maxValue + 20) / 10) * 10;
 
   const options: ApexCharts.ApexOptions = useMemo(
     () => ({
       chart: {
         type: "bar",
+        toolbar: { show: true },
         animations: {
           enabled: false,
           dynamicAnimation: {
@@ -60,8 +62,9 @@ export default function FX_ETARIA() {
       colors: [barColor],
       dataLabels: {
         enabled: true,
+        textAnchor: "start",
         formatter: (val: number) => `${val}%`,
-        offsetX: 20,
+        offsetX: 30,
         style: {
           fontSize: "10px",
           fontWeight: "300",
@@ -71,6 +74,7 @@ export default function FX_ETARIA() {
       xaxis: {
         type: "numeric",
         max: chartMax,
+        min: 0,
         labels: {
           style: {
             colors: textColor,
@@ -90,7 +94,7 @@ export default function FX_ETARIA() {
         xaxis: { lines: { show: true } },
         yaxis: { lines: { show: false } },
         padding: {
-          top: -20,
+          top: -5,
         },
       },
       tooltip: {

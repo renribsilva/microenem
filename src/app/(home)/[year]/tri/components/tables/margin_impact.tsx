@@ -177,8 +177,8 @@ export default function MarginImpactTable() {
             Impacto virtual do item
           </h3>
           <p className={styles.tcc_subtitle_p}>
-            &quotQual seria o impacto na nota final se um item tivesse o seu
-            status invertido, mantidos os outros status inalterados?&quot
+            Qual seria o impacto na nota final se um item tivesse o seu status
+            invertido, mantidos os outros status inalterados?
           </p>
         </div>
       </div>

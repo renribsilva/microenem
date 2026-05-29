@@ -1,3 +1,6 @@
+"use client";
+
+import { useSidebar } from "../../context/sidebar_context";
 import styles from "./components.module.css";
 
 interface TabItem {
@@ -12,6 +15,7 @@ interface TabsNavigationProps {
 }
 
 function TabsNavigation({ items, activeId, onTabChange }: TabsNavigationProps) {
+  const { isMobile } = useSidebar();
   return (
     <div className={styles.tab_container}>
       {items.map((tab) => (
@@ -20,7 +24,7 @@ function TabsNavigation({ items, activeId, onTabChange }: TabsNavigationProps) {
           onClick={() => onTabChange(tab.id)}
           className={styles.tab_button}
         >
-          {tab.label}
+          {isMobile ? tab.id : tab.label}
           {activeId === tab.id && <div className={styles.tab_indicator} />}
         </button>
       ))}

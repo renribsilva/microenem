@@ -225,11 +225,10 @@ export default function MarginImpactTable() {
                               }}
                             >
                               {{
-                                asc: <Sort height="20px" />,
-                                desc: <Sort height="20px" />,
-                              }[header.column.getIsSorted() as string] ?? (
-                                <Sort height="20px" />
-                              )}
+                                asc: !isMobile && <Sort height="20px" />,
+                                desc: !isMobile && <Sort height="20px" />,
+                              }[header.column.getIsSorted() as string] ??
+                                (!isMobile && <Sort height="20px" />)}
                             </span>
                           )}
                         </div>
@@ -247,7 +246,6 @@ export default function MarginImpactTable() {
                     className={clsx(styles.margin_tr1)}
                     style={needUpdateEAP ? { opacity: 0.2 } : {}}
                   >
-                    {" "}
                     {row.getVisibleCells().map((cell) => (
                       <td key={cell.id} className={styles.margin_td}>
                         {flexRender(

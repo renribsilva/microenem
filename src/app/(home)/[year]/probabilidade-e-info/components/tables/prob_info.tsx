@@ -238,11 +238,10 @@ export default function ProbsInfoTable() {
                           }}
                         >
                           {{
-                            asc: <Sort height="20px" />,
-                            desc: <Sort height="20px" />,
-                          }[header.column.getIsSorted() as string] ?? (
-                            <Sort height="20px" />
-                          )}
+                            asc: !isMobile && <Sort height="20px" />,
+                            desc: !isMobile && <Sort height="20px" />,
+                          }[header.column.getIsSorted() as string] ??
+                            (!isMobile && <Sort height="20px" />)}
                         </span>
                       )}
                     </div>{" "}

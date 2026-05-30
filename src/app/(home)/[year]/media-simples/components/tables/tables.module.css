@@ -1,6 +1,6 @@
 .meantable_container {
   display: flex;
-  flex-direction: column;  
+  flex-direction: column;
 }
 
 .table_scroll_y {
@@ -17,14 +17,14 @@
   border-collapse: collapse;
   font-size: 0.875rem;
   /* Isso aqui é o que garante a largura fixa */
-  table-layout: fixed; 
+  table-layout: fixed;
 }
 
 .meantable_thead_sticky {
   position: sticky;
   top: 0;
   z-index: 10;
-  color:var(--tab-text);
+  color: var(--tab-text);
   background-color: var(--tab-hover);
 }
 
@@ -56,14 +56,14 @@
 /* Estilo para a linha que você clicou */
 .row_active {
   background-color: rgba(0, 227, 150, 0.1) !important;
-  border-left: 4px solid #00E396;
+  border-left: 4px solid #00e396;
 }
 
 .table_footer {
   margin-top: 10px;
   font-size: 0.9rem;
   color: var(--foreground);
-} 
+}
 
 /**************************************************/
 /*********************CANDIDATE********************/
@@ -83,15 +83,15 @@
   /* margin-bottom: 20px; */
 }
 
-.main_info { 
-  display: flex; 
-  align-items: center; 
-  gap: 15px; 
+.main_info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
   /* margin-bottom: 15px;  */
 }
 
 .rank_badge {
-  background: #00E396;
+  background: #00e396;
   color: #000;
   padding: 8px 12px;
   border-radius: 18px;
@@ -128,8 +128,8 @@
 /* Estado Ativo */
 .tabs button.active {
   opacity: 1;
-  color: #00E396; /* Verde do seu tema */
-  border-bottom: 2px solid #00E396;
+  color: #00e396; /* Verde do seu tema */
+  border-bottom: 2px solid #00e396;
 }
 
 /* Conteúdo da Tab */
@@ -162,13 +162,12 @@
 }
 
 .static_thead {
-  color:var(--tab-text);
+  color: var(--tab-text);
   /* background-color: var(--tab-hover); */
   text-align: left;
 }
 
 .static_tr {
-
 }
 
 .static_th {
@@ -205,10 +204,29 @@
   margin-bottom: 4px;
 }
 
-.comp_label { width: 100px; font-size: 0.75rem; }
-.comp_bar_bg { flex: 1; height: 6px; background: #333; border-radius: 3px; }
-.comp_bar_fill { height: 100%; background: #00E396; border-radius: 3px; }
-.comp_val { width: 30px; font-weight: '300'; font-size: 0.85rem; }
+.comp_label {
+  width: 100px;
+  font-size: 0.75rem;
+}
+
+.comp_bar_bg {
+  flex: 1;
+  height: 6px;
+  background: var(--tab-hover);
+  border-radius: 3px;
+}
+
+.comp_bar_fill {
+  height: 100%;
+  background: #00e396;
+  border-radius: 3px;
+}
+
+.comp_val {
+  width: 30px;
+  font-weight: "300";
+  font-size: 0.85rem;
+}
 
 .scores_content {
   /* background-color: aquamarine; */
@@ -239,12 +257,20 @@
   border-radius: 2px;
 }
 
-.correct { background: #00E396; }
-.wrong { background: #ff4b4b; }
-.abandoned { background: #5e5e5e; }
+.correct {
+  background: #00e396;
+}
+.wrong {
+  background: #ff4b4b;
+}
+.abandoned {
+  background: #5e5e5e;
+}
 
 @media (max-width: 1000px) {
-  .score_dots_grid { grid-template-columns: repeat(15, 1fr); }
+  .score_dots_grid {
+    grid-template-columns: repeat(15, 1fr);
+  }
 }
 
 /************************************************/
@@ -264,7 +290,7 @@
   align-items: center;
   gap: 8px;
   font-size: 0.85rem;
-  color: #666;
+  color: var(--tab-text);
 }
 
 /* Garante que o ponto na legenda tenha o mesmo tamanho dos pontos do mapa */
@@ -310,6 +336,6 @@
   pointer-events: none; /* ESSENCIAL para não tremer */
   z-index: 9999;
   white-space: nowrap;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }

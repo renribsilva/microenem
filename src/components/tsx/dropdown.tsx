@@ -43,6 +43,7 @@ function Dropdown() {
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
+            fontSize: "14px",
           }}
         >
           Prova:{" "}

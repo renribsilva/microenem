@@ -48,7 +48,7 @@
 .probtable_td {
   padding: 10px;
   border-bottom: 1px solid var(--grid);
-  text-align: left; /* Centraliza o conteúdo das linhas */
+  text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

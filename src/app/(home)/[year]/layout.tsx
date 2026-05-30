@@ -8,7 +8,7 @@ function YearLayout({ children }: { children: React.ReactNode }) {
       <Navbar />
       <main>{children}</main>
       <div className={styles.table_footer}>
-        Aviso: a análise dos microdados do ENEM apresentada nesta aplicação está
+        Aviso: a análise dos microdados do ENEM apresentada neste saite está
         circunscrita aos dados dos que participaram de ao menos um dia da
         aplicação regular do exame (incluindo treineiros) – não inclui
         reaplicações, versões digitais ou adaptadas do exame. O motivo dessa

@@ -196,7 +196,7 @@ export default function ProbsInfoTable() {
       <table className={styles.probtable_table}>
         <thead className={styles.probtable_thead}>
           {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id} className={styles.probtable_tr}>
+            <tr key={headerGroup.id} className={styles.probtable_thead_tr}>
               {headerGroup.headers.map((header) => {
                 const isGroup = header.column.columns.length > 0;
                 const canSort = header.column.getCanSort() && !isGroup;
@@ -206,7 +206,7 @@ export default function ProbsInfoTable() {
                     key={header.id}
                     colSpan={header.colSpan}
                     className={[
-                      `${styles.probtable_th} `,
+                      `${styles.probtable_thead_th} `,
                       `${isGroup ? styles.probtable_group_th : ""}`,
                     ].join("")}
                     onClick={

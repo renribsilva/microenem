@@ -131,15 +131,15 @@ export default function MarginImpactTable() {
       }),
       columnHelper.accessor("a", {
         header: "a¹",
-        cell: (info) => info.getValue().toFixed(3),
+        cell: (info) => info.getValue()?.toFixed(3) ?? "---",
       }),
       columnHelper.accessor("b", {
         header: "b²",
-        cell: (info) => info.getValue().toFixed(3),
+        cell: (info) => info.getValue()?.toFixed(3) ?? "---",
       }),
       columnHelper.accessor("c", {
         header: "c³",
-        cell: (info) => info.getValue().toFixed(3),
+        cell: (info) => info.getValue()?.toFixed(3) ?? "---",
       }),
       columnHelper.accessor("impacto", {
         header: "Impacto",

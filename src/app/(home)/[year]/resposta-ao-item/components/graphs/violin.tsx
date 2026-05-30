@@ -91,11 +91,6 @@ export default function ViolinBinsChart() {
         colors: [gridColor],
       },
       dataLabels: { enabled: false },
-      yaxis: {
-        labels: {
-          style: { colors: axisColor },
-        },
-      },
       tooltip: {
         theme: "dark",
         followCursor: true,
@@ -201,9 +196,18 @@ export default function ViolinBinsChart() {
         padding: {
           bottom: 20,
         },
+        borderColor: gridColor,
+      },
+      yaxis: {
+        labels: {
+          style: { colors: axisColor },
+        },
       },
       xaxis: {
         categories: binsData?.labels || [],
+        axisBorder: {
+          show: false,
+        },
         min: -maxAbsValue,
         max: maxAbsValue,
         tickAmount: isMobile ? 2 : 4,
@@ -222,7 +226,6 @@ export default function ViolinBinsChart() {
               });
               return `${formatted}k`;
             }
-
             return absoluteVal.toString();
           },
         },
@@ -231,6 +234,10 @@ export default function ViolinBinsChart() {
         labels: { colors: textColor },
         floating: true,
         offsetX: 20,
+        markers: {
+          strokeWidth: 0,
+          offsetX: -2,
+        },
       },
       title: {
         text: `Frequência de resposta ao item ${lastItemActivateNum}`,

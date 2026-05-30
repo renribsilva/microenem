@@ -12,19 +12,30 @@
 }
 
 .probtable_thead {
-  background-color: var(--tab-background);
+  background-color: var(--tab-hover);
   /* text-transform: uppercase; */
 }
 
-.probtable_th {
+.probtable_thead_th {
   font-weight: 400;
   position: relative;
 }
 
 /* Estilo apenas para a linha superior (os Grupos) */
 .probtable_group_th {
-  padding-bottom: 8px;
+  padding: 5px;
   opacity: 0.5;
+}
+
+.probtable_group_th::after {
+  content: "";
+  position: absolute;
+  bottom: 2px;
+  left: 8px;
+  right: 8px;
+  height: 1px;
+  background-color: var(--tab-text);
+  opacity: 0.3;
 }
 
 .probtable_th_item {
@@ -78,7 +89,7 @@
 
 .probtable_tr1:hover {
   /* background-color: aquamarine; */
-  background-color: rgba(0, 0, 0, 0.03) !important;
+  background-color: var(--tab-hover) !important;
 }
 
 /* Linha abandonada */

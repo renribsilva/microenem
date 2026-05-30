@@ -15,6 +15,7 @@ import { useYearData } from "../../../../../../context/year_context";
 import { useSidebar } from "../../../../../../context/sidebar_context";
 import clsx from "clsx";
 import Sort from "../../../../../../components/svg/sort";
+import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 
 type TableRow = {
   id: number;
@@ -29,6 +30,7 @@ type TableRow = {
 
 export default function AcertosTable() {
   const { acertosData, acertosNum, setAcertosNum } = useYearData();
+  const { tabColor } = useChartTheme();
   const { isMobile } = useSidebar();
   const [sorting, setSorting] = useState<SortingState>([
     { id: "id", desc: false },
@@ -182,7 +184,7 @@ export default function AcertosTable() {
                       key={header.id}
                       colSpan={header.colSpan}
                       className={[
-                        `${styles.probtable_th} `,
+                        `${styles.probtable_thead_th} `,
                         `${isGroup ? styles.probtable_group_th : ""}`,
                       ].join("")}
                       onClick={
@@ -239,9 +241,7 @@ export default function AcertosTable() {
                   ].join("")}
                   onClick={() => setAcertosNum(row.original.id)}
                   style={{
-                    backgroundColor: isActive
-                      ? "rgba(0, 0, 0, 0.03)"
-                      : "transparent",
+                    backgroundColor: isActive ? tabColor : "transparent",
                     borderLeft: isActive
                       ? "4px solid rgba(0, 0, 0, 0.5)"
                       : "4px solid transparent",

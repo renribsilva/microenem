@@ -20,7 +20,7 @@
   --color-grid-dark: rgba(255, 255, 255, 0.05);
   --color-tick-dark: rgba(102, 102, 102);
 
-  --color-tab-background-dark: #27272a;
+  --color-tab-background-dark: #272340;
   --color-tab-border-dark: #3f3f46;
   --color-tab-text-dark: #a1a1aa;
   --color-tab-hover-dark: #3f3f46;
@@ -35,7 +35,7 @@
   --logo: #ffffff;
   --shadow: rgba(0, 0, 0, 0.4) 0px 4px 12px;
   --grid: var(--color-grid-dark);
-  --tab-background: var(--color-tab-background-dark);
+  --tab-hover: var(--color-tab-background-dark);
   --tab-border: var(--color-tab-border-dark);
   --tab-text: var(--color-tab-text-dark);
   --tab-hover: var(--color-tab-hover-dark);
@@ -50,8 +50,8 @@
   --panel: var(--color-panel-light);
   --logo: #1a1a1b;
   --shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px;
-  --grid: var(--color-grid-light); /* Corrigido: era ligth */
-  --tab-background: var(--color-tab-background-light);
+  --grid: var(--color-grid-light);
+  --tab-hover: var(--color-tab-background-light);
   --tab-border: var(--color-tab-border-light);
   --tab-text: var(--color-tab-text-light);
   --tab-hover: var(--color-tab-hover-light);
@@ -69,7 +69,7 @@ body {
 }
 
 .apexcharts-menu {
-  background: var(--tab-background) !important;
+  background: var(--tab-hover) !important;
   border: 1px solid var(--tab-border) !important;
   color: var(--foreground) !important;
   /* box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important; */

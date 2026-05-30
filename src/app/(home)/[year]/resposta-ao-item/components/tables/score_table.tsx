@@ -17,6 +17,7 @@ import Dropdown from "../../../../../../components/tsx/dropdown";
 import clsx from "clsx";
 import { useSidebar } from "../../../../../../context/sidebar_context";
 import Sort from "../../../../../../components/svg/sort";
+import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 
 type TableRow = {
   id: number;
@@ -32,6 +33,7 @@ type TableRow = {
 
 export default function ScoreTable() {
   const { selectedLabel, deferredArea } = useHomeData();
+  const { tabColor } = useChartTheme();
   const { isMobile } = useSidebar();
   const {
     respostaAoItemData,
@@ -309,7 +311,7 @@ export default function ScoreTable() {
                     key={header.id}
                     colSpan={header.colSpan}
                     className={clsx(
-                      styles.probtable_th,
+                      styles.probtable_thead_th,
                       isGroup && styles.probtable_group_th,
                     )}
                     onClick={
@@ -376,7 +378,7 @@ export default function ScoreTable() {
                 }}
                 style={{
                   backgroundColor: isActive
-                    ? "rgba(0, 0, 0, 0.03)"
+                    ? tabColor
                     : isAbandonado
                       ? "rgba(255, 75, 75, 0.05)"
                       : "transparent",

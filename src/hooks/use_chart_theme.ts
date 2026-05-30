@@ -9,6 +9,7 @@ export function useChartTheme() {
   const [gridColor, setGridColor] = useState(null);
   const [tickColor, setTickColor] = useState(null);
   const [axisColor, setAxisColor] = useState(null);
+  const [tabColor, setTabColor] = useState(null);
 
   const colors: Record<string, string> = {
     azul: "#3284eb",
@@ -50,6 +51,7 @@ export function useChartTheme() {
       const grid_color = style.getPropertyValue("--grid").trim();
       const tick_color = style.getPropertyValue("--tick").trim();
       const axis_color = style.getPropertyValue("--tick").trim();
+      const tab_color = style.getPropertyValue("--tab-hover").trim();
 
       if (txt_color) {
         setTextColor(txt_color);
@@ -69,6 +71,10 @@ export function useChartTheme() {
 
       if (axis_color) {
         setAxisColor(axis_color);
+      }
+
+      if (tab_color) {
+        setTabColor(tab_color);
       }
     };
 
@@ -91,5 +97,6 @@ export function useChartTheme() {
     colorMap,
     tickColor,
     axisColor,
+    tabColor,
   };
 }

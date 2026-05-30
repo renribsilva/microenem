@@ -130,7 +130,7 @@ function ItensButtons() {
               }}
               className={styles.itens_buttons}
               style={{
-                border: `2px solid ${s.border}`,
+                border: `1px solid ${s.border}`,
                 backgroundColor: s.bg,
                 color: s.text,
                 opacity: isAbandoned && !status ? 0.6 : 1,

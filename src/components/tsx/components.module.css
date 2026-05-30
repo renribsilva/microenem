@@ -325,7 +325,7 @@
 /* Container Principal */
 .shell_container {
   padding: 0px 15px;
-  background: var(--tab-background); /* Ajustado para seu tema dark */
+  background: var(--tab-hover);
   border-radius: 12px;
   /* border: 1px solid var(--tab-border); */
   z-index: 50;
@@ -501,9 +501,10 @@
 
 .dropdown_button {
   padding: 8px 12px;
+  margin-bottom: 2px;
   border-radius: 8px;
-  border: 1px solid var(--grid);
-  background-color: var(--panel);
+  border: 0px;
+  background-color: var(--tab-hover);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -524,6 +525,10 @@
   max-height: 250px;
   overflow-y: auto;
   z-index: 101;
+}
+
+.dropdown_list_item:hover {
+  background-color: var(--tab-hover) !important;
 }
 
 .link_source {

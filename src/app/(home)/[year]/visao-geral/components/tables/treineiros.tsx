@@ -16,7 +16,6 @@ export default function Treineiros() {
   const { overviewData } = useYearData();
   const data = overviewData.inscritosData;
 
-  console.log(data);
   const columns = useMemo<ColumnDef<InscritosItem>[]>(
     () => [
       {

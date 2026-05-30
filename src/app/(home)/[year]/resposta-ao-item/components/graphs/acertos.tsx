@@ -10,7 +10,7 @@ import { useSidebar } from "../../../../../../context/sidebar_context";
 export default function AcertosChart() {
   const { chartProps, activeTCC } = useHomeData();
   const { isMobile } = useSidebar();
-  const { panelColor, axisColor, textColor } = useChartTheme();
+  const { gridColor, panelColor, axisColor, textColor } = useChartTheme();
   const { lastItemActivate, lastItemActivateNum, probInfoData, itemGraphData } =
     useYearData();
 
@@ -73,6 +73,9 @@ export default function AcertosChart() {
         min: xMin,
         max: xMax,
         tickAmount: isMobile ? 5 : 10,
+        axisBorder: {
+          show: false,
+        },
         labels: {
           style: { colors: axisColor },
           // Proteção aqui:
@@ -103,6 +106,7 @@ export default function AcertosChart() {
         padding: {
           bottom: 30,
         },
+        borderColor: gridColor,
       },
       tooltip: {
         enabled: false,
@@ -205,6 +209,7 @@ export default function AcertosChart() {
   }, [
     activeTCC,
     axisColor,
+    gridColor,
     xMin,
     chartColor,
     panelColor,

@@ -232,6 +232,7 @@ export default function ViolinBinsChart() {
       },
       legend: {
         labels: { colors: textColor },
+        inverseOrder: true,
         floating: true,
         offsetX: 20,
         markers: {

@@ -11,18 +11,14 @@ export default function AcertosChart() {
   const { chartProps, activeTCC } = useHomeData();
   const { isMobile } = useSidebar();
   const { gridColor, panelColor, axisColor, textColor } = useChartTheme();
-  const { lastItemActivate, lastItemActivateNum, probInfoData, itemGraphData } =
+  const { lastItemActivate, lastItemActivateNum, itemGraphData } =
     useYearData();
 
   const { chartColor } = chartProps;
-  const probData = probInfoData.probData;
   const parentRef = useRef<HTMLDivElement>(null);
   const { xMin, xMax } = chartProps;
 
   const series = useMemo(() => {
-    if (!probData || !lastItemActivate || !probData[lastItemActivate]) {
-      return [];
-    }
     if (!itemGraphData || !Array.isArray(itemGraphData.x)) {
       return [];
     }
@@ -36,7 +32,7 @@ export default function AcertosChart() {
         })),
       },
     ];
-  }, [itemGraphData, lastItemActivate, probData]);
+  }, [itemGraphData]);
 
   const options: ApexCharts.ApexOptions = useMemo(() => {
     return {

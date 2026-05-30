@@ -121,7 +121,7 @@ export default function ScoreTable() {
         },
       }),
       columnHelper.accessor("freq_acerto", {
-        header: "Acerto",
+        header: "Certa",
         cell: (info) =>
           info.row.original.abandonado ? (
             <span style={{ color: "#ccc" }}>—</span>
@@ -138,7 +138,7 @@ export default function ScoreTable() {
           ),
       }),
       columnHelper.accessor("freq_erro", {
-        header: "Erro",
+        header: "Errada",
         cell: (info) =>
           info.row.original.abandonado ? (
             <span style={{ color: "#ccc" }}>—</span>
@@ -186,7 +186,7 @@ export default function ScoreTable() {
       }),
       columnHelper.group({
         id: "score_grupo",
-        header: isMobile ? "Frequência" : "Frequência de Respostas",
+        header: isMobile ? "Frequência" : "Frequência de Resposta",
         columns: scoreCols,
       }),
     ];

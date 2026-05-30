@@ -10,7 +10,7 @@ import { useSidebar } from "../../../../../../context/sidebar_context";
 export default function ViolinBinsChart() {
   const { respostaAoItemData, lastItemActivate, lastItemActivateNum } =
     useYearData();
-  const { panelColor, textColor, axisColor, gridColor } = useChartTheme();
+  const { textColor, axisColor, gridColor } = useChartTheme();
   const { activeTCC } = useHomeData();
   const { isMobile } = useSidebar();
 
@@ -103,7 +103,7 @@ export default function ViolinBinsChart() {
               label: [
                 "font-weight: bold",
                 "margin-left: 8px",
-                `color: ${panelColor}`,
+                `color: #fff`,
               ].join("; "),
               value: ["font-weight: bold"].join("; "),
             };
@@ -122,7 +122,7 @@ export default function ViolinBinsChart() {
               value: [
                 "font-weight: 300",
                 "opacity: 0.7",
-                `color: ${panelColor}`,
+                `color: #fff`,
                 "margin: 0px",
                 "padding: 0px",
                 "padding: 5px",
@@ -262,7 +262,6 @@ export default function ViolinBinsChart() {
       maxAbsValue,
       textColor,
       axisColor,
-      panelColor,
       lastItemActivateNum,
       gridColor,
     ],

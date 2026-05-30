@@ -23,7 +23,7 @@ interface NotaItem {
 
 export default function NotasRedacaoChart() {
   const { redacaoData } = useYearData();
-  const { panelColor, textColor, gridColor, axisColor } = useChartTheme();
+  const { textColor, gridColor, axisColor } = useChartTheme();
   const { selectedRowId } = useHomeData();
   const [selectedNota, setSelectedNota] = useState<NotaKey>("NU_NOTA_REDACAO");
 
@@ -199,7 +199,7 @@ export default function NotasRedacaoChart() {
           show: true,
           formatter: function (val) {
             const css = {
-              bg: [`color: ${panelColor}`, "padding-left: 5px"].join("; "),
+              bg: [`color: #fff`, "padding-left: 5px"].join("; "),
             };
             return `<span style="${css.bg}">Nota: ${val}<span>`;
           },
@@ -209,14 +209,7 @@ export default function NotasRedacaoChart() {
         },
       },
     };
-  }, [
-    axisColor,
-    gridColor,
-    panelColor,
-    selectedRowId,
-    currentData,
-    categories,
-  ]);
+  }, [axisColor, gridColor, selectedRowId, currentData, categories]);
 
   const selectOptions: { key: NotaKey; label: string }[] = [
     { key: "NU_NOTA_REDACAO", label: "Nota Total" },

@@ -20,7 +20,7 @@
 }
 
 .table_body tr {
-  border-bottom: none; 
+  border-bottom: none;
   white-space: nowrap;
 }
 
@@ -33,7 +33,7 @@
 }
 .table_body th {
   text-align: left;
-  padding: 10px
+  padding: 10px;
 }
 
 .table_body td {
@@ -58,9 +58,9 @@
 }
 
 .describe_thead {
-  background-color:var(--tab-hover);
+  background-color: var(--tab-hover);
   text-transform: uppercase;
-  color:var(--tab-text);
+  color: var(--tab-text);
 }
 
 .describe_th {
@@ -75,7 +75,7 @@
 }
 
 .describe_tr:hover {
-  background-color:var(--background);
+  background-color: var(--tab-hover);
 }
 
 .describe_tr.row_selected {

@@ -77,7 +77,7 @@ export default function ScoreTable() {
       ...(!isMobile
         ? [
             columnHelper.accessor("abandonado", {
-              header: "Aband?",
+              header: "Anulado",
               cell: (info) => {
                 const val = info.getValue();
                 return (
@@ -178,37 +178,12 @@ export default function ScoreTable() {
         : []),
     ];
 
-    const paramCols = [
-      // Só inclui Código se não for mobile
-      ...(!isMobile
-        ? [
-            columnHelper.accessor("param_b", {
-              header: "b*",
-              cell: (info) => (
-                <span style={{ fontSize: "0.85rem", color: "#888" }}>
-                  {info.getValue() || "—"}
-                </span>
-              ),
-            }),
-          ]
-        : []),
-    ];
-
     return [
       columnHelper.group({
         id: "identificacao_grupo",
         header: isMobile ? "Item" : "Identificação",
         columns: idCols,
       }),
-      ...(!isMobile
-        ? [
-            columnHelper.group({
-              id: "param_grupo",
-              header: isMobile ? "Param" : "Parâmetro",
-              columns: paramCols,
-            }),
-          ]
-        : []),
       columnHelper.group({
         id: "score_grupo",
         header: isMobile ? "Frequência" : "Frequência de Respostas",
@@ -402,12 +377,6 @@ export default function ScoreTable() {
           })}
         </tbody>
       </table>
-      {!isMobile && (
-        <div className={styles.table_footer}>
-          * Parâmetro de dificuldade: associado à dificuldade do item, sendo que
-          quanto maior seu valor, mais difícil é o item.
-        </div>
-      )}
     </section>
   );
 }

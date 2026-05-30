@@ -140,6 +140,9 @@ export default function FrequencyAcertosChart() {
           },
         },
       },
+      noData: {
+        text: "Atualizando...",
+      },
       title: {
         text: "Frequência de acertos",
         style: {

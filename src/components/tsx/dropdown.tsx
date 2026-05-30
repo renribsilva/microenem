@@ -46,7 +46,9 @@ function Dropdown() {
           }}
         >
           Prova:{" "}
-          <span style={{ color: chartColor }}>{activeTCC?.metadata?.cor}</span>
+          <span style={{ color: chartColor }}>
+            {activeTCC?.metadata?.cor ?? "..."}
+          </span>
         </span>
         <span
           style={{

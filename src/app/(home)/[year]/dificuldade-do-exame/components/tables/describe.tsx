@@ -15,10 +15,42 @@ import { clsx } from "clsx";
 
 const columnHelper = createColumnHelper<TableDataItem>();
 
+// Lista estática com a estrutura fixa de todas as medidas necessárias na tabela
+const MEDIDAS_PADRAO = [
+  { id: "mean", metric: "Média" },
+  { id: "median", metric: "Mediana" },
+  { id: "mode", metric: "Moda" },
+  { id: "min", metric: "Mínima¹" },
+  { id: "max", metric: "Máxima²" },
+  { id: "sd", metric: "Desvio Padrão" },
+  { id: "q1", metric: "1º quartil" },
+  { id: "q3", metric: "3º quartil" },
+  { id: "p99", metric: "Percentil 99" },
+  { id: "skew", metric: "Assimetria" },
+  { id: "kurtosis", metric: "Curtose" },
+];
 export function DescribeTable() {
   const { deferredArea, selectedRowId, setSelectedRowId } = useHomeData();
-  const { dificuldadeDoExameAux } = useYearData();
+  const { dificuldadeDoExame, dificuldadeDoExameAux } = useYearData();
   const describeRowData = dificuldadeDoExameAux.describeRowData;
+  const describeDifData = dificuldadeDoExame.describeDifData;
+  const stableData = useMemo<TableDataItem[]>(() => {
+    const hasData = describeRowData?.data && describeRowData.data.length > 0;
+
+    return MEDIDAS_PADRAO.map((medida) => {
+      // Se houver dados carregados, procura a linha correspondente pelo ID
+      const realRow = hasData
+        ? describeRowData.data.find((item) => item.id === medida.id)
+        : null;
+
+      return {
+        id: medida.id,
+        metric: realRow?.metric || medida.metric,
+        nota: !describeDifData ? "---" : realRow?.nota || "---",
+        acerto: !describeDifData ? "---" : realRow?.acerto || "---",
+      };
+    });
+  }, [describeRowData, describeDifData]);
 
   const columns = useMemo(
     () => [
@@ -46,12 +78,10 @@ export function DescribeTable() {
 
   // eslint-disable-next-line
   const table = useReactTable({
-    data: describeRowData.data,
+    data: stableData, // Usa a lista de dados protegida contra quebras
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
-
-  if (!describeRowData.data.length) return null;
 
   return (
     <div className={styles.describe_wrapper}>
@@ -98,14 +128,22 @@ export function DescribeTable() {
         </table>
         <div className={styles.describe_footer}>
           <div>
-            ¹ Prova de referência: {describeRowData.cor_min_ref} (cod:{" "}
-            {describeRowData.cod_min_ref})
+            <span>¹ Prova de referência: </span>
+            {describeRowData?.cor_min_ref || "---"} (cod:{" "}
+            {describeRowData?.cod_min_ref || "---"})
           </div>
           <div>
-            ² Prova de referência: {describeRowData.cor_max_ref} (cod:{" "}
-            {describeRowData.cod_max_ref})
+            <span>² Prova de referência: </span>
+            {describeRowData?.cor_max_ref || "---"} (cod:{" "}
+            {describeRowData?.cod_max_ref || "---"})
           </div>
-          <div>(n = {describeRowData.n.toLocaleString("pt-BR")})</div>
+          <div>
+            (n ={" "}
+            {describeRowData?.n
+              ? describeRowData.n.toLocaleString("pt-BR")
+              : "0"}
+            )
+          </div>
         </div>
       </div>
     </div>

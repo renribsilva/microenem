@@ -51,6 +51,7 @@ import {
   GetParamByLabelType,
   HandleToggleType,
   GetAreaMapType,
+  ViolinDataType,
 } from "../types/year_types";
 
 const YearContext = createContext<YearContextType>(null);
@@ -581,13 +582,19 @@ export function YearProvider({ children }: { children: ReactNode }) {
   // Função auxiliar para atualizar estado da área ativa
   const handleTabChange = (id: string) => {
     setActiveArea(id);
-    //EAP handle
-    setEAPData(null);
-    setIsInitialRender(true);
-    setNeedUpdateEAP(true);
-    //Dificuldade do Exame handle
-    // setDensityDifData(null);
-    // setFrequencyDifData(null);
+    if (deferredArea !== id) {
+      //EAP handle
+      setEAPData(null);
+      setIsInitialRender(true);
+      setNeedUpdateEAP(true);
+      //Dificuldade do Exame handle
+      setDensityDifData(null);
+      setFrequencyDifData(null);
+      setDescribeDifData(null);
+      //RespostaAoItem
+      setItemGraphData(null);
+      setViolinData(null);
+    }
   };
 
   const formatValue: FormatValueType = (key, val, type) => {
@@ -837,6 +844,41 @@ export function YearProvider({ children }: { children: ReactNode }) {
     prevLabelRef.current = selectedLabel;
   }, [selectedLabel, getCodeByLabel, deferredArea]);
 
+  //--------------------------RESPOSTA AO ITEM---------------------------
+
+  const [violinData, setViolinData] = useState<ViolinDataType>(null);
+
+  useEffect(() => {
+    async function defineVioninData() {
+      if (!scoreData || !lastItemActivate || !scoreData[lastItemActivate]) {
+        setViolinData(null);
+        return;
+      }
+      const rawBins = scoreData[lastItemActivate].bins;
+      if (
+        !rawBins ||
+        !Array.isArray(rawBins["0"]) ||
+        !Array.isArray(rawBins["1"]) ||
+        !Array.isArray(rawBins.labels)
+      ) {
+        setViolinData(null);
+        return;
+      }
+      const v0 = rawBins["0"];
+      const v1 = rawBins["1"];
+      const labels = rawBins.labels;
+      const filteredIndices = labels
+        .map((_, i) => i)
+        .filter((i) => v0[i] > 0 || v1[i] > 0);
+      setViolinData({
+        "0": filteredIndices.map((i) => v0[i]).reverse(),
+        "1": filteredIndices.map((i) => v1[i]).reverse(),
+        labels: filteredIndices.map((i) => labels[i]).reverse(),
+      });
+    }
+    defineVioninData();
+  }, [scoreData, lastItemActivate]);
+
   //--------------------------EAP---------------------------
 
   const intervalData = useMemo<string>(() => {
@@ -880,9 +922,11 @@ export function YearProvider({ children }: { children: ReactNode }) {
         selectedItems,
         acertosNum,
         sampleEAP,
-        needUpdateEAP,
         fixedPalette,
+
+        // Updatings
         isInitialRender,
+        needUpdateEAP,
 
         // Carga estática no server (bundle inicial)
         constantesData,
@@ -910,6 +954,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
         dificuldadeDoExameAux,
         lastItemActivateNum,
         intervalData,
+        violinData,
 
         // Funções
         getCodeByLabel,

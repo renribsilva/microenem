@@ -52,6 +52,9 @@ export default function AcertosChart() {
           },
         },
       },
+      noData: {
+        text: "Atualizando...",
+      },
       markers: {
         size: [1, 0],
         strokeWidth: 0,

@@ -375,14 +375,22 @@ export type GetAreaMapType = (
   score: string,
 ) => AreaItemMap[];
 
+export type ViolinDataType = {
+  0: number[];
+  1: number[];
+  labels: string[];
+};
+
 export type YearContextType = {
   lastItemActivate: number;
   selectedItems: SelectedItemsType | object;
   acertosNum: number;
   sampleEAP: string;
-  needUpdateEAP: boolean;
   fixedPalette: Record<number, string>;
+
+  //Updatings
   isInitialRender: boolean;
+  needUpdateEAP: boolean;
 
   // Carga estática no server
   constantesData: ConstantesType;
@@ -410,6 +418,7 @@ export type YearContextType = {
   dificuldadeDoExameAux: dificuldadeDoExameAuxType;
   lastItemActivateNum: number;
   intervalData: string;
+  violinData: ViolinDataType;
 
   // Funções
   getCodeByLabel: GetCodeByLabelType;

@@ -4,7 +4,6 @@ import { DescribeTable } from "./components/tables/describe";
 import styles from "./dados-do-exame.module.css";
 import Card from "../../../../components/tsx/card";
 import dynamic from "next/dynamic";
-import { useHomeData } from "../../../../context/home_context";
 
 // Imports dinâmicos mantidos
 const TCCChart = dynamic(() => import("./components/graphs/tcc"));
@@ -16,16 +15,8 @@ const FrequencyAcertosChart = dynamic(
 );
 
 export default function DadosDoExame() {
-  const { isFetchingBI } = useHomeData();
-
   return (
-    <section
-      className={styles.main}
-      style={{
-        opacity: isFetchingBI ? 0.7 : 1,
-        transition: "opacity 0.5s ease",
-      }}
-    >
+    <section className={styles.main}>
       <div className={styles.main_top}>
         <div className={styles.main_left}>
           <Card className={styles.card_describe}>

@@ -70,6 +70,9 @@ export default function TCCChart() {
           },
         },
       },
+      noData: {
+        text: "Atualizando...",
+      },
       markers: {
         size: [1, 1],
         strokeColors: "#fff",

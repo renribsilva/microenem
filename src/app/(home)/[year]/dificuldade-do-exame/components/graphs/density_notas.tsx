@@ -135,6 +135,9 @@ export default function DensityNotasChart() {
           },
         },
       },
+      noData: {
+        text: "Atualizando...",
+      },
       title: {
         text: "Curva de densidade",
         style: {

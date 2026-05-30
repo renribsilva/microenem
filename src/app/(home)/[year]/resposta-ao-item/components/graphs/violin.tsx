@@ -8,60 +8,32 @@ import { useHomeData } from "../../../../../../context/home_context";
 import { useSidebar } from "../../../../../../context/sidebar_context";
 
 export default function ViolinBinsChart() {
-  const { respostaAoItemData, lastItemActivate, lastItemActivateNum } =
-    useYearData();
+  const { violinData, lastItemActivate, lastItemActivateNum } = useYearData();
   const { textColor, axisColor, gridColor } = useChartTheme();
   const { activeTCC } = useHomeData();
   const { isMobile } = useSidebar();
 
-  const scoreData = respostaAoItemData.scoreData;
-
-  const binsData = useMemo(() => {
-    if (!scoreData || !lastItemActivate || !scoreData[lastItemActivate])
-      return null;
-    const rawBins = scoreData[lastItemActivate].bins;
-    if (
-      !rawBins ||
-      !Array.isArray(rawBins["0"]) ||
-      !Array.isArray(rawBins["1"]) ||
-      !Array.isArray(rawBins.labels)
-    ) {
-      return null;
-    }
-    const v0 = rawBins["0"];
-    const v1 = rawBins["1"];
-    const labels = rawBins.labels;
-    const filteredIndices = labels
-      .map((_, i) => i)
-      .filter((i) => v0[i] > 0 || v1[i] > 0);
-    return {
-      "0": filteredIndices.map((i) => v0[i]).reverse(),
-      "1": filteredIndices.map((i) => v1[i]).reverse(),
-      labels: filteredIndices.map((i) => labels[i]).reverse(),
-    };
-  }, [scoreData, lastItemActivate]);
-
   const maxAbsValue = useMemo(() => {
-    if (!binsData) return 100;
-    const maxVal = Math.max(...binsData["1"], ...binsData["0"]);
+    if (!violinData) return 100;
+    const maxVal = Math.max(...violinData["1"], ...violinData["0"]);
     if (maxVal === 0) return 100;
     const withBuffer = maxVal * 1.1;
     return Math.ceil(withBuffer);
-  }, [binsData]);
+  }, [violinData]);
 
   const series = useMemo(() => {
-    if (!binsData) return [];
+    if (!violinData) return [];
     return [
       {
         name: "Acertos",
-        data: binsData["1"] || [],
+        data: violinData["1"] || [],
       },
       {
         name: "Erros",
-        data: (binsData["0"] || []).map((v: number) => -v),
+        data: (violinData["0"] || []).map((v: number) => -v),
       },
     ];
-  }, [binsData]);
+  }, [violinData]);
 
   const erroColor = "#FF4560";
   const acertoColor = "#00E396";
@@ -78,6 +50,9 @@ export default function ViolinBinsChart() {
             enabled: false,
           },
         },
+      },
+      noData: {
+        text: "Atualizando...",
       },
       colors: [acertoColor, erroColor],
       plotOptions: {
@@ -200,11 +175,11 @@ export default function ViolinBinsChart() {
       },
       yaxis: {
         labels: {
-          style: { colors: axisColor },
+          style: { colors: violinData ? axisColor : "#fff" },
         },
       },
       xaxis: {
-        categories: binsData?.labels || [],
+        categories: violinData?.labels || [],
         axisBorder: {
           show: false,
         },
@@ -255,7 +230,7 @@ export default function ViolinBinsChart() {
       },
     }),
     [
-      binsData,
+      violinData,
       isMobile,
       lastItemActivate,
       activeTCC,

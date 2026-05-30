@@ -57,6 +57,7 @@ export default function FX_ETARIA() {
           dataLabels: {
             position: "top",
           },
+          barHeight: "90%",
         },
       },
       colors: [barColor],

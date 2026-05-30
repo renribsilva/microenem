@@ -21,7 +21,7 @@
   width: 100%;
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1300px) {
   .main_top {
     flex-direction: column;
   }

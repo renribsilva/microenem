@@ -186,7 +186,7 @@ export default function ScoreTable() {
       }),
       columnHelper.group({
         id: "score_grupo",
-        header: isMobile ? "Frequência" : "Frequência de Resposta",
+        header: isMobile ? "Resposta" : "Frequência de Resposta",
         columns: scoreCols,
       }),
     ];

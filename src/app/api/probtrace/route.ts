@@ -4,12 +4,12 @@ import path from "path";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const co_p = searchParams.get("co_p");
+  const codigo = searchParams.get("codigo");
   const year = searchParams.get("year");
 
-  if (!co_p || !year) {
+  if (!codigo || !year) {
     return NextResponse.json(
-      { error: "Informe os parâmtros obrigatórios: co_p, year" },
+      { error: "Informe os parâmtros obrigatórios: codigo, year" },
       { status: 400 },
     );
   }
@@ -23,7 +23,7 @@ export async function GET(request: Request) {
     const fullJson = JSON.parse(fileContent);
 
     return NextResponse.json({
-      dataset: fullJson.datasets[co_p] || null,
+      dataset: fullJson.datasets[codigo] || null,
       theta_labels: fullJson.theta_labels,
     });
   } catch (error) {

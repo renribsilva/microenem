@@ -184,7 +184,7 @@ export default function MarginImpactTable() {
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
-  console.log(table.getRowModel().rows);
+
   return (
     <div className={styles.impact_container}>
       <div className={styles.tcc_cabecalho}>

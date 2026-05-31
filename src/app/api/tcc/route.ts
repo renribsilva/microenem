@@ -5,7 +5,7 @@ import path from "path";
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const area = searchParams.get("area");
-  const label = searchParams.get("co_p");
+  const label = searchParams.get("label");
   const year = searchParams.get("year");
 
   if (!area || !label || !year) {

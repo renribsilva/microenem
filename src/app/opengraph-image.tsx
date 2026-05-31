@@ -42,11 +42,21 @@ export default async function Image() {
             color: "white",
           }}
         >
-          just data.
+          ENEMmicro.
+        </p>
+        <p
+          style={{
+            fontSize: 12,
+            margin: 0,
+            fontWeight: "900",
+            letterSpacing: "-0.05em",
+            color: "white",
+          }}
+        >
+          No bullshit, just data.
         </p>
       </div>
     </div>,
     { ...size },
   );
 }
-

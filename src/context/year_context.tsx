@@ -119,7 +119,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
 
   const [loading, setLoading] = useState(true);
 
-  const [co_p_selected] = selectedLabel.split("_");
+  const [codigo, lingua, versao] = selectedLabel.split("_");
 
   const [acertosNum, setAcertosNum] = useState<number>(0);
 
@@ -373,8 +373,8 @@ export function YearProvider({ children }: { children: ReactNode }) {
   const infoCache = useRef<ProbCacheType | null>(null);
 
   useEffect(() => {
-    if (!co_p_selected) return;
-    if (probCache.current?.co_p === co_p_selected) {
+    if (!codigo) return;
+    if (probCache.current?.codigo === codigo) {
       setProbData(probCache.current.dataset);
       setProbLabels(probCache.current.labels);
       return;
@@ -382,11 +382,11 @@ export function YearProvider({ children }: { children: ReactNode }) {
     async function fetchProbData() {
       try {
         const res = await fetch(
-          `/api/probtrace?co_p=${String(co_p_selected)}&year=${currentYear}`,
+          `/api/probtrace?codigo=${String(codigo)}&year=${currentYear}`,
         );
         const json = await res.json();
         probCache.current = {
-          co_p: co_p_selected,
+          codigo: codigo,
           dataset: json.dataset,
           labels: json.theta_labels,
         };
@@ -400,11 +400,11 @@ export function YearProvider({ children }: { children: ReactNode }) {
     async function fetchInfoData() {
       try {
         const res = await fetch(
-          `/api/info?co_p=${String(co_p_selected)}&year=${currentYear}`,
+          `/api/info?codigo=${String(codigo)}&year=${currentYear}`,
         );
         const json = await res.json();
         infoCache.current = {
-          co_p: co_p_selected,
+          codigo: codigo,
           dataset: json.dataset,
           labels: json.theta_labels,
         };
@@ -417,7 +417,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
 
     fetchProbData();
     fetchInfoData();
-  }, [co_p_selected, currentYear]);
+  }, [codigo, currentYear]);
 
   // ---------------------------RESPOSTA AO ITEM--------------------------------
 
@@ -553,7 +553,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const isPathOfInterest = pathName.endsWith("tri");
     if (!isPathOfInterest) return;
-    const [codigo, lingua] = selectedLabel.split("_");
     async function fetchEAPData() {
       try {
         const res = await fetch(
@@ -573,6 +572,9 @@ export function YearProvider({ children }: { children: ReactNode }) {
     if (isPathOfInterest || needUpdateEAP) fetchEAPData();
   }, [
     deferredArea,
+    lingua,
+    versao,
+    codigo,
     sampleEAP,
     pathName,
     needUpdateEAP,
@@ -617,40 +619,38 @@ export function YearProvider({ children }: { children: ReactNode }) {
   const getCodeByLabel = useCallback<GetCodeByLabelType>(
     (num, label) => {
       if (!label || !itensData || !itensData.CO_POSICAO) return null;
-      const [co_p, ling, vers] = label.split("_");
       const p = itensData;
       const idx = Object.keys(p.CO_POSICAO).find((i) => {
-        const matchProva = Number(p.CO_PROVA[i]) === Number(co_p);
+        const matchProva = Number(p.CO_PROVA[i]) === Number(codigo);
         const matchPos = Number(p.CO_POSICAO[i]) === num;
         if (!matchProva || !matchPos) return false;
-        if (deferredArea === "LC" && num <= 5 && ling !== undefined) {
-          return Number(p.TP_LINGUA[i]) === Number(ling);
+        if (deferredArea === "LC" && num <= 5 && lingua !== undefined) {
+          return Number(p.TP_LINGUA[i]) === Number(lingua);
         }
-        if (vers === "D" && p.TP_VERSAO_DIGITAL) {
-          if (Number(vers) !== p.TP_VERSAO_DIGITAL[i]) return false;
+        if (versao === "D" && p.TP_VERSAO_DIGITAL) {
+          if (Number(versao) !== p.TP_VERSAO_DIGITAL[i]) return false;
         }
         return true;
       });
       return idx ? Number(p.CO_ITEM[idx]) : null;
     },
-    [deferredArea, itensData],
+    [deferredArea, itensData, codigo, versao, lingua],
   );
 
   // Função para traduzir Posição (ex: questão 95) em Parâmetro (ex: 1.234)
   const getParamByLabel = useCallback<GetParamByLabelType>(
     (num, label, type) => {
       if (!label || !itensData || !itensData.CO_POSICAO) return null;
-      const [co_p, ling, vers] = label.split("_");
       const p = itensData;
       const idx = Object.keys(p.CO_POSICAO).find((i) => {
-        const matchProva = Number(p.CO_PROVA[i]) === Number(co_p);
+        const matchProva = Number(p.CO_PROVA[i]) === Number(codigo);
         const matchPos = Number(p.CO_POSICAO[i]) === num;
         if (!matchProva || !matchPos) return false;
-        if (deferredArea === "LC" && num <= 5 && ling !== undefined) {
-          return Number(p.TP_LINGUA[i]) === Number(ling);
+        if (deferredArea === "LC" && num <= 5 && lingua !== undefined) {
+          return Number(p.TP_LINGUA[i]) === Number(lingua);
         }
-        if (vers === "D" && p.TP_VERSAO_DIGITAL) {
-          if (Number(vers) !== p.TP_VERSAO_DIGITAL[i]) return false;
+        if (versao === "D" && p.TP_VERSAO_DIGITAL) {
+          if (Number(versao) !== p.TP_VERSAO_DIGITAL[i]) return false;
         }
         return true;
       });
@@ -663,7 +663,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
       const val = map[type];
       return idx ? Number(val) : null;
     },
-    [deferredArea, itensData],
+    [codigo, lingua, versao, deferredArea, itensData],
   );
 
   const handleToggle = useCallback<HandleToggleType>(

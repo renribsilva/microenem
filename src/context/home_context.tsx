@@ -149,7 +149,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
       try {
         const params = new URLSearchParams({
           area: deferredArea,
-          co_p: selectedLabel,
+          label: selectedLabel,
           year: currentYear.toString(),
         });
         const res = await fetch(`/api/tcc?${params}`);
@@ -167,7 +167,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
         // Guarda a lista de todos os tccs disponíveis
         setAvailableTCC(json.availableDatasets);
         // Atualiza os labels das provas
-        if (json.label && json.resLabel !== selectedLabel) {
+        if (json.resLabel !== selectedLabel) {
           setSelectionsByArea((prev) => ({
             ...prev,
             [deferredArea]: json.resLabel,

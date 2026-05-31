@@ -8,14 +8,8 @@ import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import styles from "./graphs.module.css";
 
 export default function ProdProbChart() {
-  const {
-    EAPData,
-    constantesData,
-    activeCodes,
-    needUpdateEAP,
-    isFetchingEAP,
-    isInitialRender,
-  } = useYearData();
+  const { EAPData, constantesData, needUpdateEAP, isInitialRender } =
+    useYearData();
 
   const { chartProps, deferredArea, currentYear } = useHomeData();
   const { axisColor, textColor, gridColor } = useChartTheme();

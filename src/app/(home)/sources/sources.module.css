@@ -11,7 +11,7 @@
   overflow-y: auto;
   position: relative;
   width: calc(100svw - 250px);
-  min-height: calc(100svh - 60px);
+  height: calc(100svh - 60px);
   padding: 10px;
   font-weight: 300;
 }
@@ -25,4 +25,20 @@
       margin 0.3s ease-in-out,
       transform 0.3s ease-in-out;
   }
+}
+
+.layout_section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sources_item {
+  background-color: var(--tab-hover);
+  padding: 20px;
+  border-radius: 1rem;
+}
+
+.sources_item a {
+  color: var(--foreground);
 }

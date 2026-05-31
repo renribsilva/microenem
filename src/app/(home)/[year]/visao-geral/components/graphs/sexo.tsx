@@ -37,6 +37,7 @@ export default function SEXO() {
           donut: {
             size: "45%",
           },
+          offsetY: -5,
         },
       },
       dataLabels: {
@@ -55,7 +56,7 @@ export default function SEXO() {
           strokeWidth: 0,
           offsetX: -2,
         },
-        offsetY: -4,
+        offsetY: -5,
       },
       tooltip: {
         fillSeriesColor: false,

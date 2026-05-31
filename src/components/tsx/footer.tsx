@@ -8,27 +8,20 @@ function Footer() {
     <footer className={styles.footer}>
       <div>GPLv3 © {currentYear}</div>
       <div>No bullshit, just data.</div>
-      <div className={styles.links_container}>
-        <span>
-          <a
-            target="_blank"
-            href="https://github.com/renribsilva/microEnemAnalyze"
-            rel="noopener noreferrer"
-            className={styles.link_source}
-          >
-            source
-          </a>
-        </span>
-        <span className={styles.separator}> | </span>
-        <span>
-          <Link href="/privacy" className={styles.link_source}>
-            política de privacidade
+      <div className={styles.link_container}>
+        <div>
+          <Link href="/sources" className={styles.link_source}>
+            Código
           </Link>
-        </span>
+        </div>
+        <div>
+          <Link href="/privacy" className={styles.link_source}>
+            Privacidade
+          </Link>
+        </div>
       </div>
     </footer>
   );
 }
 
 export default Footer;
-

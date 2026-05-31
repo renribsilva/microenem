@@ -81,7 +81,6 @@ export default function RankingTable() {
             {table.getRowModel().rows.map((row) => {
               const currentRank = row.original.ranking;
               const isSelected = activeRanking === currentRank;
-
               return (
                 <tr
                   key={row.id}

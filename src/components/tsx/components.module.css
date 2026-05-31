@@ -531,6 +531,15 @@
   background-color: var(--tab-hover) !important;
 }
 
+/*******************************************************/
+/*******************LINKS FOOTER*********************/
+/*******************************************************/
+
+.link_container {
+  display: flex;
+  gap: 5px;
+}
+
 .link_source {
   color: var(--foreground);
 }

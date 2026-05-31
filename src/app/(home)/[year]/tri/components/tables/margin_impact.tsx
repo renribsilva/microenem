@@ -184,7 +184,7 @@ export default function MarginImpactTable() {
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
-
+  console.log(table.getRowModel().rows);
   return (
     <div className={styles.impact_container}>
       <div className={styles.tcc_cabecalho}>
@@ -276,7 +276,7 @@ export default function MarginImpactTable() {
             </tbody>
           </table>
         )}
-        {isInitialRender && table.getRowModel().rows.length === 0 && (
+        {table.getRowModel().rows.length === 0 && (
           <div className={styles.eap_initial}>
             <p style={{ fontSize: "16px", fontWeight: 500 }}>
               Calcule o desempenho TRI para ver o impacto virtual de cada item.

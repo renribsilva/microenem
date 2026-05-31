@@ -43,6 +43,8 @@ export default function ScoreTable() {
     lastItemActivate,
     setLastItemActivate,
     setLastItemActivateNum,
+    setItemGraphData,
+    setAcertosData,
   } = useYearData();
 
   const scoreData = respostaAoItemData.scoreData;
@@ -349,6 +351,8 @@ export default function ScoreTable() {
                   if (!isAbandonado) {
                     setLastItemActivate(itemId);
                     setLastItemActivateNum(row.original.posicao);
+                    setItemGraphData(null);
+                    setAcertosData(null);
                   }
                 }}
                 style={{

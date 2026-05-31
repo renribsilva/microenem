@@ -570,8 +570,15 @@ export function YearProvider({ children }: { children: ReactNode }) {
         console.error("Erro ao carregar EAPdata:", err);
       }
     }
-    if (isPathOfInterest) fetchEAPData();
-  }, [deferredArea, sampleEAP, pathName, selectedLabel, currentYear]);
+    if (isPathOfInterest || needUpdateEAP) fetchEAPData();
+  }, [
+    deferredArea,
+    sampleEAP,
+    pathName,
+    needUpdateEAP,
+    selectedLabel,
+    currentYear,
+  ]);
 
   //----------------------------------------------------------------------------
   //---------------------------TRANSFORMAÇÃO DE DADOS---------------------------
@@ -904,8 +911,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
     return updatedInterval.join("");
   }, [deferredArea, activeCodes, selectedItems]);
 
-  //-------------------------------MEAN-----------------------------------------
-
   //----------------------------------------------------------------------------
   //----------------------------------RETURN------------------------------------
   //----------------------------------------------------------------------------
@@ -970,6 +975,8 @@ export function YearProvider({ children }: { children: ReactNode }) {
         setIsFetchingEAP,
         setIsInitialRender,
         handleTabChange,
+        setItemGraphData,
+        setAcertosData,
       }}
     >
       {children}

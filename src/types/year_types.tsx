@@ -433,5 +433,7 @@ export type YearContextType = {
   setLastItemActivateNum: React.Dispatch<React.SetStateAction<number>>;
   setActiveRanking: React.Dispatch<React.SetStateAction<number | null>>;
   setLastItemActivate: React.Dispatch<React.SetStateAction<number>>;
-  handleTabChange: React.Dispatch<React.SetStateAction<string | null>>;
+  handleTabChange: (id: string) => void;
+  setItemGraphData: React.Dispatch<React.SetStateAction<ItemGraphType | null>>;
+  setAcertosData: React.Dispatch<React.SetStateAction<AcertosDataType | null>>;
 };

@@ -79,8 +79,7 @@
 }
 
 .describe_tr.row_selected {
-  background-color: var(--background);
-  /* Adicional: você pode colocar um border-left ou negrito para destacar mais */
+  background-color: var(--tab-hover);
   font-weight: 600;
 }
 

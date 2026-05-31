@@ -436,4 +436,5 @@ export type YearContextType = {
   handleTabChange: (id: string) => void;
   setItemGraphData: React.Dispatch<React.SetStateAction<ItemGraphType | null>>;
   setAcertosData: React.Dispatch<React.SetStateAction<AcertosDataType | null>>;
+  setEAPData: React.Dispatch<React.SetStateAction<EAPDataType | null>>;
 };

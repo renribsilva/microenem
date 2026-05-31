@@ -12,6 +12,7 @@ function EAPButton() {
     setNeedUpdateEAP,
     setIsFetchingEAP,
     setSampleEAP,
+    setEAPData,
   } = useYearData();
   const { chartProps } = useHomeData();
   const { chartColor } = chartProps;
@@ -22,6 +23,7 @@ function EAPButton() {
     setSampleEAP(intervalData);
     setIsInitialRender(false);
     setNeedUpdateEAP(false);
+    setEAPData(null);
   };
 
   return (

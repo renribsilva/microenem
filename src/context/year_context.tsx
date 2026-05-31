@@ -977,6 +977,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
         handleTabChange,
         setItemGraphData,
         setAcertosData,
+        setEAPData,
       }}
     >
       {children}

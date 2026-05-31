@@ -61,6 +61,9 @@ export default function ProdProbChart() {
         },
       },
     },
+    noData: {
+      text: "Atualizando...",
+    },
     dataLabels: { enabled: false },
     stroke: { curve: "smooth", width: 3, colors: [chartColor] },
     fill: {
@@ -180,7 +183,7 @@ export default function ProdProbChart() {
           </div>
         </div>
       </div>
-      {series.length > 0 && EAPData ? (
+      {!isInitialRender ? (
         <>
           <Chart
             style={{
@@ -206,9 +209,7 @@ export default function ProdProbChart() {
       ) : (
         <div className={styles.eap_initial}>
           <p style={{ fontSize: "16px", fontWeight: 500 }}>
-            {isFetchingEAP && activeCodes.length === 0
-              ? "Iniciando cálculos..."
-              : "Marque as respostas e clique no botão para calcular."}
+            Marque as respostas e clique no botão para calcular.
           </p>
         </div>
       )}

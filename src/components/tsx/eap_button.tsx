@@ -5,7 +5,6 @@ import styles from "./components.module.css";
 function EAPButton() {
   const {
     isFetchingEAP,
-    selectedItems,
     needUpdateEAP,
     intervalData,
     isInitialRender,
@@ -18,7 +17,7 @@ function EAPButton() {
   const { chartColor } = chartProps;
 
   const handleUpdateChart = () => {
-    if (Object.entries(selectedItems).length === 0 || !needUpdateEAP) return;
+    if (!needUpdateEAP) return;
     setIsFetchingEAP(true);
     setSampleEAP(intervalData);
     setIsInitialRender(false);

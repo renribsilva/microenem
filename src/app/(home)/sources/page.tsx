@@ -31,6 +31,19 @@ function Sources() {
               github.com/renribsilva/microenem
             </Link>
           </div>
+          <div className={styles.sources_item}>
+            <p>
+              API hospedado no Render para executar a reprodução da TRI por meio
+              de um script R
+            </p>
+            <Link
+              target="_blank"
+              rel="noopener noreferrer"
+              href={"https://github.com/renribsilva/microenemAPI"}
+            >
+              github.com/renribsilva/microenemAPI
+            </Link>
+          </div>
         </div>
       </Card>
     </section>

@@ -46,7 +46,7 @@ export default async function Image() {
         </p>
         <p
           style={{
-            fontSize: 24,
+            fontSize: 26,
             margin: 0,
             fontWeight: "900",
             letterSpacing: "-0.05em",

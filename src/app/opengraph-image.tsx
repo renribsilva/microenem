@@ -42,11 +42,11 @@ export default async function Image() {
             color: "white",
           }}
         >
-          ENEMmicro.
+          ENEMmicro
         </p>
         <p
           style={{
-            fontSize: 12,
+            fontSize: 16,
             margin: 0,
             fontWeight: "900",
             letterSpacing: "-0.05em",

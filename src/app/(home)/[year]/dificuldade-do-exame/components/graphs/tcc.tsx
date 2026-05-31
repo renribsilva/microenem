@@ -248,7 +248,6 @@ export default function TCCChart() {
       legend: {
         position: "bottom",
         labels: { colors: textColor },
-        offsetX: 20,
         markers: {
           strokeWidth: 0,
           offsetX: -2,

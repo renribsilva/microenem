@@ -5,6 +5,7 @@ import styles from "./tables.module.css";
 import { useYearData } from "../../../../../../context/year_context";
 import { useHomeData } from "../../../../../../context/home_context";
 import { useSidebar } from "../../../../../../context/sidebar_context";
+import clsx from "clsx";
 
 export default function CandidateFullDetail() {
   const { dicData } = useHomeData();
@@ -117,19 +118,19 @@ export default function CandidateFullDetail() {
       <div className={styles.tabs}>
         <button
           onClick={() => setActiveTab("geral")}
-          className={[
-            `${styles.tab_btn} `,
-            `${activeTab === "geral" ? styles.active : ""}`,
-          ].join("")}
+          className={clsx(
+            styles.tab_btn,
+            activeTab === "geral" && styles.active,
+          )}
         >
           Resumo de Notas
         </button>
         <button
           onClick={() => setActiveTab("scores")}
-          className={[
-            `${styles.tab_btn} `,
-            `${activeTab === "scores" ? styles.active : ""}`,
-          ].join("")}
+          className={clsx(
+            styles.tab_btn,
+            activeTab === "scores" && styles.active,
+          )}
         >
           Mapa de Acertos
         </button>

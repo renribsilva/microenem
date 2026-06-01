@@ -205,10 +205,10 @@ export default function ProbsInfoTable() {
                   <th
                     key={header.id}
                     colSpan={header.colSpan}
-                    className={[
-                      `${styles.probtable_thead_th} `,
-                      `${isGroup ? styles.probtable_group_th : ""}`,
-                    ].join("")}
+                    className={clsx(
+                      styles.probtable_thead_th,
+                      isGroup && styles.probtable_group_th,
+                    )}
                     onClick={
                       canSort
                         ? header.column.getToggleSortingHandler()

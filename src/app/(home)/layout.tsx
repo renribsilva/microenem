@@ -5,6 +5,7 @@ import AppSidebar from "../../components/tsx/sidebar";
 import { useSidebar } from "../../context/sidebar_context";
 import styles from "./layout.module.css";
 import { HomeProvider } from "../../context/home_context";
+import clsx from "clsx";
 
 function HomeLayout({ children }: { children: React.ReactNode }) {
   const { isMobileOpen, toggleMobileSidebar, isMobile } = useSidebar();
@@ -14,10 +15,10 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
       <div className={styles.layout_container}>
         {isMobile && (
           <div
-            className={[
-              `${styles.backdrop} `,
-              `${isMobileOpen ? styles.backdrop_active : ""}`,
-            ].join("")}
+            className={clsx(
+              styles.backdrop,
+              isMobileOpen && styles.backdrop_active,
+            )}
             onClick={toggleMobileSidebar}
           />
         )}

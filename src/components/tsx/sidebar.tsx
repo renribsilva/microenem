@@ -8,6 +8,7 @@ import Link from "next/link";
 import ArrowDown from "../svg/arrow_down";
 import ArrowUp from "../svg/arrow_up";
 import { useHomeData } from "../../context/home_context";
+import clsx from "clsx";
 
 interface SubItemsItem {
   name: string;
@@ -87,10 +88,10 @@ function AppSidebar() {
             {nav.name && (
               <button
                 onClick={() => handleSubmenuToggle(index)}
-                className={[
-                  `${styles.navbar_button} `,
-                  `${openSubmenu === index ? styles.navbar_button_active : ""}`,
-                ].join("")}
+                className={clsx(
+                  styles.navbar_button,
+                  openSubmenu === index && styles.navbar_button_active,
+                )}
               >
                 <div className={styles.navbar_button_1}>
                   <span>{nav.name}</span>
@@ -127,12 +128,11 @@ function AppSidebar() {
                   {nav.subItems.map((subItem) => (
                     <li
                       key={subItem.name}
-                      className={[
+                      className={clsx(
                         styles.navbar_subitems_items,
-                        isActive(subItem.path)
-                          ? styles.navbar_subitems_items_active
-                          : "",
-                      ].join(" ")}
+                        isActive(subItem.path) &&
+                          styles.navbar_subitems_items_active,
+                      )}
                     >
                       <Link
                         href={subItem.path}

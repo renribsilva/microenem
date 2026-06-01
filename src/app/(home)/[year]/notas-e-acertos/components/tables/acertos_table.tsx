@@ -183,10 +183,10 @@ export default function AcertosTable() {
                     <th
                       key={header.id}
                       colSpan={header.colSpan}
-                      className={[
-                        `${styles.probtable_thead_th} `,
-                        `${isGroup ? styles.probtable_group_th : ""}`,
-                      ].join("")}
+                      className={clsx(
+                        styles.probtable_thead_th,
+                        isGroup && styles.probtable_group_th,
+                      )}
                       onClick={
                         canSort
                           ? header.column.getToggleSortingHandler()
@@ -235,10 +235,10 @@ export default function AcertosTable() {
               return (
                 <tr
                   key={row.id}
-                  className={[
-                    `${styles.probtable_tr1} `,
-                    `${isActive ? styles.row_active : ""}`,
-                  ].join("")}
+                  className={clsx(
+                    styles.probtable_tr1,
+                    isActive && styles.row_active,
+                  )}
                   onClick={() => setAcertosNum(row.original.id)}
                   style={{
                     backgroundColor: isActive ? tabColor : "transparent",

@@ -11,6 +11,7 @@ import {
 import styles from "./tables.module.css";
 import { useYearData } from "../../../../../../context/year_context";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
+import clsx from "clsx";
 
 type RankingRow = {
   ranking: number;
@@ -84,10 +85,10 @@ export default function RankingTable() {
               return (
                 <tr
                   key={row.id}
-                  className={[
-                    `${styles.meantable_tr} `,
-                    `${isSelected ? styles.row_active : ""}`,
-                  ].join("")}
+                  className={clsx(
+                    styles.meantable_tr,
+                    isSelected && styles.row_active,
+                  )}
                   onClick={() => setActiveRanking(currentRank)}
                 >
                   {row.getVisibleCells().map((cell) => (

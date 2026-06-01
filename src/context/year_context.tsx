@@ -443,13 +443,15 @@ export function YearProvider({ children }: { children: ReactNode }) {
           code: lastItemActivate,
           dataset: json?.dataset,
         };
-        setItemGraphData(json?.dataset);
+        if (needUpdateEAP) {
+          setItemGraphData(json?.dataset);
+        }
       } catch (err) {
         console.error("Erro ao carregar item_score:", err);
       }
     }
     fetchItemData();
-  }, [lastItemActivate, currentYear]);
+  }, [lastItemActivate, needUpdateEAP, currentYear]);
 
   // -------------------------RELAÇÃO NOTAS-ACERTOS-----------------------------
 

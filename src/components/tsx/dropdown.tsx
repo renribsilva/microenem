@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./components.module.css";
 import { useChartTheme } from "../../hooks/use_chart_theme";
 import { useHomeData } from "../../context/home_context";
+import { useYearData } from "../../context/year_context";
 
 function Dropdown() {
   const {
@@ -16,6 +17,7 @@ function Dropdown() {
   } = useHomeData();
 
   const { chartColor } = chartProps;
+  const { setNeedUpdateEAP } = useYearData();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { colorMap, tabColor, textColor } = useChartTheme();
@@ -60,7 +62,6 @@ function Dropdown() {
           ▼
         </span>
       </button>
-
       {isOpen && (
         <div className={styles.dropdown_list}>
           {availableTCC?.map((ds) => {
@@ -72,6 +73,7 @@ function Dropdown() {
                 onClick={() => {
                   setSelectedLabel(ds.label);
                   setIsOpen(false);
+                  setNeedUpdateEAP(true);
                 }}
                 className={styles.dropdown_list_item}
                 style={{

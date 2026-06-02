@@ -45,6 +45,7 @@ function ItensButtons() {
   );
   const containerRef = useRef<HTMLDivElement>(null);
   const { start, end } = ranges[deferredArea] || { start: 1, end: 45 };
+
   const questions = Array.from(
     { length: end - start + 1 },
     (_, i) => start + i,

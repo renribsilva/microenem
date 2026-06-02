@@ -10,6 +10,7 @@ import {
   useState,
   useCallback,
   useEffect,
+  act,
 } from "react";
 import { useHomeData } from "./home_context";
 import constantes from "../app/(home)/JSON/constantes.json";
@@ -774,9 +775,22 @@ export function YearProvider({ children }: { children: ReactNode }) {
   }, [itensData]);
 
   const activeCodes = useMemo(() => {
-    const codes = Object.keys(selectedItems).map(Number);
-    return codes.filter((code) => String(code) in (probData || {}));
-  }, [selectedItems, probData]);
+    if (!probData || Object.keys(selectedItems).length === 0) return [];
+    const currentlySelectedCodes = Object.keys(selectedItems).map(Number);
+    const { start, end } = ranges[deferredArea] || { start: 1, end: 45 };
+    const validCodesForCurrentLabel = new Set();
+    for (let num = start; num <= end; num++) {
+      const currentCode = getCodeByLabel(num, selectedLabel);
+      if (currentCode) {
+        validCodesForCurrentLabel.add(currentCode);
+      }
+    }
+    return currentlySelectedCodes.filter((code) => {
+      const existsInCurrentLabel = validCodesForCurrentLabel.has(code);
+      const existsInProbData = String(code) in probData;
+      return existsInCurrentLabel && existsInProbData;
+    });
+  }, [selectedItems, probData, getCodeByLabel, deferredArea, selectedLabel]);
 
   //-----------------------------DIFICULDADE DO EXAME---------------------------
 
@@ -896,7 +910,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
       end: 45,
     };
     const updatedInterval = Array(45).fill("0");
-
     activeCodes.forEach((codigo: number) => {
       const itemMarcado = selectedItems[codigo];
       if (itemMarcado && itemMarcado.status === "acerto") {
@@ -909,7 +922,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
         }
       }
     });
-
     return updatedInterval.join("");
   }, [deferredArea, activeCodes, selectedItems]);
 

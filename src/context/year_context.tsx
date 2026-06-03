@@ -443,9 +443,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
           code: lastItemActivate,
           dataset: json?.dataset,
         };
-        if (needUpdateEAP) {
-          setItemGraphData(json?.dataset);
-        }
+        setItemGraphData(json?.dataset);
       } catch (err) {
         console.error("Erro ao carregar item_score:", err);
       }

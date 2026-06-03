@@ -46,7 +46,7 @@ export default function MarginImpactTable() {
   ]);
 
   const isTRIDivergente =
-    (deferredArea === "MT" && currentYear === "2009") ||
+    (deferredArea === "LC" && currentYear === "2024") ||
     (deferredArea === "MT" && currentYear === "2019");
 
   const paramsPorCodigo = useMemo(() => {

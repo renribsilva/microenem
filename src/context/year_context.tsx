@@ -10,7 +10,6 @@ import {
   useState,
   useCallback,
   useEffect,
-  act,
 } from "react";
 import { useHomeData } from "./home_context";
 import constantes from "../app/(home)/JSON/constantes.json";

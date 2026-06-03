@@ -122,8 +122,9 @@ export default function ProdProbChart() {
                   padding: { left: 15, right: 15, top: 15, bottom: 15 },
                 },
                 text: [
-                  "O método (não oficial) de transformação da escala",
-                  `apresentou divergência na nota de ${deferredArea}.`,
+                  "O método (não oficial) de transformação ",
+                  `da escala calculou uma nota diferente da`,
+                  `divulgada nos microdados do ano ${currentYear}.`,
                 ],
                 orientation: "horizontal",
                 offsetY: 80,

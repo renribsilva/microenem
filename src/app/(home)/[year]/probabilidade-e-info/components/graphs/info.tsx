@@ -21,7 +21,7 @@ export default function InfoChart() {
     constantesData,
     probInfoData,
     selectedItems,
-    lastItemActivate,
+    activeCodes,
   } = useYearData();
 
   const infoLabels = probInfoData.infoLabels;
@@ -29,37 +29,32 @@ export default function InfoChart() {
 
   // --- PROCESSAMENTO DE DADOS PARA APEXCHARTS ---
   const { series, ymax } = useMemo(() => {
-    let abandonedFound = false;
-    let currentMax = 0; // Inicializa o rastreador do valor máximo
-
-    const codes = Object.keys(selectedItems).map(Number);
+    const codes = activeCodes;
     const allItemsInProva = Object.keys(infoData || {});
-
     const chartSeries = codes
       .map((code) => {
         const itemKey = String(code);
         const isAbandoned = abandonadosCodes.has(code);
         if (isAbandoned) {
-          if (code === lastItemActivate) abandonedFound = true;
           return null;
         }
-
         const status = selectedItems[code]?.status;
         const rawPoints = infoData?.[itemKey] as (number | null)[];
         if (!rawPoints) return null;
-
         const colorIndex = allItemsInProva.indexOf(itemKey);
 
         const dataPoints = rawPoints.map((yValue, idx) => {
-          const finalY = yValue || 0;
-          if (finalY > currentMax) currentMax = finalY;
+          // Se for erro, inverte o valor (1 - y). Se não, usa o y normal.
+          const finalY = parseFloat(
+            (status === "erro" ? 1 - (yValue || 0) : yValue || 0).toFixed(3),
+          );
           return {
             x: transformTheta(
               infoLabels[idx],
               constantesData.k,
               constantesData.d,
             ),
-            y: finalY,
+            y: finalY, // O valor real que vai para o gráfico
           };
         });
 
@@ -73,24 +68,26 @@ export default function InfoChart() {
       })
       .filter(Boolean);
 
-    // Adiciona uma margem de segurança (ex: 10%) para
-    // a curva não encostar no topo
+    const allYValues = chartSeries.flatMap((s) =>
+      s ? s.data.map((d) => d.y) : [],
+    );
+    const currentMax = allYValues.length > 0 ? Math.max(...allYValues) : 0;
+
     const safetyMax = currentMax === 0 ? 1 : currentMax * 1.1;
 
     return {
       series: chartSeries,
-      hasAbandonedItem: abandonedFound,
       ymax: safetyMax,
     };
   }, [
     selectedItems,
     infoData,
+    activeCodes,
     fixedPalette,
     infoLabels,
     constantesData.k,
     constantesData.d,
     abandonadosCodes,
-    lastItemActivate,
   ]);
 
   // --- CONFIGURAÇÕES DO APEXCHARTS ---

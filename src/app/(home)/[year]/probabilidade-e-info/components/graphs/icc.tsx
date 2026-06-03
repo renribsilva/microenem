@@ -21,7 +21,7 @@ export default function ICCChart() {
     constantesData,
     probInfoData,
     selectedItems,
-    lastItemActivate,
+    activeCodes,
   } = useYearData();
 
   const probLabels = probInfoData.probLabels;
@@ -29,15 +29,13 @@ export default function ICCChart() {
 
   // --- PROCESSAMENTO DE DADOS PARA APEXCHARTS ---
   const { series } = useMemo(() => {
-    let abandonedFound = false;
-    const codes = Object.keys(selectedItems).map(Number);
+    const codes = activeCodes;
     const allItemsInProva = Object.keys(probData || {});
     const chartSeries = codes
       .map((code) => {
         const itemKey = String(code);
         const isAbandoned = abandonadosCodes.has(code);
         if (isAbandoned) {
-          if (code === lastItemActivate) abandonedFound = true;
           return null;
         }
         const status = selectedItems[code]?.status;
@@ -63,16 +61,16 @@ export default function ICCChart() {
       })
       .filter(Boolean);
 
-    return { series: chartSeries, hasAbandonedItem: abandonedFound };
+    return { series: chartSeries };
   }, [
     selectedItems,
     probData,
     fixedPalette,
     probLabels,
+    activeCodes,
     abandonadosCodes,
     constantesData.k,
     constantesData.d,
-    lastItemActivate,
   ]);
 
   const options: ApexCharts.ApexOptions = useMemo(() => {

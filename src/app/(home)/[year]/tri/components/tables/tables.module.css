@@ -83,7 +83,7 @@
 .margin_table {
   /* width: 100%; */
   border-collapse: collapse;
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   table-layout: fixed;
 }
 
@@ -104,18 +104,17 @@
 
 .margin_tr,
 .margin_tr1 {
-  font-weight: 300;
   transition: background-color 0.2s;
   border-bottom: solid 1px var(--grid);
 }
 
 .margin_th {
-  font-weight: 400;
-  padding: 8px 8px;
+  padding-top: 8px;
+  font-weight: 300;
 }
 
 .margin_td {
-  padding: 8px 8px;
+  padding: 8px;
   color: var(--tab-text);
   text-align: center;
 }
@@ -123,9 +122,8 @@
 .margin_th_item {
   display: flex;
   align-items: top;
-  justify-content: center; /* Garante que tudo no header nasça centralizado por padrão */
-  padding: 10px 8px;
-  gap: 4px;
+  justify-content: center;
+  padding: 8px;
   transition: all 0.3s ease;
 }
 

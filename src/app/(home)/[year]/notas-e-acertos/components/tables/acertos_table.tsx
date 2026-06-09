@@ -15,7 +15,6 @@ import { useYearData } from "../../../../../../context/year_context";
 import { useSidebar } from "../../../../../../context/sidebar_context";
 import clsx from "clsx";
 import Sort from "../../../../../../components/svg/sort";
-import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 
 type TableRow = {
   id: number;
@@ -30,7 +29,6 @@ type TableRow = {
 
 export default function AcertosTable() {
   const { acertosData, acertosNum, setAcertosNum } = useYearData();
-  const { tabColor } = useChartTheme();
   const { isMobile } = useSidebar();
   const [sorting, setSorting] = useState<SortingState>([
     { id: "id", desc: false },
@@ -46,15 +44,33 @@ export default function AcertosTable() {
         columns: [
           columnHelper.accessor("id", {
             header: "Acertos",
-            cell: (info) => <strong>{info.getValue()}</strong>,
+            cell: (info) => {
+              const isSorted = info.column.getIsSorted();
+              return (
+                <strong
+                  style={{
+                    fontWeight: isSorted ? "400" : "300",
+                    color: "#888",
+                  }}
+                >
+                  {info.getValue()}
+                </strong>
+              );
+            },
           }),
           columnHelper.accessor("n", {
             id: "n",
             header: "n",
             cell: (info) => {
               const val = info.getValue();
+              const isSorted = info.column.getIsSorted();
               return (
-                <span style={{ fontSize: "0.85rem", color: "#888" }}>
+                <span
+                  style={{
+                    fontWeight: isSorted ? "400" : "300",
+                    color: "#888",
+                  }}
+                >
                   {val ? val.toLocaleString() : 0}
                 </span>
               );
@@ -68,53 +84,103 @@ export default function AcertosTable() {
         columns: [
           columnHelper.accessor("min", {
             header: "Mín",
-            cell: (info) =>
-              info.getValue() !== 0 ? info.getValue().toFixed(1) : "—",
+            cell: (info) => {
+              const isSorted = info.column.getIsSorted();
+              return (
+                <strong
+                  style={{
+                    fontWeight: isSorted ? "400" : "300",
+                    color: "#888",
+                  }}
+                >
+                  {info.getValue() !== 0 ? info.getValue().toFixed(1) : "—"}
+                </strong>
+              );
+            },
           }),
           columnHelper.accessor("mean", {
             header: "Média",
             cell: (info) => {
+              const isSorted = info.column.getIsSorted();
               const val = info.getValue();
               return (
-                <span style={{ fontWeight: "600" }}>
+                <strong
+                  style={{
+                    fontWeight: isSorted ? "400" : "300",
+                    color: "#888",
+                  }}
+                >
                   {val !== 0 ? val.toFixed(1) : "—"}
-                </span>
+                </strong>
               );
             },
           }),
           columnHelper.accessor("max", {
             header: "Máx",
-            cell: (info) =>
-              info.getValue() !== 0 ? info.getValue().toFixed(1) : "—",
+            cell: (info) => {
+              const isSorted = info.column.getIsSorted();
+              return (
+                <strong
+                  style={{
+                    fontWeight: isSorted ? "400" : "300",
+                    color: "#888",
+                  }}
+                >
+                  {info.getValue() !== 0 ? info.getValue().toFixed(1) : "—"}
+                </strong>
+              );
+            },
           }),
           columnHelper.accessor("sd", {
             header: "D.P.",
             cell: (info) => {
+              const isSorted = info.column.getIsSorted();
               const val = info.getValue();
               return (
-                <span style={{ color: "#888" }}>
+                <strong
+                  style={{
+                    fontWeight: isSorted ? "400" : "300",
+                    color: "#888",
+                  }}
+                >
                   {val !== 0 ? val.toFixed(1) : "—"}
-                </span>
+                </strong>
               );
             },
           }),
           columnHelper.accessor("skew", {
             id: "skew",
             header: "Assimetria",
-            cell: (info) => (
-              <span style={{ color: "#888" }}>
-                {info.getValue() !== 0 ? info.getValue().toFixed(1) : "—"}
-              </span>
-            ),
+            cell: (info) => {
+              const isSorted = info.column.getIsSorted();
+              return (
+                <strong
+                  style={{
+                    fontWeight: isSorted ? "400" : "300",
+                    color: "#888",
+                  }}
+                >
+                  {info.getValue() !== 0 ? info.getValue().toFixed(1) : "—"}
+                </strong>
+              );
+            },
           }),
           columnHelper.accessor("kurtosis", {
             id: "kurtosis",
             header: "Curtose",
-            cell: (info) => (
-              <span style={{ color: "#888" }}>
-                {info.getValue() !== 0 ? info.getValue().toFixed(1) : "—"}
-              </span>
-            ),
+            cell: (info) => {
+              const isSorted = info.column.getIsSorted();
+              return (
+                <strong
+                  style={{
+                    fontWeight: isSorted ? "400" : "300",
+                    color: "#888",
+                  }}
+                >
+                  {info.getValue() !== 0 ? info.getValue().toFixed(1) : "—"}
+                </strong>
+              );
+            },
           }),
         ],
       }),
@@ -156,6 +222,7 @@ export default function AcertosTable() {
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    enableSortingRemoval: false,
   });
 
   return (
@@ -210,11 +277,7 @@ export default function AcertosTable() {
                             header.getContext(),
                           )}
                         {canSort && (
-                          <span
-                            style={{
-                              fontSize: "10px",
-                            }}
-                          >
+                          <span>
                             {{
                               asc: !isMobile && <Sort height="20px" />,
                               desc: !isMobile && <Sort height="20px" />,
@@ -239,13 +302,15 @@ export default function AcertosTable() {
                     styles.probtable_tr1,
                     isActive && styles.row_active,
                   )}
-                  onClick={() => setAcertosNum(row.original.id)}
-                  style={{
-                    backgroundColor: isActive ? tabColor : "transparent",
-                    borderLeft: isActive
-                      ? "4px solid rgba(0, 0, 0, 0.5)"
-                      : "4px solid transparent",
-                    cursor: "pointer",
+                  onClick={() => {
+                    setAcertosNum(row.original.id);
+                    const topo = document.getElementById("topo-pagina");
+                    if (topo) {
+                      topo.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start",
+                      });
+                    }
                   }}
                 >
                   {row.getVisibleCells().map((cell) => (

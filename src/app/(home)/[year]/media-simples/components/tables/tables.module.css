@@ -15,7 +15,7 @@
 .meantable_table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   /* Isso aqui é o que garante a largura fixa */
   table-layout: fixed;
 }
@@ -156,7 +156,7 @@
   /* background-color: aquamarine; */
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   /* Isso aqui é o que garante a largura fixa */
   /* table-layout: fixed;  */
 }
@@ -225,7 +225,7 @@
 .comp_val {
   width: 30px;
   font-weight: "300";
-  font-size: 0.85rem;
+  font-size: 0.9rem;
 }
 
 .scores_content {
@@ -289,7 +289,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: var(--tab-text);
 }
 
@@ -331,7 +331,7 @@
   color: #fff;
   padding: 6px 12px;
   border-radius: 4px;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: 600;
   pointer-events: none; /* ESSENCIAL para não tremer */
   z-index: 9999;

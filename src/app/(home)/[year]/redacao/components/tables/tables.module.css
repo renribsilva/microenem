@@ -53,18 +53,17 @@
   /* background-color: aquamarine; */
   min-width: 100%;
   border-collapse: collapse;
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   text-align: left;
+  table-layout: fixed;
 }
 
 .describe_thead {
   background-color: var(--tab-hover);
-  text-transform: uppercase;
-  color: var(--tab-text);
 }
 
 .describe_th {
-  padding: 10px;
+  padding: 8px;
   border-bottom: 1px solid var(--grid);
   font-weight: 300;
 }
@@ -75,11 +74,10 @@
 }
 
 .describe_tr:hover {
-  background-color: var(--tab-hover);
+  font-weight: 600;
 }
 
 .describe_tr.row_selected {
-  background-color: var(--tab-hover);
   font-weight: 600;
 }
 
@@ -88,8 +86,11 @@
   border-bottom: 1px solid var(--grid);
 }
 
+.describe_td:first-child {
+  width: 40%;
+}
+
 .describe_metricLabel {
-  /* font-weight: 600; */
   /* color: #374151; */
 }
 

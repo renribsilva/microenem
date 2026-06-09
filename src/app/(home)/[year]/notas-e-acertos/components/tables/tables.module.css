@@ -13,7 +13,6 @@
   /* background-color: aquamarine; */
   font-size: 20px;
   margin-bottom: 15px;
-  font-weight: 300;
   padding: 7;
 }
 
@@ -21,7 +20,7 @@
   /* background-color: aquamarine; */
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   /* Isso aqui é o que garante a largura fixa */
   table-layout: fixed;
 }
@@ -29,10 +28,11 @@
 .probtable_thead {
   background-color: var(--tab-hover);
   /* text-transform: uppercase; */
+  border-bottom: solid 4px var(--panel);
 }
 
 .probtable_thead_th {
-  font-weight: 400;
+  font-weight: 300;
   position: relative;
 }
 
@@ -50,7 +50,8 @@
   right: 8px;
   height: 1px;
   background-color: var(--tab-text);
-  opacity: 0.3;
+  opacity: 0.5;
+  font-weight: 300;
 }
 
 .probtable_th_item {
@@ -98,6 +99,10 @@
 /* Hover na linha abandonada */
 .row_abandonado:hover {
   background-color: rgba(255, 75, 75, 0.12) !important;
+}
+
+.row_active {
+  background-color: var(--tab-hover) !important;
 }
 
 .table_footer {

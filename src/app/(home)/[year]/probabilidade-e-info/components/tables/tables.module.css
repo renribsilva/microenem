@@ -42,6 +42,7 @@
 .probtable_group_th {
   padding: 5px;
   opacity: 0.5;
+  font-weight: 300;
 }
 
 .probtable_group_th::after {
@@ -52,7 +53,7 @@
   right: 8px;
   height: 1px;
   background-color: var(--tab-text);
-  opacity: 0.3;
+  opacity: 0.5;
 }
 
 .probtable_th_item {
@@ -62,6 +63,7 @@
   padding: 10px 8px;
   gap: 4px;
   transition: all 0.3s ease;
+  font-weight: 300;
 }
 
 .probtable_td {

@@ -119,32 +119,75 @@ export default function MarginImpactTable() {
     () => [
       columnHelper.accessor("id", {
         header: "Item",
-        cell: (info) => info.getValue(),
+        cell: (info) => {
+          const isSorted = info.column.getIsSorted();
+          return (
+            <span style={{ fontWeight: isSorted ? "400" : "300" }}>
+              {info.getValue()}
+            </span>
+          );
+        },
       }),
       columnHelper.accessor("codigo", {
         header: "Código",
-        cell: (info) => info.getValue(),
+        cell: (info) => {
+          const isSorted = info.column.getIsSorted();
+          return (
+            <span style={{ fontWeight: isSorted ? "400" : "300" }}>
+              {info.getValue()}
+            </span>
+          );
+        },
       }),
       columnHelper.accessor("status", {
         header: "Status",
-        cell: (info) => info.getValue(),
+        cell: (info) => {
+          const isSorted = info.column.getIsSorted();
+          return (
+            <span style={{ fontWeight: isSorted ? "400" : "300" }}>
+              {info.getValue()}
+            </span>
+          );
+        },
       }),
       columnHelper.accessor("a", {
         header: "a¹",
-        cell: (info) => info.getValue()?.toFixed(3) ?? "---",
+        cell: (info) => {
+          const isSorted = info.column.getIsSorted();
+          return (
+            <span style={{ fontWeight: isSorted ? "400" : "300" }}>
+              {info.getValue()?.toFixed(3) ?? "---"}
+            </span>
+          );
+        },
       }),
       columnHelper.accessor("b", {
         header: "b²",
-        cell: (info) => info.getValue()?.toFixed(3) ?? "---",
+        cell: (info) => {
+          const isSorted = info.column.getIsSorted();
+          return (
+            <span style={{ fontWeight: isSorted ? "400" : "300" }}>
+              {info.getValue()?.toFixed(3) ?? "---"}
+            </span>
+          );
+        },
       }),
       columnHelper.accessor("c", {
         header: "c³",
-        cell: (info) => info.getValue()?.toFixed(3) ?? "---",
+        cell: (info) => {
+          const isSorted = info.column.getIsSorted();
+          return (
+            <span style={{ fontWeight: isSorted ? "400" : "300" }}>
+              {info.getValue()?.toFixed(3) ?? "---"}
+            </span>
+          );
+        },
       }),
       columnHelper.accessor("impacto", {
         header: "Impacto",
         cell: (info) => {
           const value = info.getValue();
+          const isSorted = info.column.getIsSorted();
           if (isTRIDivergente) return <span>---</span>;
           const formatted =
             value > 0
@@ -156,7 +199,7 @@ export default function MarginImpactTable() {
             <span
               style={{
                 color: value < 0 ? "#ef4444" : "inherit",
-                fontWeight: value < 0 ? 500 : 400,
+                fontWeight: isSorted ? "400" : "300",
               }}
             >
               {formatted}
@@ -183,6 +226,7 @@ export default function MarginImpactTable() {
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    enableSortingRemoval: false,
   });
 
   return (
@@ -235,11 +279,7 @@ export default function MarginImpactTable() {
                             )}
 
                           {canSort && (
-                            <span
-                              style={{
-                                fontSize: "10px",
-                              }}
-                            >
+                            <span>
                               {{
                                 asc: !isMobile && <Sort height="20px" />,
                                 desc: !isMobile && <Sort height="20px" />,

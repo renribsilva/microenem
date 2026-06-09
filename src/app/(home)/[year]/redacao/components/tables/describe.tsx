@@ -49,7 +49,7 @@ export default function NotasRedacaoTable() {
   const tableData = useMemo<TableDataItem[]>(() => {
     const metrics = [
       { id: "media", label: "Média" }, // O ID aqui é 'media'
-      { id: "mediana", label: isMobile ? "Media." : "Mediana" },
+      { id: "mediana", label: "Mediana" },
       { id: "moda", label: "Moda" },
       { id: "q1", label: "Q1" },
       { id: "q3", label: "Q3" },
@@ -145,7 +145,16 @@ export default function NotasRedacaoTable() {
                   styles.describe_tr,
                   selectedRowId === row.original.id && styles.row_selected,
                 )}
-                onClick={() => setSelectedRowId(row.original.id)}
+                onClick={() => {
+                  setSelectedRowId(row.original.id);
+                  const topo = document.getElementById("topo-pagina");
+                  if (topo) {
+                    topo.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                    });
+                  }
+                }}
                 style={{ cursor: "pointer" }}
               >
                 {row.getVisibleCells().map((cell) => (

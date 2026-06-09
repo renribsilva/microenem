@@ -6,7 +6,7 @@ import ViolinBinsChart from "./components/graphs/violin";
 
 export default function QuestoesPage() {
   return (
-    <main className={styles.main_container}>
+    <main id="topo-pagina" className={styles.main_container}>
       <div className={styles.main_top}>
         <div className={styles.main_top1}>
           <Card>

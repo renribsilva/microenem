@@ -57,6 +57,7 @@ export default function ProdProbChart() {
     },
     noData: {
       text: "Atualizando...",
+      offsetY: -30,
     },
     dataLabels: { enabled: false },
     stroke: { curve: "smooth", width: 3, colors: [chartColor] },

@@ -61,7 +61,7 @@ export default function ProbsInfoTable() {
               return (
                 <strong
                   style={{
-                    fontWeight: isSorted ? "600" : "300",
+                    fontWeight: isSorted ? "400" : "300",
                     color: "#888",
                   }}
                 >
@@ -78,7 +78,7 @@ export default function ProbsInfoTable() {
                 <span
                   style={{
                     color: "#888",
-                    fontWeight: isSorted ? "600" : "300",
+                    fontWeight: isSorted ? "400" : "300",
                   }}
                 >
                   {info.getValue()}
@@ -101,7 +101,7 @@ export default function ProbsInfoTable() {
                 <span
                   style={{
                     color: "#888",
-                    fontWeight: isSorted ? "600" : "300",
+                    fontWeight: isSorted ? "400" : "300",
                   }}
                 >
                   {info.getValue()?.toUpperCase()}
@@ -121,7 +121,7 @@ export default function ProbsInfoTable() {
                   ? "#ff4d4f"
                   : "#52c41a";
               return (
-                <span style={{ fontWeight: isSorted ? "600" : "300", color }}>
+                <span style={{ fontWeight: isSorted ? "400" : "300", color }}>
                   {val !== null ? `${(val * 100).toFixed(1)}%` : "N/A"}
                 </span>
               );
@@ -143,7 +143,7 @@ export default function ProbsInfoTable() {
                 <span
                   style={{
                     color: "#888",
-                    fontWeight: isSorted ? "600" : "300",
+                    fontWeight: isSorted ? "400" : "300",
                   }}
                 >
                   {val !== null ? val : "N/A"}

@@ -17,7 +17,6 @@ import Dropdown from "../../../../../../components/tsx/dropdown";
 import clsx from "clsx";
 import { useSidebar } from "../../../../../../context/sidebar_context";
 import Sort from "../../../../../../components/svg/sort";
-import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 
 type TableRow = {
   id: number;
@@ -33,7 +32,6 @@ type TableRow = {
 
 export default function ScoreTable() {
   const { selectedLabel, deferredArea } = useHomeData();
-  const { tabColor } = useChartTheme();
   const { isMobile } = useSidebar();
   const {
     respostaAoItemData,
@@ -60,18 +58,35 @@ export default function ScoreTable() {
     const idCols = [
       columnHelper.accessor("posicao", {
         header: "Item",
-        cell: (info) => <strong>{info.getValue()}</strong>,
+        cell: (info) => {
+          const isSorted = info.column.getIsSorted();
+          return (
+            <strong
+              style={{ fontWeight: isSorted ? "400" : "300", color: "#888" }}
+            >
+              {info.getValue()}
+            </strong>
+          );
+        },
       }),
       // Só inclui Código se não for mobile
       ...(!isMobile
         ? [
             columnHelper.accessor("id", {
               header: "Código",
-              cell: (info) => (
-                <span style={{ fontSize: "0.85rem", color: "#888" }}>
-                  {info.getValue() || "—"}
-                </span>
-              ),
+              cell: (info) => {
+                const isSorted = info.column.getIsSorted();
+                return (
+                  <strong
+                    style={{
+                      fontWeight: isSorted ? "400" : "300",
+                      color: "#888",
+                    }}
+                  >
+                    {info.getValue()}
+                  </strong>
+                );
+              },
             }),
           ]
         : []),
@@ -82,10 +97,11 @@ export default function ScoreTable() {
               header: "Anulado",
               cell: (info) => {
                 const val = info.getValue();
+                const isSorted = info.column.getIsSorted();
                 return (
                   <span
                     style={{
-                      fontSize: "0.85rem",
+                      fontWeight: isSorted ? "400" : "300",
                       color: val ? "#ff4b4b" : "#888",
                     }}
                   >
@@ -103,18 +119,18 @@ export default function ScoreTable() {
       columnHelper.accessor("respondentes", {
         header: "n",
         cell: (info) => {
-          if (info.row.original.abandonado)
+          if (info.row.original.abandonado) {
             return <span style={{ color: "#ccc" }}>—</span>;
-
+          }
           const val = info.getValue();
           const compactFormatter = new Intl.NumberFormat("pt-BR", {
             notation: "compact",
             compactDisplay: "short",
             maximumFractionDigits: 1,
           });
-
+          const isSorted = info.column.getIsSorted();
           return (
-            <span style={{ fontSize: "0.8rem", color: "#888" }}>
+            <span style={{ fontSize: isSorted ? "400" : "300", color: "#888" }}>
               {isMobile
                 ? compactFormatter.format(val).toLowerCase()
                 : val.toLocaleString("pt-BR")}
@@ -124,57 +140,81 @@ export default function ScoreTable() {
       }),
       columnHelper.accessor("freq_acerto", {
         header: "Certa",
-        cell: (info) =>
-          info.row.original.abandonado ? (
-            <span style={{ color: "#ccc" }}>—</span>
-          ) : (
+        cell: (info) => {
+          if (info.row.original.abandonado) {
+            return <span style={{ color: "#ccc" }}>—</span>;
+          }
+          const isSorted = info.column.getIsSorted();
+          return (
             <span
               style={{
-                fontSize: "0.85rem",
                 color: "#52c41a",
-                fontWeight: "500",
+                fontWeight: isSorted ? "400" : "300",
               }}
             >
               {info.getValue()}%
             </span>
-          ),
+          );
+        },
       }),
       columnHelper.accessor("freq_erro", {
         header: "Errada",
-        cell: (info) =>
-          info.row.original.abandonado ? (
-            <span style={{ color: "#ccc" }}>—</span>
-          ) : (
+        cell: (info) => {
+          if (info.row.original.abandonado) {
+            return <span style={{ color: "#ccc" }}>—</span>;
+          }
+          const isSorted = info.column.getIsSorted();
+          return (
             <span
               style={{
-                fontSize: "0.85rem",
                 color: "#ff4b4b",
-                fontWeight: "500",
+                fontWeight: isSorted ? "400" : "300",
               }}
             >
               {info.getValue()}%
             </span>
-          ),
+          );
+        },
       }),
       ...(!isMobile
         ? [
             columnHelper.accessor("freq_branco", {
               header: "Branco",
-              cell: (info) =>
-                info.row.original.abandonado ? (
-                  <span style={{ color: "#ccc" }}>—</span>
-                ) : (
-                  <span style={{ color: "#888" }}>{info.getValue()}%</span>
-                ),
+              cell: (info) => {
+                if (info.row.original.abandonado) {
+                  return <span style={{ color: "#ccc" }}>—</span>;
+                }
+                const isSorted = info.column.getIsSorted();
+                return (
+                  <span
+                    style={{
+                      color: "#888",
+                      fontWeight: isSorted ? "400" : "300",
+                    }}
+                  >
+                    {info.getValue()}%
+                  </span>
+                );
+              },
             }),
             columnHelper.accessor("freq_dupla_marcacao", {
               header: "Dupla",
-              cell: (info) =>
-                info.row.original.abandonado ? (
-                  <span style={{ color: "#ccc" }}>—</span>
-                ) : (
-                  <span style={{ color: "#888" }}>{info.getValue()}%</span>
-                ),
+              cell: (info) => {
+                if (info.row.original.abandonado) {
+                  return <span style={{ color: "#ccc" }}>—</span>;
+                }
+                const isSorted = info.column.getIsSorted();
+                return (
+                  <span
+                    style={{
+                      color: "#888",
+                      fontWeight: isSorted ? "400" : "300",
+                    }}
+                  >
+                    {info.getValue()}%
+                  </span>
+                );
+              },
             }),
           ]
         : []),
@@ -249,6 +289,7 @@ export default function ScoreTable() {
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    enableSortingRemoval: false,
   });
 
   // INICIA COM O PRIMEIRO ITEM
@@ -314,11 +355,7 @@ export default function ScoreTable() {
                           header.getContext(),
                         )}
                       {canSort && (
-                        <span
-                          style={{
-                            fontSize: "10px",
-                          }}
-                        >
+                        <span>
                           {{
                             asc: !isMobile && <Sort height="20px" />,
                             desc: !isMobile && <Sort height="20px" />,
@@ -338,37 +375,28 @@ export default function ScoreTable() {
             const isAbandonado = row.original.abandonado;
             const itemId = row.original.id;
             const isActive = lastItemActivate === itemId;
-
             return (
               <tr
                 key={row.id}
-                className={`
-                  ${styles.probtable_tr1} 
-                  ${isAbandonado ? styles.row_abandonado : ""} 
-                  ${isActive ? styles.row_active : ""}
-                `}
+                className={clsx(
+                  styles.probtable_tr1,
+                  isAbandonado && styles.row_abandonado,
+                  isActive && styles.row_active,
+                )}
                 onClick={() => {
                   if (!isAbandonado) {
                     setLastItemActivate(itemId);
                     setLastItemActivateNum(row.original.posicao);
                     setItemGraphData(null);
                     setAcertosData(null);
+                    const topo = document.getElementById("topo-pagina");
+                    if (topo) {
+                      topo.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start",
+                      });
+                    }
                   }
-                }}
-                style={{
-                  backgroundColor: isActive
-                    ? tabColor
-                    : isAbandonado
-                      ? "rgba(255, 75, 75, 0.05)"
-                      : "transparent",
-                  borderLeft: isActive
-                    ? "4px solid rgba(0, 0, 0, 0.5)"
-                    : isAbandonado
-                      ? "4px solid #ff4b4b"
-                      : "4px solid transparent",
-                  cursor: isAbandonado ? "not-allowed" : "pointer",
-                  transition: "all 0.2s ease",
-                  opacity: isAbandonado ? 0.7 : 1,
                 }}
               >
                 {row.getVisibleCells().map((cell) => (

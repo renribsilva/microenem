@@ -1,14 +1,13 @@
-'use client'
+"use client";
 
-import PersonText from "../../../../components/svg/person_text"
-import Card from "../../../../components/tsx/card"
-import NotasRedacaoChart from "./components/graphs/notas"
-import NotasRedacaoTable from "./components/tables/describe"
-import StatusRedacaoTable from "./components/tables/status"
-import styles from "./redacao.module.css"
+import PersonText from "../../../../components/svg/person_text";
+import Card from "../../../../components/tsx/card";
+import NotasRedacaoChart from "./components/graphs/notas";
+import NotasRedacaoTable from "./components/tables/describe";
+import StatusRedacaoTable from "./components/tables/status";
+import styles from "./redacao.module.css";
 
 export default function Redacao() {
-
   return (
     <section className={styles.redacao_main}>
       <div className={styles.redacao_top}>
@@ -25,11 +24,12 @@ export default function Redacao() {
           </Card>
         </div>
       </div>
-      <div className={styles.redacao_bottom}>
+      <div id="topo-pagina" className={styles.redacao_bottom}>
         <Card>
           <NotasRedacaoChart />
         </Card>
       </div>
     </section>
-  )
+  );
 }
+

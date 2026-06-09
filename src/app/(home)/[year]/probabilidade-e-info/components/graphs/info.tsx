@@ -45,9 +45,7 @@ export default function InfoChart() {
 
         const dataPoints = rawPoints.map((yValue, idx) => {
           // Se for erro, inverte o valor (1 - y). Se não, usa o y normal.
-          const finalY = parseFloat(
-            (status === "erro" ? 1 - (yValue || 0) : yValue || 0).toFixed(3),
-          );
+          const finalY = parseFloat((yValue || 0).toFixed(3));
           return {
             x: transformTheta(
               infoLabels[idx],

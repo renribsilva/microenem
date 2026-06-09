@@ -63,7 +63,7 @@
 }
 
 .describe_th {
-  padding: 8px;
+  padding: 10px;
   border-bottom: 1px solid var(--grid);
   font-weight: 300;
 }

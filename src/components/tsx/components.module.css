@@ -324,10 +324,9 @@
 
 /* Container Principal */
 .shell_container {
-  padding: 0px 15px;
+  padding: 10px 20px;
   background: var(--tab-hover);
-  border-radius: 12px;
-  /* border: 1px solid var(--tab-border); */
+  border-radius: 15px;
   z-index: 50;
   margin-bottom: 10px;
 }

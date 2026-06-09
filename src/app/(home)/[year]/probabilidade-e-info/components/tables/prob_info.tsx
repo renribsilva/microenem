@@ -56,15 +56,35 @@ export default function ProbsInfoTable() {
         columns: [
           columnHelper.accessor("posicao", {
             header: "Item",
-            cell: (info) => <strong>{info.getValue()}</strong>,
+            cell: (info) => {
+              const isSorted = info.column.getIsSorted();
+              return (
+                <strong
+                  style={{
+                    fontWeight: isSorted ? "600" : "300",
+                    color: "#888",
+                  }}
+                >
+                  {info.getValue()}
+                </strong>
+              );
+            },
           }),
           columnHelper.accessor("id", {
             header: "Código",
-            cell: (info) => (
-              <span style={{ fontSize: "0.9rem", color: "#888" }}>
-                {info.getValue()}
-              </span>
-            ),
+            cell: (info) => {
+              const isSorted = info.column.getIsSorted();
+              return (
+                <span
+                  style={{
+                    color: "#888",
+                    fontWeight: isSorted ? "600" : "300",
+                  }}
+                >
+                  {info.getValue()}
+                </span>
+              );
+            },
           }),
         ],
       }),
@@ -75,24 +95,33 @@ export default function ProbsInfoTable() {
         columns: [
           columnHelper.accessor("estado", {
             header: "Estado",
-            cell: (info) => (
-              <span style={{ fontSize: "0.8rem", color: "#888" }}>
-                {info.getValue()?.toUpperCase()}
-              </span>
-            ),
+            cell: (info) => {
+              const isSorted = info.column.getIsSorted();
+              return (
+                <span
+                  style={{
+                    color: "#888",
+                    fontWeight: isSorted ? "600" : "300",
+                  }}
+                >
+                  {info.getValue()?.toUpperCase()}
+                </span>
+              );
+            },
           }),
           columnHelper.accessor("probabilidade", {
             header: "Prob¹",
             cell: (info) => {
               const val = info.getValue();
               const { estado, isAbandonado } = info.row.original;
+              const isSorted = info.column.getIsSorted();
               const color = isAbandonado
                 ? "#888"
                 : estado === "erro"
                   ? "#ff4d4f"
                   : "#52c41a";
               return (
-                <span style={{ fontWeight: "350", color }}>
+                <span style={{ fontWeight: isSorted ? "600" : "300", color }}>
                   {val !== null ? `${(val * 100).toFixed(1)}%` : "N/A"}
                 </span>
               );
@@ -109,8 +138,14 @@ export default function ProbsInfoTable() {
             header: "Valor²",
             cell: (info) => {
               const val = info.getValue();
+              const isSorted = info.column.getIsSorted();
               return (
-                <span style={{ fontWeight: "350", color: "#888" }}>
+                <span
+                  style={{
+                    color: "#888",
+                    fontWeight: isSorted ? "600" : "300",
+                  }}
+                >
                   {val !== null ? val : "N/A"}
                 </span>
               );
@@ -232,11 +267,7 @@ export default function ProbsInfoTable() {
                           header.getContext(),
                         )}
                       {canSort && (
-                        <span
-                          style={{
-                            fontSize: "10px",
-                          }}
-                        >
+                        <span>
                           {{
                             asc: !isMobile && <Sort height="20px" />,
                             desc: !isMobile && <Sort height="20px" />,

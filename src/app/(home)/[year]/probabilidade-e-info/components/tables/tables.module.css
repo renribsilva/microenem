@@ -20,22 +20,21 @@
   /* background-color: aquamarine; */
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   table-layout: fixed;
 }
 
 .probtable_thead {
-  background-color: var(--tab-hover);
   /* text-transform: uppercase; */
+  border: solid 1px var(--tab-hover);
+  background-color: var(--tab-hover);
 }
 
 .probtable_tr {
   /* background-color: aquamarine; */
-  font-weight: 300;
 }
 
 .probtable_thead_th {
-  font-weight: 400;
   position: relative;
 }
 
@@ -63,10 +62,6 @@
   padding: 10px 8px;
   gap: 4px;
   transition: all 0.3s ease;
-}
-
-.probtable_th_item :nth-child(2) {
-  border-bottom: solid 1px var(--grid);
 }
 
 .probtable_td {

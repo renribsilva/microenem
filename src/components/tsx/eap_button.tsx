@@ -1,4 +1,5 @@
 import { useHomeData } from "../../context/home_context";
+import { useSidebar } from "../../context/sidebar_context";
 import { useYearData } from "../../context/year_context";
 import styles from "./components.module.css";
 
@@ -15,6 +16,7 @@ function EAPButton() {
     setEAPData,
   } = useYearData();
   const { chartProps } = useHomeData();
+  const { isMobile } = useSidebar();
   const { chartColor } = chartProps;
 
   const handleUpdateChart = () => {
@@ -24,6 +26,13 @@ function EAPButton() {
     setIsInitialRender(false);
     setNeedUpdateEAP(false);
     setEAPData(null);
+    const topo = document.getElementById("topo-pagina");
+    if (topo && isMobile) {
+      topo.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
   };
 
   return (

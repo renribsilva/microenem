@@ -22,7 +22,7 @@ export default function RedacaoPage() {
               <ItensButtons />
             </Card>
           </div>
-          <div className={styles.tri_top_right}>
+          <div id="topo-pagina" className={styles.tri_top_right}>
             <Card>
               <ProdProbChart />
             </Card>

@@ -78,7 +78,7 @@ export default function ICCChart() {
       chart: {
         id: "icc-chart",
         type: "line",
-        toolbar: { show: true, offsetX: 0, offsetY: 0 },
+        toolbar: { show: false, offsetX: 0, offsetY: 0 },
         zoom: {
           enabled: false,
         },

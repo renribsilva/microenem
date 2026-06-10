@@ -12,6 +12,7 @@ import styles from "./tables.module.css";
 import { useYearData } from "../../../../../../context/year_context";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import clsx from "clsx";
+import { useSidebar } from "../../../../../../context/sidebar_context";
 
 type RankingRow = {
   ranking: number;
@@ -20,6 +21,7 @@ type RankingRow = {
 
 export default function RankingTable() {
   const { meanData, setActiveRanking } = useYearData();
+  const { isMobile } = useSidebar();
   const columnHelper = createColumnHelper<RankingRow>();
   const { textColor } = useChartTheme();
 
@@ -89,7 +91,16 @@ export default function RankingTable() {
                     styles.meantable_tr,
                     isSelected && styles.row_active,
                   )}
-                  onClick={() => setActiveRanking(currentRank)}
+                  onClick={() => {
+                    setActiveRanking(currentRank);
+                    const topo = document.getElementById("topo-pagina");
+                    if (topo && isMobile) {
+                      topo.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start",
+                      });
+                    }
+                  }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} className={styles.meantable_td}>

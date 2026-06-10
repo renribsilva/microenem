@@ -12,6 +12,7 @@ import { useHomeData } from "../../../../../../context/home_context";
 import { useYearData } from "../../../../../../context/year_context";
 import { TableDataItem } from "../../../../../../types/year_types";
 import { clsx } from "clsx";
+import { useSidebar } from "../../../../../../context/sidebar_context";
 
 const columnHelper = createColumnHelper<TableDataItem>();
 
@@ -32,6 +33,7 @@ const MEDIDAS_PADRAO = [
 export function DescribeTable() {
   const { deferredArea, selectedRowId, setSelectedRowId } = useHomeData();
   const { dificuldadeDoExame, dificuldadeDoExameAux } = useYearData();
+  const { isMobile } = useSidebar();
   const describeRowData = dificuldadeDoExameAux.describeRowData;
   const describeDifData = dificuldadeDoExame.describeDifData;
   const stableData = useMemo<TableDataItem[]>(() => {
@@ -114,7 +116,16 @@ export function DescribeTable() {
                   styles.describe_tr,
                   selectedRowId === row.original.id && styles.row_selected,
                 )}
-                onClick={() => setSelectedRowId(row.original.id)}
+                onClick={() => {
+                  setSelectedRowId(row.original.id);
+                  const topo = document.getElementById("topo-pagina");
+                  if (topo && isMobile) {
+                    topo.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                    });
+                  }
+                }}
                 style={{ cursor: "pointer" }}
               >
                 {row.getVisibleCells().map((cell) => (

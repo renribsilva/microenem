@@ -3,10 +3,9 @@
 import Card from "../../../../components/tsx/card";
 import CandidateDetailTable from "./components/tables/candidate";
 import RankingTable from "./components/tables/mean_table";
-import styles from "./mean.module.css"
+import styles from "./mean.module.css";
 
 export default function RedacaoPage() {
-
   return (
     <main className={styles.main_container}>
       <div className={styles.main_left}>
@@ -14,7 +13,7 @@ export default function RedacaoPage() {
           <RankingTable />
         </Card>
       </div>
-      <div className={styles.main_right}>
+      <div id="topo-pagina" className={styles.main_right}>
         <Card>
           <CandidateDetailTable />
         </Card>
@@ -22,3 +21,4 @@ export default function RedacaoPage() {
     </main>
   );
 }
+

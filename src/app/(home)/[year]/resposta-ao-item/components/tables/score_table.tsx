@@ -105,7 +105,7 @@ export default function ScoreTable() {
                       color: val ? "#ff4b4b" : "#888",
                     }}
                   >
-                    {val ? "Sim" : "Não"}
+                    {val ? "SIM" : "NÃO"}
                   </span>
                 );
               },

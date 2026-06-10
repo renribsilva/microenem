@@ -145,7 +145,7 @@ export default function MarginImpactTable() {
           const isSorted = info.column.getIsSorted();
           return (
             <span style={{ fontWeight: isSorted ? "400" : "300" }}>
-              {info.getValue()}
+              {info.getValue().toLocaleUpperCase()}
             </span>
           );
         },

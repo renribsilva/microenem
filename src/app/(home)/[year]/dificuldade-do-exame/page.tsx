@@ -25,6 +25,7 @@ export default function DadosDoExame() {
         </div>
         <div className={styles.main_right}>
           <div
+            id="topo-pagina"
             className={styles.main_right_top}
             style={{ minWidth: 0, minHeight: 0 }}
           >

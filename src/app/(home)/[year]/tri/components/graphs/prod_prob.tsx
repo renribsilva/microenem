@@ -199,7 +199,8 @@ export default function ProdProbChart() {
           >
             A nota mais provável é a média ponderada de todas as proficiências
             sob a curva, tendo como peso as suas respectivas probabilidades
-            ajustadas à normal N(0,1).
+            ajustadas à normal N(0,1). (Este gráfico pode apresentar valores que
+            não condizem com a nota divulgada nos microdados.)
           </div>
         </>
       ) : (

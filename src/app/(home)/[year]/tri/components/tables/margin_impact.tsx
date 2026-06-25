@@ -28,7 +28,7 @@ type ImpactoRow = {
 };
 
 export default function MarginImpactTable() {
-  const { currentYear, deferredArea, selectedLabel } = useHomeData();
+  const { deferredArea, selectedLabel } = useHomeData();
   const { isMobile } = useSidebar();
   const {
     EAPData,
@@ -45,9 +45,9 @@ export default function MarginImpactTable() {
     { id: "id", desc: false },
   ]);
 
-  const isTRIDivergente =
-    (deferredArea === "LC" && currentYear === "2024") ||
-    (deferredArea === "MT" && currentYear === "2019");
+  const isTRIDivergente = false;
+  // (deferredArea === "LC" && currentYear === "2024") ||
+  // (deferredArea === "MT" && currentYear === "2019");
 
   const paramsPorCodigo = useMemo(() => {
     const ranges = {

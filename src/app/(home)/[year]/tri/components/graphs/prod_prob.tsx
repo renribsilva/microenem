@@ -15,9 +15,9 @@ export default function ProdProbChart() {
   const { axisColor, textColor, gridColor } = useChartTheme();
   const { chartColor } = chartProps;
 
-  const isTRIDivergente =
-    (deferredArea === "LC" && currentYear === "2024") ||
-    (deferredArea === "MT" && currentYear === "2019");
+  const isTRIDivergente = false;
+  // (deferredArea === "LC" && currentYear === "2024") ||
+  // (deferredArea === "MT" && currentYear === "2019");
 
   const series = useMemo(() => {
     if (

@@ -1,0 +1,47 @@
+{
+  "digital": {},
+  "regular": {
+    "notas": {
+      "vars": 1,
+      "n": 3195065,
+      "mean": 520.863,
+      "sd": 127.5699,
+      "median": 501.1,
+      "trimmed": 511.3958,
+      "mad": 137.5853,
+      "min": 312.6,
+      "max": 980.3,
+      "range": 667.7,
+      "skew": 0.6014,
+      "kurtosis": -0.2986,
+      "se": 0.0714,
+      "mode": 411.5581,
+      "q1": 417.1,
+      "q3": 607.9,
+      "p99": 849.1,
+      "cor_min": "Laranja (Atendimento especializado)",
+      "cor_max": "Cinza",
+      "cod_min": 1497,
+      "cod_max": 1474
+    },
+    "acertos": {
+      "vars": 1,
+      "n": 3195065,
+      "mean": 14.0087,
+      "sd": 7.022,
+      "median": 12,
+      "trimmed": 13.0894,
+      "mad": 5.9304,
+      "min": 0,
+      "max": 43,
+      "range": 43,
+      "skew": 1.2279,
+      "kurtosis": 1.3658,
+      "se": 0.0039,
+      "mode": 10,
+      "q1": 9,
+      "q3": 17,
+      "p99": 36
+    }
+  }
+}

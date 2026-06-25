@@ -1,0 +1,47 @@
+{
+  "digital": {},
+  "regular": {
+    "notas": {
+      "vars": 1,
+      "n": 3386757,
+      "mean": 533.2168,
+      "sd": 70.9715,
+      "median": 539.4,
+      "trimmed": 536.593,
+      "mad": 66.717,
+      "min": 314.2,
+      "max": 794.5,
+      "range": 480.3,
+      "skew": -0.4183,
+      "kurtosis": 0.1097,
+      "se": 0.0386,
+      "mode": 547.6039,
+      "q1": 491.4,
+      "q3": 582.1,
+      "p99": 678.8,
+      "cor_min": "Verde (Espanhol)",
+      "cor_max": "Branca (Ingles)",
+      "cod_min": 1461,
+      "cod_max": 1462
+    },
+    "acertos": {
+      "vars": 1,
+      "n": 3386757,
+      "mean": 21.2243,
+      "sd": 8.0691,
+      "median": 21,
+      "trimmed": 20.953,
+      "mad": 8.8956,
+      "min": 0,
+      "max": 45,
+      "range": 45,
+      "skew": 0.2677,
+      "kurtosis": -0.6159,
+      "se": 0.0044,
+      "mode": 19,
+      "q1": 15,
+      "q3": 27,
+      "p99": 39
+    }
+  }
+}

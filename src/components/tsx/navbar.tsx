@@ -20,6 +20,7 @@ function Navbar() {
     "dificuldade-do-exame",
     "probabilidade-e-info",
     "resposta-ao-item",
+    "notas-e-acertos",
     "tri",
   ];
 

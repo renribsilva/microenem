@@ -27,7 +27,7 @@ const icons = {
   arrow_up: ArrowUp,
 };
 
-const anosPermitidos = ["2019", "2020", "2021", "2022", "2023", "2024"];
+const anosPermitidos = ["2019", "2020", "2021", "2022", "2023", "2024", "2025"];
 
 // Função auxiliar para gerar sub-itens com base no ano
 const generateSubItems: GenerateSubItemsType = (year) => [

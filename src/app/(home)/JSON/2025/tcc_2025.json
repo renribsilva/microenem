@@ -405,7 +405,7 @@
   "metadata": {
     "codigo": 1487,
     "area": "CN",
-    "cor": "Verde (Ampliada)",
+    "cor": "Laranja (Ampliada)",
     "min": 324.2,
     "max": 858.7,
     "lingua": "X",
@@ -421,7 +421,7 @@
   "metadata": {
     "codigo": 1488,
     "area": "CN",
-    "cor": "Verde (Superampliada)",
+    "cor": "Laranja (Superampliada)",
     "min": 324.2,
     "max": 858.7,
     "lingua": "X",
@@ -517,7 +517,7 @@
   "metadata": {
     "codigo": 1475,
     "area": "MT",
-    "cor": "Verde (Ampliada)",
+    "cor": "Laranja (Ampliada)",
     "min": 312.6,
     "max": 980.3,
     "lingua": "X",
@@ -533,7 +533,7 @@
   "metadata": {
     "codigo": 1476,
     "area": "MT",
-    "cor": "Verde (Superampliada)",
+    "cor": "Laranja (Superampliada)",
     "min": 312.6,
     "max": 980.3,
     "lingua": "X",

@@ -2,6 +2,7 @@ import { useRef } from "react";
 import styles from "./components.module.css";
 import { useHomeData } from "../../context/home_context";
 import Link from "next/link";
+import { useSidebar } from "../../context/sidebar_context";
 
 type YearItem = {
   name: string;
@@ -29,6 +30,7 @@ function DropdownSidebar({
   setIsOpen,
 }: DropdownSidebarProps) {
   const { currentYear, pathName } = useHomeData();
+  const { isMobileOpen, isMobile } = useSidebar();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const getYearDestinationPath = (targetYear: string) => {
@@ -56,14 +58,16 @@ function DropdownSidebar({
         >
           Edição: {currentYear || "2025"}
         </span>
-        <span
-          style={{
-            transform: isOpen ? "rotate(180deg)" : "none",
-            transition: "0.2s",
-          }}
-        >
-          ▼
-        </span>
+        {(isMobileOpen || !isMobile) && (
+          <span
+            style={{
+              transform: isOpen ? "rotate(180deg)" : "none",
+              transition: "0.2s",
+            }}
+          >
+            ▼
+          </span>
+        )}
       </button>
       {isOpen && (
         <div className={styles.dropdown_list}>

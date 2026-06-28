@@ -6,7 +6,7 @@ import { useChartTheme } from "../../hooks/use_chart_theme";
 import { useHomeData } from "../../context/home_context";
 import { useYearData } from "../../context/year_context";
 
-function Dropdown() {
+function DropdownBooks() {
   const {
     chartProps,
     availableTCC,
@@ -100,4 +100,4 @@ function Dropdown() {
   );
 }
 
-export default Dropdown;
+export default DropdownBooks;

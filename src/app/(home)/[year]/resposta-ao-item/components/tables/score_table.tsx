@@ -13,10 +13,10 @@ import {
 import styles from "./tables.module.css";
 import { useHomeData } from "../../../../../../context/home_context";
 import { useYearData } from "../../../../../../context/year_context";
-import Dropdown from "../../../../../../components/tsx/dropdown";
 import clsx from "clsx";
 import { useSidebar } from "../../../../../../context/sidebar_context";
 import Sort from "../../../../../../components/svg/sort";
+import DropdownBooks from "../../../../../../components/tsx/dropdown_books";
 
 type TableRow = {
   id: number;
@@ -313,7 +313,7 @@ export default function ScoreTable() {
           </p>
         </div>
         <div className={styles.probtable_dropdown}>
-          <Dropdown />
+          <DropdownBooks />
         </div>
       </div>
       <table className={styles.probtable_table}>

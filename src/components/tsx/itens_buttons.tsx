@@ -5,8 +5,8 @@ import styles from "./components.module.css";
 import { useChartTheme } from "../../hooks/use_chart_theme";
 import { useHomeData } from "../../context/home_context";
 import { useYearData } from "../../context/year_context";
-import Dropdown from "./dropdown";
 import EAPButton from "./eap_button";
+import DropdownBooks from "./dropdown_books";
 
 type onButtonClickType = (
   num: number,
@@ -74,7 +74,7 @@ function ItensButtons() {
 
   return (
     <section>
-      <Dropdown />
+      <DropdownBooks />
       <div className={styles.EAPButton_container}>
         {pathName.endsWith("tri") && <EAPButton />}
       </div>

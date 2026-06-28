@@ -55,6 +55,10 @@
   overscroll-behavior: contain;
 }
 
+.appsidebar_dropdown {
+  padding-top: 10px;
+}
+
 .appsidebar_footer {
   /* background-color: rgb(158, 100, 52); */
   padding-block: 15px;
@@ -69,61 +73,6 @@
   flex: 1;
 }
 
-.navbar_title {
-  /* background-color: aquamarine; */
-  font-weight: 300;
-  font-size: 16px;
-  color: var(--foreground);
-  margin-top: 15px;
-}
-
-.navbar_list {
-  /* background-color: blueviolet; */
-  list-style: none;
-  margin: 0;
-  padding-left: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.navbar_years {
-  /* background-color:azure; */
-}
-
-.navbar_button {
-  background-color: var(--panel);
-  border: none;
-  border-radius: 5px;
-  height: 30px;
-  width: 100%;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  font-family: Ubuntu;
-  font-size: large;
-  align-items: center;
-}
-
-.navbar_button_1 {
-  display: flex;
-  gap: 5px;
-  align-items: center;
-}
-
-.navbar_button_2 {
-  display: flex;
-  align-items: center;
-}
-
-.navbar_button_active {
-  background-color: var(--tab-hover);
-}
-
-.navbar_button:hover {
-  background-color: var(--tab-hover);
-}
-
 .navbar_subitems {
   /* background-color: brown; */
   overflow: hidden;
@@ -136,9 +85,8 @@
   flex-direction: column;
   gap: 5px;
   list-style: none;
-  padding-top: 5px;
   box-sizing: border-box;
-  padding-left: 20px;
+  padding-inline: 10px;
 }
 
 .navbar_subitems_items {
@@ -172,12 +120,6 @@
   text-decoration: none;
   padding-inline: 5px;
   color: var(--foreground);
-}
-
-.em_breve {
-  font-weight: 300;
-  font-size: 10px;
-  /* font-style: italic; */
 }
 
 /***********************************/
@@ -516,7 +458,6 @@
 
 .dropdown_list {
   position: absolute;
-  right: -1;
   width: 100%;
   background-color: var(--panel);
   border: 1px solid var(--grid);

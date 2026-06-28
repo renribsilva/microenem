@@ -5,7 +5,7 @@ import Chart from "react-apexcharts";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import styles from "./graphs.module.css";
 import { useHomeData } from "../../../../../../context/home_context";
-import Dropdown from "../../../../../../components/tsx/dropdown";
+import DropdownBooks from "../../../../../../components/tsx/dropdown_books";
 
 export default function TCCChart() {
   const { chartProps, activeTCC } = useHomeData();
@@ -279,7 +279,7 @@ export default function TCCChart() {
             dificuldade média da prova.
           </p>
         </div>
-        <Dropdown />
+        <DropdownBooks />
       </div>
       <div className={styles.tcc_graph_container}>
         <div className={styles.tcc_graph_wrapper}>

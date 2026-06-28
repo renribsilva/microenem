@@ -53,7 +53,7 @@ function DropdownSidebar({
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
-            fontSize: "14px",
+            fontSize: "16px",
           }}
         >
           Edição: {currentYear || "2025"}
@@ -85,7 +85,7 @@ function DropdownSidebar({
                   display: "block", // Garante que o Link ocupe a linha toda
                   padding: "10px 14px",
                   cursor: "pointer",
-                  fontSize: "0.8rem",
+                  fontSize: "1rem",
                   textDecoration: "none",
                   color: "inherit",
                 }}

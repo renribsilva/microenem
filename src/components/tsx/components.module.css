@@ -86,7 +86,7 @@
   gap: 5px;
   list-style: none;
   box-sizing: border-box;
-  padding-inline: 10px;
+  padding-inline: 0px;
 }
 
 .navbar_subitems_items {
@@ -95,6 +95,7 @@
   border-radius: 5px;
   display: flex;
   align-items: center;
+  padding-inline: 5px;
 }
 
 .navbar_subitems_links {

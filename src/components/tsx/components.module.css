@@ -181,7 +181,7 @@
 /*****************************************/
 
 .menu_button {
-  background-color: var(--background);
+  background-color: var(--tab-hover);
   border: none;
   height: 35px;
   border-radius: 99px;
@@ -196,7 +196,7 @@
 /*****************************************/
 
 .theme_button {
-  background-color: var(--background);
+  background-color: var(--tab-hover);
   border: none;
   height: 35px;
   border-radius: 99px;

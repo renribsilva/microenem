@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import styles from "./components.module.css";
 import { useHomeData } from "../../context/home_context";
 import Link from "next/link";
@@ -41,6 +41,18 @@ function DropdownSidebar({
     }
     return `/${targetYear}/visao-geral`;
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      )
+        setIsOpen(false);
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isOpen, setIsOpen]);
 
   return (
     <div className={styles.dropdown_container} ref={dropdownRef}>

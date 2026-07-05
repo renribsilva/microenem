@@ -54,6 +54,15 @@ export function DescribeTable() {
     });
   }, [describeRowData, describeDifData]);
 
+  const formatCellText = (value: number | string) => {
+    if (value === "---" || value === undefined || value === null) return "---";
+    const num = Number(value);
+    if (!isNaN(num) && num === 0) {
+      return "0";
+    }
+    return value;
+  };
+
   const columns = useMemo(
     () => [
       columnHelper.accessor("metric", {
@@ -65,13 +74,17 @@ export function DescribeTable() {
       columnHelper.accessor("nota", {
         header: "Notas",
         cell: (info) => (
-          <span className={styles.describe_valueText}>{info.getValue()}</span>
+          <span className={styles.describe_valueText}>
+            {formatCellText(info.getValue())}
+          </span>
         ),
       }),
       columnHelper.accessor("acerto", {
         header: "Acertos",
         cell: (info) => (
-          <span className={styles.describe_valueText}>{info.getValue()}</span>
+          <span className={styles.describe_valueText}>
+            {formatCellText(info.getValue())}
+          </span>
         ),
       }),
     ],

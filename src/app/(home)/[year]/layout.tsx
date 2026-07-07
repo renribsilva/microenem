@@ -21,6 +21,15 @@ function YearLayoutContent({ children }: { children: React.ReactNode }) {
 
   const dadosQuestao = questoesEnem.find((q) => q.codigo === questaoPopUp);
 
+  const cropDefault = [
+    {
+      cropHeight: 0,
+      cropWidth: 0,
+      offsetX: 0,
+      offsetY: 0,
+    },
+  ];
+
   return (
     <>
       {showPopUp && (
@@ -30,11 +39,9 @@ function YearLayoutContent({ children }: { children: React.ReactNode }) {
           onClose={() => setShowPopUp(false)}
           pageNumber={dadosQuestao ? dadosQuestao.pagina : 1}
           code={dadosQuestao ? dadosQuestao.codigo : 0}
-          cropHeight={dadosQuestao ? dadosQuestao.cropHeight : 0}
-          cropWidth={dadosQuestao ? dadosQuestao.cropWidth : 0}
-          offsetX={dadosQuestao ? dadosQuestao.offsetX : 0}
-          offsetY={dadosQuestao ? dadosQuestao.offsetY : 0}
           scale={dadosQuestao ? dadosQuestao.scale : 1.2}
+          crops={dadosQuestao ? dadosQuestao.crops : cropDefault}
+          direction={dadosQuestao ? dadosQuestao.direction : "row"}
         />
       )}
       <Navbar />

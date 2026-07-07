@@ -3,16 +3,21 @@
 import { useEffect, useRef } from "react";
 import PdfThumbnail from "./pdf_thumbnail";
 
+export interface CropArea {
+  cropHeight: number;
+  cropWidth: number;
+  offsetX: number;
+  offsetY: number;
+}
+
 interface PdfModalProps {
   isOpen: boolean;
   onClose: () => void;
   fileUrl: string;
   pageNumber: number;
   code: number;
-  cropHeight: number;
-  cropWidth: number;
-  offsetX: number;
-  offsetY: number;
+  crops: CropArea[];
+  direction: "row" | "column" | null;
   scale: number;
   tituloQuestao?: string;
 }
@@ -23,10 +28,8 @@ export default function PdfModal({
   fileUrl,
   pageNumber,
   code,
-  cropHeight,
-  cropWidth,
-  offsetX,
-  offsetY,
+  crops,
+  direction,
   scale,
   tituloQuestao,
 }: PdfModalProps) {
@@ -116,10 +119,8 @@ export default function PdfModal({
           <PdfThumbnail
             fileUrl={fileUrl}
             pageNumber={pageNumber}
-            cropHeight={cropHeight}
-            cropWidth={cropWidth}
-            offsetX={offsetX}
-            offsetY={offsetY}
+            crops={crops}
+            direction={direction}
             scale={scale}
           />
         </div>

@@ -52,7 +52,9 @@ export default function ProbsInfoTable() {
   const columnHelper = createColumnHelper<TableRow>();
 
   const columns = useMemo(() => {
+    // 1. Cria a estrutura base contendo apenas os dois primeiros grupos
     const baseColumns = [
+      // GRUPO 1: APENAS RÓTULO
       columnHelper.group({
         id: "identificacao_grupo",
         header: "Identificação",
@@ -105,7 +107,7 @@ export default function ProbsInfoTable() {
           }),
         ],
       }),
-
+      // GRUPO 2: APENAS RÓTULO
       columnHelper.group({
         id: "probabilidade_grupo",
         header: "Probabilidade",
@@ -148,6 +150,7 @@ export default function ProbsInfoTable() {
       }),
     ];
 
+    // 2. Se NÃO for mobile, adiciona dinamicamente a coluna de Informação
     if (!isMobile) {
       baseColumns.push(
         columnHelper.group({

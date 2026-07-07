@@ -387,6 +387,8 @@ export type YearContextType = {
   acertosNum: number;
   sampleEAP: string;
   fixedPalette: Record<number, string>;
+  questaoPopUp: number;
+  showPopUp: boolean;
 
   //Updatings
   isInitialRender: boolean;
@@ -437,4 +439,6 @@ export type YearContextType = {
   setItemGraphData: React.Dispatch<React.SetStateAction<ItemGraphType | null>>;
   setAcertosData: React.Dispatch<React.SetStateAction<AcertosDataType | null>>;
   setEAPData: React.Dispatch<React.SetStateAction<EAPDataType | null>>;
+  setQuestaoPopUp: React.Dispatch<React.SetStateAction<number>>;
+  setShowPopUp: React.Dispatch<React.SetStateAction<boolean>>;
 };

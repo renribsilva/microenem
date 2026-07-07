@@ -17,6 +17,7 @@ import { useYearData } from "../../../../../../context/year_context";
 import { useSidebar } from "../../../../../../context/sidebar_context";
 import Sort from "../../../../../../components/svg/sort";
 import clsx from "clsx";
+import Visibility from "../../../../../../components/svg/open_in_new";
 
 type TableRow = {
   id: number;
@@ -37,6 +38,8 @@ export default function ProbsInfoTable() {
     selectedItems,
     activeCodes,
     abandonadosCodes,
+    setShowPopUp,
+    setQuestaoPopUp,
   } = useYearData();
 
   const probLabels = probInfoData.probLabels;
@@ -45,6 +48,7 @@ export default function ProbsInfoTable() {
   const [sorting, setSorting] = useState<SortingState>([
     { id: "posicao", desc: false },
   ]);
+
   const columnHelper = createColumnHelper<TableRow>();
 
   const columns = useMemo(
@@ -74,15 +78,29 @@ export default function ProbsInfoTable() {
             header: "Código",
             cell: (info) => {
               const isSorted = info.column.getIsSorted();
+              const codigoQuestao = info.getValue();
               return (
-                <span
-                  style={{
-                    color: "#888",
-                    fontWeight: isSorted ? "400" : "300",
-                  }}
-                >
-                  {info.getValue()}
-                </span>
+                <div className={styles.code_container}>
+                  <span
+                    style={{
+                      color: "#888",
+                      fontWeight: isSorted ? "400" : "300",
+                    }}
+                  >
+                    {info.getValue()}
+                  </span>
+                  <span>
+                    <button
+                      onClick={() => {
+                        setShowPopUp(true);
+                        setQuestaoPopUp(codigoQuestao);
+                      }}
+                      className={styles.visibility_button}
+                    >
+                      <Visibility fill="#888" height="20px" />
+                    </button>
+                  </span>
+                </div>
               );
             },
           }),
@@ -154,7 +172,7 @@ export default function ProbsInfoTable() {
         ],
       }),
     ],
-    [columnHelper, isMobile],
+    [columnHelper, isMobile, setShowPopUp, setQuestaoPopUp],
   );
 
   const data = useMemo(() => {

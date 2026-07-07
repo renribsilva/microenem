@@ -139,6 +139,10 @@ export function YearProvider({ children }: { children: ReactNode }) {
 
   const [isInitialRender, setIsInitialRender] = useState<boolean>(true);
 
+  const [questaoPopUp, setQuestaoPopUp] = useState(null);
+
+  const [showPopUp, setShowPopUp] = useState(false);
+
   // ---------------------------------------------------------------------------
   // ------------ CARGA ESTÁTICA DE JSON POR ANO (BUNDLE INICIAL) --------------
   // ---------------------------------------------------------------------------
@@ -939,6 +943,8 @@ export function YearProvider({ children }: { children: ReactNode }) {
         acertosNum,
         sampleEAP,
         fixedPalette,
+        questaoPopUp,
+        showPopUp,
 
         // Updatings
         isInitialRender,
@@ -989,6 +995,8 @@ export function YearProvider({ children }: { children: ReactNode }) {
         setItemGraphData,
         setAcertosData,
         setEAPData,
+        setQuestaoPopUp,
+        setShowPopUp,
       }}
     >
       {children}

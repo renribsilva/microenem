@@ -1,10 +1,42 @@
-import { YearProvider } from "../../../context/year_context";
+"use client";
+
+import { useYearData, YearProvider } from "../../../context/year_context";
 import styles from "./layout.module.css";
 import Navbar from "../../../components/tsx/navbar";
+import dynamic from "next/dynamic";
+import { useHomeData } from "../../../context/home_context";
+import { questoesEnem } from "../../../hooks/questoes_coordenadas";
 
-function YearLayout({ children }: { children: React.ReactNode }) {
+const PdfModal = dynamic(() => import("../../../components/tsx/pdf_modal"), {
+  ssr: false,
+});
+
+function YearLayoutContent({ children }: { children: React.ReactNode }) {
+  const { currentYear, deferredArea } = useHomeData();
+  const { showPopUp, questaoPopUp, setShowPopUp } = useYearData();
+
+  const ehPrimeiroDia = deferredArea === "LC" || deferredArea === "CH";
+  const sufixoDia = ehPrimeiroDia ? "1DIA" : "2DIA";
+  const fileUrlDinamico = `/${currentYear}_${sufixoDia}.pdf`;
+
+  const dadosQuestao = questoesEnem.find((q) => q.codigo === questaoPopUp);
+
   return (
-    <YearProvider>
+    <>
+      {showPopUp && (
+        <PdfModal
+          fileUrl={fileUrlDinamico}
+          isOpen={showPopUp}
+          onClose={() => setShowPopUp(false)}
+          pageNumber={dadosQuestao ? dadosQuestao.pagina : 1}
+          code={dadosQuestao ? dadosQuestao.codigo : 0}
+          cropHeight={dadosQuestao ? dadosQuestao.cropHeight : 0}
+          cropWidth={dadosQuestao ? dadosQuestao.cropWidth : 0}
+          offsetX={dadosQuestao ? dadosQuestao.offsetX : 0}
+          offsetY={dadosQuestao ? dadosQuestao.offsetY : 0}
+          scale={dadosQuestao ? dadosQuestao.scale : 1.2}
+        />
+      )}
       <Navbar />
       <main>{children}</main>
       <div className={styles.table_footer}>
@@ -17,6 +49,15 @@ function YearLayout({ children }: { children: React.ReactNode }) {
         dificuldade média do exame; de modo que excluí-los estabelece uma
         normalização para possíveis comparações.
       </div>
+    </>
+  );
+}
+
+// 2. O componente principal apenas envelopa tudo com o Provider
+function YearLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <YearProvider>
+      <YearLayoutContent>{children}</YearLayoutContent>
     </YearProvider>
   );
 }

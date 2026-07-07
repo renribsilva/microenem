@@ -40,7 +40,7 @@ export default function PdfThumbnail({
     <div
       style={{
         display: "flex",
-        alignItems: "safe center",
+        alignItems: "right",
         flexDirection: direction,
         gap: "5px",
         width: `100%`,

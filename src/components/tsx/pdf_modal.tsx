@@ -2,13 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import PdfThumbnail from "./pdf_thumbnail";
-
-export interface CropArea {
-  cropHeight: number;
-  cropWidth: number;
-  offsetX: number;
-  offsetY: number;
-}
+import { CropArea } from "../../types/questões_types";
 
 interface PdfModalProps {
   isOpen: boolean;
@@ -77,7 +71,6 @@ export default function PdfModal({
           width: "100%",
         }}
       >
-        {/* Cabeçalho */}
         <div
           style={{
             display: "flex",

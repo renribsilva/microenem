@@ -1,17 +1,4 @@
-export interface CropArea {
-  cropHeight: number;
-  cropWidth: number;
-  offsetX: number;
-  offsetY: number;
-}
-
-export interface QuestaoCoordenadas {
-  codigo: number;
-  pagina: number;
-  scale: number;
-  crops?: CropArea[];
-  direction?: "row" | "column";
-}
+import { QuestaoCoordenadas } from "../types/questões_types";
 
 export const questoesEnem: QuestaoCoordenadas[] = [
   {
@@ -305,6 +292,58 @@ export const questoesEnem: QuestaoCoordenadas[] = [
       },
     ],
     direction: "column",
+    scale: 1.2,
+  },
+  {
+    codigo: 157598,
+    pagina: 9,
+    crops: [
+      {
+        offsetY: 230,
+        offsetX: 340,
+        cropHeight: 435,
+        cropWidth: 30,
+      },
+    ],
+    scale: 1.2,
+  },
+  {
+    codigo: 154020,
+    pagina: 10,
+    crops: [
+      {
+        offsetY: 110,
+        offsetX: 32,
+        cropHeight: 440,
+        cropWidth: 340,
+      },
+    ],
+    scale: 1.2,
+  },
+  {
+    codigo: 157619,
+    pagina: 10,
+    crops: [
+      {
+        offsetY: 575,
+        offsetX: 32,
+        cropHeight: 315,
+        cropWidth: 340,
+      },
+    ],
+    scale: 1.2,
+  },
+  {
+    codigo: 150612,
+    pagina: 10,
+    crops: [
+      {
+        offsetY: 110,
+        offsetX: 345,
+        cropHeight: 415,
+        cropWidth: 20,
+      },
+    ],
     scale: 1.2,
   },
 ];

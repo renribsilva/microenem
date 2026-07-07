@@ -51,9 +51,8 @@ export default function ProbsInfoTable() {
 
   const columnHelper = createColumnHelper<TableRow>();
 
-  const columns = useMemo(
-    () => [
-      // GRUPO 1: APENAS RÓTULO
+  const columns = useMemo(() => {
+    const baseColumns = [
       columnHelper.group({
         id: "identificacao_grupo",
         header: "Identificação",
@@ -106,7 +105,7 @@ export default function ProbsInfoTable() {
           }),
         ],
       }),
-      // GRUPO 2: APENAS RÓTULO
+
       columnHelper.group({
         id: "probabilidade_grupo",
         header: "Probabilidade",
@@ -147,33 +146,38 @@ export default function ProbsInfoTable() {
           }),
         ],
       }),
-      // GRUPO 3: APENAS RÓTULO
-      columnHelper.group({
-        id: "informacao_grupo",
-        header: isMobile ? "Info" : "Informação",
-        columns: [
-          columnHelper.accessor("informacao", {
-            header: "Valor²",
-            cell: (info) => {
-              const val = info.getValue();
-              const isSorted = info.column.getIsSorted();
-              return (
-                <span
-                  style={{
-                    color: "#888",
-                    fontWeight: isSorted ? "400" : "300",
-                  }}
-                >
-                  {val !== null ? val : "N/A"}
-                </span>
-              );
-            },
-          }),
-        ],
-      }),
-    ],
-    [columnHelper, isMobile, setShowPopUp, setQuestaoPopUp],
-  );
+    ];
+
+    if (!isMobile) {
+      baseColumns.push(
+        columnHelper.group({
+          id: "informacao_grupo",
+          header: "Informação",
+          columns: [
+            columnHelper.accessor("informacao", {
+              header: "Valor²",
+              cell: (info) => {
+                const val = info.getValue();
+                const isSorted = info.column.getIsSorted();
+                return (
+                  <span
+                    style={{
+                      color: "#888",
+                      fontWeight: isSorted ? "400" : "300",
+                    }}
+                  >
+                    {val !== null ? val : "N/A"}
+                  </span>
+                );
+              },
+            }),
+          ],
+        }),
+      );
+    }
+
+    return baseColumns;
+  }, [columnHelper, isMobile, setShowPopUp, setQuestaoPopUp]);
 
   const data = useMemo(() => {
     if (!activeCodes.length || !chartProps) return [];

@@ -2,18 +2,12 @@
 
 import { ComponentProps, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
+import { CropArea } from "../../types/questões_types";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
   import.meta.url,
 ).toString();
-
-interface CropArea {
-  cropHeight: number;
-  cropWidth: number;
-  offsetX: number;
-  offsetY: number;
-}
 
 interface PdfThumbnailProps {
   fileUrl: string;
@@ -32,19 +26,21 @@ export default function PdfThumbnail({
   pageNumber,
   scale,
   crops,
-  direction = "row",
+  direction,
 }: PdfThumbnailProps) {
-  const [larguraBase, setLarguraBase] = useState<number>(450);
+  const [larguraBase, setLarguraBase] = useState<number>(300);
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
   function handlePageLoad(page: PageLoadSuccessParams) {
     setLarguraBase(page.width);
+    setIsLoaded(true);
   }
 
   return (
     <div
       style={{
         display: "flex",
-        alignItems: "center",
+        alignItems: "safe center",
         flexDirection: direction,
         gap: "5px",
         width: `100%`,
@@ -52,7 +48,9 @@ export default function PdfThumbnail({
       }}
     >
       {crops.map((crop, index) => {
-        const larguraIndividual = larguraBase - crop.offsetX - crop.cropWidth;
+        const larguraIndividual = isLoaded
+          ? larguraBase - crop.offsetX - crop.cropWidth
+          : larguraBase;
 
         return (
           <div
@@ -69,20 +67,31 @@ export default function PdfThumbnail({
               backgroundColor: "#f9fafb",
             }}
           >
+            {!isLoaded && (
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "#f9fafb",
+                  color: "#6b7280",
+                  fontSize: "14px",
+                  zIndex: 10,
+                }}
+              >
+                Carregando...
+              </div>
+            )}
             <div
               style={{
                 position: "absolute",
                 transform: `translate(${-crop.offsetX}px, ${-crop.offsetY}px)`,
+                visibility: isLoaded ? "visible" : "hidden",
               }}
             >
-              <Document
-                file={fileUrl}
-                loading={
-                  <p style={{ padding: "16px", color: "#6b7280" }}>
-                    Carregando...
-                  </p>
-                }
-              >
+              <Document file={fileUrl} loading={null}>
                 <Page
                   pageNumber={pageNumber}
                   scale={scale}

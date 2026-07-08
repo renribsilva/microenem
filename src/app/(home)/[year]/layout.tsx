@@ -6,7 +6,7 @@ import Navbar from "../../../components/tsx/navbar";
 import dynamic from "next/dynamic";
 import { useHomeData } from "../../../context/home_context";
 import { QuestaoCoordenadas } from "../../../types/questoes_types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const PdfModal = dynamic(() => import("../../../components/tsx/pdf_modal"), {
   ssr: false,
@@ -22,22 +22,42 @@ function YearLayoutContent({ children }: { children: React.ReactNode }) {
   const sufixoDia = ehPrimeiroDia ? "1DIA" : "2DIA";
   const fileUrlDinamico = `/${currentYear}_${sufixoDia}.pdf`;
 
-  import(`../../../questoes/${currentYear}/${deferredArea}`)
-    .then((modulo) => {
-      const listaQuestoes: QuestaoCoordenadas[] =
-        modulo.questoesEnem || modulo.default;
-      const questaoEncontrada = listaQuestoes.find(
-        (q) => q.codigo === questaoPopUp,
-      );
-      setDadosQuestao(questaoEncontrada || null);
-    })
-    .catch((err) => {
-      console.error(
-        `Erro ao carregar questões: ${deferredArea} do ano ${currentYear}:`,
-        err,
-      );
-      setDadosQuestao(null);
-    });
+  // import(`../../../questoes/${currentYear}/${deferredArea}`)
+  //   .then((modulo) => {
+  //     const listaQuestoes: QuestaoCoordenadas[] =
+  //       modulo.questoesEnem || modulo.default;
+  //     const questaoEncontrada = listaQuestoes.find(
+  //       (q) => q.codigo === questaoPopUp,
+  //     );
+  //     setDadosQuestao(questaoEncontrada || null);
+  //   })
+  //   .catch((err) => {
+  //     console.error(
+  //       `Erro ao carregar questões: ${deferredArea} do ano ${currentYear}:`,
+  //       err,
+  //     );
+  //     setDadosQuestao(null);
+  //   });
+
+  useEffect(() => {
+    if (!questaoPopUp || !currentYear || !deferredArea) return;
+    import(`../../../questoes/${currentYear}/${deferredArea}`)
+      .then((modulo) => {
+        const listaQuestoes: QuestaoCoordenadas[] =
+          modulo.questoesEnem || modulo.default;
+        const questaoEncontrada = listaQuestoes.find(
+          (q) => q.codigo === questaoPopUp,
+        );
+        setDadosQuestao(questaoEncontrada || null);
+      })
+      .catch((err) => {
+        console.error(
+          `Erro ao carregar questões: ${deferredArea} do ano ${currentYear}:`,
+          err,
+        );
+        setDadosQuestao(null);
+      });
+  }, [questaoPopUp, currentYear, deferredArea]);
 
   const cropDefault = [
     {

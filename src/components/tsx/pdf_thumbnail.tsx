@@ -62,7 +62,7 @@ export default function PdfThumbnail({
               overflowY: "hidden",
               overflowX: "hidden",
               height: `${crop.cropHeight}px`,
-              // border: "1px solid #e5e7eb",
+              border: "1px solid #e5e7eb",
               borderRadius: "8px",
               backgroundColor: "#f9fafb",
             }}

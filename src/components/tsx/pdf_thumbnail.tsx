@@ -1,6 +1,6 @@
 "use client";
 
-import { ComponentProps, useState, useEffect } from "react";
+import { ComponentProps, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { CropArea } from "../../types/questoes_types";
 
@@ -21,72 +21,35 @@ type PageLoadSuccessParams = Parameters<
   Required<ComponentProps<typeof Page>>["onLoadSuccess"]
 >[0];
 
-const pdfCache: Record<string, string> = {};
-
 export default function PdfThumbnail({
   fileUrl,
   pageNumber,
   scale,
   crops,
-  direction,
+  direction = "row",
 }: PdfThumbnailProps) {
-  const [larguraBase, setLarguraBase] = useState<number>(300);
-  const [isLoaded, setIsLoaded] = useState<boolean>(false);
-
-  const [localBlobUrl, setLocalBlobUrl] = useState<string | null>(
-    () => pdfCache[fileUrl] || null,
-  );
-
-  const [isDownloading, setIsDownloading] = useState<boolean>(
-    () => !pdfCache[fileUrl],
-  );
-
-  const [downloadError, setDownloadError] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (pdfCache[fileUrl]) {
-      return;
-    }
-
-    let isMounted = true;
-
-    async function downloadPdf() {
-      try {
-        setIsDownloading(true);
-        const response = await fetch(fileUrl);
-        if (!response.ok) throw new Error("Erro ao buscar o arquivo");
-        const blob = await response.blob();
-        const blobUrl = URL.createObjectURL(blob);
-        pdfCache[fileUrl] = blobUrl;
-        if (isMounted) {
-          setLocalBlobUrl(blobUrl);
-          setIsDownloading(false);
-        }
-      } catch (err) {
-        console.error("Erro no download do PDF:", err);
-        if (isMounted) {
-          setDownloadError(true);
-          setIsDownloading(false);
-        }
-      }
-    }
-
-    downloadPdf();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [fileUrl]);
+  const [larguraBase, setLarguraBase] = useState(300);
+  const [documentLoaded, setDocumentLoaded] = useState(false);
+  const [pageLoaded, setPageLoaded] = useState(false);
+  const [error, setError] = useState(false);
 
   function handlePageLoad(page: PageLoadSuccessParams) {
     setLarguraBase(page.width);
-    setIsLoaded(true);
+    setPageLoaded(true);
   }
 
-  if (downloadError) {
+  const loading = !documentLoaded || !pageLoaded;
+
+  if (error) {
     return (
-      <div style={{ color: "#ef4444", padding: "10px", fontSize: "14px" }}>
-        ❌ Falha ao carregar o arquivo. Verifique sua conexão.
+      <div
+        style={{
+          color: "#ef4444",
+          padding: 12,
+          fontSize: 14,
+        }}
+      >
+        ❌ Falha ao carregar o PDF.
       </div>
     );
   }
@@ -94,98 +57,125 @@ export default function PdfThumbnail({
   return (
     <div
       style={{
+        position: "relative",
         display: "flex",
-        alignItems: "right",
         flexDirection: direction,
-        gap: "5px",
-        width: `100%`,
+        gap: 5,
+        width: "100%",
         overflow: "auto",
       }}
     >
-      {isDownloading && (
+      {loading && (
         <div
           style={{
+            position: "absolute",
+            inset: 0,
+            zIndex: 999,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: "#f3f4f6",
-            color: "#374151",
-            fontWeight: "bold",
-            fontSize: "14px",
-            padding: "20px",
-            width: "100%",
-            borderRadius: "8px",
-            border: "2px dashed #d1d5db",
+            background: "rgba(255,255,255,0.92)",
+            borderRadius: 8,
+            minHeight: 250,
           }}
         >
-          ⏳ Baixando PDF (uma única vez)...
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 10,
+            }}
+          >
+            <div
+              style={{
+                width: 36,
+                height: 36,
+                border: "4px solid #e5e7eb",
+                borderTop: "4px solid #2563eb",
+                borderRadius: "50%",
+                animation: "spin 1s linear infinite",
+              }}
+            />
+
+            <div
+              style={{
+                color: "#374151",
+                fontSize: 14,
+                fontWeight: 500,
+              }}
+            >
+              Carregando questão...
+            </div>
+
+            <div
+              style={{
+                color: "#6b7280",
+                fontSize: 12,
+              }}
+            >
+              Isso pode levar alguns segundos no celular.
+            </div>
+          </div>
         </div>
       )}
 
-      {localBlobUrl && (
-        <Document
-          file={localBlobUrl}
-          loading={
-            <div style={{ color: "#6b7280" }}>Processando documento...</div>
-          }
-        >
-          {crops.map((crop, index) => {
-            const { offsetX, offsetY } = crop;
-            const larguraIndividual = isLoaded
-              ? larguraBase - crop.offsetX - crop.cropWidth
-              : larguraBase;
+      <Document
+        file={fileUrl}
+        onLoadSuccess={() => setDocumentLoaded(true)}
+        onLoadError={() => setError(true)}
+        loading={null}
+        error={null}
+      >
+        {crops.map((crop, index) => {
+          const { offsetX, offsetY } = crop;
+          const larguraIndividual = pageLoaded
+            ? larguraBase - crop.offsetX - crop.cropWidth
+            : larguraBase;
 
-            return (
+          return (
+            <div
+              key={index}
+              style={{
+                position: "relative",
+                width: larguraIndividual,
+                height: crop.cropHeight,
+                overflow: "hidden",
+                flexShrink: 0,
+                borderRadius: 8,
+                background: "#f3f4f6",
+              }}
+            >
               <div
-                key={index}
                 style={{
-                  position: "relative",
-                  width: `${larguraIndividual}px`,
-                  flexShrink: 0,
-                  overflowY: "hidden",
-                  overflowX: "hidden",
-                  height: `${crop.cropHeight}px`,
-                  borderRadius: "8px",
-                  backgroundColor: "#f9fafb",
+                  position: "absolute",
+                  transform: `translate(-${offsetX}px, -${offsetY}px)`,
+                  visibility: pageLoaded ? "visible" : "hidden",
                 }}
               >
-                {!isLoaded && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      backgroundColor: "#f9fafb",
-                      color: "#6b7280",
-                      fontSize: "13px",
-                      zIndex: 10,
-                    }}
-                  >
-                    Recortando questão...
-                  </div>
-                )}
-                <div
-                  style={{
-                    position: "absolute",
-                    transform: `translate(${-offsetX}px, ${-offsetY}px)`,
-                    visibility: isLoaded ? "visible" : "hidden",
-                  }}
-                >
-                  <Page
-                    pageNumber={pageNumber}
-                    scale={scale}
-                    onLoadSuccess={handlePageLoad}
-                    renderTextLayer={false}
-                    renderAnnotationLayer={false}
-                  />
-                </div>
+                <Page
+                  pageNumber={pageNumber}
+                  scale={scale}
+                  onLoadSuccess={handlePageLoad}
+                  renderTextLayer={false}
+                  renderAnnotationLayer={false}
+                />
               </div>
-            );
-          })}
-        </Document>
-      )}
+            </div>
+          );
+        })}
+      </Document>
+
+      <style jsx>{`
+        @keyframes spin {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+      `}</style>
     </div>
   );
 }

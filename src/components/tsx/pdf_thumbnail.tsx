@@ -79,8 +79,8 @@ export default function PdfThumbnail({
   }, [fileUrl]);
 
   function handlePageLoad(page: PageLoadSuccessParams) {
+    // Pega a largura base, mas NÃO avisa que carregou ainda.
     setLarguraBase(page.width);
-    setIsLoaded(true);
   }
 
   if (downloadError) {
@@ -119,7 +119,7 @@ export default function PdfThumbnail({
             border: "2px dashed #d1d5db",
           }}
         >
-          ⏳ Baixando PDF (uma única vez)...
+          Baixando PDF
         </div>
       )}
 
@@ -182,6 +182,7 @@ export default function PdfThumbnail({
                     pageNumber={pageNumber}
                     scale={scale}
                     onLoadSuccess={handlePageLoad}
+                    onRenderSuccess={() => setIsLoaded(true)}
                     renderTextLayer={false}
                     renderAnnotationLayer={false}
                   />

@@ -1,4 +1,4 @@
-import { QuestaoCoordenadas } from "../types/questoes_types";
+import { QuestaoCoordenadas } from "../../types/questoes_types";
 
 export const questoesEnem: QuestaoCoordenadas[] = [
   {

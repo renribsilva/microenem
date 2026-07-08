@@ -47,51 +47,52 @@ export default function PdfThumbnail({
         overflow: "auto",
       }}
     >
-      {crops.map((crop, index) => {
-        const larguraIndividual = isLoaded
-          ? larguraBase - crop.offsetX - crop.cropWidth
-          : larguraBase;
+      <Document file={fileUrl} loading={"Carregando..."}>
+        {crops.map((crop, index) => {
+          const { offsetX, offsetY } = crop;
+          const larguraIndividual = isLoaded
+            ? larguraBase - crop.offsetX - crop.cropWidth
+            : larguraBase;
 
-        return (
-          <div
-            key={index}
-            style={{
-              position: "relative",
-              width: `${larguraIndividual}px`,
-              flexShrink: 0,
-              overflowY: "hidden",
-              overflowX: "hidden",
-              height: `${crop.cropHeight}px`,
-              // border: "1px solid #e5e7eb",
-              borderRadius: "8px",
-              backgroundColor: "#f9fafb",
-            }}
-          >
-            {!isLoaded && (
+          return (
+            <div
+              key={index}
+              style={{
+                position: "relative",
+                width: `${larguraIndividual}px`,
+                flexShrink: 0,
+                overflowY: "hidden",
+                overflowX: "hidden",
+                height: `${crop.cropHeight}px`,
+                // border: "1px solid #e5e7eb",
+                borderRadius: "8px",
+                backgroundColor: "#f9fafb",
+              }}
+            >
+              {!isLoaded && (
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: "#f9fafb",
+                    color: "#6b7280",
+                    fontSize: "14px",
+                    zIndex: 10,
+                  }}
+                >
+                  Carregando...
+                </div>
+              )}
               <div
                 style={{
                   position: "absolute",
-                  inset: 0,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  backgroundColor: "#f9fafb",
-                  color: "#6b7280",
-                  fontSize: "14px",
-                  zIndex: 10,
+                  transform: `translate(${-offsetX}px, ${-offsetY}px)`,
+                  visibility: isLoaded ? "visible" : "hidden",
                 }}
               >
-                Carregando...
-              </div>
-            )}
-            <div
-              style={{
-                position: "absolute",
-                transform: `translate(${-crop.offsetX}px, ${-crop.offsetY}px)`,
-                visibility: isLoaded ? "visible" : "hidden",
-              }}
-            >
-              <Document file={fileUrl} loading={null}>
                 <Page
                   pageNumber={pageNumber}
                   scale={scale}
@@ -99,11 +100,11 @@ export default function PdfThumbnail({
                   renderTextLayer={false}
                   renderAnnotationLayer={false}
                 />
-              </Document>
+              </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </Document>
     </div>
   );
 }

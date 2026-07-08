@@ -96,7 +96,6 @@ function YearLayoutContent({ children }: { children: React.ReactNode }) {
   );
 }
 
-// 2. O componente principal apenas envelopa tudo com o Provider
 function YearLayout({ children }: { children: React.ReactNode }) {
   return (
     <YearProvider>

@@ -70,18 +70,16 @@ function YearLayoutContent({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      {showPopUp && (
-        <PdfModal
-          fileUrl={fileUrlDinamico}
-          isOpen={showPopUp}
-          onClose={() => setShowPopUp(false)}
-          pageNumber={dadosQuestao ? dadosQuestao.pagina : 1}
-          code={dadosQuestao ? dadosQuestao.codigo : 0}
-          scale={dadosQuestao ? dadosQuestao.scale : 1.2}
-          crops={dadosQuestao ? dadosQuestao.crops : cropDefault}
-          direction={dadosQuestao ? dadosQuestao.direction : "row"}
-        />
-      )}
+      <PdfModal
+        fileUrl={fileUrlDinamico}
+        isOpen={showPopUp}
+        onClose={() => setShowPopUp(false)}
+        pageNumber={dadosQuestao ? dadosQuestao.pagina : 1}
+        code={dadosQuestao ? dadosQuestao.codigo : 0}
+        scale={dadosQuestao ? dadosQuestao.scale : 1.2}
+        crops={dadosQuestao ? dadosQuestao.crops : cropDefault}
+        direction={dadosQuestao ? dadosQuestao.direction : "row"}
+      />
       <Navbar />
       <main>{children}</main>
       <div className={styles.table_footer}>

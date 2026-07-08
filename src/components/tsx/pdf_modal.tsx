@@ -46,8 +46,6 @@ export default function PdfModal({
     };
   }, [isOpen]);
 
-  if (!isOpen) return null;
-
   return (
     <dialog
       ref={dialogRef}

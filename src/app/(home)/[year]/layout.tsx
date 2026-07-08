@@ -22,7 +22,7 @@ function YearLayoutContent({ children }: { children: React.ReactNode }) {
   const sufixoDia = ehPrimeiroDia ? "1DIA" : "2DIA";
   const fileUrlDinamico = `/${currentYear}_${sufixoDia}.pdf`;
 
-  import(`../../../questoes/${currentYear}`)
+  import(`../../../questoes/${currentYear}/${deferredArea}`)
     .then((modulo) => {
       const listaQuestoes: QuestaoCoordenadas[] =
         modulo.questoesEnem || modulo.default;
@@ -32,7 +32,10 @@ function YearLayoutContent({ children }: { children: React.ReactNode }) {
       setDadosQuestao(questaoEncontrada || null);
     })
     .catch((err) => {
-      console.error(`Erro ao carregar as questões do ano ${currentYear}:`, err);
+      console.error(
+        `Erro ao carregar questões: ${deferredArea} do ano ${currentYear}:`,
+        err,
+      );
       setDadosQuestao(null);
     });
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { ComponentProps, useState } from "react";
+import { ComponentProps, useState, useEffect } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { CropArea } from "../../types/questoes_types";
 
@@ -21,27 +21,7 @@ type PageLoadSuccessParams = Parameters<
   Required<ComponentProps<typeof Page>>["onLoadSuccess"]
 >[0];
 
-// Criamos um componente de Loading reutilizável e visível
-function LoadingPlaceholder() {
-  return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "#f9fafb",
-        color: "#6b7280",
-        fontSize: "14px",
-        padding: "20px",
-        width: "100%",
-        borderRadius: "8px",
-        border: "1px dashed #e5e7eb",
-      }}
-    >
-      Carregando...
-    </div>
-  );
-}
+const pdfCache: Record<string, string> = {};
 
 export default function PdfThumbnail({
   fileUrl,
@@ -53,9 +33,62 @@ export default function PdfThumbnail({
   const [larguraBase, setLarguraBase] = useState<number>(300);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
+  const [localBlobUrl, setLocalBlobUrl] = useState<string | null>(
+    () => pdfCache[fileUrl] || null,
+  );
+
+  const [isDownloading, setIsDownloading] = useState<boolean>(
+    () => !pdfCache[fileUrl],
+  );
+
+  const [downloadError, setDownloadError] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (pdfCache[fileUrl]) {
+      return;
+    }
+
+    let isMounted = true;
+
+    async function downloadPdf() {
+      try {
+        setIsDownloading(true);
+        const response = await fetch(fileUrl);
+        if (!response.ok) throw new Error("Erro ao buscar o arquivo");
+        const blob = await response.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        pdfCache[fileUrl] = blobUrl;
+        if (isMounted) {
+          setLocalBlobUrl(blobUrl);
+          setIsDownloading(false);
+        }
+      } catch (err) {
+        console.error("Erro no download do PDF:", err);
+        if (isMounted) {
+          setDownloadError(true);
+          setIsDownloading(false);
+        }
+      }
+    }
+
+    downloadPdf();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [fileUrl]);
+
   function handlePageLoad(page: PageLoadSuccessParams) {
     setLarguraBase(page.width);
     setIsLoaded(true);
+  }
+
+  if (downloadError) {
+    return (
+      <div style={{ color: "#ef4444", padding: "10px", fontSize: "14px" }}>
+        ❌ Falha ao carregar o arquivo. Verifique sua conexão.
+      </div>
+    );
   }
 
   return (
@@ -69,63 +102,90 @@ export default function PdfThumbnail({
         overflow: "auto",
       }}
     >
-      <Document file={fileUrl} loading={<LoadingPlaceholder />}>
-        {crops.map((crop, index) => {
-          const { offsetX, offsetY } = crop;
-          const larguraIndividual = isLoaded
-            ? larguraBase - crop.offsetX - crop.cropWidth
-            : larguraBase;
+      {isDownloading && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "#f3f4f6",
+            color: "#374151",
+            fontWeight: "bold",
+            fontSize: "14px",
+            padding: "20px",
+            width: "100%",
+            borderRadius: "8px",
+            border: "2px dashed #d1d5db",
+          }}
+        >
+          ⏳ Baixando PDF (uma única vez)...
+        </div>
+      )}
 
-          return (
-            <div
-              key={index}
-              style={{
-                position: "relative",
-                width: `${larguraIndividual}px`,
-                flexShrink: 0,
-                overflowY: "hidden",
-                overflowX: "hidden",
-                height: `${crop.cropHeight}px`,
-                borderRadius: "8px",
-                backgroundColor: "#f9fafb",
-              }}
-            >
-              {!isLoaded && (
+      {localBlobUrl && (
+        <Document
+          file={localBlobUrl}
+          loading={
+            <div style={{ color: "#6b7280" }}>Processando documento...</div>
+          }
+        >
+          {crops.map((crop, index) => {
+            const { offsetX, offsetY } = crop;
+            const larguraIndividual = isLoaded
+              ? larguraBase - crop.offsetX - crop.cropWidth
+              : larguraBase;
+
+            return (
+              <div
+                key={index}
+                style={{
+                  position: "relative",
+                  width: `${larguraIndividual}px`,
+                  flexShrink: 0,
+                  overflowY: "hidden",
+                  overflowX: "hidden",
+                  height: `${crop.cropHeight}px`,
+                  borderRadius: "8px",
+                  backgroundColor: "#f9fafb",
+                }}
+              >
+                {!isLoaded && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      inset: 0,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: "#f9fafb",
+                      color: "#6b7280",
+                      fontSize: "13px",
+                      zIndex: 10,
+                    }}
+                  >
+                    Recortando questão...
+                  </div>
+                )}
                 <div
                   style={{
                     position: "absolute",
-                    inset: 0,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backgroundColor: "#f9fafb",
-                    color: "#6b7280",
-                    fontSize: "14px",
-                    zIndex: 10,
+                    transform: `translate(${-offsetX}px, ${-offsetY}px)`,
+                    visibility: isLoaded ? "visible" : "hidden",
                   }}
                 >
-                  Carregando...
+                  <Page
+                    pageNumber={pageNumber}
+                    scale={scale}
+                    onLoadSuccess={handlePageLoad}
+                    renderTextLayer={false}
+                    renderAnnotationLayer={false}
+                  />
                 </div>
-              )}
-              <div
-                style={{
-                  position: "absolute",
-                  transform: `translate(${-offsetX}px, ${-offsetY}px)`,
-                  visibility: isLoaded ? "visible" : "hidden",
-                }}
-              >
-                <Page
-                  pageNumber={pageNumber}
-                  scale={scale}
-                  onLoadSuccess={handlePageLoad}
-                  renderTextLayer={false}
-                  renderAnnotationLayer={false}
-                />
               </div>
-            </div>
-          );
-        })}
-      </Document>
+            );
+          })}
+        </Document>
+      )}
     </div>
   );
 }

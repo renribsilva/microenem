@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import PdfThumbnail from "./pdf_thumbnail";
-import { CropArea } from "../../types/questões_types";
+import { CropArea } from "../../types/questoes_types";
 
 interface PdfModalProps {
   isOpen: boolean;

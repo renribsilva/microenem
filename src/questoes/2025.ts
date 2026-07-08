@@ -1,4 +1,4 @@
-import { QuestaoCoordenadas } from "../types/questões_types";
+import { QuestaoCoordenadas } from "../types/questoes_types";
 
 export const questoesEnem: QuestaoCoordenadas[] = [
   {
@@ -416,10 +416,264 @@ export const questoesEnem: QuestaoCoordenadas[] = [
     pagina: 13,
     crops: [
       {
-        offsetY: 0,
+        offsetY: 110,
         offsetX: 25,
-        cropHeight: 290,
+        cropHeight: 490,
+        cropWidth: 350,
+      },
+    ],
+    scale: 1.2,
+  },
+  {
+    codigo: 118196,
+    pagina: 13,
+    crops: [
+      {
+        offsetY: 620,
+        offsetX: 25,
+        cropHeight: 270,
+        cropWidth: 348,
+      },
+    ],
+    scale: 1.2,
+  },
+  {
+    codigo: 150505,
+    pagina: 13,
+    crops: [
+      {
+        offsetY: 110,
+        offsetX: 340,
+        cropHeight: 385,
+        cropWidth: 30,
+      },
+    ],
+    scale: 1.2,
+  },
+  {
+    codigo: 150761,
+    pagina: 13,
+    crops: [
+      {
+        offsetY: 520,
+        offsetX: 340,
+        cropHeight: 370,
+        cropWidth: 30,
+      },
+    ],
+    scale: 1.2,
+  },
+  {
+    codigo: 153420,
+    pagina: 14,
+    crops: [
+      {
+        offsetY: 110,
+        offsetX: 32,
+        cropHeight: 380,
+        cropWidth: 340,
+      },
+    ],
+    scale: 1.2,
+  },
+  {
+    codigo: 153419,
+    pagina: 14,
+    crops: [
+      {
+        offsetY: 512,
+        offsetX: 32,
+        cropHeight: 380,
+        cropWidth: 340,
+      },
+    ],
+    scale: 1.2,
+  },
+  {
+    codigo: 140908,
+    pagina: 14,
+    crops: [
+      {
+        offsetY: 110,
+        offsetX: 346,
+        cropHeight: 410,
         cropWidth: 20,
+      },
+    ],
+    scale: 1.2,
+  },
+  {
+    codigo: 140845,
+    pagina: 14,
+    crops: [
+      {
+        offsetY: 545,
+        offsetX: 346,
+        cropHeight: 345,
+        cropWidth: 20,
+      },
+    ],
+    scale: 1.2,
+  },
+  {
+    codigo: 120341,
+    pagina: 15,
+    crops: [
+      {
+        offsetY: 110,
+        offsetX: 25,
+        cropHeight: 655,
+        cropWidth: 348,
+      },
+    ],
+    scale: 1.2,
+  },
+  {
+    codigo: 150642,
+    pagina: 15,
+    crops: [
+      {
+        offsetY: 110,
+        offsetX: 340,
+        cropHeight: 395,
+        cropWidth: 30,
+      },
+    ],
+    scale: 1.2,
+  },
+  {
+    codigo: 153681,
+    pagina: 15,
+    crops: [
+      {
+        offsetY: 530,
+        offsetX: 340,
+        cropHeight: 360,
+        cropWidth: 30,
+      },
+    ],
+    scale: 1.2,
+  },
+  {
+    codigo: 97881,
+    pagina: 16,
+    crops: [
+      {
+        offsetY: 110,
+        offsetX: 32,
+        cropHeight: 440,
+        cropWidth: 25,
+      },
+    ],
+    scale: 1.2,
+  },
+  {
+    codigo: 43532,
+    pagina: 16,
+    crops: [
+      {
+        offsetY: 575,
+        offsetX: 32,
+        cropHeight: 265,
+        cropWidth: 25,
+      },
+    ],
+    scale: 1.2,
+  },
+  {
+    codigo: 152784,
+    pagina: 17,
+    crops: [
+      {
+        offsetY: 110,
+        offsetX: 20,
+        cropHeight: 300,
+        cropWidth: 30,
+      },
+    ],
+    scale: 1.2,
+  },
+  {
+    codigo: 150607,
+    pagina: 17,
+    crops: [
+      {
+        offsetY: 430,
+        offsetX: 20,
+        cropHeight: 415,
+        cropWidth: 30,
+      },
+    ],
+    scale: 1.2,
+  },
+  {
+    codigo: 153550,
+    pagina: 18,
+    crops: [
+      {
+        offsetY: 110,
+        offsetX: 32,
+        cropHeight: 460,
+        cropWidth: 23,
+      },
+    ],
+    scale: 1.2,
+  },
+  {
+    codigo: 66526,
+    pagina: 18,
+    crops: [
+      {
+        offsetY: 595,
+        offsetX: 32,
+        cropHeight: 295,
+        cropWidth: 23,
+      },
+    ],
+    scale: 1.2,
+  },
+  {
+    codigo: 157593,
+    pagina: 19,
+    crops: [
+      {
+        offsetY: 110,
+        offsetX: 20,
+        cropHeight: 445,
+        cropWidth: 345,
+      },
+    ],
+    scale: 1.2,
+  },
+  {
+    codigo: 17166,
+    pagina: 19,
+    crops: [
+      {
+        offsetY: 580,
+        offsetX: 20,
+        cropHeight: 310,
+        cropWidth: 345,
+      },
+      {
+        offsetY: 90,
+        offsetX: 337,
+        cropHeight: 180,
+        cropWidth: 25,
+      },
+    ],
+    direction: "column",
+    scale: 1.2,
+  },
+  {
+    codigo: 120714,
+    pagina: 19,
+    crops: [
+      {
+        offsetY: 295,
+        offsetX: 337,
+        cropHeight: 520,
+        cropWidth: 25,
       },
     ],
     scale: 1.2,

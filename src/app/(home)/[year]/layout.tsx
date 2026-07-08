@@ -5,8 +5,8 @@ import styles from "./layout.module.css";
 import Navbar from "../../../components/tsx/navbar";
 import dynamic from "next/dynamic";
 import { useHomeData } from "../../../context/home_context";
-import { QuestaoCoordenadas } from "../../../types/questões_types";
-import { useEffect, useState } from "react";
+import { QuestaoCoordenadas } from "../../../types/questoes_types";
+import { useState } from "react";
 
 const PdfModal = dynamic(() => import("../../../components/tsx/pdf_modal"), {
   ssr: false,
@@ -22,26 +22,19 @@ function YearLayoutContent({ children }: { children: React.ReactNode }) {
   const sufixoDia = ehPrimeiroDia ? "1DIA" : "2DIA";
   const fileUrlDinamico = `/${currentYear}_${sufixoDia}.pdf`;
 
-  useEffect(() => {
-    if (!currentYear || !questaoPopUp) return;
-
-    import(`../../../questoes/${currentYear}`)
-      .then((modulo) => {
-        const listaQuestoes: QuestaoCoordenadas[] =
-          modulo.questoesEnem || modulo.default;
-        const questaoEncontrada = listaQuestoes.find(
-          (q) => q.codigo === questaoPopUp,
-        );
-        setDadosQuestao(questaoEncontrada || null);
-      })
-      .catch((err) => {
-        console.error(
-          `Erro ao carregar as questões do ano ${currentYear}:`,
-          err,
-        );
-        setDadosQuestao(null);
-      });
-  }, [currentYear, questaoPopUp]);
+  import(`../../../questoes/${currentYear}`)
+    .then((modulo) => {
+      const listaQuestoes: QuestaoCoordenadas[] =
+        modulo.questoesEnem || modulo.default;
+      const questaoEncontrada = listaQuestoes.find(
+        (q) => q.codigo === questaoPopUp,
+      );
+      setDadosQuestao(questaoEncontrada || null);
+    })
+    .catch((err) => {
+      console.error(`Erro ao carregar as questões do ano ${currentYear}:`, err);
+      setDadosQuestao(null);
+    });
 
   const cropDefault = [
     {

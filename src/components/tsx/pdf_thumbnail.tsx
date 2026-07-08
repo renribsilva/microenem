@@ -2,7 +2,7 @@
 
 import { ComponentProps, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
-import { CropArea } from "../../types/questões_types";
+import { CropArea } from "../../types/questoes_types";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -62,7 +62,7 @@ export default function PdfThumbnail({
               overflowY: "hidden",
               overflowX: "hidden",
               height: `${crop.cropHeight}px`,
-              border: "1px solid #e5e7eb",
+              // border: "1px solid #e5e7eb",
               borderRadius: "8px",
               backgroundColor: "#f9fafb",
             }}

@@ -31,7 +31,9 @@ export default function PdfThumbnail({
   direction,
 }: PdfThumbnailProps) {
   const [larguraBase, setLarguraBase] = useState<number>(300);
-  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+
+  // Substituindo o booleano único por um estado que rastreia cada crop individualmente
+  const [loadedCrops, setLoadedCrops] = useState<Record<number, boolean>>({});
 
   const [localBlobUrl, setLocalBlobUrl] = useState<string | null>(
     () => pdfCache[fileUrl] || null,
@@ -79,7 +81,6 @@ export default function PdfThumbnail({
   }, [fileUrl]);
 
   function handlePageLoad(page: PageLoadSuccessParams) {
-    // Pega a largura base, mas NÃO avisa que carregou ainda.
     setLarguraBase(page.width);
   }
 
@@ -119,7 +120,7 @@ export default function PdfThumbnail({
             border: "2px dashed #d1d5db",
           }}
         >
-          Baixando PDF
+          ⏳ Baixando PDF...
         </div>
       )}
 
@@ -127,14 +128,31 @@ export default function PdfThumbnail({
         <Document
           file={localBlobUrl}
           loading={
-            <div style={{ height: "400px", width: "300px", color: "#0000" }}>
-              Processando documento...
+            /* CORRIGIDO: Removido o color: "#0000" que deixava o texto invisível */
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                height: "400px",
+                width: "300px",
+                backgroundColor: "#f9fafb",
+                color: "#6b7280",
+                fontSize: "14px",
+                borderRadius: "8px",
+              }}
+            >
+              ⚙️ Processando documento...
             </div>
           }
         >
           {crops.map((crop, index) => {
             const { offsetX, offsetY } = crop;
-            const larguraIndividual = isLoaded
+
+            // Verifica se ESTE recorte específico já terminou de renderizar
+            const isThisCropLoaded = loadedCrops[index] || false;
+
+            const larguraIndividual = isThisCropLoaded
               ? `${larguraBase - crop.offsetX - crop.cropWidth}px`
               : "max-content";
 
@@ -152,7 +170,7 @@ export default function PdfThumbnail({
                   backgroundColor: "#f9fafb",
                 }}
               >
-                {!isLoaded && (
+                {!isThisCropLoaded && (
                   <div
                     style={{
                       display: "flex",
@@ -166,7 +184,7 @@ export default function PdfThumbnail({
                       padding: "0 20px",
                     }}
                   >
-                    Recortando questão...
+                    ✂️ Recortando questão...
                   </div>
                 )}
                 <div
@@ -175,14 +193,17 @@ export default function PdfThumbnail({
                     top: 0,
                     left: 0,
                     transform: `translate(${-offsetX}px, ${-offsetY}px)`,
-                    visibility: isLoaded ? "visible" : "hidden",
+                    visibility: isThisCropLoaded ? "visible" : "hidden",
                   }}
                 >
                   <Page
                     pageNumber={pageNumber}
                     scale={scale}
                     onLoadSuccess={handlePageLoad}
-                    onRenderSuccess={() => setIsLoaded(true)}
+                    onRenderSuccess={() => {
+                      // Avisa que APENAS este recorte terminou
+                      setLoadedCrops((prev) => ({ ...prev, [index]: true }));
+                    }}
                     renderTextLayer={false}
                     renderAnnotationLayer={false}
                   />

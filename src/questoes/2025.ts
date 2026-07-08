@@ -346,4 +346,82 @@ export const questoesEnem: QuestaoCoordenadas[] = [
     ],
     scale: 1.2,
   },
+  {
+    codigo: 153392,
+    pagina: 10,
+    crops: [
+      {
+        offsetY: 550,
+        offsetX: 345,
+        cropHeight: 340,
+        cropWidth: 20,
+      },
+    ],
+    scale: 1.2,
+  },
+  {
+    codigo: 158757,
+    pagina: 11,
+    crops: [
+      {
+        offsetY: 110,
+        offsetX: 25,
+        cropHeight: 635,
+        cropWidth: 348,
+      },
+    ],
+    scale: 1.2,
+  },
+  {
+    codigo: 158716,
+    pagina: 11,
+    crops: [
+      {
+        offsetY: 110,
+        offsetX: 338,
+        cropHeight: 765,
+        cropWidth: 30,
+      },
+    ],
+    scale: 1.2,
+  },
+  {
+    codigo: 150674,
+    pagina: 12,
+    crops: [
+      {
+        offsetY: 110,
+        offsetX: 32,
+        cropHeight: 465,
+        cropWidth: 25,
+      },
+    ],
+    scale: 1.2,
+  },
+  {
+    codigo: 150643,
+    pagina: 12,
+    crops: [
+      {
+        offsetY: 600,
+        offsetX: 32,
+        cropHeight: 290,
+        cropWidth: 20,
+      },
+    ],
+    scale: 1.2,
+  },
+  {
+    codigo: 44047,
+    pagina: 13,
+    crops: [
+      {
+        offsetY: 0,
+        offsetX: 25,
+        cropHeight: 290,
+        cropWidth: 20,
+      },
+    ],
+    scale: 1.2,
+  },
 ];

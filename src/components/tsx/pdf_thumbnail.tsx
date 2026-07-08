@@ -21,6 +21,28 @@ type PageLoadSuccessParams = Parameters<
   Required<ComponentProps<typeof Page>>["onLoadSuccess"]
 >[0];
 
+// Criamos um componente de Loading reutilizável e visível
+function LoadingPlaceholder() {
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#f9fafb",
+        color: "#6b7280",
+        fontSize: "14px",
+        padding: "20px",
+        width: "100%",
+        borderRadius: "8px",
+        border: "1px dashed #e5e7eb",
+      }}
+    >
+      Carregando...
+    </div>
+  );
+}
+
 export default function PdfThumbnail({
   fileUrl,
   pageNumber,
@@ -47,7 +69,7 @@ export default function PdfThumbnail({
         overflow: "auto",
       }}
     >
-      <Document file={fileUrl} loading={"Carregando..."}>
+      <Document file={fileUrl} loading={<LoadingPlaceholder />}>
         {crops.map((crop, index) => {
           const { offsetX, offsetY } = crop;
           const larguraIndividual = isLoaded
@@ -64,7 +86,6 @@ export default function PdfThumbnail({
                 overflowY: "hidden",
                 overflowX: "hidden",
                 height: `${crop.cropHeight}px`,
-                // border: "1px solid #e5e7eb",
                 borderRadius: "8px",
                 backgroundColor: "#f9fafb",
               }}

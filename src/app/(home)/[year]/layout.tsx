@@ -14,8 +14,14 @@ const PdfModal = dynamic(() => import("../../../components/tsx/pdf_modal"), {
 
 function YearLayoutContent({ children }: { children: React.ReactNode }) {
   const { currentYear, deferredArea } = useHomeData();
-  const { showPopUp, questaoPopUp, setShowPopUp, isLoaded, setIsLoaded } =
-    useYearData();
+  const {
+    showPopUp,
+    questaoPopUp,
+    setShowPopUp,
+    isLoaded,
+    setIsLoaded,
+    setShowGabarito,
+  } = useYearData();
   const [dadosQuestao, setDadosQuestao] = useState<QuestaoCoordenadas | null>(
     null,
   );
@@ -70,12 +76,17 @@ function YearLayoutContent({ children }: { children: React.ReactNode }) {
     },
   ];
 
+  function handleOnClose() {
+    setShowPopUp(false);
+    setShowGabarito(false);
+  }
+
   return (
     <>
       <PdfModal
         fileUrl={fileUrlDinamico}
         isOpen={showPopUp}
-        onClose={() => setShowPopUp(false)}
+        onClose={handleOnClose}
         code={dadosQuestao ? dadosQuestao.codigo : 0}
         scale={dadosQuestao ? dadosQuestao.scale : 1.2}
         crops={dadosQuestao ? dadosQuestao.crops : cropDefault}

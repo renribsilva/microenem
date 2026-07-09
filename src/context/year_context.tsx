@@ -153,6 +153,8 @@ export function YearProvider({ children }: { children: ReactNode }) {
 
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
+  const [showGabarito, setShowGabarito] = useState<boolean>(false);
+
   // ---------------------------------------------------------------------------
   // ----------------- CARGA ESTÁTICA DE JSON (BUNDLE INICIAL) -----------------
   // ---------------------------------------------------------------------------
@@ -991,6 +993,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
         questaoPopUp,
         showPopUp,
         isLoaded,
+        showGabarito,
 
         // Updatings
         isInitialRender,
@@ -1047,6 +1050,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
         setQuestaoPopUp,
         setShowPopUp,
         setIsLoaded,
+        setShowGabarito,
       }}
     >
       {children}

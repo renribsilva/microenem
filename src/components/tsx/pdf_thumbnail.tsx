@@ -34,8 +34,13 @@ export default function PdfThumbnail({
   setIsLoaded,
 }: PdfThumbnailProps) {
   const [larguraBase, setLarguraBase] = useState<number>(300);
-  const [showGabarito, setShowGabarito] = useState<boolean>(false);
-  const { getItemDetails, habilidades, competencias } = useYearData();
+  const {
+    getItemDetails,
+    habilidades,
+    competencias,
+    showGabarito,
+    setShowGabarito,
+  } = useYearData();
   const itemDetails = getItemDetails(code);
   const habInfo = itemDetails ? habilidades[itemDetails.CO_HABILIDADE] : null;
   const compInfo = habInfo ? competencias[habInfo.comp] : null;

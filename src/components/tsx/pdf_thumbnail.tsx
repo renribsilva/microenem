@@ -3,6 +3,7 @@
 import { ComponentProps, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { CropArea } from "../../types/questoes_types";
+import { useYearData } from "../../context/year_context";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -29,7 +30,7 @@ export default function PdfThumbnail({
   direction,
 }: PdfThumbnailProps) {
   const [larguraBase, setLarguraBase] = useState<number>(300);
-  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  const { isLoaded, setIsLoaded } = useYearData();
 
   function handlePageLoad(page: PageLoadSuccessParams) {
     setLarguraBase(page.width);
@@ -52,7 +53,7 @@ export default function PdfThumbnail({
           const { offsetX, offsetY } = crop;
           const larguraIndividual = isLoaded
             ? larguraBase - crop.offsetX - crop.cropWidth
-            : larguraBase;
+            : 300;
 
           return (
             <div
@@ -61,6 +62,7 @@ export default function PdfThumbnail({
                 position: "relative",
                 width: `${larguraIndividual}px`,
                 flexShrink: 0,
+                flex: "0 0 auto",
                 overflowY: "hidden",
                 overflowX: "hidden",
                 height: `${crop.cropHeight}px`,

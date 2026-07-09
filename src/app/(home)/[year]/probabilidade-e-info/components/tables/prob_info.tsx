@@ -40,6 +40,7 @@ export default function ProbsInfoTable() {
     abandonadosCodes,
     setShowPopUp,
     setQuestaoPopUp,
+    setIsLoaded,
   } = useYearData();
 
   const probLabels = probInfoData.probLabels;
@@ -95,6 +96,7 @@ export default function ProbsInfoTable() {
                       onClick={() => {
                         setShowPopUp(true);
                         setQuestaoPopUp(codigoQuestao);
+                        setIsLoaded(false);
                       }}
                       className={styles.visibility_button}
                     >

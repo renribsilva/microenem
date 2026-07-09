@@ -389,6 +389,7 @@ export type YearContextType = {
   fixedPalette: Record<number, string>;
   questaoPopUp: number;
   showPopUp: boolean;
+  isLoaded: boolean;
 
   //Updatings
   isInitialRender: boolean;
@@ -441,4 +442,5 @@ export type YearContextType = {
   setEAPData: React.Dispatch<React.SetStateAction<EAPDataType | null>>;
   setQuestaoPopUp: React.Dispatch<React.SetStateAction<number>>;
   setShowPopUp: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsLoaded: React.Dispatch<React.SetStateAction<boolean>>;
 };

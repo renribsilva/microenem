@@ -31,7 +31,6 @@ export default function PdfThumbnail({
   direction,
 }: PdfThumbnailProps) {
   const [larguraBase, setLarguraBase] = useState<number>(300);
-  // Controla o carregamento de CADA recorte separadamente
   const [loadedCrops, setLoadedCrops] = useState<Record<number, boolean>>({});
 
   const [localBlobUrl, setLocalBlobUrl] = useState<string | null>(
@@ -95,7 +94,7 @@ export default function PdfThumbnail({
     <div
       style={{
         display: "flex",
-        alignItems: "flex-start", // "right" é inválido no CSS, mudei pra flex-start
+        alignItems: "flex-start",
         flexDirection: direction,
         gap: "5px",
         width: `100%`,
@@ -148,7 +147,6 @@ export default function PdfThumbnail({
             const { offsetX, offsetY, cropHeight, cropWidth } = crop;
             const isThisCropLoaded = loadedCrops[index] || false;
 
-            // Voltei para a sua lógica: usa larguraBase se não tiver carregado pra não colapsar a div!
             const larguraIndividual = isThisCropLoaded
               ? `${larguraBase - offsetX - cropWidth}px`
               : `${larguraBase}px`;
@@ -170,7 +168,7 @@ export default function PdfThumbnail({
                   <div
                     style={{
                       position: "absolute",
-                      inset: 0, // Preenche todo o espaço
+                      inset: 0,
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -178,7 +176,7 @@ export default function PdfThumbnail({
                       color: "#6b7280",
                       fontSize: "14px",
                       fontWeight: "500",
-                      zIndex: 20, // Garante que a mensagem fica por cima
+                      zIndex: 20,
                     }}
                   >
                     ⏳ Renderizando questão...
@@ -191,7 +189,7 @@ export default function PdfThumbnail({
                     top: 0,
                     left: 0,
                     transform: `translate(${-offsetX}px, ${-offsetY}px)`,
-                    opacity: isThisCropLoaded ? 1 : 0, // Fade suave no lugar do visiblity abrupto
+                    opacity: isThisCropLoaded ? 1 : 0,
                     transition: "opacity 0.2s ease-in-out",
                     zIndex: 10,
                   }}
@@ -199,10 +197,14 @@ export default function PdfThumbnail({
                   <Page
                     pageNumber={pageNumber}
                     scale={scale}
-                    loading={null} // MATAMOS O LOADER NATIVO AQUI para ele não sumir no translate!
+                    loading={null}
                     onLoadSuccess={handlePageLoad}
                     onRenderSuccess={() => {
-                      setLoadedCrops((prev) => ({ ...prev, [index]: true }));
+                      // A MÁGICA: Atrasamos a remoção do loader em 250ms
+                      // Isso dá tempo para a GPU do celular desenhar o canvas na tela.
+                      setTimeout(() => {
+                        setLoadedCrops((prev) => ({ ...prev, [index]: true }));
+                      }, 250);
                     }}
                     renderTextLayer={false}
                     renderAnnotationLayer={false}

@@ -96,7 +96,7 @@ export default function PdfThumbnail({
                 <Page
                   pageNumber={pageNumber}
                   scale={scale}
-                  onLoadSuccess={handlePageLoad}
+                  onRenderSuccess={handlePageLoad}
                   renderTextLayer={false}
                   renderAnnotationLayer={false}
                 />

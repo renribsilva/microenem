@@ -156,10 +156,9 @@ export default function PdfThumbnail({
                 key={index}
                 style={{
                   position: "relative",
-                  width: "100%",
-                  maxWidth: larguraIndividual,
-                  flex: "1 1 auto",
+                  width: larguraIndividual,
                   height: `${cropHeight}px`,
+                  flexShrink: 0,
                   overflow: "hidden",
                   borderRadius: "8px",
                   backgroundColor: "#f9fafb",
@@ -168,8 +167,9 @@ export default function PdfThumbnail({
                 {!isThisCropLoaded && (
                   <div
                     style={{
-                      position: "absolute",
-                      inset: 0,
+                      position: "relative",
+                      width: larguraIndividual,
+                      height: `${cropHeight}`,
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -178,13 +178,12 @@ export default function PdfThumbnail({
                       fontSize: "14px",
                       fontWeight: "500",
                       zIndex: 20,
-                      padding: "10px",
-                      textAlign: "center",
                     }}
                   >
                     ⏳ Renderizando questão...
                   </div>
                 )}
+
                 <div
                   style={{
                     position: "absolute",

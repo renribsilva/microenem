@@ -149,7 +149,7 @@ export default function PdfThumbnail({
 
             const larguraIndividual = isThisCropLoaded
               ? `${larguraBase - offsetX - cropWidth}px`
-              : `${larguraBase}px`;
+              : "300px";
 
             return (
               <div
@@ -167,20 +167,19 @@ export default function PdfThumbnail({
                 {!isThisCropLoaded && (
                   <div
                     style={{
-                      position: "relative",
-                      width: larguraIndividual,
-                      height: `${cropHeight}`,
+                      position: "absolute",
+                      inset: 0,
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       backgroundColor: "#f9fafb",
-                      color: "#6b7280",
+                      color: "#92a1bd",
                       fontSize: "14px",
                       fontWeight: "500",
                       zIndex: 20,
                     }}
                   >
-                    ⏳ Renderizando questão...
+                    Renderizando questão...
                   </div>
                 )}
 

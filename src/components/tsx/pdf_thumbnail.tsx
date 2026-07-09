@@ -156,9 +156,10 @@ export default function PdfThumbnail({
                 key={index}
                 style={{
                   position: "relative",
-                  width: larguraIndividual,
+                  width: "100%",
+                  maxWidth: larguraIndividual,
+                  flex: "1 1 auto",
                   height: `${cropHeight}px`,
-                  flexShrink: 0,
                   overflow: "hidden",
                   borderRadius: "8px",
                   backgroundColor: "#f9fafb",
@@ -177,12 +178,13 @@ export default function PdfThumbnail({
                       fontSize: "14px",
                       fontWeight: "500",
                       zIndex: 20,
+                      padding: "10px",
+                      textAlign: "center",
                     }}
                   >
                     ⏳ Renderizando questão...
                   </div>
                 )}
-
                 <div
                   style={{
                     position: "absolute",
@@ -200,8 +202,6 @@ export default function PdfThumbnail({
                     loading={null}
                     onLoadSuccess={handlePageLoad}
                     onRenderSuccess={() => {
-                      // A MÁGICA: Atrasamos a remoção do loader em 250ms
-                      // Isso dá tempo para a GPU do celular desenhar o canvas na tela.
                       setTimeout(() => {
                         setLoadedCrops((prev) => ({ ...prev, [index]: true }));
                       }, 250);

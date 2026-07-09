@@ -653,7 +653,7 @@ export const questoesEnem: QuestaoCoordenadas[] = [
         offsetY: 580,
         offsetX: 20,
         cropHeight: 310,
-        cropWidth: 345,
+        cropWidth: 348,
       },
       {
         offsetY: 90,

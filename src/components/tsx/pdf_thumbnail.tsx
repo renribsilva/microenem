@@ -3,7 +3,6 @@
 import { ComponentProps, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { CropArea } from "../../types/questoes_types";
-import { useYearData } from "../../context/year_context";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -16,6 +15,8 @@ interface PdfThumbnailProps {
   scale: number;
   crops: CropArea[];
   direction?: "row" | "column";
+  isLoaded: boolean;
+  setIsLoaded: (x: boolean) => void;
 }
 
 type PageLoadSuccessParams = Parameters<
@@ -28,18 +29,23 @@ export default function PdfThumbnail({
   scale,
   crops,
   direction,
+  isLoaded,
+  setIsLoaded,
 }: PdfThumbnailProps) {
   const [larguraBase, setLarguraBase] = useState<number>(300);
-  const { isLoaded, setIsLoaded } = useYearData();
 
   function handlePageLoad(page: PageLoadSuccessParams) {
     setLarguraBase(page.width);
+  }
+
+  function handlePageRendered() {
     setIsLoaded(true);
   }
 
   return (
     <div
       style={{
+        position: "relative",
         display: "flex",
         alignItems: "right",
         flexDirection: direction,
@@ -48,7 +54,24 @@ export default function PdfThumbnail({
         overflow: "auto",
       }}
     >
-      <Document file={fileUrl} loading={"Carregando..."}>
+      {!isLoaded && (
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "#f9fafb",
+            color: "#6b7280",
+            fontSize: "14px",
+            zIndex: 10,
+          }}
+        >
+          Carregando...
+        </div>
+      )}
+      <Document file={fileUrl} loading={null}>
         {crops.map((crop, index) => {
           const { offsetX, offsetY } = crop;
           const larguraIndividual = isLoaded
@@ -71,34 +94,18 @@ export default function PdfThumbnail({
                 backgroundColor: "#f9fafb",
               }}
             >
-              {!isLoaded && (
-                <div
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backgroundColor: "#f9fafb",
-                    color: "#6b7280",
-                    fontSize: "14px",
-                    zIndex: 10,
-                  }}
-                >
-                  Carregando...
-                </div>
-              )}
               <div
                 style={{
-                  position: "absolute",
+                  position: "relative",
                   transform: `translate(${-offsetX}px, ${-offsetY}px)`,
-                  visibility: isLoaded ? "visible" : "hidden",
                 }}
               >
                 <Page
+                  key={String(isLoaded)}
                   pageNumber={pageNumber}
                   scale={scale}
-                  onRenderSuccess={handlePageLoad}
+                  onLoadSuccess={handlePageLoad}
+                  onRenderSuccess={handlePageRendered}
                   renderTextLayer={false}
                   renderAnnotationLayer={false}
                 />

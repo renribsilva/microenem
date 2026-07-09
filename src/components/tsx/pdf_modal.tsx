@@ -14,6 +14,8 @@ interface PdfModalProps {
   direction: "row" | "column" | null;
   scale: number;
   tituloQuestao?: string;
+  isLoaded: boolean;
+  setIsLoaded: (x: boolean) => void;
 }
 
 export default function PdfModal({
@@ -26,6 +28,8 @@ export default function PdfModal({
   direction,
   scale,
   tituloQuestao,
+  isLoaded,
+  setIsLoaded,
 }: PdfModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
@@ -105,7 +109,11 @@ export default function PdfModal({
           </button>
         </div>
         <div
-          style={{ width: "100%", display: "flex", justifyContent: "center" }}
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+          }}
         >
           <PdfThumbnail
             fileUrl={fileUrl}
@@ -113,6 +121,8 @@ export default function PdfModal({
             crops={crops}
             direction={direction}
             scale={scale}
+            isLoaded={isLoaded}
+            setIsLoaded={setIsLoaded}
           />
         </div>
       </div>

@@ -228,6 +228,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
         activeArea,
         deferredArea,
         selectedLabel,
+        selectionsByArea,
         selectedRowId,
         isFetchingBI: activeArea !== deferredArea || loading,
         pathName,
@@ -248,6 +249,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
         setSelectedRowId,
         setSelectedLabel,
         setActiveArea,
+        setSelectionsByArea,
       }}
     >
       {children}

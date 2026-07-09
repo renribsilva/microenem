@@ -80,6 +80,7 @@ export type HomeContextType = {
   currentYear: ParamValue;
   activeArea: SelectionsByAreaType["LC"];
   deferredArea: SelectionsByAreaType["LC"];
+  selectionsByArea: SelectionsByAreaType;
   selectedLabel: SelectionsByAreaType["LC"];
   selectedRowId: SelectedRowIdType;
   isFetchingBI: boolean;
@@ -101,4 +102,7 @@ export type HomeContextType = {
   getMetadata: GetMetadataType;
   setSelectedLabel: React.Dispatch<React.SetStateAction<string | null>>;
   setActiveArea: React.Dispatch<React.SetStateAction<string | null>>;
+  setSelectionsByArea: React.Dispatch<
+    React.SetStateAction<SelectionsByAreaType>
+  >;
 };

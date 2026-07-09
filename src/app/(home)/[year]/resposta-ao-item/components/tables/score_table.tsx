@@ -17,6 +17,7 @@ import clsx from "clsx";
 import { useSidebar } from "../../../../../../context/sidebar_context";
 import Sort from "../../../../../../components/svg/sort";
 import DropdownBooks from "../../../../../../components/tsx/dropdown_books";
+import Visibility from "../../../../../../components/svg/open_in_new";
 
 type TableRow = {
   id: number;
@@ -43,7 +44,23 @@ export default function ScoreTable() {
     setLastItemActivateNum,
     setItemGraphData,
     setAcertosData,
+    setShowPopUp,
+    setQuestaoPopUp,
+    setIsLoaded,
   } = useYearData();
+
+  const [windowWidth, setWindowWidth] = useState(
+    typeof window !== "undefined" ? window.innerWidth : 1200,
+  );
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Defina a constante de visibilidade
+  const hideExtraColumns = windowWidth <= 1000;
 
   const scoreData = respostaAoItemData.scoreData;
 
@@ -54,42 +71,58 @@ export default function ScoreTable() {
   const columnHelper = createColumnHelper<TableRow>();
 
   const columns = useMemo(() => {
-    // Definimos as sub-colunas de Identificação
     const idCols = [
       columnHelper.accessor("posicao", {
         header: "Item",
+        meta: {
+          hidden: isMobile,
+        },
         cell: (info) => {
           const isSorted = info.column.getIsSorted();
           return (
             <strong
-              style={{ fontWeight: isSorted ? "400" : "300", color: "#888" }}
+              style={{
+                fontWeight: isSorted ? "400" : "300",
+                color: "#888",
+              }}
             >
               {info.getValue()}
             </strong>
           );
         },
       }),
-      // Só inclui Código se não for mobile
-      ...(!isMobile
-        ? [
-            columnHelper.accessor("id", {
-              header: "Código",
-              cell: (info) => {
-                const isSorted = info.column.getIsSorted();
-                return (
-                  <strong
-                    style={{
-                      fontWeight: isSorted ? "400" : "300",
-                      color: "#888",
-                    }}
-                  >
-                    {info.getValue()}
-                  </strong>
-                );
-              },
-            }),
-          ]
-        : []),
+      columnHelper.accessor("id", {
+        header: "Código",
+        cell: (info) => {
+          const isSorted = info.column.getIsSorted();
+          const codigoQuestao = info.getValue();
+          return (
+            <div className={styles.code_container}>
+              <span
+                style={{
+                  color: "#888",
+                  fontWeight: isSorted ? "400" : "300",
+                }}
+              >
+                {info.getValue()}
+              </span>
+              <span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowPopUp(true);
+                    setQuestaoPopUp(codigoQuestao);
+                    setIsLoaded(false);
+                  }}
+                  className={clsx(styles.visibility_button)}
+                >
+                  <Visibility fill="#888" height="20px" />
+                </button>
+              </span>
+            </div>
+          );
+        },
+      }),
       // Só inclui Abandonado se não for mobile
       ...(!isMobile
         ? [
@@ -116,28 +149,37 @@ export default function ScoreTable() {
 
     // Definimos as sub-colunas de Score
     const scoreCols = [
-      columnHelper.accessor("respondentes", {
-        header: "n",
-        cell: (info) => {
-          if (info.row.original.abandonado) {
-            return <span style={{ color: "#ccc" }}>—</span>;
-          }
-          const val = info.getValue();
-          const compactFormatter = new Intl.NumberFormat("pt-BR", {
-            notation: "compact",
-            compactDisplay: "short",
-            maximumFractionDigits: 1,
-          });
-          const isSorted = info.column.getIsSorted();
-          return (
-            <span style={{ fontSize: isSorted ? "400" : "300", color: "#888" }}>
-              {isMobile
-                ? compactFormatter.format(val).toLowerCase()
-                : val.toLocaleString("pt-BR")}
-            </span>
-          );
-        },
-      }),
+      ...(!isMobile
+        ? [
+            columnHelper.accessor("respondentes", {
+              header: "n",
+              cell: (info) => {
+                if (info.row.original.abandonado) {
+                  return <span style={{ color: "#ccc" }}>—</span>;
+                }
+                const val = info.getValue();
+                const compactFormatter = new Intl.NumberFormat("pt-BR", {
+                  notation: "compact",
+                  compactDisplay: "short",
+                  maximumFractionDigits: 1,
+                });
+                const isSorted = info.column.getIsSorted();
+                return (
+                  <span
+                    style={{
+                      fontSize: isSorted ? "400" : "300",
+                      color: "#888",
+                    }}
+                  >
+                    {isMobile
+                      ? compactFormatter.format(val).toLowerCase()
+                      : val.toLocaleString("pt-BR")}
+                  </span>
+                );
+              },
+            }),
+          ]
+        : []),
       columnHelper.accessor("freq_acerto", {
         header: "Certa",
         cell: (info) => {
@@ -176,7 +218,7 @@ export default function ScoreTable() {
           );
         },
       }),
-      ...(!isMobile
+      ...(!isMobile && !hideExtraColumns
         ? [
             columnHelper.accessor("freq_branco", {
               header: "Branco",
@@ -232,7 +274,14 @@ export default function ScoreTable() {
         columns: scoreCols,
       }),
     ];
-  }, [columnHelper, isMobile]);
+  }, [
+    columnHelper,
+    isMobile,
+    setIsLoaded,
+    setQuestaoPopUp,
+    setShowPopUp,
+    hideExtraColumns,
+  ]);
 
   const data = useMemo(() => {
     const ranges: Record<string, { start: number; end: number }> = {

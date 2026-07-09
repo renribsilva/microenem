@@ -254,7 +254,9 @@
 
 .dot {
   aspect-ratio: 1;
-  border-radius: 2px;
+  border-radius: 4px;
+  border: 0px;
+  cursor: pointer;
 }
 
 .correct {

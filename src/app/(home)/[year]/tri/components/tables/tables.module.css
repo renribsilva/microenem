@@ -147,3 +147,16 @@
 .sorted {
   opacity: 1 !important;
 }
+
+.code_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.visibility_button {
+  background-color: transparent !important;
+  display: flex;
+  border: none;
+  cursor: pointer;
+}

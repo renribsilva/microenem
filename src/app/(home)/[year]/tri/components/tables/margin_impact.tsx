@@ -16,6 +16,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import clsx from "clsx";
+import Visibility from "../../../../../../components/svg/open_in_new";
 
 type ImpactoRow = {
   id: number;
@@ -38,6 +39,9 @@ export default function MarginImpactTable() {
     needUpdateEAP,
     isInitialRender,
     abandonadosCodes,
+    setShowPopUp,
+    setQuestaoPopUp,
+    setIsLoaded,
   } = useYearData();
 
   const { textColor } = useChartTheme();
@@ -132,10 +136,30 @@ export default function MarginImpactTable() {
         header: "Código",
         cell: (info) => {
           const isSorted = info.column.getIsSorted();
+          const codigoQuestao = Number(info.getValue());
           return (
-            <span style={{ fontWeight: isSorted ? "400" : "300" }}>
-              {info.getValue()}
-            </span>
+            <div className={styles.code_container}>
+              <span
+                style={{
+                  color: "#888",
+                  fontWeight: isSorted ? "400" : "300",
+                }}
+              >
+                {info.getValue()}
+              </span>
+              <span>
+                <button
+                  onClick={() => {
+                    setShowPopUp(true);
+                    setQuestaoPopUp(codigoQuestao);
+                    setIsLoaded(false);
+                  }}
+                  className={styles.visibility_button}
+                >
+                  <Visibility fill="#888" height="20px" />
+                </button>
+              </span>
+            </div>
           );
         },
       }),
@@ -208,7 +232,7 @@ export default function MarginImpactTable() {
         },
       }),
     ],
-    [columnHelper, isTRIDivergente],
+    [columnHelper, isTRIDivergente, setIsLoaded, setQuestaoPopUp, setShowPopUp],
   );
 
   // eslint-disable-next-line
@@ -218,7 +242,7 @@ export default function MarginImpactTable() {
     state: {
       sorting,
       columnVisibility: {
-        codigo: !isMobile,
+        a: !isMobile,
         b: !isMobile,
         c: !isMobile,
       },

@@ -360,6 +360,8 @@ export type GetParamByLabelType = (
   type: string,
 ) => number | null;
 
+export type GetItemDetails = (coItem: number) => ItemDetails | null;
+
 export type HandleToggleType = (num: number, isAbandoned: boolean) => void;
 
 interface AreaItemMap {
@@ -381,6 +383,39 @@ export type ViolinDataType = {
   labels: string[];
 };
 
+export type ItemDetails = {
+  CO_POSICAO: number;
+  SG_AREA: string;
+  TX_GABARITO: string | null;
+  CO_HABILIDADE: number;
+  IN_ITEM_ABAN: number;
+  TX_MOTIVO_ABAN: string;
+  TX_COR: string;
+};
+
+export type HabilidadeData = {
+  plain: string[];
+  comp: number;
+};
+
+export type HabAreaData = {
+  [habilidadeId: string]: HabilidadeData;
+};
+
+export type HabilidadesJson = {
+  [areaSigla: string]: HabAreaData;
+};
+
+export type CompetenciaData = string[];
+
+export type CompAreaData = {
+  [competenciaId: string]: CompetenciaData;
+};
+
+export type CompetenciasJson = {
+  [areaSigla: string]: CompAreaData;
+};
+
 export type YearContextType = {
   lastItemActivate: number;
   selectedItems: SelectedItemsType | object;
@@ -397,6 +432,8 @@ export type YearContextType = {
 
   // Carga estática no server
   constantesData: ConstantesType;
+  habilidades: HabAreaData;
+  competencias: CompAreaData;
 
   // Carga dinamenica no server (bundle inicial)
   itensData: ItensDataType | null;
@@ -426,6 +463,7 @@ export type YearContextType = {
   // Funções
   getCodeByLabel: GetCodeByLabelType;
   getParamByLabel: GetParamByLabelType;
+  getItemDetails: GetItemDetails;
   handleToggle: HandleToggleType;
   getAreaMap: GetAreaMapType;
   setNeedUpdateEAP: React.Dispatch<React.SetStateAction<boolean>>;

@@ -13,6 +13,9 @@ import {
 } from "react";
 import { useHomeData } from "./home_context";
 import constantes from "../app/(home)/JSON/constantes.json";
+import matrizHab from "../app/(home)/JSON/matriz_hab.json";
+import matrizComp from "../app/(home)/JSON/matriz_comp.json";
+
 import {
   AbstencaoType,
   CompetenciaRowType,
@@ -52,6 +55,11 @@ import {
   HandleToggleType,
   GetAreaMapType,
   ViolinDataType,
+  GetItemDetails,
+  HabilidadesJson,
+  HabAreaData,
+  CompetenciasJson,
+  CompAreaData,
 } from "../types/year_types";
 
 const YearContext = createContext<YearContextType>(null);
@@ -146,9 +154,10 @@ export function YearProvider({ children }: { children: ReactNode }) {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
   // ---------------------------------------------------------------------------
-  // ------------ CARGA ESTÁTICA DE JSON POR ANO (BUNDLE INICIAL) --------------
+  // ----------------- CARGA ESTÁTICA DE JSON (BUNDLE INICIAL) -----------------
   // ---------------------------------------------------------------------------
 
+  // -----------------CONSTANTES DE TRANSFORMAÇÃO DA ESCALA --------------------
   const areaIdx: number = constantes.area.indexOf(deferredArea || "LC");
   const d: number = constantes.d[areaIdx];
   const k: number = constantes.k[areaIdx];
@@ -158,6 +167,12 @@ export function YearProvider({ children }: { children: ReactNode }) {
     d: d,
     k: k,
   };
+
+  // ----------------MATRIZ DE RERÊNCIA (COMPETÊNCIAS E HABILIDADES)
+  const habilidades: HabAreaData = (matrizHab as HabilidadesJson)[deferredArea];
+  const competencias: CompAreaData = (matrizComp as CompetenciasJson)[
+    deferredArea
+  ];
 
   // ---------------------------------------------------------------------------
   // ------------ CARGA DINÂMICA DE JSON POR ANO (BUNDLE INICIAL) --------------
@@ -672,6 +687,34 @@ export function YearProvider({ children }: { children: ReactNode }) {
     [codigo, lingua, versao, deferredArea, itensData],
   );
 
+  // Função para retornar metadata dos itens, a partir do codigo
+  // da prova e do item
+  const getItemDetails = useCallback<GetItemDetails>(
+    (coItem: number) => {
+      if (!itensData || !itensData.CO_PROVA) return null;
+      const p = itensData;
+      // Encontra o índice onde ambos, prova e item, correspondem
+      const idx = p.CO_PROVA.findIndex(
+        (pVal, i) =>
+          Number(pVal) === Number(codigo) &&
+          Number(p.CO_ITEM[i]) === Number(coItem),
+      );
+
+      if (idx === -1) return null;
+
+      return {
+        CO_POSICAO: p.CO_POSICAO[idx],
+        SG_AREA: p.SG_AREA[idx],
+        TX_GABARITO: p.TX_GABARITO[idx],
+        CO_HABILIDADE: p.CO_HABILIDADE[idx],
+        IN_ITEM_ABAN: p.IN_ITEM_ABAN[idx],
+        TX_MOTIVO_ABAN: p.TX_MOTIVO_ABAN[idx],
+        TX_COR: p.TX_COR[idx],
+      };
+    },
+    [itensData, codigo],
+  );
+
   const handleToggle = useCallback<HandleToggleType>(
     (num, isAbandoned) => {
       const codeItem = getCodeByLabel(num, selectedLabel);
@@ -955,6 +998,8 @@ export function YearProvider({ children }: { children: ReactNode }) {
 
         // Carga estática no server (bundle inicial)
         constantesData,
+        habilidades,
+        competencias,
 
         // Carga dinâmica no server (bundle inicial)
         itensData,
@@ -984,6 +1029,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
         // Funções
         getCodeByLabel,
         getParamByLabel,
+        getItemDetails,
         handleToggle,
         getAreaMap,
         setLastItemActivate,

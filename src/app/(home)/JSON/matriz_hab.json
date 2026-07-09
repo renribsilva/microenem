@@ -1,0 +1,718 @@
+{
+  "LC": {
+    "1": {
+      "plain": [
+        "Identificar as diferentes linguagens e seus recursos expressivos como elementos de caracterização dos sistemas de comunicação."
+      ],
+      "comp": 1
+    },
+    "2": {
+      "plain": [
+        "Recorrer aos conhecimentos sobre as linguagens dos sistemas de comunicação e informação para resolver problemas sociais."
+      ],
+      "comp": 1
+    },
+    "3": {
+      "plain": [
+        "Relacionar informações geradas nos sistemas de comunicação e informação, considerando a função social desses sistemas."
+      ],
+      "comp": 1
+    },
+    "4": {
+      "plain": [
+        "Reconhecer posições críticas aos usos sociais que são feitos das linguagens e dos sistemas de comunicação e informação."
+      ],
+      "comp": 1
+    },
+    "5": {
+      "plain": [
+        "Associar vocábulos e expressões de um texto em LEM ao seu tema."
+      ],
+      "comp": 2
+    },
+    "6": {
+      "plain": [
+        "Utilizar os conhecimentos da LEM e de seus mecanismos como meio de ampliar as possibilidades de acesso a informações, tecnologias e culturas."
+      ],
+      "comp": 2
+    },
+    "7": {
+      "plain": [
+        "Relacionar um texto em LEM, as estruturas linguísticas, sua função e seu uso social."
+      ],
+      "comp": 2
+    },
+    "8": {
+      "plain": [
+        "Reconhecer a importância da produção cultural em LEM como representação da diversidade cultural e linguística."
+      ],
+      "comp": 2
+    },
+    "9": {
+      "plain": [
+        "Reconhecer as manifestações corporais de movimento como originárias de necessidades cotidianas de um grupo social."
+      ],
+      "comp": 3
+    },
+    "10": {
+      "plain": [
+        "Reconhecer a necessidade de transformação de hábitos corporais em função das necessidades cinestésicas."
+      ],
+      "comp": 3
+    },
+    "11": {
+      "plain": [
+        "Reconhecer a linguagem corporal como meio de interação social, considerando os limites de desempenho e as alternativas de adaptação para diferentes indivíduos."
+      ],
+      "comp": 3
+    },
+    "12": {
+      "plain": [
+        "Reconhecer diferentes funções da arte, do trabalho da produção dos artistas em seus meios culturais."
+      ],
+      "comp": 4
+    },
+    "13": {
+      "plain": [
+        "Analisar as diversas produções artísticas como meio de explicar diferentes culturas, padrões de beleza e preconceitos."
+      ],
+      "comp": 4
+    },
+    "14": {
+      "plain": [
+        "Reconhecer o valor da diversidade artística e das inter-relações de elementos que se apresentam nas manifestações de vários grupos sociais e étnicos."
+      ],
+      "comp": 4
+    },
+    "15": {
+      "plain": [
+        "Estabelecer relações entre o texto literário e o momento de sua produção, situando aspectos do contexto histórico, social e político."
+      ],
+      "comp": 5
+    },
+    "16": {
+      "plain": [
+        "Relacionar informações sobre concepções artísticas e procedimentos de construção do texto literário."
+      ],
+      "comp": 5
+    },
+    "17": {
+      "plain": [
+        "Reconhecer a presença de valores sociais e humanos atualizáveis e permanentes no patrimônio literário nacional."
+      ],
+      "comp": 5
+    },
+    "18": {
+      "plain": [
+        "Identificar os elementos que concorrem para a progressão temática e para a organização e estruturação de textos de diferentes gêneros e tipos."
+      ],
+      "comp": 6
+    },
+    "19": {
+      "plain": [
+        "Analisar a função da linguagem predominante nos textos em situações específicas de interlocução."
+      ],
+      "comp": 6
+    },
+    "20": {
+      "plain": [
+        "Reconhecer a importância do patrimônio linguístico para a preservação da memória e da identidade nacional."
+      ],
+      "comp": 6
+    },
+    "21": {
+      "plain": [
+        "Reconhecer em textos de diferentes gêneros, recursos verbais e não-verbais utilizados com a finalidade de criar e mudar comportamentos e hábitos."
+      ],
+      "comp": 7
+    },
+    "22": {
+      "plain": [
+        "Relacionar, em diferentes textos, opiniões, temas, assuntos e recursos linguísticos."
+      ],
+      "comp": 7
+    },
+    "23": {
+      "plain": [
+        "Inferir em um texto quais são os objetivos de seu produtor e quem é seu público alvo, pela análise dos procedimentos argumentativos utilizados."
+      ],
+      "comp": 7
+    },
+    "24": {
+      "plain": [
+        "Reconhecer no texto estratégias argumentativas empregadas para o convencimento do público, tais como a intimidação, sedução, comoção, chantagem, entre outras."
+      ],
+      "comp": 7
+    },
+    "25": {
+      "plain": [
+        "Identificar, em textos de diferentes gêneros, as marcas linguísticas que singularizam as variedades linguísticas sociais, regionais e de registro."
+      ],
+      "comp": 8
+    },
+    "26": {
+      "plain": [
+        "Relacionar as variedades linguísticas a situações específicas de uso social."
+      ],
+      "comp": 8
+    },
+    "27": {
+      "plain": [
+        "Reconhecer os usos da norma padrão da língua portuguesa nas diferentes situações de comunicação."
+      ],
+      "comp": 8
+    },
+    "28": {
+      "plain": [
+        "Reconhecer a função e o impacto social das diferentes tecnologias da comunicação e informação."
+      ],
+      "comp": 9
+    },
+    "29": {
+      "plain": [
+        "Identificar pela análise de suas linguagens, as tecnologias da comunicação e informação."
+      ],
+      "comp": 9
+    },
+    "30": {
+      "plain": [
+        "Relacionar as tecnologias de comunicação e informação ao desenvolvimento das sociedades e ao conhecimento que elas produzem."
+      ],
+      "comp": 9
+    }
+  },
+  "CH": {
+    "1": {
+      "plain": [
+        "Interpretar historicamente e/ou geograficamente fontes documentais acerca de aspectos da cultura."
+      ],
+      "comp": 1
+    },
+    "2": {
+      "plain": ["Analisar a produção da memória pelas sociedades humanas."],
+      "comp": 1
+    },
+    "3": {
+      "plain": [
+        "Associar as manifestações culturais do presente aos seus processos históricos."
+      ],
+      "comp": 1
+    },
+    "4": {
+      "plain": [
+        "Comparar pontos de vista expressos em diferentes fontes sobre determinado aspecto da cultura."
+      ],
+      "comp": 1
+    },
+    "5": {
+      "plain": [
+        "Identificar as manifestações ou representações da diversidade do patrimônio cultural e artístico em diferentes sociedades."
+      ],
+      "comp": 1
+    },
+    "6": {
+      "plain": [
+        "Interpretar diferentes representações gráficas e cartográficas dos espaços geográficos."
+      ],
+      "comp": 2
+    },
+    "7": {
+      "plain": [
+        "Identificar os significados histórico-geográficos das relações de poder entre as nações."
+      ],
+      "comp": 2
+    },
+    "8": {
+      "plain": [
+        "Analisar a ação dos estados nacionais no que se refere à dinâmica dos fluxos populacionais e no enfrentamento de problemas de ordem econômico-social."
+      ],
+      "comp": 2
+    },
+    "9": {
+      "plain": [
+        "Comparar o significado histórico-geográfico das organizações políticas e socioeconômicas em escala local, regional ou mundial."
+      ],
+      "comp": 2
+    },
+    "10": {
+      "plain": [
+        "Reconhecer a dinâmica da organização dos movimentos sociais e a importância da participação da coletividade na transformação da realidade histórico-geográfica."
+      ],
+      "comp": 2
+    },
+    "11": {
+      "plain": [
+        "Identificar registros de práticas de grupos sociais no tempo e no espaço."
+      ],
+      "comp": 3
+    },
+    "12": {
+      "plain": [
+        "Analisar o papel da justiça como instituição na organização das sociedades."
+      ],
+      "comp": 3
+    },
+    "13": {
+      "plain": [
+        "Analisar a atuação dos movimentos sociais que contribuíram para mudanças ou rupturas em processos de disputa pelo poder."
+      ],
+      "comp": 3
+    },
+    "14": {
+      "plain": [
+        "Comparar diferentes pontos de vista, presentes em textos analíticos e interpretativos, sobre situação ou fatos de natureza histórico-geográfica acerca das instituições sociais, políticas e econômicas."
+      ],
+      "comp": 3
+    },
+    "15": {
+      "plain": [
+        "Avaliar criticamente conflitos culturais, sociais, políticos, econômicos ou ambientais ao longo da história."
+      ],
+      "comp": 3
+    },
+    "16": {
+      "plain": [
+        "Identificar registros sobre o papel das técnicas e tecnologias na organização do trabalho e/ou da vida social."
+      ],
+      "comp": 4
+    },
+    "17": {
+      "plain": [
+        "Analisar fatores que explicam o impacto das novas tecnologias no processo de territorialização da produção."
+      ],
+      "comp": 4
+    },
+    "18": {
+      "plain": [
+        "Analisar diferentes processos de produção ou circulação de riquezas e suas implicações sócio-espaciais."
+      ],
+      "comp": 4
+    },
+    "19": {
+      "plain": [
+        "Reconhecer as transformações técnicas e tecnológicas que determinam as várias formas de uso e apropriação dos espaços rural e urbano."
+      ],
+      "comp": 4
+    },
+    "20": {
+      "plain": [
+        "Selecionar argumentos favoráveis ou contrários às modificações impostas pelas novas tecnologias à vida social e ao mundo do trabalho."
+      ],
+      "comp": 4
+    },
+    "21": {
+      "plain": [
+        "Identificar o papel dos meios de comunicação na construção da vida social."
+      ],
+      "comp": 5
+    },
+    "22": {
+      "plain": [
+        "Analisar as lutas sociais e conquistas obtidas no que se refere às mudanças nas legislações ou nas políticas públicas."
+      ],
+      "comp": 5
+    },
+    "23": {
+      "plain": [
+        "Analisar a importância dos valores éticos na estruturação política das sociedades."
+      ],
+      "comp": 5
+    },
+    "24": {
+      "plain": [
+        "Relacionar cidadania e democracia na organização das sociedades."
+      ],
+      "comp": 5
+    },
+    "25": {
+      "plain": [
+        "Identificar estratégias que promovam formas de inclusão social."
+      ],
+      "comp": 5
+    },
+    "26": {
+      "plain": [
+        "Identificar em fontes diversas o processo de ocupação dos meios físicos e as relações da vida humana com a paisagem."
+      ],
+      "comp": 6
+    },
+    "27": {
+      "plain": [
+        "Analisar de maneira crítica as interações da sociedade com o meio físico, levando em consideração aspectos históricos e(ou) geográficos."
+      ],
+      "comp": 6
+    },
+    "28": {
+      "plain": [
+        "Relacionar o uso das tecnologias com os impactos sócio-ambientais em diferentes contextos histórico-geográficos."
+      ],
+      "comp": 6
+    },
+    "29": {
+      "plain": [
+        "Reconhecer a função dos recursos naturais na produção do espaço geográfico, relacionando-os com as mudanças provocadas pelas ações humanas."
+      ],
+      "comp": 6
+    },
+    "30": {
+      "plain": [
+        "Avaliar as relações entre preservação e degradação da vida no planeta nas diferentes escalas."
+      ],
+      "comp": 6
+    }
+  },
+  "CN": {
+    "1": {
+      "plain": [
+        "Reconhecer características ou propriedades de fenômenos ondulatórios ou oscilatórios, relacionando-os a seus usos em diferentes contextos."
+      ],
+      "comp": 1
+    },
+    "2": {
+      "plain": [
+        "Associar a solução de problemas de comunicação, transporte, saúde ou outro, com o correspondente desenvolvimento científico e tecnológico."
+      ],
+      "comp": 1
+    },
+    "3": {
+      "plain": [
+        "Confrontar interpretações científicas com interpretações baseadas no senso comum, ao longo do tempo ou em diferentes culturas."
+      ],
+      "comp": 1
+    },
+    "4": {
+      "plain": [
+        "Avaliar propostas de intervenção no ambiente, considerando a qualidade da vida humana ou medidas de conservação, recuperação ou utilização sustentável da biodiversidade."
+      ],
+      "comp": 1
+    },
+    "5": {
+      "plain": [
+        "Dimensionar circuitos ou dispositivos elétricos de uso cotidiano."
+      ],
+      "comp": 2
+    },
+    "6": {
+      "plain": [
+        "Relacionar informações para compreender manuais de instalação ou utilização de aparelhos, ou sistemas tecnológicos de uso comum."
+      ],
+      "comp": 2
+    },
+    "7": {
+      "plain": [
+        "Selecionar testes de controle, parâmetros ou critérios para a comparação de materiais e produtos, tendo em vista a defesa do consumidor, a saúde do trabalhador ou a qualidade de vida."
+      ],
+      "comp": 2
+    },
+    "8": {
+      "plain": [
+        "Identificar etapas em processos de obtenção, transformação, utilização ou reciclagem de recursos naturais, energéticos ou matérias-primas, considerando processos biológicos, químicos ou físicos neles envolvidos."
+      ],
+      "comp": 3
+    },
+    "9": {
+      "plain": [
+        "Compreender a importância dos ciclos biogeoquímicos ou do fluxo energia para a vida, ou da ação de agentes ou fenômenos que podem causar alterações nesses processos."
+      ],
+      "comp": 3
+    },
+    "10": {
+      "plain": [
+        "Analisar perturbações ambientais, identificando fontes, transporte e(ou) destino dos poluentes ou prevendo efeitos em sistemas naturais, produtivos ou sociais."
+      ],
+      "comp": 3
+    },
+    "11": {
+      "plain": [
+        "Reconhecer benefícios, limitações e aspectos éticos da biotecnologia, considerando estruturas e processos biológicos envolvidos em produtos biotecnológicos."
+      ],
+      "comp": 3
+    },
+    "12": {
+      "plain": [
+        "Avaliar impactos em ambientes naturais decorrentes de atividades sociais ou econômicas, considerando interesses contraditórios."
+      ],
+      "comp": 3
+    },
+    "13": {
+      "plain": [
+        "Reconhecer mecanismos de transmissão da vida, prevendo ou explicando a manifestação de características dos seres vivos."
+      ],
+      "comp": 4
+    },
+    "14": {
+      "plain": [
+        "Identificar padrões em fenômenos e processos vitais dos organismos, como manutenção do equilíbrio interno, defesa, relações com o ambiente, sexualidade, entre outros."
+      ],
+      "comp": 4
+    },
+    "15": {
+      "plain": [
+        "Interpretar modelos e experimentos para explicar fenômenos ou processos biológicos em qualquer nível de organização dos sistemas biológicos."
+      ],
+      "comp": 4
+    },
+    "16": {
+      "plain": [
+        "Compreender o papel da evolução na produção de padrões, processos biológicos ou na organização taxonômica dos seres vivos."
+      ],
+      "comp": 4
+    },
+    "17": {
+      "plain": [
+        "Relacionar informações apresentadas em diferentes formas de linguagem e representação usadas nas ciências físicas, químicas ou biológicas, como texto discursivo, gráficos, tabelas, relações matemáticas ou linguagem simbólica."
+      ],
+      "comp": 5
+    },
+    "18": {
+      "plain": [
+        "Relacionar propriedades físicas, químicas ou biológicas de produtos, sistemas ou procedimentos tecnológicos às finalidades a que se destinam."
+      ],
+      "comp": 5
+    },
+    "19": {
+      "plain": [
+        "Avaliar métodos, processos ou procedimentos das ciências naturais que contribuam para diagnosticar ou solucionar problemas de ordem social, econômica ou ambiental."
+      ],
+      "comp": 5
+    },
+    "20": {
+      "plain": [
+        "Caracterizar causas ou efeitos dos movimentos de partículas, substâncias, objetos ou corpos celestes."
+      ],
+      "comp": 6
+    },
+    "21": {
+      "plain": [
+        "Utilizar leis físicas e (ou) químicas para interpretar processos naturais ou tecnológicos inseridos no contexto da termodinâmica e(ou) do eletromagnetismo."
+      ],
+      "comp": 6
+    },
+    "22": {
+      "plain": [
+        "Compreender fenômenos decorrentes da interação entre a radiação e a matéria em suas manifestações em processos naturais ou tecnológicos, ou em suas implicações biológicas, sociais, econômicas ou ambientais."
+      ],
+      "comp": 6
+    },
+    "23": {
+      "plain": [
+        "Avaliar possibilidades de geração, uso ou transformação de energia em ambientes específicos, considerando implicações éticas, ambientais, sociais e/ou econômicas."
+      ],
+      "comp": 6
+    },
+    "24": {
+      "plain": [
+        "Utilizar códigos e nomenclatura da química para caracterizar materiais, substâncias ou transformações químicas."
+      ],
+      "comp": 7
+    },
+    "25": {
+      "plain": [
+        "Caracterizar materiais ou substâncias, identificando etapas, rendimentos ou implicações biológicas, sociais, econômicas ou ambientais de sua obtenção ou produção."
+      ],
+      "comp": 7
+    },
+    "26": {
+      "plain": [
+        "Avaliar implicações sociais, ambientais e/ou econômicas na produção ou no consumo de recursos energéticos ou minerais, identificando transformações químicas ou de energia envolvidas nesses processos."
+      ],
+      "comp": 7
+    },
+    "27": {
+      "plain": [
+        "Avaliar propostas de intervenção no meio ambiente aplicando conhecimentos químicos, observando riscos ou benefícios."
+      ],
+      "comp": 7
+    },
+    "28": {
+      "plain": [
+        "Associar características adaptativas dos organismos com seu modo de vida ou com seus limites de distribuição em diferentes ambientes, em especial em ambientes brasileiros."
+      ],
+      "comp": 8
+    },
+    "29": {
+      "plain": [
+        "Interpretar experimentos ou técnicas que utilizam seres vivos, analisando implicações para o ambiente, a saúde, a produção de alimentos, matérias primas ou produtos industriais."
+      ],
+      "comp": 8
+    },
+    "30": {
+      "plain": [
+        "Avaliar propostas de alcance individual ou coletivo, identificando aquelas que visam à preservação e a implementação da saúde individual, coletiva ou do ambiente."
+      ],
+      "comp": 8
+    }
+  },
+  "MT": {
+    "1": {
+      "plain": [
+        "Reconhecer, no contexto social, diferentes significados e representações dos números e operações - naturais, inteiros, racionais ou reais."
+      ],
+      "comp": 1
+    },
+    "2": {
+      "plain": ["Identificar padrões numéricos ou princípios de contagem."],
+      "comp": 1
+    },
+    "3": {
+      "plain": [
+        "Resolver situação-problema envolvendo conhecimentos numéricos."
+      ],
+      "comp": 1
+    },
+    "4": {
+      "plain": [
+        "Avaliar a razoabilidade de um resultado numérico na construção de argumentos sobre afirmações quantitativas."
+      ],
+      "comp": 1
+    },
+    "5": {
+      "plain": [
+        "Avaliar propostas de intervenção na realidade utilizando conhecimentos numéricos."
+      ],
+      "comp": 1
+    },
+    "6": {
+      "plain": [
+        "Interpretar a localização e a movimentação de pessoas/objetos no espaço tridimensional e sua representação no espaço bidimensional."
+      ],
+      "comp": 2
+    },
+    "7": {
+      "plain": ["Identificar características de figuras planas ou espaciais."],
+      "comp": 2
+    },
+    "8": {
+      "plain": [
+        "Resolver situação-problema que envolva conhecimentos geométricos de espaço e forma."
+      ],
+      "comp": 2
+    },
+    "9": {
+      "plain": [
+        "Utilizar conhecimentos geométricos de espaço e forma na seleção de argumentos propostos como solução de problemas do cotidiano."
+      ],
+      "comp": 2
+    },
+    "10": {
+      "plain": ["Identificar relações entre grandezas e unidades de medida."],
+      "comp": 3
+    },
+    "11": {
+      "plain": [
+        "Utilizar a noção de escalas na leitura de representação de situação do cotidiano."
+      ],
+      "comp": 3
+    },
+    "12": {
+      "plain": ["Resolver situação-problema que envolva medidas de grandezas."],
+      "comp": 3
+    },
+    "13": {
+      "plain": [
+        "Avaliar o resultado de uma medição na construção de um argumento consistente."
+      ],
+      "comp": 3
+    },
+    "14": {
+      "plain": [
+        "Avaliar proposta de intervenção na realidade utilizando conhecimentos geométricos relacionados a grandezas e medidas."
+      ],
+      "comp": 3
+    },
+    "15": {
+      "plain": ["Identificar a relação de dependência entre grandezas."],
+      "comp": 4
+    },
+    "16": {
+      "plain": [
+        "Resolver situação-problema envolvendo a variação de grandezas, direta ou inversamente proporcionais."
+      ],
+      "comp": 4
+    },
+    "17": {
+      "plain": [
+        "Analisar informações envolvendo a variação de grandezas como recurso para a construção de argumentação."
+      ],
+      "comp": 4
+    },
+    "18": {
+      "plain": [
+        "Avaliar propostas de intervenção na realidade envolvendo variação de grandezas."
+      ],
+      "comp": 4
+    },
+    "19": {
+      "plain": [
+        "Identificar representações algébricas que expressem a relação entre grandezas."
+      ],
+      "comp": 5
+    },
+    "20": {
+      "plain": [
+        "Interpretar gráfico cartesiano que represente relações entre grandezas."
+      ],
+      "comp": 5
+    },
+    "21": {
+      "plain": [
+        "Resolver situação-problema cuja modelagem envolva conhecimentos algébricos."
+      ],
+      "comp": 5
+    },
+    "22": {
+      "plain": [
+        "Utilizar conhecimentos algébricos/geométricos como recurso para a construção de argumentação."
+      ],
+      "comp": 5
+    },
+    "23": {
+      "plain": [
+        "Avaliar propostas de intervenção na realidade utilizando conhecimentos algébricos."
+      ],
+      "comp": 5
+    },
+    "24": {
+      "plain": [
+        "Utilizar informações expressas em gráficos ou tabelas para fazer inferências."
+      ],
+      "comp": 6
+    },
+    "25": {
+      "plain": [
+        "Resolver problema com dados apresentados em tabelas ou gráficos."
+      ],
+      "comp": 6
+    },
+    "26": {
+      "plain": [
+        "Analisar informações expressas em gráficos ou tabelas como recurso para a construção de argumentos."
+      ],
+      "comp": 6
+    },
+    "27": {
+      "plain": [
+        "Calcular medidas de tendência central ou de dispersão de um conjunto de dados expressos em uma tabela de frequências de dados agrupados (não em classes) ou em gráficos."
+      ],
+      "comp": 7
+    },
+    "28": {
+      "plain": [
+        "Resolver situação-problema que envolva conhecimentos de estatística e probabilidade."
+      ],
+      "comp": 7
+    },
+    "29": {
+      "plain": [
+        "Utilizar conhecimentos de estatística e probabilidade como recurso para a construção de argumentação."
+      ],
+      "comp": 7
+    },
+    "30": {
+      "plain": [
+        "Avaliar propostas de intervenção na realidade utilizando conhecimentos de estatística e probabilidade."
+      ],
+      "comp": 7
+    }
+  }
+}

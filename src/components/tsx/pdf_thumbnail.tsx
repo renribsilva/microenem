@@ -3,6 +3,7 @@
 import { ComponentProps, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { CropArea } from "../../types/questoes_types";
+import { useYearData } from "../../context/year_context";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -13,6 +14,7 @@ interface PdfThumbnailProps {
   fileUrl: string;
   scale: number;
   crops: CropArea[];
+  code: number;
   direction?: "row" | "column";
   isLoaded: boolean;
   setIsLoaded: (x: boolean) => void;
@@ -26,11 +28,22 @@ export default function PdfThumbnail({
   fileUrl,
   scale,
   crops,
+  code,
   direction,
   isLoaded,
   setIsLoaded,
 }: PdfThumbnailProps) {
   const [larguraBase, setLarguraBase] = useState<number>(300);
+  const [showGabarito, setShowGabarito] = useState<boolean>(false);
+  const { getItemDetails, habilidades, competencias } = useYearData();
+  const itemDetails = getItemDetails(code);
+  const habInfo = itemDetails ? habilidades[itemDetails.CO_HABILIDADE] : null;
+  const compInfo = habInfo ? competencias[habInfo.comp] : null;
+
+  const maiorLargura = Math.max(
+    ...crops.map((c) => larguraBase - c.offsetX - c.cropWidth),
+    300,
+  );
 
   function handlePageLoad(page: PageLoadSuccessParams) {
     setLarguraBase(page.width);
@@ -111,6 +124,52 @@ export default function PdfThumbnail({
             </div>
           );
         })}
+        <div
+          style={{
+            borderTop: "1px solid #e5e7eb",
+            marginTop: "16px",
+            width: `${maiorLargura}px`,
+          }}
+        >
+          {itemDetails && (
+            <div
+              style={{
+                fontSize: "12px",
+                color: "#6b7280",
+              }}
+            >
+              <div style={{ marginTop: "8px" }}>
+                <strong>Gabarito: </strong>
+                <button
+                  onClick={() => setShowGabarito(!showGabarito)}
+                  style={{
+                    cursor: "pointer",
+                    padding: "4px 8px",
+                    borderRadius: "6px",
+                    marginBottom: "10px",
+                    marginTop: "5px",
+                    border: "1px solid #d1d5db",
+                    backgroundColor: showGabarito ? "#d1fae5" : "#f3f4f6",
+                  }}
+                >
+                  {showGabarito ? itemDetails.TX_GABARITO : "Ver"}
+                </button>
+              </div>
+              {compInfo && (
+                <div style={{ marginBottom: "10px" }}>
+                  <strong>Competência: </strong>
+                  {compInfo[0]}
+                </div>
+              )}
+              {habInfo && (
+                <div>
+                  <strong>Habilidade: </strong>
+                  {habInfo.plain[0]}
+                </div>
+              )}{" "}
+            </div>
+          )}
+        </div>
       </Document>
     </div>
   );

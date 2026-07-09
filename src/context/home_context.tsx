@@ -41,10 +41,10 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   // Labels iniciais de cada área do conhecimento
   const [selectionsByArea, setSelectionsByArea] =
     useState<SelectionsByAreaType>({
-      LC: "1395_0_X",
-      CH: "1383_X_X",
-      CN: "1419_X_X",
-      MT: "1407_X_X",
+      LC: "1459_0_X",
+      CH: "1447_X_X",
+      CN: "1483_X_X",
+      MT: "1471_X_X",
     });
 
   // Extrai o rótulo da prova de acordo com a área ativa

@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import PdfThumbnail from "./pdf_thumbnail";
 import { CropArea } from "../../types/questoes_types";
+import { useYearData } from "../../context/year_context";
 
 interface PdfModalProps {
   isOpen: boolean;
@@ -17,6 +18,13 @@ interface PdfModalProps {
   setIsLoaded: (x: boolean) => void;
 }
 
+const areaMap = {
+  LC: "Linguagens",
+  CH: "Ciências Humanas",
+  CN: "Ciências da Natureza",
+  MT: "Matemática",
+};
+
 export default function PdfModal({
   isOpen,
   onClose,
@@ -30,6 +38,8 @@ export default function PdfModal({
   setIsLoaded,
 }: PdfModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const { getItemDetails } = useYearData();
+  const itemDetails = getItemDetails(code);
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -74,48 +84,72 @@ export default function PdfModal({
         <div
           style={{
             display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            flexDirection: "column",
             width: "100%",
             marginBottom: "16px",
           }}
         >
-          <h3
+          <div
             style={{
-              margin: 0,
-              fontWeight: "bold",
-              color: "#1f2937",
-              fontSize: "18px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              width: "100%",
+              marginBottom: "10px",
             }}
           >
-            {tituloQuestao || `Questão ${code}`}
-          </h3>
-          <button
-            onClick={onClose}
-            style={{
-              color: "#4c4f52",
-              backgroundColor: "#c2c8c9",
-              border: "none",
-              fontWeight: "bold",
-              fontSize: "14px",
-              padding: "4px 12px",
-              borderRadius: "8px",
-              cursor: "pointer",
-            }}
+            <h3
+              style={{
+                margin: 0,
+                fontWeight: "bold",
+                color: "#1f2937",
+                fontSize: "18px",
+              }}
+            >
+              {tituloQuestao ||
+                `Questão ${itemDetails?.CO_POSICAO} ${
+                  itemDetails?.IN_ITEM_ABAN === 1 ? "(anulada)" : ""
+                }`}
+            </h3>{" "}
+            <button
+              onClick={onClose}
+              style={{
+                color: "#4c4f52",
+                backgroundColor: "#c2c8c9",
+                border: "none",
+                fontWeight: "bold",
+                fontSize: "14px",
+                padding: "4px 12px",
+                borderRadius: "8px",
+                cursor: "pointer",
+              }}
+            >
+              Fechar
+            </button>
+          </div>
+          <div
+            style={{ borderBottom: "1px solid #e5e7eb", paddingBottom: "16px" }}
           >
-            Fechar
-          </button>
+            {itemDetails && (
+              <div style={{ fontSize: "12px", color: "#6b7280" }}>
+                Caderno: {itemDetails.TX_COR.toLocaleLowerCase()} | Área:{" "}
+                {areaMap[itemDetails.SG_AREA]}
+              </div>
+            )}
+          </div>
         </div>
         <div
           style={{
             width: "100%",
             display: "flex",
             justifyContent: "center",
+            flexDirection: "column",
           }}
         >
           <PdfThumbnail
             fileUrl={fileUrl}
             crops={crops}
+            code={code}
             direction={direction}
             scale={scale}
             isLoaded={isLoaded}

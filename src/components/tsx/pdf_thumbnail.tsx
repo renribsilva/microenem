@@ -31,8 +31,7 @@ export default function PdfThumbnail({
   direction,
 }: PdfThumbnailProps) {
   const [larguraBase, setLarguraBase] = useState<number>(300);
-
-  // Substituindo o booleano único por um estado que rastreia cada crop individualmente
+  // Controla o carregamento de CADA recorte separadamente
   const [loadedCrops, setLoadedCrops] = useState<Record<number, boolean>>({});
 
   const [localBlobUrl, setLocalBlobUrl] = useState<string | null>(
@@ -96,7 +95,7 @@ export default function PdfThumbnail({
     <div
       style={{
         display: "flex",
-        alignItems: "right",
+        alignItems: "flex-start", // "right" é inválido no CSS, mudei pra flex-start
         flexDirection: direction,
         gap: "5px",
         width: `100%`,
@@ -120,7 +119,7 @@ export default function PdfThumbnail({
             border: "2px dashed #d1d5db",
           }}
         >
-          ⏳ Baixando PDF...
+          ⏳ Baixando arquivo...
         </div>
       )}
 
@@ -128,7 +127,6 @@ export default function PdfThumbnail({
         <Document
           file={localBlobUrl}
           loading={
-            /* CORRIGIDO: Removido o color: "#0000" que deixava o texto invisível */
             <div
               style={{
                 display: "flex",
@@ -147,14 +145,13 @@ export default function PdfThumbnail({
           }
         >
           {crops.map((crop, index) => {
-            const { offsetX, offsetY } = crop;
-
-            // Verifica se ESTE recorte específico já terminou de renderizar
+            const { offsetX, offsetY, cropHeight, cropWidth } = crop;
             const isThisCropLoaded = loadedCrops[index] || false;
 
+            // Voltei para a sua lógica: usa larguraBase se não tiver carregado pra não colapsar a div!
             const larguraIndividual = isThisCropLoaded
-              ? `${larguraBase - crop.offsetX - crop.cropWidth}px`
-              : "max-content";
+              ? `${larguraBase - offsetX - cropWidth}px`
+              : `${larguraBase}px`;
 
             return (
               <div
@@ -162,10 +159,9 @@ export default function PdfThumbnail({
                 style={{
                   position: "relative",
                   width: larguraIndividual,
+                  height: `${cropHeight}px`,
                   flexShrink: 0,
-                  overflowY: "hidden",
-                  overflowX: "hidden",
-                  height: `${crop.cropHeight}px`,
+                  overflow: "hidden",
                   borderRadius: "8px",
                   backgroundColor: "#f9fafb",
                 }}
@@ -173,35 +169,39 @@ export default function PdfThumbnail({
                 {!isThisCropLoaded && (
                   <div
                     style={{
+                      position: "absolute",
+                      inset: 0, // Preenche todo o espaço
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       backgroundColor: "#f9fafb",
                       color: "#6b7280",
-                      fontSize: "13px",
-                      zIndex: 10,
-                      height: "100%",
-                      padding: "0 20px",
+                      fontSize: "14px",
+                      fontWeight: "500",
+                      zIndex: 20, // Garante que a mensagem fica por cima
                     }}
                   >
-                    ✂️ Recortando questão...
+                    ⏳ Renderizando questão...
                   </div>
                 )}
+
                 <div
                   style={{
                     position: "absolute",
                     top: 0,
                     left: 0,
                     transform: `translate(${-offsetX}px, ${-offsetY}px)`,
-                    visibility: isThisCropLoaded ? "visible" : "hidden",
+                    opacity: isThisCropLoaded ? 1 : 0, // Fade suave no lugar do visiblity abrupto
+                    transition: "opacity 0.2s ease-in-out",
+                    zIndex: 10,
                   }}
                 >
                   <Page
                     pageNumber={pageNumber}
                     scale={scale}
+                    loading={null} // MATAMOS O LOADER NATIVO AQUI para ele não sumir no translate!
                     onLoadSuccess={handlePageLoad}
                     onRenderSuccess={() => {
-                      // Avisa que APENAS este recorte terminou
                       setLoadedCrops((prev) => ({ ...prev, [index]: true }));
                     }}
                     renderTextLayer={false}

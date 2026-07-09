@@ -3,9 +3,9 @@ import { QuestaoCoordenadas } from "../../types/questoes_types";
 export const questoesEnem: QuestaoCoordenadas[] = [
   {
     codigo: 153875,
-    pagina: 2,
     crops: [
       {
+        pagina: 2,
         offsetY: 165,
         offsetX: 32,
         cropHeight: 215,
@@ -16,9 +16,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 118169,
-    pagina: 2,
     crops: [
       {
+        pagina: 2,
         offsetY: 398,
         offsetX: 32,
         cropHeight: 170,
@@ -29,9 +29,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 153836,
-    pagina: 2,
     crops: [
       {
+        pagina: 2,
         offsetY: 585,
         offsetX: 32,
         cropHeight: 305,
@@ -42,9 +42,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 112036,
-    pagina: 3,
     crops: [
       {
+        pagina: 3,
         offsetY: 110,
         offsetX: 20,
         cropHeight: 225,
@@ -55,9 +55,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 153930,
-    pagina: 3,
     crops: [
       {
+        pagina: 3,
         offsetY: 350,
         offsetX: 20,
         cropHeight: 475,
@@ -68,9 +68,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 152688,
-    pagina: 4,
     crops: [
       {
+        pagina: 4,
         offsetY: 135,
         offsetX: 32,
         cropHeight: 305,
@@ -81,9 +81,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 153945,
-    pagina: 4,
     crops: [
       {
+        pagina: 4,
         offsetY: 457,
         offsetX: 32,
         cropHeight: 435,
@@ -94,9 +94,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 140709,
-    pagina: 4,
     crops: [
       {
+        pagina: 4,
         offsetY: 110,
         offsetX: 345,
         cropHeight: 460,
@@ -107,9 +107,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 154015,
-    pagina: 5,
     crops: [
       {
+        pagina: 5,
         offsetY: 110,
         offsetX: 20,
         cropHeight: 435,
@@ -120,9 +120,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 153833,
-    pagina: 5,
     crops: [
       {
+        pagina: 5,
         offsetY: 560,
         offsetX: 20,
         cropHeight: 285,
@@ -133,9 +133,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 153833,
-    pagina: 5,
     crops: [
       {
+        pagina: 5,
         offsetY: 560,
         offsetX: 20,
         cropHeight: 285,
@@ -146,22 +146,36 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 157751,
-    pagina: 7,
     crops: [
       {
+        pagina: 6,
+        offsetY: 115,
+        offsetX: 120,
+        cropHeight: 775,
+        cropWidth: 20,
+      },
+      {
+        pagina: 7,
         offsetY: 110,
         offsetX: 20,
         cropHeight: 115,
-        cropWidth: 250,
+        cropWidth: 280,
       },
     ],
     scale: 1.2,
   },
   {
     codigo: 157750,
-    pagina: 7,
     crops: [
       {
+        pagina: 6,
+        offsetY: 115,
+        offsetX: 120,
+        cropHeight: 775,
+        cropWidth: 20,
+      },
+      {
+        pagina: 7,
         offsetY: 245,
         offsetX: 20,
         cropHeight: 115,
@@ -172,9 +186,16 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 157779,
-    pagina: 7,
     crops: [
       {
+        pagina: 6,
+        offsetY: 115,
+        offsetX: 120,
+        cropHeight: 775,
+        cropWidth: 20,
+      },
+      {
+        pagina: 7,
         offsetY: 380,
         offsetX: 20,
         cropHeight: 110,
@@ -185,9 +206,16 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 157781,
-    pagina: 7,
     crops: [
       {
+        pagina: 6,
+        offsetY: 115,
+        offsetX: 120,
+        cropHeight: 775,
+        cropWidth: 20,
+      },
+      {
+        pagina: 7,
         offsetY: 510,
         offsetX: 20,
         cropHeight: 110,
@@ -198,9 +226,16 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 157775,
-    pagina: 7,
     crops: [
       {
+        pagina: 6,
+        offsetY: 115,
+        offsetX: 120,
+        cropHeight: 775,
+        cropWidth: 20,
+      },
+      {
+        pagina: 7,
         offsetY: 640,
         offsetX: 20,
         cropHeight: 115,
@@ -211,9 +246,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 150940,
-    pagina: 8,
     crops: [
       {
+        pagina: 8,
         offsetY: 110,
         offsetX: 32,
         cropHeight: 470,
@@ -224,9 +259,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 157571,
-    pagina: 8,
     crops: [
       {
+        pagina: 8,
         offsetY: 605,
         offsetX: 32,
         cropHeight: 270,
@@ -237,9 +272,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 153400,
-    pagina: 8,
     crops: [
       {
+        pagina: 8,
         offsetY: 110,
         offsetX: 345,
         cropHeight: 320,
@@ -250,9 +285,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 157665,
-    pagina: 8,
     crops: [
       {
+        pagina: 8,
         offsetY: 460,
         offsetX: 345,
         cropHeight: 430,
@@ -263,9 +298,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 153556,
-    pagina: 9,
     crops: [
       {
+        pagina: 9,
         offsetY: 110,
         offsetX: 20,
         cropHeight: 505,
@@ -276,15 +311,16 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 157615,
-    pagina: 9,
     crops: [
       {
+        pagina: 9,
         offsetY: 633,
         offsetX: 52,
         cropHeight: 260,
         cropWidth: 348,
       },
       {
+        pagina: 9,
         offsetY: 90,
         offsetX: 340,
         cropHeight: 115,
@@ -296,9 +332,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 157598,
-    pagina: 9,
     crops: [
       {
+        pagina: 9,
         offsetY: 230,
         offsetX: 340,
         cropHeight: 435,
@@ -309,9 +345,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 154020,
-    pagina: 10,
     crops: [
       {
+        pagina: 10,
         offsetY: 110,
         offsetX: 32,
         cropHeight: 440,
@@ -322,9 +358,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 157619,
-    pagina: 10,
     crops: [
       {
+        pagina: 10,
         offsetY: 575,
         offsetX: 32,
         cropHeight: 315,
@@ -335,9 +371,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 150612,
-    pagina: 10,
     crops: [
       {
+        pagina: 10,
         offsetY: 110,
         offsetX: 345,
         cropHeight: 415,
@@ -348,9 +384,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 153392,
-    pagina: 10,
     crops: [
       {
+        pagina: 10,
         offsetY: 550,
         offsetX: 345,
         cropHeight: 340,
@@ -361,9 +397,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 158757,
-    pagina: 11,
     crops: [
       {
+        pagina: 11,
         offsetY: 110,
         offsetX: 25,
         cropHeight: 635,
@@ -374,9 +410,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 158716,
-    pagina: 11,
     crops: [
       {
+        pagina: 11,
         offsetY: 110,
         offsetX: 338,
         cropHeight: 765,
@@ -387,9 +423,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 150674,
-    pagina: 12,
     crops: [
       {
+        pagina: 12,
         offsetY: 110,
         offsetX: 32,
         cropHeight: 465,
@@ -400,9 +436,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 150643,
-    pagina: 12,
     crops: [
       {
+        pagina: 12,
         offsetY: 600,
         offsetX: 32,
         cropHeight: 290,
@@ -413,9 +449,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 44047,
-    pagina: 13,
     crops: [
       {
+        pagina: 13,
         offsetY: 110,
         offsetX: 25,
         cropHeight: 490,
@@ -426,9 +462,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 118196,
-    pagina: 13,
     crops: [
       {
+        pagina: 13,
         offsetY: 620,
         offsetX: 25,
         cropHeight: 270,
@@ -439,9 +475,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 150505,
-    pagina: 13,
     crops: [
       {
+        pagina: 13,
         offsetY: 110,
         offsetX: 340,
         cropHeight: 385,
@@ -452,9 +488,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 150761,
-    pagina: 13,
     crops: [
       {
+        pagina: 13,
         offsetY: 520,
         offsetX: 340,
         cropHeight: 370,
@@ -465,9 +501,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 153420,
-    pagina: 14,
     crops: [
       {
+        pagina: 14,
         offsetY: 110,
         offsetX: 32,
         cropHeight: 380,
@@ -478,9 +514,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 153419,
-    pagina: 14,
     crops: [
       {
+        pagina: 14,
         offsetY: 512,
         offsetX: 32,
         cropHeight: 380,
@@ -491,9 +527,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 140908,
-    pagina: 14,
     crops: [
       {
+        pagina: 14,
         offsetY: 110,
         offsetX: 346,
         cropHeight: 410,
@@ -504,9 +540,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 140845,
-    pagina: 14,
     crops: [
       {
+        pagina: 14,
         offsetY: 545,
         offsetX: 346,
         cropHeight: 345,
@@ -517,9 +553,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 120341,
-    pagina: 15,
     crops: [
       {
+        pagina: 15,
         offsetY: 110,
         offsetX: 25,
         cropHeight: 655,
@@ -530,9 +566,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 150642,
-    pagina: 15,
     crops: [
       {
+        pagina: 15,
         offsetY: 110,
         offsetX: 340,
         cropHeight: 395,
@@ -543,9 +579,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 153681,
-    pagina: 15,
     crops: [
       {
+        pagina: 15,
         offsetY: 530,
         offsetX: 340,
         cropHeight: 360,
@@ -556,9 +592,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 97881,
-    pagina: 16,
     crops: [
       {
+        pagina: 16,
         offsetY: 110,
         offsetX: 32,
         cropHeight: 440,
@@ -569,9 +605,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 43532,
-    pagina: 16,
     crops: [
       {
+        pagina: 16,
         offsetY: 575,
         offsetX: 32,
         cropHeight: 265,
@@ -582,9 +618,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 152784,
-    pagina: 17,
     crops: [
       {
+        pagina: 17,
         offsetY: 110,
         offsetX: 20,
         cropHeight: 300,
@@ -595,9 +631,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 150607,
-    pagina: 17,
     crops: [
       {
+        pagina: 17,
         offsetY: 430,
         offsetX: 20,
         cropHeight: 415,
@@ -608,9 +644,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 153550,
-    pagina: 18,
     crops: [
       {
+        pagina: 18,
         offsetY: 110,
         offsetX: 32,
         cropHeight: 460,
@@ -621,9 +657,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 66526,
-    pagina: 18,
     crops: [
       {
+        pagina: 18,
         offsetY: 595,
         offsetX: 32,
         cropHeight: 295,
@@ -634,9 +670,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 157593,
-    pagina: 19,
     crops: [
       {
+        pagina: 19,
         offsetY: 110,
         offsetX: 20,
         cropHeight: 445,
@@ -647,15 +683,16 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 17166,
-    pagina: 19,
     crops: [
       {
+        pagina: 19,
         offsetY: 580,
         offsetX: 20,
         cropHeight: 310,
         cropWidth: 348,
       },
       {
+        pagina: 19,
         offsetY: 90,
         offsetX: 337,
         cropHeight: 180,
@@ -667,9 +704,9 @@ export const questoesEnem: QuestaoCoordenadas[] = [
   },
   {
     codigo: 120714,
-    pagina: 19,
     crops: [
       {
+        pagina: 19,
         offsetY: 295,
         offsetX: 337,
         cropHeight: 520,

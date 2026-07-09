@@ -8,7 +8,6 @@ interface PdfModalProps {
   isOpen: boolean;
   onClose: () => void;
   fileUrl: string;
-  pageNumber: number;
   code: number;
   crops: CropArea[];
   direction: "row" | "column" | null;
@@ -22,7 +21,6 @@ export default function PdfModal({
   isOpen,
   onClose,
   fileUrl,
-  pageNumber,
   code,
   crops,
   direction,
@@ -57,8 +55,8 @@ export default function PdfModal({
       style={{
         padding: "14px",
         borderRadius: "16px",
-        backgroundColor: "#ffffff",
-        border: "1px solid #f3f4f6",
+        backgroundColor: "#fdfdfd",
+        border: "1px solid #fdfdfd",
         boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
         width: `calc(100% - 90px)`,
         maxWidth: `max-content`,
@@ -95,8 +93,8 @@ export default function PdfModal({
           <button
             onClick={onClose}
             style={{
-              color: "#888888",
-              backgroundColor: "#f3f4f6",
+              color: "#4c4f52",
+              backgroundColor: "#c2c8c9",
               border: "none",
               fontWeight: "bold",
               fontSize: "14px",
@@ -117,7 +115,6 @@ export default function PdfModal({
         >
           <PdfThumbnail
             fileUrl={fileUrl}
-            pageNumber={pageNumber}
             crops={crops}
             direction={direction}
             scale={scale}

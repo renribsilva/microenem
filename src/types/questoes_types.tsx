@@ -1,4 +1,5 @@
 export type CropArea = {
+  pagina: number;
   cropHeight: number;
   cropWidth: number;
   offsetX: number;
@@ -7,7 +8,6 @@ export type CropArea = {
 
 export type QuestaoCoordenadas = {
   codigo: number;
-  pagina: number;
   scale: number;
   crops?: CropArea[];
   direction?: "row" | "column";

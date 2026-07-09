@@ -11,7 +11,6 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 
 interface PdfThumbnailProps {
   fileUrl: string;
-  pageNumber: number;
   scale: number;
   crops: CropArea[];
   direction?: "row" | "column";
@@ -25,7 +24,6 @@ type PageLoadSuccessParams = Parameters<
 
 export default function PdfThumbnail({
   fileUrl,
-  pageNumber,
   scale,
   crops,
   direction,
@@ -49,7 +47,7 @@ export default function PdfThumbnail({
         display: "flex",
         alignItems: "right",
         flexDirection: direction,
-        gap: "5px",
+        gap: "10px",
         width: `100%`,
         overflow: "auto",
       }}
@@ -62,8 +60,8 @@ export default function PdfThumbnail({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: "#f9fafb",
-            color: "#6b7280",
+            backgroundColor: "#fdfdfd",
+            color: "#8c8c8c",
             fontSize: "14px",
             zIndex: 10,
           }}
@@ -73,9 +71,9 @@ export default function PdfThumbnail({
       )}
       <Document file={fileUrl} loading={null}>
         {crops.map((crop, index) => {
-          const { offsetX, offsetY } = crop;
+          const { offsetX, offsetY, cropWidth, cropHeight, pagina } = crop;
           const larguraIndividual = isLoaded
-            ? larguraBase - crop.offsetX - crop.cropWidth
+            ? larguraBase - offsetX - cropWidth
             : 300;
 
           return (
@@ -88,10 +86,10 @@ export default function PdfThumbnail({
                 flex: "0 0 auto",
                 overflowY: "hidden",
                 overflowX: "hidden",
-                height: `${crop.cropHeight}px`,
-                // border: "1px solid #e5e7eb",
+                height: `${cropHeight}px`,
+                border: "1px solid #e5e7eb",
                 borderRadius: "8px",
-                backgroundColor: "#f9fafb",
+                backgroundColor: "#fdfdfd",
               }}
             >
               <div
@@ -102,7 +100,7 @@ export default function PdfThumbnail({
               >
                 <Page
                   key={String(isLoaded)}
-                  pageNumber={pageNumber}
+                  pageNumber={pagina}
                   scale={scale}
                   onLoadSuccess={handlePageLoad}
                   onRenderSuccess={handlePageRendered}

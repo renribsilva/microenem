@@ -23,45 +23,46 @@ function YearLayoutContent({ children }: { children: React.ReactNode }) {
   const sufixoDia = ehPrimeiroDia ? "1DIA" : "2DIA";
   const fileUrlDinamico = `/${currentYear}_${sufixoDia}.pdf`;
 
-  // import(`../../../questoes/${currentYear}/${deferredArea}`)
-  //   .then((modulo) => {
-  //     const listaQuestoes: QuestaoCoordenadas[] =
-  //       modulo.questoesEnem || modulo.default;
-  //     const questaoEncontrada = listaQuestoes.find(
-  //       (q) => q.codigo === questaoPopUp,
-  //     );
-  //     setDadosQuestao(questaoEncontrada || null);
-  //   })
-  //   .catch((err) => {
-  //     console.error(
-  //       `Erro ao carregar questões: ${deferredArea} do ano ${currentYear}:`,
-  //       err,
-  //     );
-  //     setDadosQuestao(null);
-  //   });
+  import(`../../../questoes/${currentYear}/${deferredArea}`)
+    .then((modulo) => {
+      const listaQuestoes: QuestaoCoordenadas[] =
+        modulo.questoesEnem || modulo.default;
+      const questaoEncontrada = listaQuestoes.find(
+        (q) => q.codigo === questaoPopUp,
+      );
+      setDadosQuestao(questaoEncontrada || null);
+    })
+    .catch((err) => {
+      console.error(
+        `Erro ao carregar questões: ${deferredArea} do ano ${currentYear}:`,
+        err,
+      );
+      setDadosQuestao(null);
+    });
 
-  useEffect(() => {
-    if (!questaoPopUp || !currentYear || !deferredArea) return;
-    import(`../../../questoes/${currentYear}/${deferredArea}`)
-      .then((modulo) => {
-        const listaQuestoes: QuestaoCoordenadas[] =
-          modulo.questoesEnem || modulo.default;
-        const questaoEncontrada = listaQuestoes.find(
-          (q) => q.codigo === questaoPopUp,
-        );
-        setDadosQuestao(questaoEncontrada || null);
-      })
-      .catch((err) => {
-        console.error(
-          `Erro ao carregar questões: ${deferredArea} do ano ${currentYear}:`,
-          err,
-        );
-        setDadosQuestao(null);
-      });
-  }, [questaoPopUp, currentYear, deferredArea]);
+  // useEffect(() => {
+  //   if (!questaoPopUp || !currentYear || !deferredArea) return;
+  //   import(`../../../questoes/${currentYear}/${deferredArea}`)
+  //     .then((modulo) => {
+  //       const listaQuestoes: QuestaoCoordenadas[] =
+  //         modulo.questoesEnem || modulo.default;
+  //       const questaoEncontrada = listaQuestoes.find(
+  //         (q) => q.codigo === questaoPopUp,
+  //       );
+  //       setDadosQuestao(questaoEncontrada || null);
+  //     })
+  //     .catch((err) => {
+  //       console.error(
+  //         `Erro ao carregar questões: ${deferredArea} do ano ${currentYear}:`,
+  //         err,
+  //       );
+  //       setDadosQuestao(null);
+  //     });
+  // }, [questaoPopUp, currentYear, deferredArea]);
 
   const cropDefault = [
     {
+      pagina: 1,
       cropHeight: 0,
       cropWidth: 0,
       offsetX: 0,
@@ -75,7 +76,6 @@ function YearLayoutContent({ children }: { children: React.ReactNode }) {
         fileUrl={fileUrlDinamico}
         isOpen={showPopUp}
         onClose={() => setShowPopUp(false)}
-        pageNumber={dadosQuestao ? dadosQuestao.pagina : 1}
         code={dadosQuestao ? dadosQuestao.codigo : 0}
         scale={dadosQuestao ? dadosQuestao.scale : 1.2}
         crops={dadosQuestao ? dadosQuestao.crops : cropDefault}

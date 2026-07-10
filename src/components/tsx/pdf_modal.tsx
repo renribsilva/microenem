@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import PdfThumbnail from "./pdf_thumbnail";
 import { CropArea } from "../../types/questoes_types";
 import { useYearData } from "../../context/year_context";
+import { useChartTheme } from "../../hooks/use_chart_theme";
 
 interface PdfModalProps {
   isOpen: boolean;
@@ -40,6 +41,7 @@ export default function PdfModal({
   const dialogRef = useRef<HTMLDialogElement>(null);
   const { getItemDetails } = useYearData();
   const itemDetails = getItemDetails(code);
+  const { colorMap } = useChartTheme();
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -95,7 +97,6 @@ export default function PdfModal({
               justifyContent: "space-between",
               alignItems: "center",
               width: "100%",
-              marginBottom: "10px",
             }}
           >
             <h3
@@ -114,14 +115,13 @@ export default function PdfModal({
             <button
               onClick={onClose}
               style={{
-                color: "#4c4f52",
-                backgroundColor: "#c2c8c9",
-                border: "none",
-                fontWeight: "bold",
-                fontSize: "14px",
-                padding: "4px 12px",
-                borderRadius: "8px",
                 cursor: "pointer",
+                padding: "4px 8px",
+                borderRadius: "6px",
+                marginBottom: "10px",
+                marginTop: "5px",
+                border: "1px solid #d1d5db",
+                backgroundColor: "#f3f4f6",
               }}
             >
               Fechar
@@ -132,8 +132,10 @@ export default function PdfModal({
           >
             {itemDetails && (
               <div style={{ fontSize: "12px", color: "#6b7280" }}>
-                Caderno: {itemDetails.TX_COR.toLocaleLowerCase()} | Área:{" "}
-                {areaMap[itemDetails.SG_AREA]}
+                Área: {areaMap[itemDetails.SG_AREA]} | Prova:{" "}
+                <span style={{ color: `${colorMap[itemDetails.TX_COR]}` }}>
+                  {itemDetails.TX_COR.toLocaleLowerCase()}
+                </span>
               </div>
             )}
           </div>

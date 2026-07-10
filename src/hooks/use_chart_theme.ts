@@ -22,7 +22,7 @@ export function useChartTheme() {
     rosa: "#db2777",
   };
 
-  const colorMap: Record<string, string> = {
+  const rawColorMap: Record<string, string> = {
     Azul: colors.azul,
     Amarela: colors.amarela,
     Branca: colors.branca,
@@ -42,6 +42,18 @@ export function useChartTheme() {
     "Rosa (Ampliada)": colors.rosa,
     "Rosa (Superampliada)": colors.rosa,
   };
+
+  const colorMap = new Proxy(rawColorMap as Record<string, string>, {
+    get: (target, prop) => {
+      if (typeof prop === "string") {
+        const key = Object.keys(target).find(
+          (k) => k.toLowerCase() === prop.toLowerCase(),
+        );
+        return key ? target[key] : undefined;
+      }
+      return undefined;
+    },
+  });
 
   useEffect(() => {
     const updateThemeValues = () => {

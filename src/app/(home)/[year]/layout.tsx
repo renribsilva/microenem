@@ -29,25 +29,31 @@ function YearLayoutContent({ children }: { children: React.ReactNode }) {
   const sufixoDia = ehPrimeiroDia ? "1DIA" : "2DIA";
   const fileUrlDinamico = `/${currentYear}_${sufixoDia}.pdf`;
 
-  // import(`../../../questoes/${currentYear}/${deferredArea}`)
-  //   .then((modulo) => {
-  //     const listaQuestoes: QuestaoCoordenadas[] =
-  //       modulo.questoesEnem || modulo.default;
-  //     const questaoEncontrada = listaQuestoes.find(
-  //       (q) => q.codigo === questaoPopUp,
-  //     );
-  //     setDadosQuestao(questaoEncontrada || null);
-  //   })
-  //   .catch((err) => {
-  //     console.error(
-  //       `Erro ao carregar questões: ${deferredArea} do ano ${currentYear}:`,
-  //       err,
-  //     );
-  //     setDadosQuestao(null);
-  //   });
+  if (process.env.NODE_ENV === "development") {
+    if (questaoPopUp && currentYear && deferredArea) {
+      import(`../../../questoes/${currentYear}/${deferredArea}`)
+        .then((modulo) => {
+          const listaQuestoes: QuestaoCoordenadas[] =
+            modulo.questoesEnem || modulo.default;
+          const questaoEncontrada = listaQuestoes.find(
+            (q) => q.codigo === questaoPopUp,
+          );
+          setDadosQuestao(questaoEncontrada || null);
+        })
+        .catch((err) => {
+          console.error(
+            `[DEV] erro: ${deferredArea} do ano ${currentYear}:`,
+            err,
+          );
+          setDadosQuestao(null);
+        });
+    }
+  }
 
   useEffect(() => {
+    if (process.env.NODE_ENV !== "production") return;
     if (!questaoPopUp || !currentYear || !deferredArea) return;
+
     import(`../../../questoes/${currentYear}/${deferredArea}`)
       .then((modulo) => {
         const listaQuestoes: QuestaoCoordenadas[] =
@@ -59,7 +65,7 @@ function YearLayoutContent({ children }: { children: React.ReactNode }) {
       })
       .catch((err) => {
         console.error(
-          `Erro ao carregar questões: ${deferredArea} do ano ${currentYear}:`,
+          `[PROD] Erro: ${deferredArea} do ano ${currentYear}:`,
           err,
         );
         setDadosQuestao(null);

@@ -93,6 +93,7 @@ export default function PdfThumbnail({
           const larguraIndividual = isLoaded
             ? larguraBase - offsetX - cropWidth
             : 300;
+          const isDev = process.env.NODE_ENV === "development";
 
           return (
             <div
@@ -105,7 +106,7 @@ export default function PdfThumbnail({
                 overflowY: "hidden",
                 overflowX: "hidden",
                 height: `${cropHeight}px`,
-                // border: "1px solid #e5e7eb",
+                border: isDev ? "1px solid #e5e7eb" : "none",
                 borderRadius: "8px",
                 backgroundColor: "#fdfdfd",
               }}

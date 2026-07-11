@@ -31,20 +31,16 @@ function YearLayoutContent({ children }: { children: React.ReactNode }) {
 
   if (process.env.NODE_ENV === "development") {
     if (questaoPopUp && currentYear && deferredArea) {
-      import(`../../../questoes/${currentYear}/${deferredArea}`)
+      import(`../../../questoes/${currentYear}/${deferredArea}.json`)
         .then((modulo) => {
-          const listaQuestoes: QuestaoCoordenadas[] =
-            modulo.questoesEnem || modulo.default;
+          const listaQuestoes = modulo.default as QuestaoCoordenadas[];
           const questaoEncontrada = listaQuestoes.find(
             (q) => q.codigo === questaoPopUp,
           );
           setDadosQuestao(questaoEncontrada || null);
         })
         .catch((err) => {
-          console.error(
-            `[DEV] erro: ${deferredArea} do ano ${currentYear}:`,
-            err,
-          );
+          console.error(`Erro ao carregar questões:`, err);
           setDadosQuestao(null);
         });
     }
@@ -53,21 +49,16 @@ function YearLayoutContent({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (process.env.NODE_ENV !== "production") return;
     if (!questaoPopUp || !currentYear || !deferredArea) return;
-
-    import(`../../../questoes/${currentYear}/${deferredArea}`)
+    import(`../../../questoes/${currentYear}/${deferredArea}.json`)
       .then((modulo) => {
-        const listaQuestoes: QuestaoCoordenadas[] =
-          modulo.questoesEnem || modulo.default;
+        const listaQuestoes = modulo.default as QuestaoCoordenadas[];
         const questaoEncontrada = listaQuestoes.find(
           (q) => q.codigo === questaoPopUp,
         );
         setDadosQuestao(questaoEncontrada || null);
       })
       .catch((err) => {
-        console.error(
-          `[PROD] Erro: ${deferredArea} do ano ${currentYear}:`,
-          err,
-        );
+        console.error(`Erro ao carregar questões:`, err);
         setDadosQuestao(null);
       });
   }, [questaoPopUp, currentYear, deferredArea]);

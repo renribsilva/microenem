@@ -4,6 +4,7 @@ import { ComponentProps, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { CropArea } from "../../types/questoes_types";
 import { useYearData } from "../../context/year_context";
+import LoadingFallback from "./loading_fallback";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -68,115 +69,117 @@ export default function PdfThumbnail({
         gap: "10px",
         width: `100%`,
         overflow: "auto",
+        minHeight: !isLoaded ? "400px" : "auto",
       }}
     >
-      {!isLoaded && (
+      {!isLoaded && <LoadingFallback />}
+      {isLoaded && !itemDetails && (
         <div
           style={{
-            position: "absolute",
-            inset: 0,
+            padding: "40px",
+            textAlign: "center",
+            color: "#6b7280",
+            minHeight: "400px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: "#fdfdfd",
-            color: "#8c8c8c",
-            fontSize: "14px",
-            zIndex: 10,
           }}
         >
-          Carregando...
+          Dados da questão não encontrados.
         </div>
       )}
-      <Document file={fileUrl} loading={null}>
-        {crops.map((crop, index) => {
-          const { offsetX, offsetY, cropWidth, cropHeight, pagina } = crop;
-          const larguraIndividual = isLoaded
-            ? larguraBase - offsetX - cropWidth
-            : 300;
-          const isDev = process.env.NODE_ENV === "development";
+      <div style={{ display: isLoaded && itemDetails ? "block" : "none" }}>
+        <Document file={fileUrl} loading={null}>
+          {crops.map((crop, index) => {
+            const { offsetX, offsetY, cropWidth, cropHeight, pagina } = crop;
+            const larguraIndividual = isLoaded
+              ? larguraBase - offsetX - cropWidth
+              : 300;
+            const isDev = process.env.NODE_ENV === "development";
 
-          return (
-            <div
-              key={index}
-              style={{
-                position: "relative",
-                width: `${larguraIndividual}px`,
-                flexShrink: 0,
-                flex: "0 0 auto",
-                overflowY: "hidden",
-                overflowX: "hidden",
-                height: `${cropHeight}px`,
-                border: isDev ? "1px solid #e5e7eb" : "none",
-                borderRadius: "8px",
-                backgroundColor: "#fdfdfd",
-              }}
-            >
+            return (
               <div
+                key={index}
                 style={{
                   position: "relative",
-                  transform: `translate(${-offsetX}px, ${-offsetY}px)`,
+                  width: `${larguraIndividual}px`,
+                  flexShrink: 0,
+                  flex: "0 0 auto",
+                  overflowY: "hidden",
+                  overflowX: "hidden",
+                  height: `${cropHeight}px`,
+                  border: isDev ? "1px solid #e5e7eb" : "none",
+                  borderRadius: "8px",
+                  backgroundColor: "#fdfdfd",
                 }}
               >
-                <Page
-                  key={String(isLoaded)}
-                  pageNumber={pagina}
-                  scale={scale}
-                  onLoadSuccess={handlePageLoad}
-                  onRenderSuccess={handlePageRendered}
-                  renderTextLayer={false}
-                  renderAnnotationLayer={false}
-                />
-              </div>
-            </div>
-          );
-        })}
-        <div
-          style={{
-            borderTop: "1px solid #e5e7eb",
-            marginTop: "12px",
-            width: `${maiorLargura}px`,
-          }}
-        >
-          {itemDetails && (
-            <div
-              style={{
-                fontSize: "12px",
-                color: "#6b7280",
-              }}
-            >
-              <div style={{ marginTop: "8px" }}>
-                <strong>Gabarito: </strong>
-                <button
-                  onClick={() => setShowGabarito(!showGabarito)}
+                <div
                   style={{
-                    cursor: "pointer",
-                    padding: "4px 8px",
-                    borderRadius: "6px",
-                    marginBottom: "10px",
-                    marginTop: "5px",
-                    border: "1px solid #d1d5db",
-                    backgroundColor: showGabarito ? "#d1fae5" : "#f3f4f6",
+                    position: "relative",
+                    transform: `translate(${-offsetX}px, ${-offsetY}px)`,
                   }}
                 >
-                  {showGabarito ? itemDetails.TX_GABARITO : "Ver"}
-                </button>
+                  <Page
+                    key={String(isLoaded)}
+                    pageNumber={pagina}
+                    scale={scale}
+                    onLoadSuccess={handlePageLoad}
+                    onRenderSuccess={handlePageRendered}
+                    renderTextLayer={false}
+                    renderAnnotationLayer={false}
+                  />
+                </div>
               </div>
-              {compInfo && (
-                <div style={{ marginBottom: "10px" }}>
-                  <strong>Competência: </strong>
-                  {compInfo[0]}
+            );
+          })}
+          <div
+            style={{
+              borderTop: "1px solid #e5e7eb",
+              marginTop: "12px",
+              width: `${maiorLargura}px`,
+            }}
+          >
+            {itemDetails && (
+              <div
+                style={{
+                  fontSize: "12px",
+                  color: "#6b7280",
+                }}
+              >
+                <div style={{ marginTop: "8px" }}>
+                  <strong>Gabarito: </strong>
+                  <button
+                    onClick={() => setShowGabarito(!showGabarito)}
+                    style={{
+                      cursor: "pointer",
+                      padding: "4px 8px",
+                      borderRadius: "6px",
+                      marginBottom: "10px",
+                      marginTop: "5px",
+                      border: "1px solid #d1d5db",
+                      backgroundColor: showGabarito ? "#d1fae5" : "#f3f4f6",
+                    }}
+                  >
+                    {showGabarito ? itemDetails.TX_GABARITO : "Ver"}
+                  </button>
                 </div>
-              )}
-              {habInfo && (
-                <div>
-                  <strong>Habilidade: </strong>
-                  {habInfo.plain[0]}
-                </div>
-              )}{" "}
-            </div>
-          )}
-        </div>
-      </Document>
+                {compInfo && (
+                  <div style={{ marginBottom: "10px" }}>
+                    <strong>Competência: </strong>
+                    {compInfo[0]}
+                  </div>
+                )}
+                {habInfo && (
+                  <div>
+                    <strong>Habilidade: </strong>
+                    {habInfo.plain[0]}
+                  </div>
+                )}{" "}
+              </div>
+            )}
+          </div>
+        </Document>
+      </div>
     </div>
   );
 }

@@ -5,6 +5,7 @@ import PdfThumbnail from "./pdf_thumbnail";
 import { CropArea } from "../../types/questoes_types";
 import { useYearData } from "../../context/year_context";
 import { useChartTheme } from "../../hooks/use_chart_theme";
+import LoadingFallback from "./loading_fallback";
 
 interface PdfModalProps {
   isOpen: boolean;
@@ -73,11 +74,20 @@ export default function PdfModal({
         width: `calc(100% - 90px)`,
         maxWidth: `max-content`,
         height: `max-content`,
+        minHeight: "400px",
+        minWidth: "300px",
       }}
     >
+      {!isLoaded && (
+        <div
+          style={{ display: "flex", justifyContent: "center", padding: "20px" }}
+        >
+          <LoadingFallback />
+        </div>
+      )}
       <div
         style={{
-          display: "flex",
+          display: isLoaded ? "flex" : "none",
           flexDirection: "column",
           alignItems: "center",
           width: "100%",

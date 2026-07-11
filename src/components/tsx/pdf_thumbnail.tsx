@@ -96,7 +96,6 @@ export default function PdfThumbnail({
               ? larguraBase - offsetX - cropWidth
               : 300;
             const isDev = process.env.NODE_ENV === "development";
-
             return (
               <div
                 key={index}
@@ -127,6 +126,25 @@ export default function PdfThumbnail({
                     onRenderSuccess={handlePageRendered}
                     renderTextLayer={false}
                     renderAnnotationLayer={false}
+                    loading={
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: `${offsetY}px`,
+                          left: `${offsetX}px`,
+                          width: `${cropWidth}px`,
+                          height: `${cropHeight}px`,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: "#6b7280",
+                          fontSize: "14px",
+                          backgroundColor: "#fdfdfd",
+                        }}
+                      >
+                        Carregando imagem...
+                      </div>
+                    }
                   />
                 </div>
               </div>

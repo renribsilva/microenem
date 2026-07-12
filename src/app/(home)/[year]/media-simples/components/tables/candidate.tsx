@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styles from "./tables.module.css";
 import { useYearData } from "../../../../../../context/year_context";
 import { useHomeData } from "../../../../../../context/home_context";
@@ -8,9 +8,8 @@ import { useSidebar } from "../../../../../../context/sidebar_context";
 import clsx from "clsx";
 
 export default function CandidateFullDetail() {
-  const { dicData, setSelectionsByArea, setActiveArea } = useHomeData();
-  const { meanData, getAreaMap, setShowPopUp, setIsLoaded, setQuestaoPopUp } =
-    useYearData();
+  const { dicData } = useHomeData();
+  const { meanData, getAreaMap } = useYearData();
   const [activeTab, setActiveTab] = useState<"geral" | "scores">("geral");
   const { isMobile } = useSidebar();
 
@@ -27,19 +26,6 @@ export default function CandidateFullDetail() {
   });
 
   const candidateData = meanData.candidateData;
-
-  useEffect(() => {
-    if (!candidateData) return;
-    async function setSelections() {
-      setSelectionsByArea({
-        LC: `${candidateData.CO_PROVA_LC}_${candidateData.TP_LINGUA}_X`,
-        CH: `${candidateData.CO_PROVA_CH}_X_X`,
-        CN: `${candidateData.CO_PROVA_CN}_X_X`,
-        MT: `${candidateData.CO_PROVA_MT}_X_X`,
-      });
-    }
-    setSelections();
-  }, [candidateData, setSelectionsByArea]);
 
   const handleMouseMove = (e: React.MouseEvent, text: string) => {
     const isRightSide = e.clientX > window.innerWidth / 2;
@@ -275,16 +261,9 @@ export default function CandidateFullDetail() {
                             : "Anulada";
                       const tpContent = `Questão ${item.pos}: ${statusText}`;
                       return (
-                        <button
+                        <div
                           key={idx}
                           className={`${styles.dot} ${styles[item.status]}`}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setActiveArea(area.key);
-                            setShowPopUp(true);
-                            setQuestaoPopUp(item.co_item);
-                            setIsLoaded(false);
-                          }}
                           onMouseMove={(e) => handleMouseMove(e, tpContent)}
                           onMouseLeave={() =>
                             setTooltip({ ...tooltip, visible: false })

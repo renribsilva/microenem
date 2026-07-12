@@ -13,26 +13,32 @@ async function generateCrops(
       `../src/app/(home)/JSON/${currentYear}/itens_${currentYear}.json`
     );
     const data: ItensDataType = modulo.default || modulo;
-    const output: QuestaoCoordenadas[] = [];
+    const itensFiltrados: { coItem: number; coPosicao: number }[] = [];
 
     for (let i = 0; i < data.CO_ITEM.length; i++) {
       if (data.CO_PROVA[i] === targetCoProva) {
-        output.push({
-          codigo: data.CO_ITEM[i],
-          crops: [
-            { pagina: 0, offsetY: 0, offsetX: 0, cropHeight: 0, cropWidth: 0 },
-          ],
-          scale: 1.2,
+        itensFiltrados.push({
+          coItem: data.CO_ITEM[i],
+          coPosicao: data.CO_POSICAO[i],
         });
       }
     }
 
-    // Ordena o array usando o índice correspondente no data original
-    output.sort((a, b) => {
-      const posA = data.CO_POSICAO[data.CO_ITEM.indexOf(a.codigo)];
-      const posB = data.CO_POSICAO[data.CO_ITEM.indexOf(b.codigo)];
-      return posA - posB;
-    });
+    itensFiltrados.sort((a, b) => a.coPosicao - b.coPosicao);
+
+    const output: QuestaoCoordenadas[] = itensFiltrados.map((item) => ({
+      codigo: item.coItem,
+      crops: [
+        {
+          pagina: 1,
+          offsetY: 110,
+          offsetX: 32,
+          cropHeight: 300,
+          cropWidth: 20,
+        },
+      ],
+      scale: 1.2,
+    }));
 
     const basePath = "/home/renato/Área de trabalho/DEV/NEXT/microenem";
     const outputDir = path.join(
@@ -49,7 +55,9 @@ async function generateCrops(
     const outputPath = path.join(outputDir, `${area}.json`);
     fs.writeFileSync(outputPath, JSON.stringify(output, null, 2));
 
-    console.log(`Sucesso! ${output.length} questões salvas em: ${outputPath}`);
+    console.log(
+      `Sucesso! ${output.length} questões ordenadas e salvas em: ${outputPath}`,
+    );
   } catch (err) {
     console.error("Erro fatal ao processar o arquivo:", err);
   }

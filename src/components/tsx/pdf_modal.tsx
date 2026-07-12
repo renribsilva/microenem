@@ -153,9 +153,7 @@ export default function PdfModal({
         <div
           style={{
             width: "100%",
-            display: "flex",
             justifyContent: "center",
-            flexDirection: "column",
           }}
         >
           <PdfThumbnail

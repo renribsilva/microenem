@@ -160,6 +160,7 @@
         "cropWidth": 280
       }
     ],
+    "direction": "row",
     "scale": 1.2
   },
   {
@@ -180,6 +181,7 @@
         "cropWidth": 250
       }
     ],
+    "direction": "row",
     "scale": 1.2
   },
   {
@@ -200,6 +202,7 @@
         "cropWidth": 30
       }
     ],
+    "direction": "row",
     "scale": 1.2
   },
   {
@@ -220,6 +223,7 @@
         "cropWidth": 350
       }
     ],
+    "direction": "row",
     "scale": 1.2
   },
   {
@@ -240,6 +244,7 @@
         "cropWidth": 50
       }
     ],
+    "direction": "row",
     "scale": 1.2
   },
   {
@@ -325,7 +330,7 @@
         "cropWidth": 30
       }
     ],
-    "direction": "column",
+    "direction": "row",
     "scale": 1.2
   },
   {
@@ -697,7 +702,7 @@
         "cropWidth": 25
       }
     ],
-    "direction": "column",
+    "direction": "row",
     "scale": 1.2
   },
   {

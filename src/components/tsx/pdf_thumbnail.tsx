@@ -46,10 +46,12 @@ export default function PdfThumbnail({
   const habInfo = itemDetails ? habilidades[itemDetails.CO_HABILIDADE] : null;
   const compInfo = habInfo ? competencias[habInfo.comp] : null;
 
-  const maiorLargura = Math.max(
-    ...crops.map((c) => larguraBase - c.offsetX - c.cropWidth),
-    300,
-  );
+  const larguras = crops.map((c) => larguraBase - c.offsetX - c.cropWidth);
+
+  const larguraRodape =
+    crops.length > 1 && direction === "column"
+      ? larguras.reduce((acc, curr) => acc + curr, 0)
+      : Math.max(...larguras, 300);
 
   function handlePageLoad(page: PageLoadSuccessParams) {
     setLarguraBase(page.width);
@@ -63,9 +65,7 @@ export default function PdfThumbnail({
     <div
       style={{
         position: "relative",
-        display: "flex",
         alignItems: "right",
-        flexDirection: direction,
         gap: "10px",
         width: `100%`,
         overflow: "auto",
@@ -90,52 +90,54 @@ export default function PdfThumbnail({
       )}
       <div style={{ display: isLoaded && itemDetails ? "block" : "none" }}>
         <Document file={fileUrl} loading={null}>
-          {crops.map((crop, index) => {
-            const { offsetX, offsetY, cropWidth, cropHeight, pagina } = crop;
-            const larguraIndividual = isLoaded
-              ? larguraBase - offsetX - cropWidth
-              : 300;
-            const isDev = process.env.NODE_ENV === "development";
-            return (
-              <div
-                key={index}
-                style={{
-                  position: "relative",
-                  width: `${larguraIndividual}px`,
-                  flexShrink: 0,
-                  flex: "0 0 auto",
-                  overflowY: "hidden",
-                  overflowX: "hidden",
-                  height: `${cropHeight}px`,
-                  border: isDev ? "1px solid #e5e7eb" : "none",
-                  borderRadius: "8px",
-                  backgroundColor: "#fdfdfd",
-                }}
-              >
+          <div style={{ display: direction === "column" ? "flex" : "block" }}>
+            {crops.map((crop, index) => {
+              const { offsetX, offsetY, cropWidth, cropHeight, pagina } = crop;
+              const larguraIndividual = isLoaded
+                ? larguraBase - offsetX - cropWidth
+                : 300;
+              const isDev = process.env.NODE_ENV === "development";
+              return (
                 <div
+                  key={index}
                   style={{
                     position: "relative",
-                    transform: `translate(${-offsetX}px, ${-offsetY}px)`,
+                    width: `${larguraIndividual}px`,
+                    flexShrink: 0,
+                    flex: "0 0 auto",
+                    overflowY: "hidden",
+                    overflowX: "hidden",
+                    height: `${cropHeight}px`,
+                    border: isDev ? "1px solid #e5e7eb" : "none",
+                    borderRadius: "8px",
+                    backgroundColor: "#fdfdfd",
                   }}
                 >
-                  <Page
-                    key={String(isLoaded)}
-                    pageNumber={pagina}
-                    scale={scale}
-                    onLoadSuccess={handlePageLoad}
-                    onRenderSuccess={handlePageRendered}
-                    renderTextLayer={false}
-                    renderAnnotationLayer={false}
-                  />
+                  <div
+                    style={{
+                      position: "relative",
+                      transform: `translate(${-offsetX}px, ${-offsetY}px)`,
+                    }}
+                  >
+                    <Page
+                      key={String(isLoaded)}
+                      pageNumber={pagina}
+                      scale={scale}
+                      onLoadSuccess={handlePageLoad}
+                      onRenderSuccess={handlePageRendered}
+                      renderTextLayer={false}
+                      renderAnnotationLayer={false}
+                    />
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
           <div
             style={{
               borderTop: "1px solid #e5e7eb",
               marginTop: "12px",
-              width: `${maiorLargura}px`,
+              width: `${larguraRodape}px`,
             }}
           >
             {itemDetails && (

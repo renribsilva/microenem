@@ -1,12 +1,12 @@
 import { ImageResponse } from "next/og";
+import { NextRequest } from "next/server";
 
 export const runtime = "edge";
-export const alt = "ENEMmicro: No bullshit, just data.";
-export const size = {
+
+const size = {
   width: 1200,
   height: 630,
 };
-export const contentType = "image/png";
 
 function arrayBufferToBase64(buffer: ArrayBuffer): string {
   let binary = "";
@@ -18,14 +18,13 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
   return btoa(binary);
 }
 
-export default async function Image({
-  params,
-}: {
-  params: Promise<Record<string, string | string[]>>;
-}): Promise<ImageResponse> {
-  const resolvedParams = await params;
-  const path = Object.values(resolvedParams).flat().join("/");
-  const targetUrl = `https://microenem.vercel.app/${path}`;
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const path = searchParams.get("path") || "";
+
+  // Garante que não teremos barras duplicadas na URL
+  const cleanPath = path.startsWith("/") ? path.slice(1) : path;
+  const targetUrl = `https://microenem.vercel.app/${cleanPath}`;
 
   const microlinkParams = new URLSearchParams({
     url: targetUrl,

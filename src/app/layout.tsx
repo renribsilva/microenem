@@ -1,51 +1,56 @@
+"use client";
+
 import ThemeProvider from "../components/tsx/theme_provider";
 import "./globals.css";
 import { Ubuntu } from "next/font/google";
 import { SidebarProvider } from "../context/sidebar_context";
-import { Metadata } from "next";
+import { usePathname } from "next/navigation";
 
 const roboto = Ubuntu({
   subsets: ["latin"],
   weight: ["300", "400"],
 });
 
-type Props = {
-  params: Promise<Record<string, string | string[]>>;
-};
-
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const resolvedParams = await params;
-  const path = Object.values(resolvedParams).flat().join("/");
-  const dynamicUrl = `https://microenem.vercel.app/${path}`;
-
-  return {
-    metadataBase: new URL("https://microenem.vercel.app"),
-    title: "ENEMmicro",
-    description: "Visualização gráfica dos microdados do ENEM",
-    twitter: {
-      card: "summary_large_image",
-      title: "ENEMmicro",
-      description: "Visualização gráfica dos microdados do ENEM",
-      siteId: "1467726470533754880",
-      creator: "@renribsilva",
-    },
-    openGraph: {
-      title: "ENEMmicro",
-      description: "Visualização gráfica dos microdados do ENEM",
-      type: "website",
-      url: dynamicUrl,
-      siteName: "ENEMmicro",
-    },
-  };
-}
-
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname(); // Captura o path exato em tempo de execução
+  const targetUrl = `https://microenem.vercel.app${pathname}`;
+
+  // Aponta para a nossa rota de imagem dinâmica passando o path atualizado
+  const ogImageUrl = `https://microenem.vercel.app/api/og?path=${encodeURIComponent(pathname)}`;
+
   return (
     <html lang="pt-br" suppressHydrationWarning>
+      <head>
+        <title>ENEMmicro</title>
+        <meta
+          name="description"
+          content="Visualização gráfica dos microdados do ENEM"
+        />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={targetUrl} />
+        <meta property="og:title" content="ENEMmicro" />
+        <meta
+          property="og:description"
+          content="Visualização gráfica dos microdados do ENEM"
+        />
+        <meta property="og:image" content={ogImageUrl} />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={targetUrl} />
+        <meta name="twitter:title" content="ENEMmicro" />
+        <meta
+          name="twitter:description"
+          content="Visualização gráfica dos microdados do ENEM"
+        />
+        <meta name="twitter:image" content={ogImageUrl} />
+      </head>
       <body className={roboto.className}>
         <ThemeProvider
           attribute="class"

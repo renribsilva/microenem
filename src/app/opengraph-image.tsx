@@ -90,6 +90,7 @@ export default async function Image() {
         width: "100%",
         height: "100%",
         background: "black",
+        margin: "40px",
       }}
     >
       <img

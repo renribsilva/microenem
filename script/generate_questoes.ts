@@ -9,6 +9,22 @@ async function generateCrops(
   area: string,
 ) {
   try {
+    const basePath = "/home/renato/Área de trabalho/DEV/NEXT/microenem";
+    const outputDir = path.join(
+      basePath,
+      "src",
+      "questoes",
+      currentYear.toString(),
+    );
+    const outputPath = path.join(outputDir, `${area}.json`);
+
+    if (fs.existsSync(outputPath)) {
+      console.log(
+        `[Aviso] O arquivo já existe e NÃO foi sobrescrito: ${outputPath}`,
+      );
+      return;
+    }
+
     const modulo = await import(
       `../src/app/(home)/JSON/${currentYear}/itens_${currentYear}.json`
     );
@@ -40,19 +56,10 @@ async function generateCrops(
       scale: 1.2,
     }));
 
-    const basePath = "/home/renato/Área de trabalho/DEV/NEXT/microenem";
-    const outputDir = path.join(
-      basePath,
-      "src",
-      "questoes",
-      currentYear.toString(),
-    );
-
     if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir, { recursive: true });
     }
 
-    const outputPath = path.join(outputDir, `${area}.json`);
     fs.writeFileSync(outputPath, JSON.stringify(output, null, 2));
 
     console.log(
@@ -64,4 +71,4 @@ async function generateCrops(
 }
 
 // 2025
-generateCrops(2025, 1471, "MT");
+generateCrops(2024, 1407, "MT");

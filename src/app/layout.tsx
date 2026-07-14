@@ -1,55 +1,37 @@
-"use client";
-
 import ThemeProvider from "../components/tsx/theme_provider";
 import "./globals.css";
 import { Ubuntu } from "next/font/google";
 import { SidebarProvider } from "../context/sidebar_context";
-import { useHomeData } from "../context/home_context";
+import { Metadata } from "next";
 
 const roboto = Ubuntu({
   subsets: ["latin"],
   weight: ["300", "400"],
 });
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const { pathName } = useHomeData();
-  const targetUrl = `https://microenem.vercel.app${pathName}`;
-  const ogImageUrl = `https://microenem.vercel.app/api/og?path=${encodeURIComponent(pathName)}`;
+export const metadata: Metadata = {
+  metadataBase: new URL("https://microenem.vercel.app"),
+  title: "ENEMmicro",
+  description: "Vizualização gráfica dos microdados do ENEM",
+  twitter: {
+    card: "summary_large_image",
+    title: "ENEMmicro",
+    description: "Vizualização gráfica dos microdados do ENEM",
+    siteId: "1467726470533754880",
+    creator: "@renribsilva",
+  },
+  openGraph: {
+    title: "ENEMmicro",
+    description: "Vizualização gráfica dos microdados do ENEM",
+    type: "website",
+    url: "https://microenem.vercel.app",
+    siteName: "ENEMmicro",
+  },
+};
 
+function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-br" suppressHydrationWarning>
-      <head>
-        <title>ENEMmicro</title>
-        <meta
-          name="description"
-          content="Visualização gráfica dos microdados do ENEM"
-        />
-
-        {/* Open Graph / Facebook */}
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content={targetUrl} />
-        <meta property="og:title" content="ENEMmicro" />
-        <meta
-          property="og:description"
-          content="Visualização gráfica dos microdados do ENEM"
-        />
-        <meta property="og:image" content={ogImageUrl} />
-        <meta property="site_name" content="ENEMmicro" />
-
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:url" content={targetUrl} />
-        <meta name="twitter:title" content="ENEMmicro" />
-        <meta
-          name="twitter:description"
-          content="Visualização gráfica dos microdados do ENEM"
-        />
-        <meta name="twitter:image" content={ogImageUrl} />
-      </head>
       <body className={roboto.className}>
         <ThemeProvider
           attribute="class"
@@ -63,3 +45,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+export default RootLayout;

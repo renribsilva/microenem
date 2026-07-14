@@ -1,32 +1,27 @@
+// src/app/[[...slug]]/opengraph-image.tsx
 import { ImageResponse } from "next/og";
-import { NextRequest } from "next/server";
 
 export const runtime = "edge";
-
-const size = {
+export const alt = "ENEMmicro: No bullshit, just data.";
+export const size = {
   width: 1200,
   height: 630,
 };
+export const contentType = "image/png";
 
-function arrayBufferToBase64(buffer: ArrayBuffer): string {
-  let binary = "";
-  const bytes = new Uint8Array(buffer);
-  const len = bytes.byteLength;
-  for (let i = 0; i < len; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return btoa(binary);
+interface Props {
+  params: Promise<{ slug?: string[] }> | { slug?: string[] };
 }
 
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const path = searchParams.get("path") || "";
+export default async function Image({ params }: Props) {
+  const resolvedParams = await params;
+  const slugArray = resolvedParams?.slug || [];
+  const routePath = slugArray.join("/");
 
-  // Garante que não teremos barras duplicadas na URL
-  const cleanPath = path.startsWith("/") ? path.slice(1) : path;
-  const targetUrl = `https://microenem.vercel.app/${cleanPath}`;
+  // Monta a URL exata da página que está sendo compartilhada
+  const targetUrl = `https://microenem.vercel.app/${routePath}`;
 
-  const microlinkParams = new URLSearchParams({
+  const queryParams = new URLSearchParams({
     url: targetUrl,
     screenshot: "true",
     embed: "screenshot.url",
@@ -35,13 +30,13 @@ export async function GET(request: NextRequest) {
     "viewport.deviceScaleFactor": "2",
   });
 
-  const screenshotServiceUrl = `https://api.microlink.io/?${microlinkParams.toString()}`;
+  const screenshotServiceUrl = `https://api.microlink.io/?${queryParams.toString()}`;
 
   const imageSrc = await fetch(screenshotServiceUrl)
     .then(async (res) => {
       if (!res.ok) return null;
       const arrayBuffer = await res.arrayBuffer();
-      const base64Image = arrayBufferToBase64(arrayBuffer);
+      const base64Image = Buffer.from(arrayBuffer).toString("base64");
       return `data:image/png;base64,${base64Image}`;
     })
     .catch(() => null);
@@ -107,7 +102,6 @@ export async function GET(request: NextRequest) {
         background: "black",
       }}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={imageSrc}
         alt="Page Screenshot"

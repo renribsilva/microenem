@@ -99,7 +99,6 @@ export default async function Image() {
           width: "100%",
           height: "100%",
           objectFit: "cover",
-          padding: "50px",
         }}
       />
     </div>,

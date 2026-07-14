@@ -22,71 +22,85 @@ export default async function Image() {
 
   const screenshotServiceUrl = `https://api.microlink.io/?${params.toString()}`;
 
-  try {
-    const res = await fetch(screenshotServiceUrl, {
-      signal: AbortSignal.timeout(2500),
-    });
-
-    if (res.ok) {
+  const imageSrc = await fetch(screenshotServiceUrl)
+    .then(async (res) => {
+      if (!res.ok) return null;
       const arrayBuffer = await res.arrayBuffer();
+      const base64Image = Buffer.from(arrayBuffer).toString("base64");
+      return `data:image/png;base64,${base64Image}`;
+    })
+    .catch(() => null);
 
-      return new Response(arrayBuffer, {
-        headers: {
-          "Content-Type": "image/png",
-          "Cache-Control": "public, max-age=31536000, immutable",
-        },
-      });
-    }
-  } catch (error) {
-    console.error("Falha ao buscar imagem do Microlink", error);
+  if (!imageSrc) {
+    return new ImageResponse(
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "black",
+          width: "100%",
+          height: "100%",
+          fontFamily: "sans-serif",
+          color: "white",
+          padding: "40px",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            marginBottom: "40px",
+          }}
+        >
+          <p
+            style={{
+              fontSize: 90,
+              margin: 0,
+              fontWeight: "900",
+              letterSpacing: "-0.05em",
+              color: "white",
+            }}
+          >
+            ENEMmicro
+          </p>
+          <p
+            style={{
+              fontSize: 26,
+              margin: 0,
+              fontWeight: "900",
+              letterSpacing: "-0.05em",
+              color: "white",
+            }}
+          >
+            No bullshit, just data.
+          </p>
+        </div>
+      </div>,
+      { ...size },
+    );
   }
 
   return new ImageResponse(
     <div
       style={{
         display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "black",
         width: "100%",
         height: "100%",
-        fontFamily: "sans-serif",
-        color: "white",
-        padding: "40px",
+        background: "black",
       }}
     >
-      <div
+      <img
+        src={imageSrc}
+        alt="Page Screenshot"
         style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          marginBottom: "40px",
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
         }}
-      >
-        <p
-          style={{
-            fontSize: 90,
-            margin: 0,
-            fontWeight: "900",
-            letterSpacing: "-0.05em",
-            color: "white",
-          }}
-        >
-          ENEMmicro
-        </p>
-        <p
-          style={{
-            fontSize: 26,
-            margin: 0,
-            fontWeight: "900",
-            letterSpacing: "-0.05em",
-            color: "white",
-          }}
-        >
-          No bullshit, just data.
-        </p>
-      </div>
+      />
     </div>,
     { ...size },
   );

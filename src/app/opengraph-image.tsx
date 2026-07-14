@@ -9,46 +9,29 @@ export const size = {
 export const contentType = "image/png";
 
 export default async function Image() {
-  // URL fixa que você determinou
   const targetUrl = "https://microenem.vercel.app/";
 
-  // API do Microlink para tirar o print da URL fixa
-  const screenshotServiceUrl = `https://api.microlink.io/?url=${encodeURIComponent(
-    targetUrl,
-  )}&screenshot=true&embed=screenshot.url&viewport.width=1200&viewport.height=630&viewport.deviceScaleFactor=2`;
+  const params = new URLSearchParams({
+    url: targetUrl,
+    screenshot: "true",
+    embed: "screenshot.url",
+    "viewport.width": "1200",
+    "viewport.height": "630",
+    "viewport.deviceScaleFactor": "2",
+  });
 
-  try {
-    const response = await fetch(screenshotServiceUrl);
-    if (!response.ok) throw new Error("Falha ao capturar screenshot");
+  const screenshotServiceUrl = `https://api.microlink.io/?${params.toString()}`;
 
-    const arrayBuffer = await response.arrayBuffer();
-    const base64Image = Buffer.from(arrayBuffer).toString("base64");
-    const imageSrc = `data:image/png;base64,${base64Image}`;
+  const imageSrc = await fetch(screenshotServiceUrl)
+    .then(async (res) => {
+      if (!res.ok) return null;
+      const arrayBuffer = await res.arrayBuffer();
+      const base64Image = Buffer.from(arrayBuffer).toString("base64");
+      return `data:image/png;base64,${base64Image}`;
+    })
+    .catch(() => null);
 
-    return new ImageResponse(
-      <div
-        style={{
-          display: "flex",
-          width: "100%",
-          height: "100%",
-          background: "black",
-        }}
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={imageSrc}
-          alt="Page Screenshot"
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-          }}
-        />
-      </div>,
-      { ...size },
-    );
-  } catch (error) {
-    // Fallback de segurança se o Microlink falhar
+  if (!imageSrc) {
     return new ImageResponse(
       <div
         style={{
@@ -61,11 +44,64 @@ export default async function Image() {
           height: "100%",
           fontFamily: "sans-serif",
           color: "white",
+          padding: "40px",
         }}
       >
-        <p style={{ fontSize: 60, fontWeight: "900" }}>ENEMmicro</p>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            marginBottom: "40px",
+          }}
+        >
+          <p
+            style={{
+              fontSize: 90,
+              margin: 0,
+              fontWeight: "900",
+              letterSpacing: "-0.05em",
+              color: "white",
+            }}
+          >
+            ENEMmicro
+          </p>
+          <p
+            style={{
+              fontSize: 26,
+              margin: 0,
+              fontWeight: "900",
+              letterSpacing: "-0.05em",
+              color: "white",
+            }}
+          >
+            No bullshit, just data.
+          </p>
+        </div>
       </div>,
       { ...size },
     );
   }
+
+  return new ImageResponse(
+    <div
+      style={{
+        display: "flex",
+        width: "100%",
+        height: "100%",
+        background: "black",
+      }}
+    >
+      <img
+        src={imageSrc}
+        alt="Page Screenshot"
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+        }}
+      />
+    </div>,
+    { ...size },
+  );
 }

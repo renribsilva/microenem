@@ -8,10 +8,17 @@ export const size = {
 };
 export const contentType = "image/png";
 
-export default async function Image() {
-  const targetUrl = "https://microenem.vercel.app/";
+export default async function Image({
+  params,
+}: {
+  params: Promise<{ slug?: string[] }>;
+}) {
+  const { slug } = await params;
 
-  const params = new URLSearchParams({
+  const path = "/" + (slug?.join("/") ?? "");
+  const targetUrl = `https://microenem.vercel.app${path}`;
+
+  const searchParams = new URLSearchParams({
     url: targetUrl,
     screenshot: "true",
     embed: "screenshot.url",
@@ -20,13 +27,19 @@ export default async function Image() {
     "viewport.deviceScaleFactor": "2",
   });
 
-  const screenshotServiceUrl = `https://api.microlink.io/?${params.toString()}`;
+  const screenshotServiceUrl = `https://api.microlink.io/?${searchParams.toString()}`;
 
   const imageSrc = await fetch(screenshotServiceUrl)
     .then(async (res) => {
       if (!res.ok) return null;
+
       const arrayBuffer = await res.arrayBuffer();
-      const base64Image = Buffer.from(arrayBuffer).toString("base64");
+
+      // Compatível com Edge Runtime
+      const base64Image = btoa(
+        String.fromCharCode(...new Uint8Array(arrayBuffer)),
+      );
+
       return `data:image/png;base64,${base64Image}`;
     })
     .catch(() => null);
@@ -79,7 +92,7 @@ export default async function Image() {
           </p>
         </div>
       </div>,
-      { ...size },
+      size,
     );
   }
 
@@ -94,7 +107,7 @@ export default async function Image() {
     >
       <img
         src={imageSrc}
-        alt="Page Screenshot"
+        alt={targetUrl}
         style={{
           width: "100%",
           height: "100%",
@@ -102,6 +115,6 @@ export default async function Image() {
         }}
       />
     </div>,
-    { ...size },
+    size,
   );
 }

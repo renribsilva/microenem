@@ -11,12 +11,11 @@ export const contentType = "image/png";
 export default async function Image({
   params,
 }: {
-  params: Promise<{ slug?: string[] }>;
+  params: Promise<{ year: string }>;
 }) {
-  const { slug } = await params;
+  const { year } = await params;
 
-  const path = "/" + (slug?.join("/") ?? "");
-  const targetUrl = `https://microenem.vercel.app${path}`;
+  const targetUrl = `https://microenem.vercel.app/${year}`;
 
   const searchParams = new URLSearchParams({
     url: targetUrl,
@@ -35,7 +34,6 @@ export default async function Image({
 
       const arrayBuffer = await res.arrayBuffer();
 
-      // Compatível com Edge Runtime
       const base64Image = btoa(
         String.fromCharCode(...new Uint8Array(arrayBuffer)),
       );

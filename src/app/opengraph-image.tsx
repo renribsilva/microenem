@@ -1,5 +1,4 @@
 import { ImageResponse } from "next/og";
-import { headers } from "next/headers";
 
 export const runtime = "edge";
 export const alt = "ENEMmicro: No bullshit, just data.";
@@ -10,21 +9,12 @@ export const size = {
 export const contentType = "image/png";
 
 export default async function Image() {
-  // 1. Pega os headers para descobrir o domínio e o protocolo dinamicamente
-  const headersList = await headers();
-  const host =
-    headersList.get("x-forwarded-host") ||
-    headersList.get("host") ||
-    "localhost:3000";
-  const proto = headersList.get("x-forwarded-proto") || "http";
+  // URL fixa que você determinou
+  const targetUrl = "https://microenem.vercel.app/";
 
-  // 2. Reconstrói a URL exata da página atual
-  // Remove o "/opengraph-image" do final da URL se o Next estiver batendo direto na rota da imagem
-  const currentUrl = `${proto}://${host}`.replace(/\/opengraph-image$/, "");
-
-  // 3. API do Microlink para tirar o print da URL detectada
+  // API do Microlink para tirar o print da URL fixa
   const screenshotServiceUrl = `https://api.microlink.io/?url=${encodeURIComponent(
-    currentUrl,
+    targetUrl,
   )}&screenshot=true&embed=screenshot.url&viewport.width=1200&viewport.height=630&viewport.deviceScaleFactor=2`;
 
   try {
@@ -58,7 +48,7 @@ export default async function Image() {
       { ...size },
     );
   } catch (error) {
-    // Fallback de segurança caso dê merda na API de print
+    // Fallback de segurança se o Microlink falhar
     return new ImageResponse(
       <div
         style={{

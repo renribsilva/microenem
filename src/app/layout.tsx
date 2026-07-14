@@ -39,7 +39,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="pt-br" suppressHydrationWarning>
       <body className={roboto.className}>
@@ -55,5 +59,3 @@ function RootLayout({ children }: { children: React.ReactNode }) {
     </html>
   );
 }
-
-export default RootLayout;

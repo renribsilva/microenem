@@ -26,6 +26,7 @@ export default async function Image({
   const resolvedParams = await params;
   const path = Object.values(resolvedParams).flat().join("/");
   const targetUrl = `https://microenem.vercel.app/${path}`;
+
   const microlinkParams = new URLSearchParams({
     url: targetUrl,
     screenshot: "true",

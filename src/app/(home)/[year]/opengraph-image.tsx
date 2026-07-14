@@ -11,11 +11,13 @@ export const contentType = "image/png";
 export default async function Image({
   params,
 }: {
-  params: Promise<{ year: string }>;
+  params: Promise<Record<string, string | string[]>>;
 }) {
-  const { year } = await params;
+  const resolvedParams = await params;
 
-  const targetUrl = `https://microenem.vercel.app/${year}`;
+  const path = Object.values(resolvedParams).flat().join("/");
+
+  const targetUrl = `https://microenem.vercel.app/${path}`;
 
   const searchParams = new URLSearchParams({
     url: targetUrl,

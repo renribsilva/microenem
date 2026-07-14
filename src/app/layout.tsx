@@ -22,6 +22,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "ENEMmicro",
+    siteName: "ENEMmicro",
     description: "Vizualização gráfica dos microdados do ENEM",
     type: "website",
     url: "https://microenem.vercel.app",

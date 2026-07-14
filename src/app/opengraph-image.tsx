@@ -47,6 +47,7 @@ export default async function Image() {
           padding: "40px",
         }}
       >
+        {/* Texto Principal */}
         <div
           style={{
             display: "flex",
@@ -78,6 +79,7 @@ export default async function Image() {
             No bullshit, just data.
           </p>
         </div>
+        ,
       </div>,
       { ...size },
     );
@@ -90,6 +92,7 @@ export default async function Image() {
         width: "100%",
         height: "100%",
         background: "black",
+        padding: "40px",
       }}
     >
       <img

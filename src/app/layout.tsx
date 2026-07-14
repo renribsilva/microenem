@@ -4,7 +4,7 @@ import ThemeProvider from "../components/tsx/theme_provider";
 import "./globals.css";
 import { Ubuntu } from "next/font/google";
 import { SidebarProvider } from "../context/sidebar_context";
-import { usePathname } from "next/navigation";
+import { useHomeData } from "../context/home_context";
 
 const roboto = Ubuntu({
   subsets: ["latin"],
@@ -16,10 +16,9 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-  const targetUrl = `https://microenem.vercel.app${pathname}`;
-
-  const ogImageUrl = `https://microenem.vercel.app/api/og?path=${encodeURIComponent(pathname)}`;
+  const { pathName } = useHomeData();
+  const targetUrl = `https://microenem.vercel.app${pathName}`;
+  const ogImageUrl = `https://microenem.vercel.app/api/og?path=${encodeURIComponent(pathName)}`;
 
   return (
     <html lang="pt-br" suppressHydrationWarning>
@@ -39,6 +38,7 @@ export default function RootLayout({
           content="Visualização gráfica dos microdados do ENEM"
         />
         <meta property="og:image" content={ogImageUrl} />
+        <meta property="site_name" content="ENEMmicro" />
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />

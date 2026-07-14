@@ -16,10 +16,9 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname(); // Captura o path exato em tempo de execução
+  const pathname = usePathname();
   const targetUrl = `https://microenem.vercel.app${pathname}`;
 
-  // Aponta para a nossa rota de imagem dinâmica passando o path atualizado
   const ogImageUrl = `https://microenem.vercel.app/api/og?path=${encodeURIComponent(pathname)}`;
 
   return (

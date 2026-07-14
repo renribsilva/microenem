@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
 
@@ -108,7 +107,8 @@ export async function GET(request: NextRequest) {
         background: "black",
       }}
     >
-      <Image
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
         src={imageSrc}
         alt="Page Screenshot"
         style={{

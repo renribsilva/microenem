@@ -1,23 +1,19 @@
 import { ImageResponse } from "next/og";
+import { NextRequest } from "next/server";
 
 export const runtime = "edge";
-export const alt = "ENEMmicro: No bullshit, just data.";
-export const size = {
+const size = {
   width: 1200,
   height: 630,
 };
-export const contentType = "image/png";
 
-interface Props {
-  params: Promise<{ slug?: string[] }> | { slug?: string[] };
-}
+export async function GET(request: NextRequest) {
+  // Pega a rota da página atual a partir dos parâmetros da URL (?path=/2024)
+  const { searchParams } = new URL(request.url);
+  const path = searchParams.get("path") || "";
 
-export default async function Image({ params }: Props) {
-  const resolvedParams = await params;
-  const slugArray = resolvedParams?.slug || [];
-  const routePath = slugArray.join("/");
-
-  const targetUrl = `https://microenem.vercel.app/${routePath}`;
+  // Monta a URL exata do seu site que sofrerá o screenshot
+  const targetUrl = `https://microenem.vercel.app${path}`;
 
   const queryParams = new URLSearchParams({
     url: targetUrl,
@@ -100,6 +96,7 @@ export default async function Image({ params }: Props) {
         background: "black",
       }}
     >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={imageSrc}
         alt="Page Screenshot"

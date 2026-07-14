@@ -8,18 +8,25 @@ export const size = {
 };
 export const contentType = "image/png";
 
+function arrayBufferToBase64(buffer: ArrayBuffer): string {
+  let binary = "";
+  const bytes = new Uint8Array(buffer);
+  const len = bytes.byteLength;
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
 export default async function Image({
   params,
 }: {
   params: Promise<Record<string, string | string[]>>;
-}) {
+}): Promise<ImageResponse> {
   const resolvedParams = await params;
-
   const path = Object.values(resolvedParams).flat().join("/");
-
   const targetUrl = `https://microenem.vercel.app/${path}`;
-
-  const searchParams = new URLSearchParams({
+  const microlinkParams = new URLSearchParams({
     url: targetUrl,
     screenshot: "true",
     embed: "screenshot.url",
@@ -28,18 +35,13 @@ export default async function Image({
     "viewport.deviceScaleFactor": "2",
   });
 
-  const screenshotServiceUrl = `https://api.microlink.io/?${searchParams.toString()}`;
+  const screenshotServiceUrl = `https://api.microlink.io/?${microlinkParams.toString()}`;
 
   const imageSrc = await fetch(screenshotServiceUrl)
     .then(async (res) => {
       if (!res.ok) return null;
-
       const arrayBuffer = await res.arrayBuffer();
-
-      const base64Image = btoa(
-        String.fromCharCode(...new Uint8Array(arrayBuffer)),
-      );
-
+      const base64Image = arrayBufferToBase64(arrayBuffer);
       return `data:image/png;base64,${base64Image}`;
     })
     .catch(() => null);
@@ -92,7 +94,7 @@ export default async function Image({
           </p>
         </div>
       </div>,
-      size,
+      { ...size },
     );
   }
 
@@ -107,7 +109,7 @@ export default async function Image({
     >
       <img
         src={imageSrc}
-        alt={targetUrl}
+        alt="Page Screenshot"
         style={{
           width: "100%",
           height: "100%",
@@ -115,6 +117,6 @@ export default async function Image({
         }}
       />
     </div>,
-    size,
+    { ...size },
   );
 }

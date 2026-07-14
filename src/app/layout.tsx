@@ -1,4 +1,4 @@
-import "../globals.css";
+import "./globals.css";
 import { Ubuntu } from "next/font/google";
 import { Metadata } from "next";
 import { ThemeProvider } from "next-themes";

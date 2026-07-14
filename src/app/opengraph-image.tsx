@@ -90,7 +90,6 @@ export default async function Image() {
         width: "100%",
         height: "100%",
         background: "black",
-        margin: "40px",
       }}
     >
       <img
@@ -100,6 +99,7 @@ export default async function Image() {
           width: "100%",
           height: "100%",
           objectFit: "cover",
+          margin: "50px",
         }}
       />
     </div>,

@@ -1,15 +1,14 @@
 "use client";
 
-import { ComponentProps, useState } from "react";
+import { ComponentProps, useMemo, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { CropArea } from "../../types/questoes_types";
 import { useYearData } from "../../context/year_context";
 import LoadingFallback from "./loading_fallback";
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.mjs",
-  import.meta.url,
-).toString();
+pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+
+console.log(pdfjs.GlobalWorkerOptions);
 
 interface PdfThumbnailProps {
   fileUrl: string;
@@ -34,6 +33,10 @@ export default function PdfThumbnail({
   isLoaded,
   setIsLoaded,
 }: PdfThumbnailProps) {
+  const pdfOptions = useMemo(
+    () => ({ wasmUrl: `https://unpkg.com/pdfjs-dist@${pdfjs.version}/wasm/` }),
+    [],
+  );
   const [larguraBase, setLarguraBase] = useState<number>(300);
   const {
     getItemDetails,
@@ -89,7 +92,7 @@ export default function PdfThumbnail({
         </div>
       )}
       <div style={{ display: isLoaded && itemDetails ? "block" : "none" }}>
-        <Document file={fileUrl} loading={null}>
+        <Document file={fileUrl} loading={null} options={pdfOptions}>
           <div style={{ display: direction === "column" ? "flex" : "block" }}>
             {crops.map((crop, index) => {
               const { offsetX, offsetY, cropWidth, cropHeight, pagina } = crop;

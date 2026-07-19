@@ -71,4 +71,4 @@ async function generateCrops(
 }
 
 // 2025
-generateCrops(2024, 1407, "MT");
+generateCrops(2023, 1211, "MT");

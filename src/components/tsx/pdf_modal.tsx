@@ -132,6 +132,7 @@ export default function PdfModal({
                 marginTop: "5px",
                 border: "1px solid #d1d5db",
                 backgroundColor: "#f3f4f6",
+                color: "#090d0e",
               }}
             >
               Fechar

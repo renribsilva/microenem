@@ -162,6 +162,7 @@ export default function PdfThumbnail({
                       marginTop: "5px",
                       border: "1px solid #d1d5db",
                       backgroundColor: showGabarito ? "#d1fae5" : "#f3f4f6",
+                      color: "#090d0e",
                     }}
                   >
                     {showGabarito ? itemDetails.TX_GABARITO : "Ver"}

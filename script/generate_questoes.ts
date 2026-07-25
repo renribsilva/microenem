@@ -47,10 +47,10 @@ async function generateCrops(
       crops: [
         {
           pagina: 1,
-          offsetY: 110,
+          offsetY: 100,
           offsetX: 32,
-          cropHeight: 300,
-          cropWidth: 20,
+          cropHeight: 700,
+          cropWidth: 30,
         },
       ],
       scale: 1.2,
@@ -71,4 +71,4 @@ async function generateCrops(
 }
 
 // 2025
-generateCrops(2023, 1211, "MT");
+generateCrops(2022, 1075, "MT");

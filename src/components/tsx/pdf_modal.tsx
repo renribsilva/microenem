@@ -70,7 +70,6 @@ export default function PdfModal({
         borderRadius: "16px",
         backgroundColor: "#fdfdfd",
         border: "1px solid #fdfdfd",
-        boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
         width: `calc(100% - 90px)`,
         maxWidth: `max-content`,
         height: `max-content`,

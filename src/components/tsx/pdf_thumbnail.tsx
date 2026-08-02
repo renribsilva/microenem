@@ -113,7 +113,7 @@ export default function PdfThumbnail({
                     height: `${cropHeight}px`,
                     border: isDev ? "1px solid #e5e7eb" : "none",
                     borderRadius: "8px",
-                    backgroundColor: "#fdfdfd",
+                    backgroundColor: "#ffffff",
                   }}
                 >
                   <div

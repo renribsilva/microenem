@@ -68,8 +68,8 @@ export default function PdfModal({
       style={{
         padding: "14px",
         borderRadius: "16px",
-        backgroundColor: "#fdfdfd",
-        border: "1px solid #fdfdfd",
+        backgroundColor: "#ffffff",
+        border: "1px solid #ffffff",
         width: `calc(100% - 90px)`,
         maxWidth: `max-content`,
         height: `max-content`,

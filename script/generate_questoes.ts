@@ -30,7 +30,6 @@ async function generateCrops(
     );
     const data: ItensDataType = modulo.default || modulo;
     const itensFiltrados: { coItem: number; coPosicao: number }[] = [];
-
     for (let i = 0; i < data.CO_ITEM.length; i++) {
       if (data.CO_PROVA[i] === targetCoProva) {
         itensFiltrados.push({
@@ -71,4 +70,4 @@ async function generateCrops(
 }
 
 // 2025
-generateCrops(2020, 587, "MT");
+generateCrops(2020, 597, "CN");

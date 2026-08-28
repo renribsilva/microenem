@@ -17,6 +17,8 @@ interface PdfModalProps {
   scale: number;
   tituloQuestao?: string;
   isLoaded: boolean;
+  onNext?: () => void;
+  onPrev?: () => void;
   setIsLoaded: (x: boolean) => void;
 }
 
@@ -37,6 +39,8 @@ export default function PdfModal({
   scale,
   tituloQuestao,
   isLoaded,
+  onNext,
+  onPrev,
   setIsLoaded,
 }: PdfModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -60,6 +64,17 @@ export default function PdfModal({
       document.body.style.overflow = "unset";
     };
   }, [isOpen]);
+
+  const buttonStyle: React.CSSProperties = {
+    cursor: "pointer",
+    padding: "4px 10px",
+    borderRadius: "6px",
+    border: "1px solid #d1d5db",
+    backgroundColor: "#f3f4f6",
+    color: "#090d0e",
+    fontSize: "14px",
+    fontWeight: 500,
+  };
 
   return (
     <dialog
@@ -120,22 +135,36 @@ export default function PdfModal({
                 `Questão ${itemDetails?.CO_POSICAO} ${
                   itemDetails?.IN_ITEM_ABAN === 1 ? "(anulada)" : ""
                 }`}
-            </h3>{" "}
-            <button
-              onClick={onClose}
-              style={{
-                cursor: "pointer",
-                padding: "4px 8px",
-                borderRadius: "6px",
-                marginBottom: "10px",
-                marginTop: "5px",
-                border: "1px solid #d1d5db",
-                backgroundColor: "#f3f4f6",
-                color: "#090d0e",
-              }}
-            >
-              Fechar
-            </button>
+            </h3>
+            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+              <button
+                onClick={onPrev}
+                style={{
+                  ...buttonStyle,
+                  opacity: onPrev ? 1 : 0.5,
+                  cursor: onPrev ? "pointer" : "not-allowed",
+                }}
+                title="Questão anterior"
+              >
+                &larr;
+              </button>
+
+              <button
+                onClick={onNext}
+                style={{
+                  ...buttonStyle,
+                  opacity: onNext ? 1 : 0.5,
+                  cursor: onNext ? "pointer" : "not-allowed",
+                }}
+                title="Próxima questão"
+              >
+                &rarr;
+              </button>
+
+              <button onClick={onClose} style={buttonStyle}>
+                Fechar
+              </button>
+            </div>
           </div>
           <div
             style={{ borderBottom: "1px solid #e5e7eb", paddingBottom: "16px" }}

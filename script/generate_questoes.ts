@@ -70,4 +70,4 @@ async function generateCrops(
 }
 
 // 2025
-generateCrops(2020, 597, "CN");
+generateCrops(2019, 515, "MT");

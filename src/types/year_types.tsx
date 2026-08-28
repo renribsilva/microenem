@@ -426,6 +426,7 @@ export type YearContextType = {
   showPopUp: boolean;
   isLoaded: boolean;
   showGabarito: boolean;
+  listCode: number[];
 
   //Updatings
   isInitialRender: boolean;
@@ -483,4 +484,5 @@ export type YearContextType = {
   setShowPopUp: React.Dispatch<React.SetStateAction<boolean>>;
   setIsLoaded: React.Dispatch<React.SetStateAction<boolean>>;
   setShowGabarito: React.Dispatch<React.SetStateAction<boolean>>;
+  setListCode: React.Dispatch<React.SetStateAction<number[]>>;
 };

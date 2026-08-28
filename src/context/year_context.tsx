@@ -155,6 +155,8 @@ export function YearProvider({ children }: { children: ReactNode }) {
 
   const [showGabarito, setShowGabarito] = useState<boolean>(false);
 
+  const [listCode, setListCode] = useState<number[]>([]);
+
   // ---------------------------------------------------------------------------
   // ----------------- CARGA ESTÁTICA DE JSON (BUNDLE INICIAL) -----------------
   // ---------------------------------------------------------------------------
@@ -994,6 +996,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
         showPopUp,
         isLoaded,
         showGabarito,
+        listCode,
 
         // Updatings
         isInitialRender,
@@ -1051,6 +1054,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
         setShowPopUp,
         setIsLoaded,
         setShowGabarito,
+        setListCode,
       }}
     >
       {children}

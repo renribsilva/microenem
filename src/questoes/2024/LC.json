@@ -18,7 +18,7 @@
       {
         "pagina": 3,
         "offsetY": 125,
-        "offsetX": 342,
+        "offsetX": 343,
         "cropHeight": 565,
         "cropWidth": 30
       }
@@ -31,7 +31,7 @@
       {
         "pagina": 2,
         "offsetY": 100,
-        "offsetX": 342,
+        "offsetX": 343,
         "cropHeight": 300,
         "cropWidth": 30
       }
@@ -57,7 +57,7 @@
       {
         "pagina": 2,
         "offsetY": 425,
-        "offsetX": 342,
+        "offsetX": 343,
         "cropHeight": 400,
         "cropWidth": 30
       }
@@ -155,7 +155,7 @@
       {
         "pagina": 5,
         "offsetY": 81,
-        "offsetX": 342,
+        "offsetX": 343,
         "cropHeight": 345,
         "cropWidth": 33
       }
@@ -168,7 +168,7 @@
       {
         "pagina": 5,
         "offsetY": 455,
-        "offsetX": 342,
+        "offsetX": 343,
         "cropHeight": 435,
         "cropWidth": 33
       }

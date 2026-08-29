@@ -84,6 +84,33 @@ export default function PdfModal({
     };
   }, [isOpen]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "ArrowLeft" && hasPrev) {
+        event.preventDefault();
+        setIsLoaded(false);
+        setQuestaoPopUp(listCode[currentIndex - 1]);
+      } else if (event.key === "ArrowRight" && hasNext) {
+        event.preventDefault();
+        setIsLoaded(false);
+        setQuestaoPopUp(listCode[currentIndex + 1]);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [
+    isOpen,
+    hasPrev,
+    hasNext,
+    currentIndex,
+    listCode,
+    setIsLoaded,
+    setQuestaoPopUp,
+  ]);
+
   return (
     <dialog
       ref={dialogRef}

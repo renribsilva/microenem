@@ -42,6 +42,7 @@ export default function MarginImpactTable() {
     setShowPopUp,
     setQuestaoPopUp,
     setIsLoaded,
+    setListCode,
   } = useYearData();
 
   const { textColor } = useChartTheme();
@@ -137,6 +138,11 @@ export default function MarginImpactTable() {
         cell: (info) => {
           const isSorted = info.column.getIsSorted();
           const codigoQuestao = Number(info.getValue());
+          const rawData = info.table.options.data;
+          const sortedByPosicao = [...rawData].sort((a, b) => a.id - b.id);
+          const orderedCodes = sortedByPosicao.map((item) =>
+            Number(item.codigo),
+          );
           return (
             <div className={styles.code_container}>
               <span
@@ -152,6 +158,7 @@ export default function MarginImpactTable() {
                   onClick={() => {
                     setShowPopUp(true);
                     setQuestaoPopUp(codigoQuestao);
+                    setListCode(orderedCodes);
                     setIsLoaded(false);
                   }}
                   className={styles.visibility_button}
@@ -232,7 +239,14 @@ export default function MarginImpactTable() {
         },
       }),
     ],
-    [columnHelper, isTRIDivergente, setIsLoaded, setQuestaoPopUp, setShowPopUp],
+    [
+      columnHelper,
+      isTRIDivergente,
+      setListCode,
+      setIsLoaded,
+      setQuestaoPopUp,
+      setShowPopUp,
+    ],
   );
 
   // eslint-disable-next-line

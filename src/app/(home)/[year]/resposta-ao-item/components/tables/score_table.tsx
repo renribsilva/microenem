@@ -47,6 +47,7 @@ export default function ScoreTable() {
     setShowPopUp,
     setQuestaoPopUp,
     setIsLoaded,
+    setListCode,
   } = useYearData();
 
   const [windowWidth, setWindowWidth] = useState(
@@ -96,6 +97,11 @@ export default function ScoreTable() {
         cell: (info) => {
           const isSorted = info.column.getIsSorted();
           const codigoQuestao = info.getValue();
+          const rawData = info.table.options.data;
+          const sortedByPosicao = [...rawData].sort(
+            (a, b) => a.posicao - b.posicao,
+          );
+          const orderedCodes = sortedByPosicao.map((item) => item.id);
           return (
             <div className={styles.code_container}>
               <span
@@ -112,6 +118,7 @@ export default function ScoreTable() {
                     e.stopPropagation();
                     setShowPopUp(true);
                     setQuestaoPopUp(codigoQuestao);
+                    setListCode(orderedCodes);
                     setIsLoaded(false);
                   }}
                   className={clsx(styles.visibility_button)}
@@ -281,6 +288,7 @@ export default function ScoreTable() {
     setQuestaoPopUp,
     setShowPopUp,
     hideExtraColumns,
+    setListCode,
   ]);
 
   const data = useMemo(() => {

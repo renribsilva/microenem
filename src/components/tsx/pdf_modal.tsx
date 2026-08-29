@@ -6,6 +6,10 @@ import { CropArea } from "../../types/questoes_types";
 import { useYearData } from "../../context/year_context";
 import { useChartTheme } from "../../hooks/use_chart_theme";
 import LoadingFallback from "./loading_fallback";
+import ChevronLeft from "../svg/chevron_left";
+import ChevronRight from "../svg/chevron_right";
+import Close from "../svg/close";
+import styles from "./components.module.css";
 
 interface PdfModalProps {
   isOpen: boolean;
@@ -17,8 +21,6 @@ interface PdfModalProps {
   scale: number;
   tituloQuestao?: string;
   isLoaded: boolean;
-  onNext?: () => void;
-  onPrev?: () => void;
   setIsLoaded: (x: boolean) => void;
 }
 
@@ -42,9 +44,28 @@ export default function PdfModal({
   setIsLoaded,
 }: PdfModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const { getItemDetails } = useYearData();
+  const { getItemDetails, setQuestaoPopUp, listCode } = useYearData();
   const itemDetails = getItemDetails(code);
   const { colorMap } = useChartTheme();
+
+  const currentIndex = listCode ? listCode.indexOf(code) : -1;
+  const hasPrev = currentIndex > 0;
+  const hasNext =
+    listCode && currentIndex >= 0 && currentIndex < listCode.length - 1;
+
+  const handlePrev = () => {
+    if (hasPrev) {
+      setIsLoaded(false);
+      setQuestaoPopUp(listCode[currentIndex - 1]);
+    }
+  };
+
+  const handleNext = () => {
+    if (hasNext) {
+      setIsLoaded(false);
+      setQuestaoPopUp(listCode[currentIndex + 1]);
+    }
+  };
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -122,25 +143,41 @@ export default function PdfModal({
                 `Questão ${itemDetails?.CO_POSICAO} ${
                   itemDetails?.IN_ITEM_ABAN === 1 ? "(anulada)" : ""
                 }`}
-            </h3>{" "}
-            <button
-              onClick={onClose}
-              style={{
-                cursor: "pointer",
-                padding: "4px 8px",
-                borderRadius: "6px",
-                marginBottom: "10px",
-                marginTop: "5px",
-                border: "1px solid #d1d5db",
-                backgroundColor: "#f3f4f6",
-                color: "#090d0e",
-              }}
-            >
-              Fechar
-            </button>
+            </h3>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <button
+                onClick={handlePrev}
+                disabled={!hasPrev}
+                className={styles.button_pdf}
+                aria-label="Anterior"
+              >
+                <ChevronLeft />
+              </button>
+
+              <button
+                onClick={handleNext}
+                disabled={!hasNext}
+                className={styles.button_pdf}
+                aria-label="Próximo"
+              >
+                <ChevronRight />
+              </button>
+
+              <button
+                onClick={onClose}
+                className={styles.button_pdf}
+                aria-label="Fechar"
+              >
+                <Close />
+              </button>
+            </div>{" "}
           </div>
           <div
-            style={{ borderBottom: "1px solid #e5e7eb", paddingBottom: "16px" }}
+            style={{
+              borderBottom: "1px solid #e5e7eb",
+              paddingBottom: "16px",
+              paddingTop: "10px",
+            }}
           >
             {itemDetails && (
               <div style={{ fontSize: "12px", color: "#6b7280" }}>

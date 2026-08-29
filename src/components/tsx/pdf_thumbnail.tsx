@@ -155,18 +155,28 @@ export default function PdfThumbnail({
                   <button
                     onClick={() => setShowGabarito(!showGabarito)}
                     style={{
-                      cursor: "pointer",
-                      padding: "4px 8px",
-                      borderRadius: "6px",
-                      marginBottom: "10px",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      height: "36px",
+                      padding: "0 12px",
                       marginTop: "5px",
-                      border: "1px solid #d1d5db",
-                      backgroundColor: showGabarito ? "#d1fae5" : "#f3f4f6",
-                      color: "#090d0e",
+                      marginBottom: "10px",
+                      borderRadius: "6px",
+                      border: showGabarito
+                        ? "1px solid #6ee7b7"
+                        : "1px solid #cdcccb",
+                      backgroundColor: showGabarito ? "#d1fae5" : "#ffffff",
+                      color: showGabarito ? "#065f46" : "#374151",
+                      fontSize: "14px",
+                      fontWeight: 500,
+                      cursor: "pointer",
+                      boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+                      transition: "all 0.15s ease-in-out",
                     }}
                   >
                     {showGabarito ? itemDetails.TX_GABARITO : "Ver"}
-                  </button>
+                  </button>{" "}
                 </div>
                 {compInfo && (
                   <div style={{ marginBottom: "10px" }}>

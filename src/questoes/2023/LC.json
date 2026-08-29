@@ -44,7 +44,7 @@
       {
         "pagina": 4,
         "offsetY": 95,
-        "offsetX": 343,
+        "offsetX": 344,
         "cropHeight": 550,
         "cropWidth": 20
       }
@@ -57,7 +57,7 @@
       {
         "pagina": 2,
         "offsetY": 100,
-        "offsetX": 343,
+        "offsetX": 344,
         "cropHeight": 570,
         "cropWidth": 30
       }
@@ -90,7 +90,7 @@
       {
         "pagina": 5,
         "offsetY": 77,
-        "offsetX": 343,
+        "offsetX": 344,
         "cropHeight": 120,
         "cropWidth": 30
       }
@@ -116,7 +116,7 @@
       {
         "pagina": 3,
         "offsetY": 95,
-        "offsetX": 343,
+        "offsetX": 344,
         "cropHeight": 473,
         "cropWidth": 30
       }
@@ -129,7 +129,7 @@
       {
         "pagina": 5,
         "offsetY": 225,
-        "offsetX": 343,
+        "offsetX": 344,
         "cropHeight": 570,
         "cropWidth": 30
       }
@@ -168,7 +168,7 @@
       {
         "pagina": 6,
         "offsetY": 100,
-        "offsetX": 343,
+        "offsetX": 344,
         "cropHeight": 460,
         "cropWidth": 30
       }
@@ -201,7 +201,7 @@
       {
         "pagina": 7,
         "offsetY": 75,
-        "offsetX": 343,
+        "offsetX": 344,
         "cropHeight": 165,
         "cropWidth": 32
       }
@@ -214,7 +214,7 @@
       {
         "pagina": 7,
         "offsetY": 260,
-        "offsetX": 343,
+        "offsetX": 344,
         "cropHeight": 517,
         "cropWidth": 30
       }
@@ -240,7 +240,7 @@
       {
         "pagina": 8,
         "offsetY": 100,
-        "offsetX": 343,
+        "offsetX": 344,
         "cropHeight": 465,
         "cropWidth": 30
       }
@@ -266,7 +266,7 @@
       {
         "pagina": 9,
         "offsetY": 100,
-        "offsetX": 343,
+        "offsetX": 344,
         "cropHeight": 485,
         "cropWidth": 30
       }
@@ -299,7 +299,7 @@
       {
         "pagina": 10,
         "offsetY": 77,
-        "offsetX": 343,
+        "offsetX": 344,
         "cropHeight": 195,
         "cropWidth": 32
       }
@@ -312,7 +312,7 @@
       {
         "pagina": 10,
         "offsetY": 300,
-        "offsetX": 343,
+        "offsetX": 344,
         "cropHeight": 585,
         "cropWidth": 30
       }
@@ -345,7 +345,7 @@
       {
         "pagina": 11,
         "offsetY": 80,
-        "offsetX": 343,
+        "offsetX": 344,
         "cropHeight": 403,
         "cropWidth": 32
       }
@@ -358,7 +358,7 @@
       {
         "pagina": 11,
         "offsetY": 510,
-        "offsetX": 343,
+        "offsetX": 344,
         "cropHeight": 373,
         "cropWidth": 30
       }
@@ -391,7 +391,7 @@
       {
         "pagina": 12,
         "offsetY": 75,
-        "offsetX": 343,
+        "offsetX": 344,
         "cropHeight": 380,
         "cropWidth": 30
       }
@@ -404,7 +404,7 @@
       {
         "pagina": 12,
         "offsetY": 480,
-        "offsetX": 343,
+        "offsetX": 344,
         "cropHeight": 400,
         "cropWidth": 30
       }
@@ -443,7 +443,7 @@
       {
         "pagina": 13,
         "offsetY": 97,
-        "offsetX": 343,
+        "offsetX": 344,
         "cropHeight": 393,
         "cropWidth": 30
       }
@@ -456,7 +456,7 @@
       {
         "pagina": 13,
         "offsetY": 515,
-        "offsetX": 343,
+        "offsetX": 344,
         "cropHeight": 290,
         "cropWidth": 30
       }
@@ -489,7 +489,7 @@
       {
         "pagina": 14,
         "offsetY": 75,
-        "offsetX": 343,
+        "offsetX": 344,
         "cropHeight": 185,
         "cropWidth": 32
       }
@@ -502,7 +502,7 @@
       {
         "pagina": 14,
         "offsetY": 285,
-        "offsetX": 343,
+        "offsetX": 344,
         "cropHeight": 425,
         "cropWidth": 30
       }
@@ -535,7 +535,7 @@
       {
         "pagina": 15,
         "offsetY": 75,
-        "offsetX": 343,
+        "offsetX": 344,
         "cropHeight": 210,
         "cropWidth": 32
       }
@@ -548,7 +548,7 @@
       {
         "pagina": 15,
         "offsetY": 310,
-        "offsetX": 343,
+        "offsetX": 344,
         "cropHeight": 573,
         "cropWidth": 30
       }
@@ -575,7 +575,7 @@
         "pagina": 16,
         "offsetY": 540,
         "offsetX": 32,
-        "cropHeight": 343,
+        "cropHeight": 344,
         "cropWidth": 343
       }
     ],
@@ -587,7 +587,7 @@
       {
         "pagina": 16,
         "offsetY": 100,
-        "offsetX": 343,
+        "offsetX": 344,
         "cropHeight": 340,
         "cropWidth": 30
       }
@@ -600,7 +600,7 @@
       {
         "pagina": 16,
         "offsetY": 467,
-        "offsetX": 343,
+        "offsetX": 344,
         "cropHeight": 370,
         "cropWidth": 30
       }
@@ -639,7 +639,7 @@
       {
         "pagina": 17,
         "offsetY": 97,
-        "offsetX": 343,
+        "offsetX": 344,
         "cropHeight": 395,
         "cropWidth": 30
       }
@@ -652,7 +652,7 @@
       {
         "pagina": 17,
         "offsetY": 517,
-        "offsetX": 343,
+        "offsetX": 344,
         "cropHeight": 365,
         "cropWidth": 30
       }
@@ -685,7 +685,7 @@
       {
         "pagina": 18,
         "offsetY": 70,
-        "offsetX": 343,
+        "offsetX": 344,
         "cropHeight": 175,
         "cropWidth": 32
       }
@@ -698,7 +698,7 @@
       {
         "pagina": 18,
         "offsetY": 270,
-        "offsetX": 343,
+        "offsetX": 344,
         "cropHeight": 615,
         "cropWidth": 30
       }

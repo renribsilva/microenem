@@ -984,8 +984,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
     return null;
   }
 
-  console.log(lastItemActivate);
-
   return (
     <YearContext.Provider
       value={{

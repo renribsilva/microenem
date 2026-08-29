@@ -8,8 +8,6 @@ import LoadingFallback from "./loading_fallback";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
-console.log(pdfjs.GlobalWorkerOptions);
-
 interface PdfThumbnailProps {
   fileUrl: string;
   scale: number;

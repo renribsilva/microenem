@@ -627,6 +627,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
       setDescribeDifData(null);
       //RespostaAoItem
       setItemGraphData(null);
+      setLastItemActivate(0);
       setViolinData(null);
     }
   };
@@ -982,6 +983,8 @@ export function YearProvider({ children }: { children: ReactNode }) {
   if (loading) {
     return null;
   }
+
+  console.log(lastItemActivate);
 
   return (
     <YearContext.Provider

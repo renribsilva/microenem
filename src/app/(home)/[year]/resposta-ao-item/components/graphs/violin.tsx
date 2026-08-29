@@ -21,6 +21,16 @@ export default function ViolinBinsChart() {
     return Math.ceil(withBuffer);
   }, [violinData]);
 
+  const subtitleText = useMemo(() => {
+    return [
+      `Frequência absoluta de acertos e erros`,
+      `por faixa de proficiência`,
+      violinData
+        ? `(cod: ${lastItemActivate}; p: ${activeTCC?.metadata?.cor}).`
+        : ``,
+    ];
+  }, [violinData, lastItemActivate, activeTCC]);
+
   const series = useMemo(() => {
     if (!violinData) return [];
     return [
@@ -220,25 +230,20 @@ export default function ViolinBinsChart() {
         style: { color: textColor, fontSize: "16px", fontWeight: "bold" },
       },
       subtitle: {
-        text: [
-          `Frequência absoluta de acertos e erros`,
-          `por faixa de proficiência`,
-          `(cod: ${lastItemActivate}; p: ${activeTCC?.metadata?.cor || ""}).`,
-          // eslint-disable-next-line
-        ] as any,
+        // eslint-disable-next-line
+        text: subtitleText as any,
         style: { color: textColor, fontSize: "13px" },
       },
     }),
     [
       violinData,
       isMobile,
-      lastItemActivate,
-      activeTCC,
       maxAbsValue,
       textColor,
       axisColor,
       lastItemActivateNum,
       gridColor,
+      subtitleText,
     ],
   );
 

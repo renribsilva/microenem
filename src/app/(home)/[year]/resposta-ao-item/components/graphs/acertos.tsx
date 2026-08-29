@@ -14,9 +14,21 @@ export default function AcertosChart() {
   const { lastItemActivate, lastItemActivateNum, itemGraphData } =
     useYearData();
 
+  console.log(itemGraphData);
+
   const { chartColor } = chartProps;
   const parentRef = useRef<HTMLDivElement>(null);
   const { xMin, xMax } = chartProps;
+
+  const subtitleText = useMemo(() => {
+    return [
+      `Frequência relativa de acertos observados em cada`,
+      `faixa de proficiência`,
+      itemGraphData
+        ? `(cod: ${lastItemActivate}; p: ${activeTCC?.metadata?.cor}).`
+        : ``,
+    ];
+  }, [itemGraphData, lastItemActivate, activeTCC]);
 
   const series = useMemo(() => {
     if (!itemGraphData || !Array.isArray(itemGraphData.x)) {
@@ -191,12 +203,8 @@ export default function AcertosChart() {
         style: { color: textColor, fontSize: "16px", fontWeight: "bold" },
       },
       subtitle: {
-        text: [
-          `Frequência relativa de acertos observados em cada`,
-          `faixa de proficiência`,
-          `(cod: ${lastItemActivate}; p: ${activeTCC?.metadata?.cor}).`,
-          // eslint-disable-next-line
-        ] as any,
+        // eslint-disable-next-line
+        text: subtitleText as any,
         style: { color: textColor, fontSize: "13px" },
       },
       legend: {
@@ -206,17 +214,16 @@ export default function AcertosChart() {
       },
     };
   }, [
-    activeTCC,
     axisColor,
     gridColor,
     xMin,
     chartColor,
     panelColor,
     xMax,
-    lastItemActivate,
     lastItemActivateNum,
     isMobile,
     textColor,
+    subtitleText,
   ]);
 
   return (

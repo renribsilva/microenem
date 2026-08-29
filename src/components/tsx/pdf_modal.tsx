@@ -44,7 +44,8 @@ export default function PdfModal({
   setIsLoaded,
 }: PdfModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const { getItemDetails, setQuestaoPopUp, listCode } = useYearData();
+  const { getItemDetails, setShowGabarito, setQuestaoPopUp, listCode } =
+    useYearData();
   const itemDetails = getItemDetails(code);
   const { colorMap } = useChartTheme();
 
@@ -57,6 +58,7 @@ export default function PdfModal({
     if (hasPrev) {
       setIsLoaded(false);
       setQuestaoPopUp(listCode[currentIndex - 1]);
+      setShowGabarito(false);
     }
   };
 
@@ -64,6 +66,7 @@ export default function PdfModal({
     if (hasNext) {
       setIsLoaded(false);
       setQuestaoPopUp(listCode[currentIndex + 1]);
+      setShowGabarito(false);
     }
   };
 
@@ -92,10 +95,12 @@ export default function PdfModal({
         event.preventDefault();
         setIsLoaded(false);
         setQuestaoPopUp(listCode[currentIndex - 1]);
+        setShowGabarito(false);
       } else if (event.key === "ArrowRight" && hasNext) {
         event.preventDefault();
         setIsLoaded(false);
         setQuestaoPopUp(listCode[currentIndex + 1]);
+        setShowGabarito(false);
       }
     };
 
@@ -109,6 +114,7 @@ export default function PdfModal({
     listCode,
     setIsLoaded,
     setQuestaoPopUp,
+    setShowGabarito,
   ]);
 
   return (
@@ -166,10 +172,7 @@ export default function PdfModal({
                 fontSize: "18px",
               }}
             >
-              {tituloQuestao ||
-                `Questão ${itemDetails?.CO_POSICAO} ${
-                  itemDetails?.IN_ITEM_ABAN === 1 ? "(anulada)" : ""
-                }`}
+              {tituloQuestao || `Questão ${itemDetails?.CO_POSICAO} `}
             </h3>
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <button
@@ -197,11 +200,10 @@ export default function PdfModal({
               >
                 <Close />
               </button>
-            </div>{" "}
+            </div>
           </div>
           <div
             style={{
-              borderBottom: "1px solid #e5e7eb",
               paddingBottom: "16px",
               paddingTop: "10px",
             }}
@@ -214,6 +216,14 @@ export default function PdfModal({
                 </span>
               </div>
             )}
+          </div>
+          <div
+            style={{
+              borderBottom: "1px solid #e5e7eb",
+              paddingBottom: itemDetails?.IN_ITEM_ABAN === 1 ? "16px" : "0px",
+            }}
+          >
+            {itemDetails?.IN_ITEM_ABAN === 1 ? "(anulada)" : ""}
           </div>
         </div>
         <div

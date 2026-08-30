@@ -155,7 +155,6 @@ export default function CandidateFullDetail() {
                 })}
               </tbody>
             </table>
-
             <div className={styles.redacao_full_card}>
               <div className={styles.redacao_header_row}>
                 <span className={styles.redacao_label}>Redação: </span>

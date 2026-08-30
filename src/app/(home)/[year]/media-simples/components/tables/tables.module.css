@@ -202,7 +202,9 @@
   color: var(--foreground);
   padding: 0 8px;
   white-space: nowrap;
-} /**************************************************/
+}
+
+/**************************************************/
 /*********************CANDIDATE********************/
 /**************************************************/
 
@@ -300,7 +302,6 @@
 
 .static_thead {
   color: var(--tab-text);
-  /* background-color: var(--tab-hover); */
   text-align: left;
 }
 
@@ -389,29 +390,11 @@
   /* margin: 10px 0 25px 0; */
 }
 
-.dot {
-  aspect-ratio: 1;
-  border-radius: 4px;
-  border: 0px;
-}
-
-.correct {
-  background: #00e396;
-}
-.wrong {
-  background: #ff4b4b;
-}
-.abandoned {
-  background: #5e5e5e;
-}
-
 @media (max-width: 1000px) {
   .score_dots_grid {
     grid-template-columns: repeat(15, 1fr);
   }
 }
-
-/************************************************/
 
 .legend_container {
   display: flex;
@@ -431,7 +414,6 @@
   color: var(--tab-text);
 }
 
-/* Garante que o ponto na legenda tenha o mesmo tamanho dos pontos do mapa */
 .legend_item .dot {
   width: 12px;
   height: 12px;
@@ -453,29 +435,20 @@
   position: relative;
 }
 
-/* Estilo opcional: adicionar um 'X' ou traço nas anuladas para facilitar leitura */
+/* Estilo para adicionar um 'X' centralizado nas anuladas */
 .abandoned::after {
   content: "×";
   color: white;
-  font-size: 10px;
+  font-size: 11px;
+  line-height: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.custom_tooltip {
-  position: fixed;
-  background: rgba(0, 0, 0, 0.9);
-  color: #fff;
-  padding: 6px 12px;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  pointer-events: none; /* ESSENCIAL para não tremer */
-  z-index: 9999;
-  white-space: nowrap;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 /* Container da questão/quadradinho */
@@ -484,12 +457,13 @@
   align-items: center;
   justify-content: center;
   position: relative;
-  cursor: pointer;
   user-select: none;
-  /* Garante uma transição suave de cor/efeito ao passar o mouse */
   transition:
     transform 0.1s ease,
     filter 0.1s ease;
+  aspect-ratio: 1;
+  border-radius: 4px;
+  border: 0px;
 }
 
 /* Efeito ao passar o mouse sobre o quadradinho */
@@ -513,7 +487,3 @@
 .dot:hover .dot_number {
   opacity: 1;
 }
-
-/* CASO QUEIRA MOSTRAR O NÚMERO SEMPRE (sem precisar do hover):
-   Apenas remova 'opacity: 0;' e a regra '.dot:hover .dot_number' acima.
-*/

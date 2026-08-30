@@ -1,35 +1,109 @@
+/***************************************************/
+/*********************MEAN_TABLE********************/
+/***************************************************/
+
 .meantable_container {
   display: flex;
   flex-direction: column;
+  flex: 1;
 }
 
-.table_scroll_y {
-  /* 100vh é a altura da tela. Subtraia o tamanho do seu header/padding (ex: 300px) */
-  max-height: calc(100svh + 200px);
-  min-height: calc(100svh - 220px);
-  overflow-y: auto;
-  position: relative;
-  /* border: 1px solid var(--grid); */
+/**********************CABECALHO********************/
+
+.meantable_cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--grid);
+  box-sizing: border-box;
+  flex-wrap: wrap; /* Garante que em telas muito pequenas não quebre o layout */
+}
+
+.card_title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0;
+  white-space: normal;
+  word-break: break-word;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.header_searches {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Inputs de busca e página */
+.rank_input,
+.page_input {
+  background-color: var(--tab-hover);
+  border: 1px solid var(--grid);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  outline: none;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.rank_input {
+  width: 70px;
+  text-align: center;
+}
+
+.page_input {
+  width: 70px;
+  text-align: center;
+}
+
+/* Remove as setinhas numéricas padrão no Chrome/Safari/Edge */
+.rank_input::-webkit-outer-spin-button,
+.rank_input::-webkit-inner-spin-button,
+.page_input::-webkit-outer-spin-button,
+.page_input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.rank_input:focus,
+.page_input:focus {
+  border-color: #00e396;
+  box-shadow: 0 0 0 2px rgba(0, 227, 150, 0.15);
+}
+
+.page_info {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+/**********************TABLE********************/
+
+.table_scroll {
+  flex: 1;
 }
 
 .meantable_table {
-  width: 100%;
   border-collapse: collapse;
   font-size: 0.9rem;
-  /* Isso aqui é o que garante a largura fixa */
-  table-layout: fixed;
+  width: 100%;
 }
 
-.meantable_thead_sticky {
-  position: sticky;
-  top: 0;
-  z-index: 10;
+.meantable_thead {
+  height: 40px;
   color: var(--tab-text);
   background-color: var(--tab-hover);
 }
 
 .meantable_td {
-  padding: 8px 8px;
   border-bottom: 1px solid var(--grid);
   text-align: center; /* Centraliza o conteúdo das linhas */
   overflow: hidden;
@@ -38,12 +112,21 @@
 }
 
 .meantable_th {
-  padding: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--tab-hover);
+  color: var(--tab-text);
+  height: 40px;
+  padding: 0 12px;
   text-align: center;
   border-bottom: 1px solid var(--grid);
+  box-sizing: border-box;
+  vertical-align: middle;
 }
 
 .meantable_tr {
+  height: 35px;
   cursor: pointer;
   transition: background-color 0.2s;
   font-weight: 300;
@@ -65,7 +148,61 @@
   color: var(--foreground);
 }
 
-/**************************************************/
+/**********************PAGINATION********************/
+
+/* Container principal do rodapé */
+.pagination_controls {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centraliza a navegação no rodapé */
+  padding: 12px 16px;
+  border-top: 1px solid var(--grid);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* Container interno com os botões e o texto da página */
+.page_navigation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px; /* Espaçamento entre os botões e texto */
+  flex-wrap: wrap; /* Garante alinhamento em telas pequenas */
+}
+
+/* Botões da paginação */
+.page_btn {
+  padding: 6px 12px;
+  background-color: var(--tab-hover);
+  border: 1px solid var(--grid);
+  color: var(--foreground);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.page_btn:hover:not(:disabled) {
+  background-color: rgba(0, 227, 150, 0.2);
+  border-color: #00e396;
+}
+
+.page_btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Indicador numérico central */
+.footer_page_indicator {
+  font-size: 0.85rem;
+  color: var(--foreground);
+  padding: 0 8px;
+  white-space: nowrap;
+} /**************************************************/
 /*********************CANDIDATE********************/
 /**************************************************/
 
@@ -340,3 +477,43 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+/* Container da questão/quadradinho */
+.dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  /* Garante uma transição suave de cor/efeito ao passar o mouse */
+  transition:
+    transform 0.1s ease,
+    filter 0.1s ease;
+}
+
+/* Efeito ao passar o mouse sobre o quadradinho */
+.dot:hover {
+  transform: scale(1.15); /* Aumenta levemente o quadradinho */
+  filter: brightness(1.2); /* Deixa a cor mais vívida */
+  z-index: 2;
+}
+
+/* Estilo do número da questão */
+.dot_number {
+  font-size: 10px;
+  font-weight: bold;
+  color: #ffffff;
+  /* Torna invisível por padrão */
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+/* Mostra o número da questão no hover */
+.dot:hover .dot_number {
+  opacity: 1;
+}
+
+/* CASO QUEIRA MOSTRAR O NÚMERO SEMPRE (sem precisar do hover):
+   Apenas remova 'opacity: 0;' e a regra '.dot:hover .dot_number' acima.
+*/

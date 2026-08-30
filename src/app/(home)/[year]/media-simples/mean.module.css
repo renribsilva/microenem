@@ -17,9 +17,9 @@
 }
 
 .main_left {
-  flex: 1 1 40%
+  flex: 1 1 45%;
 }
 
 .main_right {
-  flex: 1 1 60%
+  flex: 1 1 55%;
 }

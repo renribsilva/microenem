@@ -7,17 +7,23 @@ import { useSidebar } from "../../context/sidebar_context";
 interface CardProps {
   children: React.ReactNode;
   className?: string;
+  fullSize?: boolean; // Padrão é false
 }
 
-function Card({ children, className }: CardProps) {
+function Card({ children, className = "", fullSize = false }: CardProps) {
   const { isExpanded } = useSidebar();
 
+  const wrapperClasses = [
+    styles.card_wrapper,
+    fullSize ? styles.full_size : "",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    /*Utiliza isExpanded para atualizaar o conteúdo*/
     <div className={styles.card_container} key={isExpanded ? "open" : "closed"}>
-      <div className={`${styles.card_wrapper} ${className || ""}`}>
-        {children}
-      </div>
+      <div className={wrapperClasses}>{children}</div>
     </div>
   );
 }

@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import {
   useReactTable,
   getCoreRowModel,
+  getPaginationRowModel,
   flexRender,
   createColumnHelper,
 } from "@tanstack/react-table";
@@ -28,6 +29,97 @@ export default function RankingTable() {
   const activeRanking = meanData.activeRanking;
   const top2000Data = meanData.top2000Data;
 
+  const mainContainerRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const footerRef = useRef<HTMLDivElement>(null);
+
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+
+  const pageIndexRef = useRef(pagination.pageIndex);
+
+  const [pageInput, setPageInput] = useState<string>("1");
+  const [rankInput, setRankInput] = useState<string>("");
+
+  // Re-calcula a página caso a altura mude (ResizeObserver)
+  useEffect(() => {
+    const mainEl = mainContainerRef.current;
+    if (!mainEl) return;
+
+    const updatePageSize = () => {
+      const totalHeight = mainEl.clientHeight || mainEl.offsetHeight;
+      const headerH = headerRef.current?.offsetHeight || 60;
+      const footerH = footerRef.current?.offsetHeight || 50;
+      const tableHeaderH = 40;
+      const rowHeight = 37;
+
+      const availableForRows = totalHeight - headerH - footerH - tableHeaderH;
+
+      if (availableForRows > 50) {
+        const calculatedSize = Math.max(
+          5,
+          Math.floor(availableForRows / rowHeight),
+        );
+
+        setPagination((prev) => {
+          if (prev.pageSize === calculatedSize) return prev;
+
+          let newPageIndex = prev.pageIndex;
+          if (activeRanking && top2000Data && top2000Data.length > 0) {
+            const activeIndex = top2000Data.findIndex(
+              (item) => item.ranking === activeRanking,
+            );
+            if (activeIndex !== -1) {
+              newPageIndex = Math.floor(activeIndex / calculatedSize);
+            }
+          }
+
+          return {
+            pageIndex: newPageIndex,
+            pageSize: calculatedSize,
+          };
+        });
+      }
+    };
+
+    const resizeObserver = new ResizeObserver(() => updatePageSize());
+    resizeObserver.observe(mainEl);
+
+    window.addEventListener("resize", updatePageSize);
+    updatePageSize();
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", updatePageSize);
+    };
+  }, [activeRanking, top2000Data]);
+
+  useEffect(() => {
+    pageIndexRef.current = pagination.pageIndex;
+  }, [pagination.pageIndex]);
+
+  useEffect(() => {
+    if (!activeRanking || !top2000Data || top2000Data.length === 0) return;
+    const activeIndex = top2000Data.findIndex(
+      (item) => item.ranking === activeRanking,
+    );
+    if (activeIndex !== -1) {
+      const targetPageIndex = Math.floor(activeIndex / pagination.pageSize);
+      if (targetPageIndex !== pageIndexRef.current) {
+        setPagination((prev) => ({
+          ...prev,
+          pageIndex: targetPageIndex,
+        }));
+      }
+    }
+  }, [activeRanking, top2000Data, pagination.pageSize]);
+
+  useEffect(() => {
+    setPageInput(String(pagination.pageIndex + 1));
+  }, [pagination.pageIndex]);
+
   const columns = useMemo(
     () => [
       columnHelper.accessor("ranking", {
@@ -46,25 +138,119 @@ export default function RankingTable() {
     [columnHelper, textColor],
   );
 
-  // eslint-disable-next-line
+  //eslint-disable-next-line
   const table = useReactTable({
     data: top2000Data || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    onPaginationChange: setPagination,
+    state: {
+      pagination,
+    },
   });
 
+  const handlePageSubmit = () => {
+    const pageNum = parseInt(pageInput, 10);
+    const maxPage = table.getPageCount();
+
+    if (isNaN(pageNum) || pageNum < 1) {
+      setPageInput(String(pagination.pageIndex + 1));
+      return;
+    }
+
+    const targetPage = Math.min(pageNum, maxPage);
+    table.setPageIndex(targetPage - 1);
+    setPageInput(String(targetPage));
+  };
+
+  const handleRankSubmit = () => {
+    const rankNum = parseInt(rankInput, 10);
+    if (isNaN(rankNum) || !top2000Data || top2000Data.length === 0) {
+      setRankInput("");
+      return;
+    }
+
+    const itemIndex = top2000Data.findIndex((item) => item.ranking === rankNum);
+
+    if (itemIndex !== -1) {
+      const targetPageIndex = Math.floor(itemIndex / pagination.pageSize);
+      table.setPageIndex(targetPageIndex);
+      setActiveRanking(rankNum);
+    } else {
+      alert("Posição/Ranking não encontrado.");
+    }
+
+    setRankInput("");
+  };
+
   return (
-    <section className={styles.meantable_container}>
-      <div className={styles.meantable_cabecalho}>
-        <div>
-          <h3 className={styles.card_title}>Top 2.500 Médias Simples</h3>
+    <section ref={mainContainerRef} className={styles.meantable_container}>
+      {/* CABEÇALHO DO CARD COM AS BUSCAS */}
+      <div ref={headerRef} className={styles.meantable_cabecalho}>
+        <h3 className={styles.card_title}>Top 2.500 Médias Simples</h3>
+        <div className={styles.header_searches}>
+          <div className={styles.page_info}>
+            Ir para:
+            <input
+              type="number"
+              min={1}
+              max={2500}
+              placeholder={activeRanking ? `#${String(activeRanking)}°` : "#1°"}
+              value={rankInput}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === "") {
+                  setRankInput("");
+                  return;
+                }
+                const num = parseInt(val, 10);
+                if (num > 2500) {
+                  setRankInput("2500");
+                } else if (num < 1) {
+                  setRankInput("1");
+                } else {
+                  setRankInput(val);
+                }
+              }}
+              onKeyDown={(e) => {
+                if (["-", "+", "e", "E"].includes(e.key)) {
+                  e.preventDefault();
+                }
+                if (e.key === "Enter") {
+                  handleRankSubmit();
+                }
+              }}
+              onBlur={handleRankSubmit}
+              className={styles.rank_input}
+            />
+          </div>
+          <div className={styles.page_info}>
+            Pág.{" "}
+            <input
+              type="number"
+              min={1}
+              max={table.getPageCount()}
+              value={pageInput}
+              onChange={(e) => setPageInput(e.target.value)}
+              onFocus={(e) => e.target.select()}
+              onBlur={handlePageSubmit}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handlePageSubmit();
+                  (e.target as HTMLInputElement).blur();
+                }
+              }}
+              className={styles.page_input}
+            />{" "}
+            de <span>{table.getPageCount()}</span>
+          </div>
         </div>
       </div>
-
-      {/* Container que limita a altura pela tela (viewport) */}
-      <div className={styles.table_scroll_y}>
+      {/* Container flexível da tabela */}
+      <div className={styles.table_scroll}>
         <table className={styles.meantable_table}>
-          <thead className={styles.meantable_thead_sticky}>
+          <thead className={styles.meantable_thead}>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
@@ -81,7 +267,7 @@ export default function RankingTable() {
             ))}
           </thead>
           <tbody>
-            {table.getRowModel().rows.map((row) => {
+            {table.getPaginationRowModel().rows.map((row) => {
               const currentRank = row.original.ranking;
               const isSelected = activeRanking === currentRank;
               return (
@@ -115,6 +301,45 @@ export default function RankingTable() {
             })}
           </tbody>
         </table>
+      </div>
+      {/* Controles de Paginação (Rodapé) */}
+      <div ref={footerRef} className={styles.pagination_controls}>
+        <div className={styles.page_navigation}>
+          <button
+            onClick={() => table.setPageIndex(0)}
+            disabled={!table.getCanPreviousPage()}
+            className={styles.page_btn}
+            title="Ir para a primeira página"
+          >
+            «
+          </button>
+          <button
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+            className={styles.page_btn}
+          >
+            ‹
+          </button>
+          <span className={styles.footer_page_indicator}>
+            <strong>{table.getState().pagination.pageIndex + 1}</strong> /{" "}
+            {table.getPageCount()}
+          </span>
+          <button
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+            className={styles.page_btn}
+          >
+            ›{" "}
+          </button>
+          <button
+            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+            disabled={!table.getCanNextPage()}
+            className={styles.page_btn}
+            title="Ir para a última página"
+          >
+            »
+          </button>
+        </div>
       </div>
     </section>
   );

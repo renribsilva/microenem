@@ -9,7 +9,7 @@ export default function RedacaoPage() {
   return (
     <main className={styles.main_container}>
       <div className={styles.main_left}>
-        <Card>
+        <Card fullSize>
           <RankingTable />
         </Card>
       </div>
@@ -21,4 +21,3 @@ export default function RedacaoPage() {
     </main>
   );
 }
-

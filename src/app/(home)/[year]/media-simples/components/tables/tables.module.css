@@ -380,14 +380,15 @@
 
 .score_h4 {
   font-weight: 300;
+  padding-inline: 6px;
 }
 
 /* Mapa de Scores Compacto */
 .score_dots_grid {
   display: grid;
-  grid-template-columns: repeat(15, 1fr); /* 45 questões por linha */
+  grid-template-columns: repeat(15, 1fr);
   gap: 2px;
-  /* margin: 10px 0 25px 0; */
+  padding: 6px; /* Evita que os dots fiquem cortados no hover */
 }
 
 @media (max-width: 1000px) {
@@ -457,6 +458,7 @@
   align-items: center;
   justify-content: center;
   position: relative;
+  cursor: pointer;
   user-select: none;
   transition:
     transform 0.1s ease,
@@ -471,6 +473,10 @@
   transform: scale(1.15); /* Aumenta levemente o quadradinho */
   filter: brightness(1.2); /* Deixa a cor mais vívida */
   z-index: 2;
+}
+
+.dot:hover.abandoned::after {
+  display: none;
 }
 
 /* Estilo do número da questão */

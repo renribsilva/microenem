@@ -107,6 +107,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
   const {
     pathName,
     setActiveArea,
+    setSelectionsByArea,
     currentYear,
     deferredArea,
     selectedRowId,
@@ -543,14 +544,20 @@ export function YearProvider({ children }: { children: ReactNode }) {
         const res = await fetch(
           `/api/candidate?year=${currentYear}&rank=${activeRanking}`,
         );
-        const json = await res.json();
+        const json: CandidateDataType = await res.json();
         setCandidateData(json);
+        setSelectionsByArea({
+          LC: `${json.CO_PROVA_LC}_${json.TP_LINGUA}_X`,
+          CH: `${json.CO_PROVA_CN}_X_X`,
+          CN: `${json.CO_PROVA_CN}_X_X`,
+          MT: `${json.CO_PROVA_MT}_X_X`,
+        });
       } catch (err) {
         console.error("Erro ao carregar probtrace:", err);
       }
     }
     fetchCandidateData();
-  }, [pathName, currentYear, activeRanking]);
+  }, [pathName, currentYear, activeRanking, setSelectionsByArea]);
 
   // ---------------------------------------------------------------------------
   // ------------ AGRUPAMENTO DE DADOS SOCILITIDADOS PELO CLIENTE --------------

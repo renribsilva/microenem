@@ -156,7 +156,6 @@
   align-items: center;
   justify-content: center; /* Centraliza a navegação no rodapé */
   padding: 12px 16px;
-  border-top: 1px solid var(--grid);
   box-sizing: border-box;
   width: 100%;
 }
@@ -166,8 +165,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px; /* Espaçamento entre os botões e texto */
-  flex-wrap: wrap; /* Garante alinhamento em telas pequenas */
+  gap: 3px; /* Espaçamento entre os botões e texto */
+  flex-wrap: nowrap;
 }
 
 /* Botões da paginação */
@@ -178,7 +177,7 @@
   color: var(--foreground);
   border-radius: 4px;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 1rem;
   transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;

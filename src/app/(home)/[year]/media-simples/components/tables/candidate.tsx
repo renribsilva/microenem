@@ -202,18 +202,22 @@ export default function CandidateFullDetail() {
             {/* Adicione este bloco da legenda aqui */}
             <div className={styles.legend_container}>
               <div className={styles.legend_item}>
-                <span className={`${styles.dot} ${styles.correct}`}></span>
+                <span
+                  className={`${styles.legend_dot} ${styles.correct}`}
+                ></span>
                 <span>Acerto</span>
               </div>
               <div className={styles.legend_item}>
-                <span className={`${styles.dot} ${styles.wrong}`}></span>
+                <span className={`${styles.legend_dot} ${styles.wrong}`}></span>
                 <span>Erro</span>
               </div>
               <div className={styles.legend_item}>
-                <span className={`${styles.dot} ${styles.abandoned}`}></span>
+                <span
+                  className={`${styles.legend_dot} ${styles.abandoned}`}
+                ></span>
                 <span>Anulada</span>
               </div>
-            </div>
+            </div>{" "}
             {areas.map((area) => {
               const map = getAreaMap(
                 area.cod,

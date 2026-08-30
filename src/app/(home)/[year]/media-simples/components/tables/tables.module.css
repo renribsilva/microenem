@@ -385,16 +385,20 @@
 /* Mapa de Scores Compacto */
 .score_dots_grid {
   display: grid;
-  grid-template-columns: repeat(15, 1fr);
-  gap: 2px;
-  padding: 6px; /* Evita que os dots fiquem cortados no hover */
+  grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+  gap: 8px;
+  padding: 8px;
+  box-sizing: border-box;
 }
 
 @media (max-width: 1000px) {
   .score_dots_grid {
-    grid-template-columns: repeat(15, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(22px, 1fr));
+    gap: 4px;
   }
 }
+
+/*************LEGEND***************/
 
 .legend_container {
   display: flex;
@@ -414,12 +418,23 @@
   color: var(--tab-text);
 }
 
-.legend_item .dot {
+/* Bolinhas da Legenda (Isoladas do .dot dos cards) */
+.legend_dot {
   width: 12px;
   height: 12px;
+  min-width: 12px !important; /* Previne sobrescrita das media queries */
+  min-height: 12px !important;
   border-radius: 50%;
   flex-shrink: 0;
+  display: inline-block;
 }
+
+/* Opcional: Desativa o 'X' da anulada na legenda para manter apenas o círculo cinza */
+.legend_dot.abandoned::after {
+  display: none;
+}
+
+/**************DOTS***************/
 
 /* Cores sugeridas (ajuste conforme o que já existe no seu CSS) */
 .correct {
@@ -463,14 +478,15 @@
     transform 0.1s ease,
     filter 0.1s ease;
   aspect-ratio: 1;
-  border-radius: 4px;
+  border-radius: 6px;
   border: 0px;
+  min-width: 36px; /* Tamanho mínimo igual ao mobile */
 }
 
 /* Efeito ao passar o mouse sobre o quadradinho */
 .dot:hover {
-  transform: scale(1.15); /* Aumenta levemente o quadradinho */
-  filter: brightness(1.2); /* Deixa a cor mais vívida */
+  transform: scale(1.15);
+  filter: brightness(1.2);
   z-index: 2;
 }
 
@@ -480,15 +496,46 @@
 
 /* Estilo do número da questão */
 .dot_number {
-  font-size: 10px;
   font-weight: bold;
   color: #ffffff;
-  /* Torna invisível por padrão */
-  opacity: 0;
+  opacity: 1;
   transition: opacity 0.15s ease;
+  font-size: 11px; /* Fonte ajustada para o tamanho de 36px */
 }
 
-/* Mostra o número da questão no hover */
+/* Mostra o número no hover em dispositivos desktop */
 .dot:hover .dot_number {
   opacity: 1;
+}
+
+@media (max-width: 1000px), (hover: none) {
+  /* Aumenta a coluna mínima do Grid */
+  .score_dots_grid {
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(36px, 1fr)
+    ); /* Aumentado de 22px para 36px */
+    gap: 8px; /* Espaçamento ligeiramente maior */
+    padding: 4px;
+  }
+
+  .dot {
+    min-width: 36px; /* Garante que o dot cresça */
+    border-radius: 6px;
+  }
+
+  /* Mostra os números e ajusta a fonte para o novo tamanho */
+  .dot_number {
+    opacity: 1;
+    font-size: 11px; /* Aumentado para acompanhar o dot maior */
+  }
+
+  /* Ajustes para questões anuladas não sobreporem o número */
+  .abandoned .dot_number {
+    z-index: 2;
+  }
+
+  .abandoned::after {
+    opacity: 0.25;
+  }
 }

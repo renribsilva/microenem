@@ -72,12 +72,58 @@ function ItensButtons() {
     handleToggle(num, isAbandoned);
   };
 
+  // Verifica se TODAS as questões da área atual já estão marcadas
+  const areAllFilled = questions.every((num) => {
+    const codeItem = getCodeByLabel(num, selectedLabel);
+    return codeItem ? Boolean(selectedItems[codeItem]?.status) : false;
+  });
+
+  // Alterna entre marcar tudo ou desmarcar tudo
+  const handleToggleAll = () => {
+    setNeedUpdateEAP(true);
+
+    if (areAllFilled) {
+      // DESMARCAR TUDO
+      questions.forEach((num) => {
+        const codeItem = getCodeByLabel(num, selectedLabel);
+        if (!codeItem) return;
+
+        const currentStatus = selectedItems[codeItem]?.status;
+        const isAbandoned = abandonadosCodes.has(codeItem);
+
+        if (currentStatus === "acerto") {
+          handleToggle(num, isAbandoned);
+          handleToggle(num, isAbandoned);
+        } else if (currentStatus === "erro") {
+          handleToggle(num, isAbandoned);
+        }
+      });
+    } else {
+      // PREENCHER TUDO
+      questions.forEach((num) => {
+        const codeItem = getCodeByLabel(num, selectedLabel);
+        if (!codeItem) return;
+
+        const currentStatus = selectedItems[codeItem]?.status;
+        const isAbandoned = abandonadosCodes.has(codeItem);
+
+        if (currentStatus === "erro") {
+          handleToggle(num, isAbandoned);
+          handleToggle(num, isAbandoned);
+        } else if (!currentStatus) {
+          handleToggle(num, isAbandoned);
+        }
+      });
+    }
+  };
+
   return (
     <section>
       <DropdownBooks />
       <div className={styles.EAPButton_container}>
         {pathName.endsWith("tri") && <EAPButton />}
       </div>
+      {/* Grid de Botões das Questões */}
       <div ref={containerRef} className={styles.itens_container}>
         {questions.map((num) => {
           const thisCodeItem = getCodeByLabel(num, selectedLabel);
@@ -89,7 +135,6 @@ function ItensButtons() {
             : false;
 
           const getStyles = () => {
-            // Se for abandonado e estiver selecionado: Cor Neutra (Cinza)
             if (isAbandoned && status) {
               return {
                 bg: isDark ? "#4a4a4a" : "#94a3b8",
@@ -97,13 +142,11 @@ function ItensButtons() {
                 border: "transparent",
               };
             }
-            // Cores normais
             if (status === "acerto")
               return { bg: "#22c55e", text: "#fff", border: "transparent" };
             if (status === "erro")
               return { bg: "#ef4444", text: "#fff", border: "transparent" };
 
-            // Estado Inativo
             return {
               bg: panelColor,
               text: textColor,
@@ -145,13 +188,31 @@ function ItensButtons() {
           );
         })}
       </div>
+
+      <button
+        type="button"
+        className={styles.fill_all_btn}
+        onClick={handleToggleAll}
+      >
+        <span
+          className={`${styles.fill_all_checkbox} ${
+            areAllFilled ? styles.checked : ""
+          }`}
+        >
+          {areAllFilled && "✓"}
+        </span>
+        <span className={styles.fill_all_label}>
+          {areAllFilled ? "Despreencher tudo" : "Preencher tudo"}
+        </span>
+      </button>
+
       <div className={styles.itens_rodape}>
         <strong>Dica:</strong>
-        <br></br>
+        <br />
         <span>1º clique (verde): indica acerto</span>
-        <br></br>
+        <br />
         <span>2º clique (vermelho): indica erro</span>
-        <br></br>
+        <br />
         <span>3º clique (sem cor): indica item em branco</span>
       </div>
       {backdropAlert &&
@@ -177,7 +238,6 @@ function ItensButtons() {
                 <p style={{ margin: 0, fontSize: "0.7rem", opacity: 0.9 }}>
                   Não teve participação no <br /> cálculo da nota final.
                 </p>
-                {/* SETINHA */}
                 <div className={styles.backdrop_msg_arrow} />
               </div>
             </>

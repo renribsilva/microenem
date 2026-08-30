@@ -548,7 +548,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
         setCandidateData(json);
         setSelectionsByArea({
           LC: `${json.CO_PROVA_LC}_${json.TP_LINGUA}_X`,
-          CH: `${json.CO_PROVA_CN}_X_X`,
+          CH: `${json.CO_PROVA_CH}_X_X`,
           CN: `${json.CO_PROVA_CN}_X_X`,
           MT: `${json.CO_PROVA_MT}_X_X`,
         });

@@ -48,7 +48,7 @@ function YearLayoutContent({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (process.env.NODE_ENV !== "production") return;
-    if (!questaoPopUp || !currentYear || !deferredArea) return;
+    if (!showPopUp || !questaoPopUp || !currentYear || !deferredArea) return;
     import(`../../../questoes/${currentYear}/${deferredArea}.json`)
       .then((modulo) => {
         const listaQuestoes = modulo.default as QuestaoCoordenadas[];
@@ -61,7 +61,7 @@ function YearLayoutContent({ children }: { children: React.ReactNode }) {
         console.error(`Erro ao carregar questões:`, err);
         setDadosQuestao(null);
       });
-  }, [questaoPopUp, currentYear, deferredArea]);
+  }, [showPopUp, questaoPopUp, currentYear, deferredArea]);
 
   const cropDefault = [
     {

@@ -1,5 +1,3 @@
-"use client";
-
 import { DescribeTable } from "./components/tables/describe";
 import styles from "./dados-do-exame.module.css";
 import Card from "../../../../components/tsx/card";

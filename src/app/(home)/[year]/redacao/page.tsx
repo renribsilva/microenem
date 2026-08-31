@@ -1,5 +1,3 @@
-"use client";
-
 import PersonText from "../../../../components/svg/person_text";
 import Card from "../../../../components/tsx/card";
 import NotasRedacaoChart from "./components/graphs/notas";
@@ -32,4 +30,3 @@ export default function Redacao() {
     </section>
   );
 }
-

@@ -1,5 +1,3 @@
-"use client";
-
 import Card from "../../../../components/tsx/card";
 import CandidateDetailTable from "./components/tables/candidate";
 import RankingTable from "./components/tables/mean_table";

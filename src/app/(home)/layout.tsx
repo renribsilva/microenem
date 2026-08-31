@@ -1,3 +1,5 @@
+"use client";
+
 import AppHeader from "../../components/tsx/header";
 import AppSidebar from "../../components/tsx/sidebar";
 import { useSidebar } from "../../context/sidebar_context";

@@ -3,8 +3,8 @@ import Card from "../../../components/tsx/card";
 
 export default function PrivacyLayout() {
   return (
-    <main className={styles.layout_main}>
-      <Card className={styles.card_privacy}>
+    <section className={styles.layout_main}>
+      <Card>
         <h1>Política de Privacidade</h1>
         <p>
           Esta política descreve como tratamos as informações no site{" "}
@@ -78,6 +78,6 @@ export default function PrivacyLayout() {
           </p>
         </section>
       </Card>
-    </main>
+    </section>
   );
 }

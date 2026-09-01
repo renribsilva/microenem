@@ -1,4 +1,3 @@
-import { DescribeTable } from "./components/tables/describe";
 import styles from "./dados-do-exame.module.css";
 import Card from "../../../../components/tsx/card";
 import dynamic from "next/dynamic";
@@ -11,6 +10,7 @@ const DensityNotasChart = dynamic(
 const FrequencyAcertosChart = dynamic(
   () => import("./components/graphs/frequency_acertos"),
 );
+const DescribeTable = dynamic(() => import("./components/tables/describe"));
 
 export default function DadosDoExame() {
   return (

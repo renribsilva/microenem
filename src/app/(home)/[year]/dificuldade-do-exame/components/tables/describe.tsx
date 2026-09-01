@@ -30,7 +30,8 @@ const MEDIDAS_PADRAO = [
   { id: "skew", metric: "Assimetria" },
   { id: "kurtosis", metric: "Curtose" },
 ];
-export function DescribeTable() {
+
+export default function DescribeTable() {
   const { deferredArea, selectedRowId, setSelectedRowId } = useHomeData();
   const { dificuldadeDoExame, dificuldadeDoExameAux } = useYearData();
   const { isMobile } = useSidebar();

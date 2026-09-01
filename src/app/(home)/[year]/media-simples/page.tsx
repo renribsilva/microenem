@@ -1,3 +1,5 @@
+"use client";
+
 import dynamic from "next/dynamic";
 import Card from "../../../../components/tsx/card";
 import styles from "./mean.module.css";

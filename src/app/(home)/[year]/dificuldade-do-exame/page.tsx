@@ -1,3 +1,5 @@
+"use client";
+
 import styles from "./dados-do-exame.module.css";
 import Card from "../../../../components/tsx/card";
 import dynamic from "next/dynamic";

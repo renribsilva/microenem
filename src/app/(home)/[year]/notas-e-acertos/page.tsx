@@ -1,3 +1,5 @@
+"use client";
+
 import styles from "./notas-e-acertos.module.css";
 import Card from "../../../../components/tsx/card";
 import dynamic from "next/dynamic";

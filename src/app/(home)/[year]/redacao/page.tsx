@@ -1,3 +1,5 @@
+"use client";
+
 import dynamic from "next/dynamic";
 import PersonText from "../../../../components/svg/person_text";
 import Card from "../../../../components/tsx/card";

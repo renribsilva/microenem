@@ -6,8 +6,10 @@ import dynamic from "next/dynamic";
 import { useHomeData } from "../../../context/home_context";
 import { QuestaoCoordenadas } from "../../../types/questoes_types";
 import { useEffect, useState } from "react";
-import TableFooter from "../../../components/tsx/table_footer";
 
+const TableFooter = dynamic(
+  () => import("../../../components/tsx/table_footer"),
+);
 const PdfModal = dynamic(() => import("../../../components/tsx/pdf_modal"), {
   ssr: false,
 });

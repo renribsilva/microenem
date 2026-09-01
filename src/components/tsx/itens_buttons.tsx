@@ -54,9 +54,42 @@ function ItensButtons() {
   const onButtonClick: onButtonClickType = (num, e) => {
     const codeItem = getCodeByLabel(num, selectedLabel);
     if (!codeItem) return;
+
     const isAbandoned = abandonadosCodes.has(codeItem);
+    const currentStatus = selectedItems[codeItem]?.status;
+
+    // 1. Pinta a cor no DOM INSTANTANEAMENTE antes do React re-renderizar
+    const btn = e.currentTarget;
     if (isAbandoned) {
-      const rect = e.currentTarget.getBoundingClientRect();
+      // Para itens abandonados
+      const nextBg = !currentStatus
+        ? isDark
+          ? "#4a4a4a"
+          : "#94a3b8"
+        : panelColor;
+      const nextText = !currentStatus ? "#fff" : textColor;
+      btn.style.backgroundColor = nextBg;
+      btn.style.color = nextText;
+    } else {
+      // Ciclo de cores: null -> acerto (verde) -> erro (vermelho) -> null
+      if (!currentStatus) {
+        btn.style.backgroundColor = "#22c55e";
+        btn.style.color = "#fff";
+        btn.style.borderColor = "transparent";
+      } else if (currentStatus === "acerto") {
+        btn.style.backgroundColor = "#ef4444";
+        btn.style.color = "#fff";
+        btn.style.borderColor = "transparent";
+      } else {
+        btn.style.backgroundColor = panelColor;
+        btn.style.color = textColor;
+        btn.style.borderColor = chartColor + "85";
+      }
+    }
+
+    // 2. Alertas e atualizações pesadas de contexto ficam assíncronos
+    if (isAbandoned) {
+      const rect = btn.getBoundingClientRect();
       const containerRect = containerRef.current?.getBoundingClientRect();
       setBackdropAlert({
         num,
@@ -68,53 +101,77 @@ function ItensButtons() {
     } else {
       setBackdropAlert(null);
     }
-    setNeedUpdateEAP(true);
-    handleToggle(num, isAbandoned);
+
+    setTimeout(() => {
+      setNeedUpdateEAP(true);
+      handleToggle(num, isAbandoned);
+    }, 0);
   };
 
-  // Verifica se TODAS as questões da área atual já estão marcadas
   const areAllFilled = questions.every((num) => {
     const codeItem = getCodeByLabel(num, selectedLabel);
-    return codeItem ? Boolean(selectedItems[codeItem]?.status) : false;
+    if (!codeItem) return true;
+
+    const isAbandoned = abandonadosCodes.has(codeItem);
+    if (isAbandoned) return true;
+
+    return Boolean(selectedItems[codeItem]?.status);
   });
 
-  // Alterna entre marcar tudo ou desmarcar tudo
   const handleToggleAll = () => {
-    setNeedUpdateEAP(true);
+    // 1. Optimistic Rendering: Altera o DOM instantaneamente
+    if (containerRef.current) {
+      const buttons = containerRef.current.querySelectorAll("button");
+      const targetBg = areAllFilled ? panelColor : "#22c55e";
+      const targetText = areAllFilled ? textColor : "#fff";
 
-    if (areAllFilled) {
-      // DESMARCAR TUDO
-      questions.forEach((num) => {
-        const codeItem = getCodeByLabel(num, selectedLabel);
-        if (!codeItem) return;
+      buttons.forEach((btn) => {
+        // Ignora botões com aviso de abandonado/anulado ao preencher
+        if (!areAllFilled && btn.textContent?.includes("⚠️")) return;
 
-        const currentStatus = selectedItems[codeItem]?.status;
-        const isAbandoned = abandonadosCodes.has(codeItem);
-
-        if (currentStatus === "acerto") {
-          handleToggle(num, isAbandoned);
-          handleToggle(num, isAbandoned);
-        } else if (currentStatus === "erro") {
-          handleToggle(num, isAbandoned);
-        }
-      });
-    } else {
-      // PREENCHER TUDO
-      questions.forEach((num) => {
-        const codeItem = getCodeByLabel(num, selectedLabel);
-        if (!codeItem) return;
-
-        const currentStatus = selectedItems[codeItem]?.status;
-        const isAbandoned = abandonadosCodes.has(codeItem);
-
-        if (currentStatus === "erro") {
-          handleToggle(num, isAbandoned);
-          handleToggle(num, isAbandoned);
-        } else if (!currentStatus) {
-          handleToggle(num, isAbandoned);
-        }
+        const htmlBtn = btn as HTMLButtonElement;
+        htmlBtn.style.backgroundColor = targetBg;
+        htmlBtn.style.color = targetText;
+        htmlBtn.style.borderColor = areAllFilled
+          ? chartColor + "85"
+          : "transparent";
       });
     }
+
+    // 2. Processa as alterações de estado no frame seguinte
+    setTimeout(() => {
+      setNeedUpdateEAP(true);
+
+      questions.forEach((num) => {
+        const codeItem = getCodeByLabel(num, selectedLabel);
+        if (!codeItem) return;
+
+        const currentStatus = selectedItems[codeItem]?.status;
+        const isAbandoned = abandonadosCodes.has(codeItem);
+
+        if (areAllFilled) {
+          if (!currentStatus) return;
+
+          if (isAbandoned) {
+            handleToggle(num, true);
+          } else if (currentStatus === "acerto") {
+            handleToggle(num, false);
+            handleToggle(num, false);
+          } else if (currentStatus === "erro") {
+            handleToggle(num, false);
+          }
+        } else {
+          if (isAbandoned) return;
+
+          if (currentStatus === "erro") {
+            handleToggle(num, false);
+            handleToggle(num, false);
+          } else if (!currentStatus) {
+            handleToggle(num, false);
+          }
+        }
+      });
+    }, 0);
   };
 
   return (
@@ -188,7 +245,6 @@ function ItensButtons() {
           );
         })}
       </div>
-
       <button
         type="button"
         className={styles.fill_all_btn}

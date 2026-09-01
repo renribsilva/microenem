@@ -984,10 +984,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
     return updatedInterval.join("");
   }, [deferredArea, activeCodes, selectedItems]);
 
-  console.log(intervalData);
-  console.log(selectedItems);
-  console.log(activeCodes);
-
   //----------------------------------------------------------------------------
   //----------------------------------RETURN------------------------------------
   //----------------------------------------------------------------------------

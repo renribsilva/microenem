@@ -835,7 +835,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
   }, [itensData]);
 
   const activeCodes = useMemo(() => {
-    if (!probData || Object.keys(selectedItems).length === 0) return [];
+    if (Object.keys(selectedItems).length === 0) return [];
     const currentlySelectedCodes = Object.keys(selectedItems).map(Number);
     const { start, end } = ranges[deferredArea] || { start: 1, end: 45 };
     const validCodesForCurrentLabel = new Set();
@@ -847,10 +847,9 @@ export function YearProvider({ children }: { children: ReactNode }) {
     }
     return currentlySelectedCodes.filter((code) => {
       const existsInCurrentLabel = validCodesForCurrentLabel.has(code);
-      const existsInProbData = String(code) in probData;
-      return existsInCurrentLabel && existsInProbData;
+      return existsInCurrentLabel;
     });
-  }, [selectedItems, probData, getCodeByLabel, deferredArea, selectedLabel]);
+  }, [selectedItems, getCodeByLabel, deferredArea, selectedLabel]);
 
   //-----------------------------DIFICULDADE DO EXAME---------------------------
 
@@ -984,6 +983,10 @@ export function YearProvider({ children }: { children: ReactNode }) {
     });
     return updatedInterval.join("");
   }, [deferredArea, activeCodes, selectedItems]);
+
+  console.log(intervalData);
+  console.log(selectedItems);
+  console.log(activeCodes);
 
   //----------------------------------------------------------------------------
   //----------------------------------RETURN------------------------------------

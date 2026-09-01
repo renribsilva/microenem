@@ -6,12 +6,9 @@ import { useHomeData } from "../../../../context/home_context";
 import ItensButtons from "../../../../components/tsx/itens_buttons";
 import dynamic from "next/dynamic";
 
-const ProdProbChart = dynamic(() => import("./components/graphs/prod_prob"), {
-  ssr: false,
-});
+const ProdProbChart = dynamic(() => import("./components/graphs/prod_prob"));
 const MarginImpactTable = dynamic(
   () => import("./components/tables/margin_impact"),
-  { ssr: false },
 );
 
 export default function RedacaoPage() {

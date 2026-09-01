@@ -1,21 +1,14 @@
-"use client";
-
 import styles from "./dados-do-exame.module.css";
 import Card from "../../../../components/tsx/card";
 import dynamic from "next/dynamic";
 
 // Imports dinâmicos mantidos
-const TCCChart = dynamic(() => import("./components/graphs/tcc"), {
-  ssr: false,
-});
-
+const TCCChart = dynamic(() => import("./components/graphs/tcc"));
 const DensityNotasChart = dynamic(
   () => import("./components/graphs/density_notas"),
-  { ssr: false },
 );
 const FrequencyAcertosChart = dynamic(
   () => import("./components/graphs/frequency_acertos"),
-  { ssr: false },
 );
 const DescribeTable = dynamic(() => import("./components/tables/describe"));
 

@@ -1,15 +1,10 @@
-"use client";
-
 import dynamic from "next/dynamic";
 import Card from "../../../../components/tsx/card";
 import styles from "./mean.module.css";
 
-const RankingTable = dynamic(() => import("./components/tables/mean_table"), {
-  ssr: false,
-});
+const RankingTable = dynamic(() => import("./components/tables/mean_table"));
 const CandidateDetailTable = dynamic(
   () => import("./components/tables/candidate"),
-  { ssr: false },
 );
 
 export default function RedacaoPage() {

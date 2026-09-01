@@ -118,23 +118,44 @@ function ItensButtons() {
     return Boolean(selectedItems[codeItem]?.status);
   });
 
-  const handleToggleAll = () => {
-    // 1. Optimistic Rendering: Altera o DOM instantaneamente
+  const handleToggleAll = (e: React.MouseEvent<HTMLButtonElement>) => {
+    // 1. Optimistic Rendering: Altera botões
+    // e o próprio checkbox instantaneamente
+    const willFill = !areAllFilled;
+
+    // Atualiza o visual do próprio botão "Preencher Tudo" no DOM
+    const fillBtn = e.currentTarget;
+    const checkboxSpan = fillBtn.querySelector(`.${styles.fill_all_checkbox}`);
+    const labelSpan = fillBtn.querySelector(`.${styles.fill_all_label}`);
+
+    if (checkboxSpan) {
+      if (willFill) {
+        checkboxSpan.classList.add(styles.checked);
+        checkboxSpan.textContent = "✓";
+      } else {
+        checkboxSpan.classList.remove(styles.checked);
+        checkboxSpan.textContent = "";
+      }
+    }
+    if (labelSpan) {
+      labelSpan.textContent = willFill ? "Despreencher tudo" : "Preencher tudo";
+    }
+
+    // Atualiza todos os botões no DOM
     if (containerRef.current) {
       const buttons = containerRef.current.querySelectorAll("button");
-      const targetBg = areAllFilled ? panelColor : "#22c55e";
-      const targetText = areAllFilled ? textColor : "#fff";
+      const targetBg = willFill ? "#22c55e" : panelColor;
+      const targetText = willFill ? "#fff" : textColor;
 
       buttons.forEach((btn) => {
-        // Ignora botões com aviso de abandonado/anulado ao preencher
-        if (!areAllFilled && btn.textContent?.includes("⚠️")) return;
+        if (willFill && btn.textContent?.includes("⚠️")) return;
 
         const htmlBtn = btn as HTMLButtonElement;
         htmlBtn.style.backgroundColor = targetBg;
         htmlBtn.style.color = targetText;
-        htmlBtn.style.borderColor = areAllFilled
-          ? chartColor + "85"
-          : "transparent";
+        htmlBtn.style.borderColor = willFill
+          ? "transparent"
+          : chartColor + "85";
       });
     }
 

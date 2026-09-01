@@ -39,7 +39,6 @@ function ItensButtons() {
   } = useYearData();
   const { panelColor, textColor, gridColor, isDark } = useChartTheme();
   const { chartColor } = chartProps;
-
   const [backdropAlert, setBackdropAlert] = useState<BackdropAlertType | null>(
     null,
   );
@@ -122,7 +121,6 @@ function ItensButtons() {
     // 1. Optimistic Rendering: Altera botões
     // e o próprio checkbox instantaneamente
     const willFill = !areAllFilled;
-
     // Atualiza o visual do próprio botão "Preencher Tudo" no DOM
     const fillBtn = e.currentTarget;
     const checkboxSpan = fillBtn.querySelector(`.${styles.fill_all_checkbox}`);
@@ -140,7 +138,6 @@ function ItensButtons() {
     if (labelSpan) {
       labelSpan.textContent = willFill ? "Despreencher tudo" : "Preencher tudo";
     }
-
     // Atualiza todos os botões no DOM
     if (containerRef.current) {
       const buttons = containerRef.current.querySelectorAll("button");
@@ -149,7 +146,6 @@ function ItensButtons() {
 
       buttons.forEach((btn) => {
         if (willFill && btn.textContent?.includes("⚠️")) return;
-
         const htmlBtn = btn as HTMLButtonElement;
         htmlBtn.style.backgroundColor = targetBg;
         htmlBtn.style.color = targetText;
@@ -158,21 +154,16 @@ function ItensButtons() {
           : chartColor + "85";
       });
     }
-
     // 2. Processa as alterações de estado no frame seguinte
     setTimeout(() => {
       setNeedUpdateEAP(true);
-
       questions.forEach((num) => {
         const codeItem = getCodeByLabel(num, selectedLabel);
         if (!codeItem) return;
-
         const currentStatus = selectedItems[codeItem]?.status;
         const isAbandoned = abandonadosCodes.has(codeItem);
-
         if (areAllFilled) {
           if (!currentStatus) return;
-
           if (isAbandoned) {
             handleToggle(num, true);
           } else if (currentStatus === "acerto") {
@@ -183,7 +174,6 @@ function ItensButtons() {
           }
         } else {
           if (isAbandoned) return;
-
           if (currentStatus === "erro") {
             handleToggle(num, false);
             handleToggle(num, false);
@@ -211,7 +201,6 @@ function ItensButtons() {
           const isAbandoned = thisCodeItem
             ? abandonadosCodes.has(thisCodeItem)
             : false;
-
           const getStyles = () => {
             if (isAbandoned && status) {
               return {
@@ -224,16 +213,13 @@ function ItensButtons() {
               return { bg: "#22c55e", text: "#fff", border: "transparent" };
             if (status === "erro")
               return { bg: "#ef4444", text: "#fff", border: "transparent" };
-
             return {
               bg: panelColor,
               text: textColor,
               border: chartColor + "85",
             };
           };
-
           const s = getStyles();
-
           return (
             <button
               key={num}
@@ -282,7 +268,6 @@ function ItensButtons() {
           {areAllFilled ? "Despreencher tudo" : "Preencher tudo"}
         </span>
       </button>
-
       <div className={styles.itens_rodape}>
         <strong>Dica:</strong>
         <br />

@@ -400,6 +400,8 @@ export function YearProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!codigo) return;
+    const isProbInfoPage = pathName?.endsWith("/probabilidade-e-info");
+    if (!isProbInfoPage) return;
     if (probCache.current?.codigo === codigo) {
       setProbData(probCache.current.dataset);
       setProbLabels(probCache.current.labels);
@@ -422,7 +424,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
         console.error("Erro ao carregar probtrace:", err);
       }
     }
-
     async function fetchInfoData() {
       try {
         const res = await fetch(
@@ -440,10 +441,9 @@ export function YearProvider({ children }: { children: ReactNode }) {
         console.error("Erro ao carregar infotrace:", err);
       }
     }
-
     fetchProbData();
     fetchInfoData();
-  }, [codigo, currentYear]);
+  }, [pathName, codigo, currentYear]);
 
   // ---------------------------RESPOSTA AO ITEM--------------------------------
 
@@ -483,6 +483,8 @@ export function YearProvider({ children }: { children: ReactNode }) {
   const acertosCache = useRef<AcertosDataCacheType | null>(null);
 
   useEffect(() => {
+    const isAcertosPage = pathName?.endsWith("/notas-e-acertos");
+    if (!isAcertosPage) return;
     const tipo = "regular";
     if (
       acertosCache.current?.area === deferredArea &&
@@ -513,7 +515,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
     }
 
     fetchAcertosData();
-  }, [deferredArea, currentYear]);
+  }, [pathName, deferredArea, currentYear]);
 
   //---------------------------------MEAN---------------------------------------
 

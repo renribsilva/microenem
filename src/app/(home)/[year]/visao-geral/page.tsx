@@ -9,7 +9,6 @@ import { useYearData } from "../../../../context/year_context";
 import Treineiros from "./components/tables/treineiros";
 import PersonRemove from "../../../../components/svg/person_remove";
 
-// Imports dinâmicos
 const FX_ETARIA = dynamic(() => import("./components/graphs/fx_etaria"));
 const SEXO = dynamic(() => import("./components/graphs/sexo"));
 const COR_RACA = dynamic(() => import("./components/graphs/cor_raca"));

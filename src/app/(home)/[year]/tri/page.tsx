@@ -4,8 +4,12 @@ import styles from "./tri.module.css";
 import Card from "../../../../components/tsx/card";
 import { useHomeData } from "../../../../context/home_context";
 import ItensButtons from "../../../../components/tsx/itens_buttons";
-import ProdProbChart from "./components/graphs/prod_prob";
-import MarginImpactTable from "./components/tables/margin_impact";
+import dynamic from "next/dynamic";
+
+const ProdProbChart = dynamic(() => import("./components/graphs/prod_prob"));
+const MarginImpactTable = dynamic(
+  () => import("./components/tables/margin_impact"),
+);
 
 export default function RedacaoPage() {
   const { deferredArea } = useHomeData();

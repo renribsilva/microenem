@@ -1,9 +1,11 @@
+import dynamic from "next/dynamic";
 import PersonText from "../../../../components/svg/person_text";
 import Card from "../../../../components/tsx/card";
-import NotasRedacaoChart from "./components/graphs/notas";
-import NotasRedacaoTable from "./components/tables/describe";
-import StatusRedacaoTable from "./components/tables/status";
 import styles from "./redacao.module.css";
+
+const NotasRedacaoChart = dynamic(() => import("./components/graphs/notas"));
+const NotasRedacaoTable = dynamic(() => import("./components/tables/describe"));
+const StatusRedacaoTable = dynamic(() => import("./components/tables/status"));
 
 export default function Redacao() {
   return (

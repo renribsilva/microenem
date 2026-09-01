@@ -1,8 +1,10 @@
 import styles from "./resposta-ao-item.module.css";
 import Card from "../../../../components/tsx/card";
-import ScoreTable from "./components/tables/score_table";
-import AcertosChart from "./components/graphs/acertos";
-import ViolinBinsChart from "./components/graphs/violin";
+import dynamic from "next/dynamic";
+
+const ScoreTable = dynamic(() => import("./components/tables/score_table"));
+const AcertosChart = dynamic(() => import("./components/graphs/acertos"));
+const ViolinBinsChart = dynamic(() => import("./components/graphs/violin"));
 
 export default function QuestoesPage() {
   return (

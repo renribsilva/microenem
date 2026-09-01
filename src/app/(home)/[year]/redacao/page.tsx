@@ -3,9 +3,16 @@ import PersonText from "../../../../components/svg/person_text";
 import Card from "../../../../components/tsx/card";
 import styles from "./redacao.module.css";
 
-const NotasRedacaoChart = dynamic(() => import("./components/graphs/notas"));
-const NotasRedacaoTable = dynamic(() => import("./components/tables/describe"));
-const StatusRedacaoTable = dynamic(() => import("./components/tables/status"));
+const NotasRedacaoChart = dynamic(() => import("./components/graphs/notas"), {
+  ssr: false,
+});
+const NotasRedacaoTable = dynamic(
+  () => import("./components/tables/describe"),
+  { ssr: false },
+);
+const StatusRedacaoTable = dynamic(() => import("./components/tables/status"), {
+  ssr: false,
+});
 
 export default function Redacao() {
   return (

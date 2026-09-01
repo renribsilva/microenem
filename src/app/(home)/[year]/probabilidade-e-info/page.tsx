@@ -6,9 +6,15 @@ import ItensButtons from "../../../../components/tsx/itens_buttons";
 import dynamic from "next/dynamic";
 import { useHomeData } from "../../../../context/home_context";
 
-const ICCChart = dynamic(() => import("./components/graphs/icc"));
-const InfoChart = dynamic(() => import("./components/graphs/info"));
-const ProbsInfoTable = dynamic(() => import("./components/tables/prob_info"));
+const ICCChart = dynamic(() => import("./components/graphs/icc"), {
+  ssr: false,
+});
+const InfoChart = dynamic(() => import("./components/graphs/info"), {
+  ssr: false,
+});
+const ProbsInfoTable = dynamic(() => import("./components/tables/prob_info"), {
+  ssr: false,
+});
 
 export default function DadosDoExame() {
   const { deferredArea } = useHomeData();

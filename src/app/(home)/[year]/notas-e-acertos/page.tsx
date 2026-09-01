@@ -2,8 +2,13 @@ import styles from "./notas-e-acertos.module.css";
 import Card from "../../../../components/tsx/card";
 import dynamic from "next/dynamic";
 
-const AcertosChart = dynamic(() => import("./components/graphs/acertos"));
-const AcertosTable = dynamic(() => import("./components/tables/acertos_table"));
+const AcertosChart = dynamic(() => import("./components/graphs/acertos"), {
+  ssr: false,
+});
+const AcertosTable = dynamic(
+  () => import("./components/tables/acertos_table"),
+  { ssr: false },
+);
 
 export default function QuestoesPage() {
   return (

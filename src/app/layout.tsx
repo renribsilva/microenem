@@ -7,6 +7,8 @@ import { Metadata } from "next";
 const roboto = Ubuntu({
   subsets: ["latin"],
   weight: ["300", "400"],
+  preload: false,
+  display: "swap",
 });
 
 // Removemos o export const metadata estático e criamos a função dinâmica:

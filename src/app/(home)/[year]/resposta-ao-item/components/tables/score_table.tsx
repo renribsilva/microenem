@@ -16,12 +16,16 @@ import clsx from "clsx";
 import { useSidebar } from "../../../../../../context/sidebar_context";
 import dynamic from "next/dynamic";
 
-const Sort = dynamic(() => import("../../../../../../components/svg/sort"));
+const Sort = dynamic(() => import("../../../../../../components/svg/sort"), {
+  ssr: false,
+});
 const DropdownBooks = dynamic(
   () => import("../../../../../../components/tsx/dropdown_books"),
+  { ssr: false },
 );
 const Visibility = dynamic(
   () => import("../../../../../../components/svg/open_in_new"),
+  { ssr: false },
 );
 
 type TableRow = {

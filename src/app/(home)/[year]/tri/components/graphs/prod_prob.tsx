@@ -7,7 +7,7 @@ import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import styles from "./graphs.module.css";
 import dynamic from "next/dynamic";
 
-const Chart = dynamic(() => import("react-apexcharts"));
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 export default function ProdProbChart() {
   const { EAPData, constantesData, needUpdateEAP, isInitialRender } =

@@ -7,7 +7,7 @@ import { useHomeData } from "../../../../../../context/home_context";
 import styles from "./graphs.module.css";
 import dynamic from "next/dynamic";
 
-const Chart = dynamic(() => import("react-apexcharts"));
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 function transformTheta(theta: number, k: number, d: number) {
   return theta * k + d;

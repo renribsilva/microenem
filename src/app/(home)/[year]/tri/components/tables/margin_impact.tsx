@@ -17,9 +17,12 @@ import {
 import clsx from "clsx";
 import dynamic from "next/dynamic";
 
-const Sort = dynamic(() => import("../../../../../../components/svg/sort"));
+const Sort = dynamic(() => import("../../../../../../components/svg/sort"), {
+  ssr: false,
+});
 const Visibility = dynamic(
   () => import("../../../../../../components/svg/open_in_new"),
+  { ssr: false },
 );
 
 type ImpactoRow = {

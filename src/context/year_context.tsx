@@ -61,7 +61,6 @@ import {
   CompetenciasJson,
   CompAreaData,
 } from "../types/year_types";
-import clsx from "clsx";
 
 const YearContext = createContext<YearContextType>(null);
 
@@ -285,20 +284,26 @@ export function YearProvider({ children }: { children: ReactNode }) {
   >(null);
 
   useEffect(() => {
-    if (!currentYear || !deferredArea) return;
     const loadData = async () => {
+      let areaFolder = "LC";
+      switch (deferredArea) {
+        case "CH":
+        case "CN":
+        case "MT":
+          areaFolder = deferredArea;
+          break;
+        default:
+          areaFolder = "LC";
+      }
+
+      const baseUrl = [
+        "/JSON",
+        currentYear,
+        "dificuldade-do-exame",
+        areaFolder,
+      ].join("/");
+
       try {
-        const areaFolder = ["CH", "CN", "MT", "LC"].includes(deferredArea)
-          ? deferredArea
-          : "LC";
-
-        const baseUrl = clsx(
-          "/JSON",
-          currentYear,
-          "dificuldade-do-exame",
-          areaFolder,
-        );
-
         const [densityRes, describeRes, frequencyRes] = await Promise.all([
           fetch(`${baseUrl}/density.json`),
           fetch(`${baseUrl}/describe.json`),
@@ -306,7 +311,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
         ]);
 
         if (!densityRes.ok || !describeRes.ok || !frequencyRes.ok) {
-          throw new Error("Erro ao carregar os dados de dificuldade do exame");
+          throw new Error("Erro ao carregar os dados de dificuldade");
         }
 
         const density = await densityRes.json();
@@ -317,16 +322,12 @@ export function YearProvider({ children }: { children: ReactNode }) {
         setDescribeDifData(describe.regular);
         setFrequencyDifData(frequency.regular);
       } catch (err) {
-        console.error(
-          `Erro ao carregar dados do ano` +
-            `${currentYear} para a área ${deferredArea}:`,
-          err,
-        );
+        console.error("Erro ao buscar dados:", err);
       }
     };
+
     loadData();
   }, [deferredArea, currentYear]);
-
   // ---------------------------------------------------------------------------
   // ----------------- AGRUPAMENTO DE DADOS DO BUNDLE INICIAL ------------------
   // ---------------------------------------------------------------------------

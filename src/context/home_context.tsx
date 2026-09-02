@@ -67,20 +67,16 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   // ---------- CARGA DINÂMICA DO DICIONÁRIO POR ANO (BUNDLE INICIAL) ---------
   // --------------------------------------------------------------------------
 
-  // Estado dependente de currentYear
   const [dicData, setDicData] = useState<DicDataType | null>(null);
 
-  // Importa um novo JSON sempre que o parâmentro currentYear for alterado
+  // Importa a API sempre que o parâmetro currentYear for alterado
   useEffect(() => {
     if (!currentYear) return;
     async function loadYearlyData() {
       setLoading(true);
       try {
-        const response = await fetch(
-          `/JSON/${currentYear}/dic_${currentYear}.json`,
-        );
-        if (!response.ok) throw new Error("Erro ao carregar JSON");
-
+        const response = await fetch(`/api/dic?year=${currentYear}`);
+        if (!response.ok) throw new Error("Erro ao carregar dados da API");
         const data = await response.json();
         setDicData(data);
       } catch (err) {
@@ -92,8 +88,6 @@ export function HomeProvider({ children }: { children: ReactNode }) {
     loadYearlyData();
   }, [currentYear]);
 
-  // (Re)mapeia os códigos das provas, associando suas respectivas propriedades
-  // cor e tipo
   const dicMap = useMemo(() => {
     const map = new Map<
       DicDataType["codigo"][number],

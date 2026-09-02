@@ -261,13 +261,10 @@ export function YearProvider({ children }: { children: ReactNode }) {
         const response = await fetch(
           `/api/describe?year=${currentYear}&area=${deferredArea}`,
         );
-
         if (!response.ok) {
           throw new Error("Erro ao carregar os dados de dificuldade");
         }
-
         const data = await response.json();
-
         setDensityDifData(data.density.regular);
         setDescribeDifData(data.describe.regular);
         setFrequencyDifData(data.frequency.regular);
@@ -275,7 +272,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
         console.error("Erro ao buscar dados:", err);
       }
     };
-
     loadData();
   }, [deferredArea, currentYear]);
 

@@ -207,65 +207,39 @@ export function YearProvider({ children }: { children: ReactNode }) {
     async function loadYearlyData() {
       setLoading(true);
       try {
-        const [
-          itens,
-          inscritos,
-          abstencao1,
-          abstencao2,
-          cor_raca,
-          sexo,
-          fx_etaria,
-          score,
-          competencia,
-          status,
-        ] = await Promise.all([
-          fetch(`/JSON/${currentYear}/itens_${currentYear}.json`).then((r) =>
-            r.json(),
-          ),
-          fetch(
-            `/JSON/${currentYear}/visao-geral/overview/inscritos.json`,
-          ).then((r) => r.json()),
-          fetch(
-            `/JSON/${currentYear}/visao-geral/overview/presenca_dia1.json`,
-          ).then((r) => r.json()),
-          fetch(
-            `/JSON/${currentYear}/visao-geral/overview/presenca_dia2.json`,
-          ).then((r) => r.json()),
-          fetch(`/JSON/${currentYear}/visao-geral/socials/cor_raca.json`).then(
-            (r) => r.json(),
-          ),
-          fetch(`/JSON/${currentYear}/visao-geral/socials/sexo.json`).then(
-            (r) => r.json(),
-          ),
-          fetch(
-            `/JSON/${currentYear}/visao-geral/socials/faixa_etaria.json`,
-          ).then((r) => r.json()),
-          fetch(`/JSON/${currentYear}/resposta-ao-item/score_table.json`).then(
-            (r) => r.json(),
-          ),
-          fetch(
-            `/JSON/${currentYear}/redacao/estatisticas_redacao_completa.json`,
-          ).then((r) => r.json()),
-          fetch(`/JSON/${currentYear}/redacao/status_redacao.json`).then((r) =>
-            r.json(),
-          ),
-        ]);
-        setItensData(itens);
-        setInscritosData(inscritos);
-        setabstencaoDia1(abstencao1);
-        setabstencaoDia2(abstencao2);
-        setCor_raca_data(cor_raca);
-        setSexo_data(sexo);
-        setFx_etaria_data(fx_etaria);
-        setScoreData(score);
-        setCompetenciaRowData(competencia);
-        setStatusData(status);
+        const [resItens, resVisaoGeral, resRespostaItem, resRedacao] =
+          await Promise.all([
+            fetch(`/api/dados/${currentYear}/itens`).then((r) => r.json()),
+            fetch(`/api/dados/${currentYear}/visao-geral`).then((r) =>
+              r.json(),
+            ),
+            fetch(`/api/dados/${currentYear}/resposta-ao-item`).then((r) =>
+              r.json(),
+            ),
+            fetch(`/api/dados/${currentYear}/redacao`).then((r) => r.json()),
+          ]);
+
+        // Populando os estados com os dados dos 4 backends
+        setItensData(resItens);
+        setInscritosData(resVisaoGeral.inscritos);
+        setabstencaoDia1(resVisaoGeral.abstencao1);
+        setabstencaoDia2(resVisaoGeral.abstencao2);
+        setCor_raca_data(resVisaoGeral.cor_raca);
+        setSexo_data(resVisaoGeral.sexo);
+        setFx_etaria_data(resVisaoGeral.fx_etaria);
+        setScoreData(resRespostaItem);
+        setCompetenciaRowData(resRedacao.competencia);
+        setStatusData(resRedacao.status);
       } catch (err) {
-        console.error(`Erro ao carregar dados do ano ${currentYear}:`, err);
+        console.error(
+          `Erro ao carregar dados das APIs para o ano ${currentYear}:`,
+          err,
+        );
       } finally {
         setLoading(false);
       }
     }
+
     loadYearlyData();
   }, [currentYear]);
 

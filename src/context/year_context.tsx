@@ -207,39 +207,37 @@ export function YearProvider({ children }: { children: ReactNode }) {
     async function loadYearlyData() {
       setLoading(true);
       try {
-        const [resItens, resVisaoGeral, resRespostaItem, resRedacao] =
-          await Promise.all([
-            fetch(`/api/dados/${currentYear}/itens`).then((r) => r.json()),
-            fetch(`/api/dados/${currentYear}/visao-geral`).then((r) =>
-              r.json(),
-            ),
-            fetch(`/api/dados/${currentYear}/resposta-ao-item`).then((r) =>
-              r.json(),
-            ),
-            fetch(`/api/dados/${currentYear}/redacao`).then((r) => r.json()),
-          ]);
+        const [resItens, resVisao, resResposta, resRedacao] = await Promise.all(
+          [
+            fetch(`/api/itens?year=${currentYear}`).then((r) => r.json()),
+            fetch(`/api/visao?year=${currentYear}`).then((r) => r.json()),
+            fetch(`/api/resposta?year=${currentYear}`).then((r) => r.json()),
+            fetch(`/api/redacao?year=${currentYear}`).then((r) => r.json()),
+          ],
+        );
 
-        // Populando os estados com os dados dos 4 backends
         setItensData(resItens);
-        setInscritosData(resVisaoGeral.inscritos);
-        setabstencaoDia1(resVisaoGeral.abstencao1);
-        setabstencaoDia2(resVisaoGeral.abstencao2);
-        setCor_raca_data(resVisaoGeral.cor_raca);
-        setSexo_data(resVisaoGeral.sexo);
-        setFx_etaria_data(resVisaoGeral.fx_etaria);
-        setScoreData(resRespostaItem);
+
+        setInscritosData(resVisao.inscritos);
+        setabstencaoDia1(resVisao.abstencao1);
+        setabstencaoDia2(resVisao.abstencao2);
+        setCor_raca_data(resVisao.cor_raca);
+        setSexo_data(resVisao.sexo);
+        setFx_etaria_data(resVisao.fx_etaria);
+
+        setScoreData(resResposta);
+
         setCompetenciaRowData(resRedacao.competencia);
         setStatusData(resRedacao.status);
       } catch (err) {
         console.error(
-          `Erro ao carregar dados das APIs para o ano ${currentYear}:`,
+          `Erro ao carregar dados da API para o ano ${currentYear}:`,
           err,
         );
       } finally {
         setLoading(false);
       }
     }
-
     loadYearlyData();
   }, [currentYear]);
 

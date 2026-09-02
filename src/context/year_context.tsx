@@ -328,6 +328,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
 
     loadData();
   }, [deferredArea, currentYear]);
+
   // ---------------------------------------------------------------------------
   // ----------------- AGRUPAMENTO DE DADOS DO BUNDLE INICIAL ------------------
   // ---------------------------------------------------------------------------

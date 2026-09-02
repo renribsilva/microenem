@@ -17,7 +17,11 @@ export async function GET(request: Request) {
   try {
     const filePath = path.join(
       process.cwd(),
-      `src/app/(home)/JSON/${year}/notas-e-acertos/score_describe.json`,
+      "public",
+      "JSON",
+      year,
+      "notas-e-acertos",
+      "score_describe.json",
     );
 
     if (!fs.existsSync(filePath)) {

@@ -17,7 +17,11 @@ export async function GET(request: Request) {
   try {
     const filePath = path.join(
       process.cwd(),
-      `src/app/(home)/JSON/${year}/media-simples/mean_table.json`,
+      "public",
+      "JSON",
+      year,
+      "media-simples",
+      "mean_table.json",
     );
 
     if (!fs.existsSync(filePath)) {

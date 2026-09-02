@@ -25,10 +25,20 @@ async function generateCrops(
       return;
     }
 
-    const modulo = await import(
-      `../src/app/(home)/JSON/${currentYear}/itens_${currentYear}.json`
+    // Lê o JSON diretamente do disco usando fs (Node.js puro)
+    const jsonPath = path.join(
+      basePath,
+      "src",
+      "app",
+      "(home)",
+      "JSON",
+      currentYear.toString(),
+      `itens_${currentYear}.json`,
     );
-    const data: ItensDataType = modulo.default || modulo;
+
+    const fileContent = fs.readFileSync(jsonPath, "utf-8");
+    const data: ItensDataType = JSON.parse(fileContent);
+
     const itensFiltrados: { coItem: number; coPosicao: number }[] = [];
     for (let i = 0; i < data.CO_ITEM.length; i++) {
       if (data.CO_PROVA[i] === targetCoProva) {

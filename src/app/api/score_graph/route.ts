@@ -17,8 +17,13 @@ export async function GET(request: Request) {
   try {
     const filePath = path.join(
       process.cwd(),
-      `src/app/(home)/JSON/${year}/resposta-ao-item/score_graph.json`,
+      "public",
+      "JSON",
+      year,
+      "resposta-ao-item",
+      "score_graph.json",
     );
+
     const fileContent = fs.readFileSync(filePath, "utf8");
     const fullJson = JSON.parse(fileContent);
 

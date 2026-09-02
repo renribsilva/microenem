@@ -76,10 +76,13 @@ export function HomeProvider({ children }: { children: ReactNode }) {
     async function loadYearlyData() {
       setLoading(true);
       try {
-        const itens = await import(
-          `../app/(home)/JSON/${currentYear}/dic_${currentYear}.json`
+        const response = await fetch(
+          `/JSON/${currentYear}/dic_${currentYear}.json`,
         );
-        setDicData(itens.default);
+        if (!response.ok) throw new Error("Erro ao carregar JSON");
+
+        const data = await response.json();
+        setDicData(data);
       } catch (err) {
         console.error(`Erro ao carregar dados do ano ${currentYear}:`, err);
       } finally {

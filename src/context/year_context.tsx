@@ -12,9 +12,9 @@ import {
   useEffect,
 } from "react";
 import { useHomeData } from "./home_context";
-import constantes from "../app/(home)/JSON/constantes.json";
-import matrizHab from "../app/(home)/JSON/matriz_hab.json";
-import matrizComp from "../app/(home)/JSON/matriz_comp.json";
+import constantes from "../../public/JSON/constantes.json";
+import matrizHab from "../../public/JSON/matriz_hab.json";
+import matrizComp from "../../public/JSON/matriz_comp.json";
 
 import {
   AbstencaoType,
@@ -61,6 +61,7 @@ import {
   CompetenciasJson,
   CompAreaData,
 } from "../types/year_types";
+import clsx from "clsx";
 
 const YearContext = createContext<YearContextType>(null);
 
@@ -219,52 +220,47 @@ export function YearProvider({ children }: { children: ReactNode }) {
           competencia,
           status,
         ] = await Promise.all([
-          import(`../app/(home)/JSON/${currentYear}/itens_${currentYear}.json`),
-          import(
-            `../app/(home)/JSON/${currentYear}/` +
-              `visao-geral/overview/inscritos.json`
+          fetch(`/JSON/${currentYear}/itens_${currentYear}.json`).then((r) =>
+            r.json(),
           ),
-          import(
-            `../app/(home)/JSON/${currentYear}/` +
-              `visao-geral/overview/presenca_dia1.json`
+          fetch(
+            `/JSON/${currentYear}/visao-geral/overview/inscritos.json`,
+          ).then((r) => r.json()),
+          fetch(
+            `/JSON/${currentYear}/visao-geral/overview/presenca_dia1.json`,
+          ).then((r) => r.json()),
+          fetch(
+            `/JSON/${currentYear}/visao-geral/overview/presenca_dia2.json`,
+          ).then((r) => r.json()),
+          fetch(`/JSON/${currentYear}/visao-geral/socials/cor_raca.json`).then(
+            (r) => r.json(),
           ),
-          import(
-            `../app/(home)/JSON/${currentYear}/` +
-              `visao-geral/overview/presenca_dia2.json`
+          fetch(`/JSON/${currentYear}/visao-geral/socials/sexo.json`).then(
+            (r) => r.json(),
           ),
-          import(
-            `../app/(home)/JSON/${currentYear}/` +
-              `visao-geral/socials/cor_raca.json`
+          fetch(
+            `/JSON/${currentYear}/visao-geral/socials/faixa_etaria.json`,
+          ).then((r) => r.json()),
+          fetch(`/JSON/${currentYear}/resposta-ao-item/score_table.json`).then(
+            (r) => r.json(),
           ),
-          import(
-            `../app/(home)/JSON/${currentYear}/visao-geral/socials/sexo.json`
-          ),
-          import(
-            `../app/(home)/JSON/${currentYear}/` +
-              `visao-geral/socials/faixa_etaria.json`
-          ),
-          import(
-            `../app/(home)/JSON/${currentYear}/` +
-              `resposta-ao-item/score_table.json`
-          ),
-          import(
-            `../app/(home)/JSON/${currentYear}/` +
-              `redacao/estatisticas_redacao_completa.json`
-          ),
-          import(
-            `../app/(home)/JSON/${currentYear}/redacao/status_redacao.json`
+          fetch(
+            `/JSON/${currentYear}/redacao/estatisticas_redacao_completa.json`,
+          ).then((r) => r.json()),
+          fetch(`/JSON/${currentYear}/redacao/status_redacao.json`).then((r) =>
+            r.json(),
           ),
         ]);
-        setItensData(itens.default);
-        setInscritosData(inscritos.default);
-        setabstencaoDia1(abstencao1.default);
-        setabstencaoDia2(abstencao2.default);
-        setCor_raca_data(cor_raca.default);
-        setSexo_data(sexo.default);
-        setFx_etaria_data(fx_etaria.default);
-        setScoreData(score.default);
-        setCompetenciaRowData(competencia.default);
-        setStatusData(status.default);
+        setItensData(itens);
+        setInscritosData(inscritos);
+        setabstencaoDia1(abstencao1);
+        setabstencaoDia2(abstencao2);
+        setCor_raca_data(cor_raca);
+        setSexo_data(sexo);
+        setFx_etaria_data(fx_etaria);
+        setScoreData(score);
+        setCompetenciaRowData(competencia);
+        setStatusData(status);
       } catch (err) {
         console.error(`Erro ao carregar dados do ano ${currentYear}:`, err);
       } finally {
@@ -289,70 +285,44 @@ export function YearProvider({ children }: { children: ReactNode }) {
   >(null);
 
   useEffect(() => {
+    if (!currentYear || !deferredArea) return;
     const loadData = async () => {
-      let density: { default: { regular: FreqDensityType["regular"] } };
-      let describe: { default: { regular: DescribeType["regular"] } };
-      let frequency: { default: { regular: FreqDensityType["regular"] } };
-      switch (deferredArea) {
-        case "CH":
-          density = await import(
-            `../app/(home)/JSON/${currentYear}/` +
-              `dificuldade-do-exame/CH/density.json`
-          );
-          describe = await import(
-            `../app/(home)/JSON/${currentYear}/` +
-              `dificuldade-do-exame/CH/describe.json`
-          );
-          frequency = await import(
-            `../app/(home)/JSON/${currentYear}/` +
-              `dificuldade-do-exame/CH/frequency_acertos.json`
-          );
-          break;
-        case "CN":
-          density = await import(
-            `../app/(home)/JSON/${currentYear}/` +
-              `dificuldade-do-exame/CN/density.json`
-          );
-          describe = await import(
-            `../app/(home)/JSON/${currentYear}/` +
-              `dificuldade-do-exame/CN/describe.json`
-          );
-          frequency = await import(
-            `../app/(home)/JSON/${currentYear}/` +
-              `dificuldade-do-exame/CN/frequency_acertos.json`
-          );
-          break;
-        case "MT":
-          density = await import(
-            `../app/(home)/JSON/${currentYear}/` +
-              `dificuldade-do-exame/MT/density.json`
-          );
-          describe = await import(
-            `../app/(home)/JSON/${currentYear}/` +
-              `dificuldade-do-exame/MT/describe.json`
-          );
-          frequency = await import(
-            `../app/(home)/JSON/${currentYear}/` +
-              `dificuldade-do-exame/MT/frequency_acertos.json`
-          );
-          break;
-        default:
-          density = await import(
-            `../app/(home)/JSON/${currentYear}/` +
-              `dificuldade-do-exame/LC/density.json`
-          );
-          describe = await import(
-            `../app/(home)/JSON/${currentYear}/` +
-              `dificuldade-do-exame/LC/describe.json`
-          );
-          frequency = await import(
-            `../app/(home)/JSON/${currentYear}/` +
-              `dificuldade-do-exame/LC/frequency_acertos.json`
-          );
+      try {
+        const areaFolder = ["CH", "CN", "MT", "LC"].includes(deferredArea)
+          ? deferredArea
+          : "LC";
+
+        const baseUrl = clsx(
+          "/JSON",
+          currentYear,
+          "dificuldade-do-exame",
+          areaFolder,
+        );
+
+        const [densityRes, describeRes, frequencyRes] = await Promise.all([
+          fetch(`${baseUrl}/density.json`),
+          fetch(`${baseUrl}/describe.json`),
+          fetch(`${baseUrl}/frequency_acertos.json`),
+        ]);
+
+        if (!densityRes.ok || !describeRes.ok || !frequencyRes.ok) {
+          throw new Error("Erro ao carregar os dados de dificuldade do exame");
+        }
+
+        const density = await densityRes.json();
+        const describe = await describeRes.json();
+        const frequency = await frequencyRes.json();
+
+        setDensityDifData(density.regular);
+        setDescribeDifData(describe.regular);
+        setFrequencyDifData(frequency.regular);
+      } catch (err) {
+        console.error(
+          `Erro ao carregar dados do ano` +
+            `${currentYear} para a área ${deferredArea}:`,
+          err,
+        );
       }
-      setDensityDifData(density.default.regular);
-      setDescribeDifData(describe.default.regular);
-      setFrequencyDifData(frequency.default.regular);
     };
     loadData();
   }, [deferredArea, currentYear]);

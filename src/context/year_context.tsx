@@ -257,42 +257,20 @@ export function YearProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const loadData = async () => {
-      let areaFolder = "LC";
-      switch (deferredArea) {
-        case "CH":
-        case "CN":
-        case "MT":
-          areaFolder = deferredArea;
-          break;
-        default:
-          areaFolder = "LC";
-      }
-
-      const baseUrl = [
-        "/JSON",
-        currentYear,
-        "dificuldade-do-exame",
-        areaFolder,
-      ].join("/");
-
       try {
-        const [densityRes, describeRes, frequencyRes] = await Promise.all([
-          fetch(`${baseUrl}/density.json`),
-          fetch(`${baseUrl}/describe.json`),
-          fetch(`${baseUrl}/frequency_acertos.json`),
-        ]);
+        const response = await fetch(
+          `/api/describe?year=${currentYear}&area=${deferredArea}`,
+        );
 
-        if (!densityRes.ok || !describeRes.ok || !frequencyRes.ok) {
+        if (!response.ok) {
           throw new Error("Erro ao carregar os dados de dificuldade");
         }
 
-        const density = await densityRes.json();
-        const describe = await describeRes.json();
-        const frequency = await frequencyRes.json();
+        const data = await response.json();
 
-        setDensityDifData(density.regular);
-        setDescribeDifData(describe.regular);
-        setFrequencyDifData(frequency.regular);
+        setDensityDifData(data.density.regular);
+        setDescribeDifData(data.describe.regular);
+        setFrequencyDifData(data.frequency.regular);
       } catch (err) {
         console.error("Erro ao buscar dados:", err);
       }

@@ -17,7 +17,9 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL("https://microenem.vercel.app"),
     title: "ENEMmicro",
     description: "Vizualização gráfica dos microdados do ENEM",
-    icons: null,
+    icons: {
+      icon: "data:;base64,iVBORw0KGgo=",
+    },
     twitter: {
       card: "summary_large_image",
       title: "ENEMmicro",

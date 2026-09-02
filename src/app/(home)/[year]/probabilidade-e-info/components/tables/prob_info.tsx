@@ -10,14 +10,19 @@ import {
   createColumnHelper,
 } from "@tanstack/react-table";
 import styles from "./tables.module.css";
-
-import InputShell from "../../../../../../components/tsx/input_shell";
 import { useHomeData } from "../../../../../../context/home_context";
 import { useYearData } from "../../../../../../context/year_context";
 import { useSidebar } from "../../../../../../context/sidebar_context";
-import Sort from "../../../../../../components/svg/sort";
 import clsx from "clsx";
-import Visibility from "../../../../../../components/svg/open_in_new";
+import dynamic from "next/dynamic";
+
+const InputShell = dynamic(
+  () => import("../../../../../../components/tsx/input_shell"),
+);
+const Sort = dynamic(() => import("../../../../../../components/svg/sort"));
+const Visibility = dynamic(
+  () => import("../../../../../../components/svg/open_in_new"),
+);
 
 type TableRow = {
   id: number;

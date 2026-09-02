@@ -9,12 +9,13 @@ import {
   flexRender,
   createColumnHelper,
 } from "@tanstack/react-table";
-
 import styles from "./tables.module.css";
 import { useYearData } from "../../../../../../context/year_context";
 import { useSidebar } from "../../../../../../context/sidebar_context";
 import clsx from "clsx";
-import Sort from "../../../../../../components/svg/sort";
+import dynamic from "next/dynamic";
+
+const Sort = dynamic(() => import("../../../../../../components/svg/sort"));
 
 type TableRow = {
   id: number;

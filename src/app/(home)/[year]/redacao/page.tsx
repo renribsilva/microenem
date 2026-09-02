@@ -1,8 +1,10 @@
 import dynamic from "next/dynamic";
-import PersonText from "../../../../components/svg/person_text";
 import Card from "../../../../components/tsx/card";
 import styles from "./redacao.module.css";
 
+const PersonText = dynamic(
+  () => import("../../../../components/svg/person_text"),
+);
 const NotasRedacaoChart = dynamic(() => import("./components/graphs/notas"));
 const NotasRedacaoTable = dynamic(() => import("./components/tables/describe"));
 const StatusRedacaoTable = dynamic(() => import("./components/tables/status"));

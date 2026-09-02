@@ -1,11 +1,13 @@
 "use client";
 
 import { useMemo } from "react";
-import Chart from "react-apexcharts";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import { useYearData } from "../../../../../../context/year_context";
 import { useHomeData } from "../../../../../../context/home_context";
 import styles from "./graphs.module.css";
+import dynamic from "next/dynamic";
+
+const Chart = dynamic(() => import("react-apexcharts"));
 
 function transformTheta(theta: number, k: number, d: number) {
   return theta * k + d;

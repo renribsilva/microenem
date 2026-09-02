@@ -2,11 +2,12 @@
 
 import styles from "./dados-dos-itens.module.css";
 import Card from "../../../../components/tsx/card";
-import ItensButtons from "../../../../components/tsx/itens_buttons";
 import dynamic from "next/dynamic";
 import { useHomeData } from "../../../../context/home_context";
 
-// Imports dinâmicos
+const ItensButtons = dynamic(
+  () => import("../../../../components/tsx/itens_buttons"),
+);
 const ICCChart = dynamic(() => import("./components/graphs/icc"));
 const InfoChart = dynamic(() => import("./components/graphs/info"));
 const ProbsInfoTable = dynamic(() => import("./components/tables/prob_info"));

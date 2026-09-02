@@ -1,12 +1,12 @@
 "use client";
 
 import { useYearData, YearProvider } from "../../../context/year_context";
-import Navbar from "../../../components/tsx/navbar";
 import dynamic from "next/dynamic";
 import { useHomeData } from "../../../context/home_context";
 import { QuestaoCoordenadas } from "../../../types/questoes_types";
 import { useEffect, useState } from "react";
 
+const Navbar = dynamic(() => import("../../../components/tsx/navbar"));
 const TableFooter = dynamic(
   () => import("../../../components/tsx/table_footer"),
 );

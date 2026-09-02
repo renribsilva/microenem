@@ -1,11 +1,15 @@
 "use client";
 
 import { useMemo } from "react";
-import Chart from "react-apexcharts";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
-import styles from "./graphs.module.css";
 import { useHomeData } from "../../../../../../context/home_context";
-import DropdownBooks from "../../../../../../components/tsx/dropdown_books";
+import dynamic from "next/dynamic";
+import styles from "./graphs.module.css";
+
+const Chart = dynamic(() => import("react-apexcharts"));
+const DropdownBooks = dynamic(
+  () => import("../../../../../../components/tsx/dropdown_books"),
+);
 
 export default function TCCChart() {
   const { chartProps, activeTCC } = useHomeData();

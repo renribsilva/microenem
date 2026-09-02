@@ -8,7 +8,6 @@ import {
   flexRender,
   createColumnHelper,
 } from "@tanstack/react-table";
-
 import styles from "./tables.module.css";
 import { useYearData } from "../../../../../../context/year_context";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";

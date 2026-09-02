@@ -1,11 +1,13 @@
 "use client";
 
-import AppHeader from "../../components/tsx/header";
-import AppSidebar from "../../components/tsx/sidebar";
 import { useSidebar } from "../../context/sidebar_context";
 import styles from "./layout.module.css";
 import { HomeProvider } from "../../context/home_context";
 import clsx from "clsx";
+import dynamic from "next/dynamic";
+
+const AppHeader = dynamic(() => import("../../components/tsx/header"));
+const AppSidebar = dynamic(() => import("../../components/tsx/sidebar"));
 
 function HomeLayout({ children }: { children: React.ReactNode }) {
   const { isMobileOpen, toggleMobileSidebar, isMobile } = useSidebar();

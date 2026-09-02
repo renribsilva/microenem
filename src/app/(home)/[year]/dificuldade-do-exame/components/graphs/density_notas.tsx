@@ -1,11 +1,13 @@
 "use client";
 
 import { useMemo } from "react";
-import Chart from "react-apexcharts";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import { useHomeData } from "../../../../../../context/home_context";
 import { useYearData } from "../../../../../../context/year_context";
 import { FreqDensityType } from "../../../../../../types/year_types";
+import dynamic from "next/dynamic";
+
+const Chart = dynamic(() => import("react-apexcharts"));
 
 const densidadeColor: Record<string, string> = {
   curve: "#8b5cf6",

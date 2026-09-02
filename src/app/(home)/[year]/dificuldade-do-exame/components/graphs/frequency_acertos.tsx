@@ -1,10 +1,12 @@
 "use client";
 
 import { useMemo } from "react";
-import Chart from "react-apexcharts";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import { useHomeData } from "../../../../../../context/home_context";
 import { useYearData } from "../../../../../../context/year_context";
+import dynamic from "next/dynamic";
+
+const Chart = dynamic(() => import("react-apexcharts"));
 
 interface FreqItem {
   x: number;

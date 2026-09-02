@@ -1,9 +1,11 @@
 "use client";
 
-import Chart from "react-apexcharts";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import { useMemo } from "react";
 import { useYearData } from "../../../../../../context/year_context";
+import dynamic from "next/dynamic";
+
+const Chart = dynamic(() => import("react-apexcharts"));
 
 interface CorRacaItem {
   x: string;

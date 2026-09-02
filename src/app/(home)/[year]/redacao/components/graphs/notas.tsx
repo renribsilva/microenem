@@ -1,11 +1,13 @@
 "use client";
 
-import Chart from "react-apexcharts";
 import { useMemo, useState } from "react";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import { useHomeData } from "../../../../../../context/home_context";
 import { useYearData } from "../../../../../../context/year_context";
 import { CompetenciaRowType } from "../../../../../../types/year_types";
+import dynamic from "next/dynamic";
+
+const Chart = dynamic(() => import("react-apexcharts"));
 
 type NotaKey =
   | "NU_NOTA_COMP1"

@@ -3,9 +3,11 @@
 import styles from "./tri.module.css";
 import Card from "../../../../components/tsx/card";
 import { useHomeData } from "../../../../context/home_context";
-import ItensButtons from "../../../../components/tsx/itens_buttons";
 import dynamic from "next/dynamic";
 
+const ItensButtons = dynamic(
+  () => import("../../../../components/tsx/itens_buttons"),
+);
 const ProdProbChart = dynamic(() => import("./components/graphs/prod_prob"));
 const MarginImpactTable = dynamic(
   () => import("./components/tables/margin_impact"),

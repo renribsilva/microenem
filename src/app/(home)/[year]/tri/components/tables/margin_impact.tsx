@@ -6,7 +6,6 @@ import { useYearData } from "../../../../../../context/year_context";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import styles from "./tables.module.css";
 import { useSidebar } from "../../../../../../context/sidebar_context";
-import Sort from "../../../../../../components/svg/sort";
 import {
   createColumnHelper,
   flexRender,
@@ -16,7 +15,12 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import clsx from "clsx";
-import Visibility from "../../../../../../components/svg/open_in_new";
+import dynamic from "next/dynamic";
+
+const Sort = dynamic(() => import("../../../../../../components/svg/sort"));
+const Visibility = dynamic(
+  () => import("../../../../../../components/svg/open_in_new"),
+);
 
 type ImpactoRow = {
   id: number;

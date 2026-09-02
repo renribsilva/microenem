@@ -1,11 +1,13 @@
 "use client";
 
 import { useMemo } from "react";
-import Chart from "react-apexcharts";
 import { useYearData } from "../../../../../../context/year_context";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import { useHomeData } from "../../../../../../context/home_context";
 import { useSidebar } from "../../../../../../context/sidebar_context";
+import dynamic from "next/dynamic";
+
+const Chart = dynamic(() => import("react-apexcharts"));
 
 export default function ViolinBinsChart() {
   const { violinData, lastItemActivate, lastItemActivateNum } = useYearData();

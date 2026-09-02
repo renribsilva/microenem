@@ -3,12 +3,17 @@
 import dynamic from "next/dynamic";
 import styles from "./visao-geral.module.css";
 import Card from "../../../../components/tsx/card";
-import Group from "../../../../components/svg/group";
-import PersonCancel from "../../../../components/svg/person_cancel";
 import { useYearData } from "../../../../context/year_context";
-import Treineiros from "./components/tables/treineiros";
-import PersonRemove from "../../../../components/svg/person_remove";
 
+const Group = dynamic(() => import("../../../../components/svg/group"));
+const PersonRemove = dynamic(
+  () => import("../../../../components/svg/person_remove"),
+);
+const PersonCancel = dynamic(
+  () => import("../../../../components/svg/person_cancel"),
+);
+
+const Treineiros = dynamic(() => import("./components/tables/treineiros"));
 const FX_ETARIA = dynamic(() => import("./components/graphs/fx_etaria"));
 const SEXO = dynamic(() => import("./components/graphs/sexo"));
 const COR_RACA = dynamic(() => import("./components/graphs/cor_raca"));

@@ -3,9 +3,11 @@
 import { useMemo } from "react";
 import { useYearData } from "../../../../../../context/year_context";
 import { useHomeData } from "../../../../../../context/home_context";
-import Chart from "react-apexcharts";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import styles from "./graphs.module.css";
+import dynamic from "next/dynamic";
+
+const Chart = dynamic(() => import("react-apexcharts"));
 
 export default function ProdProbChart() {
   const { EAPData, constantesData, needUpdateEAP, isInitialRender } =

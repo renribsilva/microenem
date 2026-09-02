@@ -9,15 +9,20 @@ import {
   flexRender,
   createColumnHelper,
 } from "@tanstack/react-table";
-
 import styles from "./tables.module.css";
 import { useHomeData } from "../../../../../../context/home_context";
 import { useYearData } from "../../../../../../context/year_context";
 import clsx from "clsx";
 import { useSidebar } from "../../../../../../context/sidebar_context";
-import Sort from "../../../../../../components/svg/sort";
-import DropdownBooks from "../../../../../../components/tsx/dropdown_books";
-import Visibility from "../../../../../../components/svg/open_in_new";
+import dynamic from "next/dynamic";
+
+const Sort = dynamic(() => import("../../../../../../components/svg/sort"));
+const DropdownBooks = dynamic(
+  () => import("../../../../../../components/tsx/dropdown_books"),
+);
+const Visibility = dynamic(
+  () => import("../../../../../../components/svg/open_in_new"),
+);
 
 type TableRow = {
   id: number;

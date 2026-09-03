@@ -7,7 +7,7 @@ import { useHomeData } from "../../../../../../context/home_context";
 import { useSidebar } from "../../../../../../context/sidebar_context";
 import dynamic from "next/dynamic";
 
-const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
+const Chart = dynamic(() => import("react-apexcharts"));
 
 export default function ViolinBinsChart() {
   const { violinData, lastItemActivate, lastItemActivateNum } = useYearData();

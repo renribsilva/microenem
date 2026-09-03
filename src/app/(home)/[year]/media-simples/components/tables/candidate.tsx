@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import styles from "./tables.module.css";
 import { useYearData } from "../../../../../../context/year_context";
 import { useHomeData } from "../../../../../../context/home_context";
 import { useSidebar } from "../../../../../../context/sidebar_context";
 import clsx from "clsx";
+import { AreaItemMap } from "../../../../../../types/year_types";
 
 export default function CandidateFullDetail() {
   const { dicData, setActiveArea } = useHomeData();
@@ -18,9 +19,82 @@ export default function CandidateFullDetail() {
     setListCode,
   } = useYearData();
   const [activeTab, setActiveTab] = useState<"geral" | "scores">("geral");
+  const [areaMaps, setAreaMaps] = useState<{ [key: string]: AreaItemMap[] }>(
+    {},
+  );
   const { isMobile } = useSidebar();
 
   const candidateData = meanData.candidateData;
+
+  const linguaEstrangeira =
+    candidateData?.TP_LINGUA === 0 ? "Inglês" : "Espanhol";
+
+  const areas = useMemo(
+    () => [
+      {
+        label: isMobile
+          ? `LC (${linguaEstrangeira.slice(0, 3)})`
+          : `Linguagens (${linguaEstrangeira})`,
+        key: "LC",
+        nota: candidateData?.NU_NOTA_LC,
+        score: candidateData?.SCORE_LC,
+        cod: candidateData?.CO_PROVA_LC,
+      },
+      {
+        label: isMobile ? "CH" : "Humanas",
+        key: "CH",
+        nota: candidateData?.NU_NOTA_CH,
+        score: candidateData?.SCORE_CH,
+        cod: candidateData?.CO_PROVA_CH,
+      },
+      {
+        label: isMobile ? "CN" : "Natureza",
+        key: "CN",
+        nota: candidateData?.NU_NOTA_CN,
+        score: candidateData?.SCORE_CN,
+        cod: candidateData?.CO_PROVA_CN,
+      },
+      {
+        label: isMobile ? "MT" : "Matemática",
+        key: "MT",
+        nota: candidateData?.NU_NOTA_MT,
+        score: candidateData?.SCORE_MT,
+        cod: candidateData?.CO_PROVA_MT,
+      },
+    ],
+    [isMobile, linguaEstrangeira, candidateData],
+  );
+
+  useEffect(() => {
+    if (!candidateData) return;
+
+    let isMounted = true;
+
+    async function loadMaps() {
+      const maps: { [key: string]: AreaItemMap[] } = {};
+      for (const area of areas) {
+        if (area.cod && area.score) {
+          const res = await getAreaMap(
+            area.cod,
+            candidateData.TP_LINGUA,
+            area.score,
+          );
+          maps[area.key] = res;
+        } else {
+          maps[area.key] = [];
+        }
+      }
+      if (isMounted) {
+        setAreaMaps(maps);
+      }
+    }
+
+    loadMaps();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [candidateData, getAreaMap, areas]);
 
   const getProvaInfo = (codProva: number) => {
     if (!dicData || !dicData.codigo) return { cor: "#333", nome: "---" };
@@ -41,42 +115,6 @@ export default function CandidateFullDetail() {
   };
 
   if (!candidateData) return <div className={styles.fallback}>Aguarde...</div>;
-
-  const linguaEstrangeira =
-    candidateData.TP_LINGUA === 0 ? "Inglês" : "Espanhol";
-
-  const areas = [
-    {
-      label: isMobile
-        ? `LC (${linguaEstrangeira.slice(0, 3)})`
-        : `Linguagens (${linguaEstrangeira})`,
-      key: "LC",
-      nota: candidateData.NU_NOTA_LC,
-      score: candidateData.SCORE_LC,
-      cod: candidateData.CO_PROVA_LC,
-    },
-    {
-      label: isMobile ? "CH" : "Humanas",
-      key: "CH",
-      nota: candidateData.NU_NOTA_CH,
-      score: candidateData.SCORE_CH,
-      cod: candidateData.CO_PROVA_CH,
-    },
-    {
-      label: isMobile ? "CN" : "Natureza",
-      key: "CN",
-      nota: candidateData.NU_NOTA_CN,
-      score: candidateData.SCORE_CN,
-      cod: candidateData.CO_PROVA_CN,
-    },
-    {
-      label: isMobile ? "MT" : "Matemática",
-      key: "MT",
-      nota: candidateData.NU_NOTA_MT,
-      score: candidateData.SCORE_MT,
-      cod: candidateData.CO_PROVA_MT,
-    },
-  ];
 
   return (
     <section className={styles.candidate_container}>
@@ -124,11 +162,7 @@ export default function CandidateFullDetail() {
               <tbody className={styles.static_body}>
                 {areas.map((area) => {
                   const info = getProvaInfo(area.cod);
-                  const map = getAreaMap(
-                    area.cod,
-                    candidateData.TP_LINGUA,
-                    area.score,
-                  );
+                  const map = areaMaps[area.key] || [];
                   const validos = map.filter(
                     (x) => x.status !== "abandoned",
                   ).length;
@@ -199,7 +233,6 @@ export default function CandidateFullDetail() {
           </div>
         ) : (
           <div className={styles.scores_content}>
-            {/* Adicione este bloco da legenda aqui */}
             <div className={styles.legend_container}>
               <div className={styles.legend_item}>
                 <span
@@ -219,11 +252,7 @@ export default function CandidateFullDetail() {
               </div>
             </div>{" "}
             {areas.map((area) => {
-              const map = getAreaMap(
-                area.cod,
-                candidateData.TP_LINGUA,
-                area.score,
-              );
+              const map = areaMaps[area.key] || [];
               const orderedCodes = map.map((item) => item.co_item);
               return (
                 <div key={area.key} className={styles.score_block}>

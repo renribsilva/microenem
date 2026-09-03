@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import PdfThumbnail from "./pdf_thumbnail";
 import { CropArea } from "../../types/questoes_types";
 import { useYearData } from "../../context/year_context";
@@ -10,6 +10,7 @@ import ChevronLeft from "../svg/chevron_left";
 import ChevronRight from "../svg/chevron_right";
 import Close from "../svg/close";
 import styles from "./components.module.css";
+import { ItemDetails } from "../../types/year_types";
 
 interface PdfModalProps {
   isOpen: boolean;
@@ -24,7 +25,7 @@ interface PdfModalProps {
   setIsLoaded: (x: boolean) => void;
 }
 
-const areaMap = {
+const areaMap: Record<string, string> = {
   LC: "Linguagens",
   CH: "Ciências Humanas",
   CN: "Ciências da Natureza",
@@ -46,8 +47,19 @@ export default function PdfModal({
   const dialogRef = useRef<HTMLDialogElement>(null);
   const { getItemDetails, setShowGabarito, setQuestaoPopUp, listCode } =
     useYearData();
-  const itemDetails = getItemDetails(code);
   const { colorMap } = useChartTheme();
+
+  const [itemDetails, setItemDetails] = useState<ItemDetails | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    getItemDetails(code).then((details) => {
+      if (isMounted) setItemDetails(details);
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, [code, getItemDetails]);
 
   const currentIndex = listCode ? listCode.indexOf(code) : -1;
   const hasPrev = currentIndex > 0;
@@ -172,7 +184,7 @@ export default function PdfModal({
                 fontSize: "18px",
               }}
             >
-              {tituloQuestao || `Questão ${itemDetails?.CO_POSICAO} `}
+              {tituloQuestao || `Questão ${itemDetails?.CO_POSICAO ?? ""} `}
             </h3>
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <button
@@ -210,9 +222,16 @@ export default function PdfModal({
           >
             {itemDetails && (
               <div style={{ fontSize: "12px", color: "#6b7280" }}>
-                Área: {areaMap[itemDetails.SG_AREA]} | Prova:{" "}
-                <span style={{ color: `${colorMap[itemDetails.TX_COR]}` }}>
-                  {itemDetails.TX_COR.toLocaleLowerCase()}
+                Área: {areaMap[itemDetails.SG_AREA] || itemDetails.SG_AREA} |
+                Prova:{" "}
+                <span
+                  style={{
+                    color: itemDetails.TX_COR
+                      ? colorMap?.[itemDetails.TX_COR]
+                      : undefined,
+                  }}
+                >
+                  {itemDetails.TX_COR?.toLocaleLowerCase()}
                 </span>
               </div>
             )}

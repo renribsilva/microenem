@@ -21,21 +21,27 @@ const COR_RACA = dynamic(() => import("./components/graphs/cor_raca"));
 export default function Visao() {
   const { overviewData } = useYearData();
 
-  const inscritosData = overviewData.inscritosData;
-  const abstencaoDia1 = overviewData.abstencaoDia1;
-  const abstencaoDia2 = overviewData.abstencaoDia2;
+  const inscritosData = overviewData?.inscritosData;
+  const abstencaoDia1 = overviewData?.abstencaoDia1;
+  const abstencaoDia2 = overviewData?.abstencaoDia2;
 
-  const total_inscritos = inscritosData[0].total.toLocaleString("pt-BR");
-  const abstencao_dia1 =
-    abstencaoDia1[0].abst.toLocaleString("pt-BR", {
-      minimumFractionDigits: 1,
-      maximumFractionDigits: 1,
-    }) + "%";
-  const abstencao_dia2 =
-    abstencaoDia2[0].abst.toLocaleString("pt-BR", {
-      minimumFractionDigits: 1,
-      maximumFractionDigits: 1,
-    }) + "%";
+  const total_inscritos = inscritosData?.[0]?.total
+    ? inscritosData[0].total.toLocaleString("pt-BR")
+    : "Carregando...";
+
+  const abstencao_dia1 = abstencaoDia1?.[0]?.abst
+    ? abstencaoDia1[0].abst.toLocaleString("pt-BR", {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1,
+      }) + "%"
+    : "Carregando...";
+
+  const abstencao_dia2 = abstencaoDia2?.[0]?.abst
+    ? abstencaoDia2[0].abst.toLocaleString("pt-BR", {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1,
+      }) + "%"
+    : "Carregando...";
 
   return (
     <section className={styles.main}>

@@ -10,7 +10,6 @@ import {
   createColumnHelper,
 } from "@tanstack/react-table";
 import styles from "./tables.module.css";
-import { useHomeData } from "../../../../../../context/home_context";
 import { useYearData } from "../../../../../../context/year_context";
 import clsx from "clsx";
 import { useSidebar } from "../../../../../../context/sidebar_context";
@@ -41,12 +40,10 @@ type TableRow = {
 };
 
 export default function ScoreTable() {
-  const { selectedLabel, deferredArea } = useHomeData();
   const { isMobile } = useSidebar();
   const {
     respostaAoItemData,
-    getCodeByLabel,
-    getParamByLabel,
+    codesMap,
     abandonadosCodes,
     lastItemActivate,
     setLastItemActivate,
@@ -301,20 +298,10 @@ export default function ScoreTable() {
   ]);
 
   const data = useMemo(() => {
-    const ranges: Record<string, { start: number; end: number }> = {
-      LC: { start: 1, end: 45 },
-      CH: { start: 46, end: 90 },
-      CN: { start: 91, end: 135 },
-      MT: { start: 136, end: 180 },
-    };
-
-    const { start, end } = ranges[deferredArea] || { start: 1, end: 45 };
-
-    // Gera o range e mapeia os dados
-    return Array.from({ length: end - start + 1 }, (_, i) => {
-      const num = start + i;
-      const code = getCodeByLabel(num, selectedLabel);
-      const param = getParamByLabel(num, selectedLabel, "b");
+    return Object.entries(codesMap).map(([posStr, itemInfo]) => {
+      const num = Number(posStr);
+      const code = itemInfo?.code;
+      const param = itemInfo?.b ?? null;
       const itemScores = scoreData && code ? scoreData[code]?.counts || {} : {};
 
       const v1 = Number(itemScores["1"] ?? 0);
@@ -338,14 +325,7 @@ export default function ScoreTable() {
         param_b: param,
       };
     });
-  }, [
-    scoreData,
-    deferredArea,
-    selectedLabel,
-    getParamByLabel,
-    getCodeByLabel,
-    abandonadosCodes,
-  ]);
+  }, [codesMap, scoreData, abandonadosCodes]);
 
   // eslint-disable-next-line
   const table = useReactTable({

@@ -16,19 +16,25 @@ interface CorRacaItem {
 export default function COR_RACA() {
   const { textColor } = useChartTheme();
   const { overviewData } = useYearData();
-  const corRacaData = overviewData.corRacaData;
+  const corRacaData = overviewData?.corRacaData;
 
-  const series: { data: CorRacaItem[] }[] = [
-    {
-      data: corRacaData.datasets[0].tree
-        .map((item) => ({
-          x: item.label,
-          y: item.value,
-          abs: item.abs,
-        }))
-        .sort((a, b) => b.y - a.y),
-    },
-  ];
+  const series: { data: CorRacaItem[] }[] = useMemo(() => {
+    if (!corRacaData?.datasets?.[0]?.tree) {
+      return [{ data: [] }];
+    }
+
+    return [
+      {
+        data: corRacaData.datasets[0].tree
+          .map((item) => ({
+            x: item.label,
+            y: item.value,
+            abs: item.abs,
+          }))
+          .sort((a, b) => b.y - a.y),
+      },
+    ];
+  }, [corRacaData]);
 
   const options: ApexCharts.ApexOptions = useMemo(
     () => ({
@@ -76,7 +82,8 @@ export default function COR_RACA() {
         offsetY: -4,
         formatter: function (val, { seriesIndex, dataPointIndex, w }) {
           const series = w.config.series as { data: CorRacaItem[] }[];
-          const item = series[seriesIndex].data[dataPointIndex];
+          const item = series?.[seriesIndex]?.data?.[dataPointIndex];
+          if (!item) return [String(val), ""];
           return [String(val), `${item.y}%`];
         },
       },
@@ -85,7 +92,8 @@ export default function COR_RACA() {
         y: {
           formatter: function (val, { seriesIndex, dataPointIndex, w }) {
             const series = w.config.series as { data: CorRacaItem[] }[];
-            const item = series[seriesIndex].data[dataPointIndex];
+            const item = series?.[seriesIndex]?.data?.[dataPointIndex];
+            if (!item) return "";
             const absoluto = item.abs.toLocaleString("pt-BR");
             const css = {
               label: ["font-weight: 300", "opacity: 0.7"].join("; "),
@@ -124,6 +132,22 @@ export default function COR_RACA() {
     }),
     [textColor],
   );
+
+  if (!corRacaData?.datasets?.[0]?.tree) {
+    return (
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100%",
+        }}
+      >
+        <span style={{ color: textColor }}>Carregando...</span>
+      </div>
+    );
+  }
 
   return (
     <div style={{ flex: 1 }}>

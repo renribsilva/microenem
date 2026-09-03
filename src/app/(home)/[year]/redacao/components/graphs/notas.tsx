@@ -29,8 +29,10 @@ export default function NotasRedacaoChart() {
   const { selectedRowId } = useHomeData();
   const [selectedNota, setSelectedNota] = useState<NotaKey>("NU_NOTA_REDACAO");
 
-  const competenciaRowData = redacaoData.competenciaRowData;
-  const currentData = (competenciaRowData as CompetenciaRowType)[selectedNota];
+  const competenciaRowData = redacaoData?.competenciaRowData;
+  const currentData = competenciaRowData
+    ? (competenciaRowData as CompetenciaRowType)[selectedNota]
+    : undefined;
   const nTotal = currentData?.estatisticas?.n || 0;
 
   const categories = useMemo(
@@ -43,7 +45,7 @@ export default function NotasRedacaoChart() {
   const accentColor = "#22d3ee";
 
   const series = useMemo(() => {
-    if (!currentData) return [];
+    if (!currentData || !currentData.frequencia) return [];
     return [
       {
         name: "Participantes",
@@ -52,7 +54,7 @@ export default function NotasRedacaoChart() {
             const percentage =
               nTotal > 0 ? Number(((absVal / nTotal) * 100).toFixed(2)) : 0;
             return {
-              x: categories[i].toString(),
+              x: categories[i]?.toString() || "",
               y: absVal,
               rel: percentage,
             };
@@ -64,11 +66,13 @@ export default function NotasRedacaoChart() {
 
   const options: ApexCharts.ApexOptions = useMemo(() => {
     const metricId = selectedRowId || "media";
-    const rawValue = currentData?.estatisticas[metricId];
+    const rawValue = currentData?.estatisticas?.[metricId];
     const numericValue = Number(rawValue);
-    const numericValueFormat = numericValue.toLocaleString("pt-BR", {
-      maximumFractionDigits: 2,
-    });
+    const numericValueFormat = !isNaN(numericValue)
+      ? numericValue.toLocaleString("pt-BR", {
+          maximumFractionDigits: 2,
+        })
+      : "";
     const isSpecialMetric = ["skew", "kurtosis"].includes(metricId);
     const shouldShowAnnotation =
       rawValue !== undefined &&
@@ -175,7 +179,7 @@ export default function NotasRedacaoChart() {
           formatter: function (val, { seriesIndex, dataPointIndex, w }) {
             const series = w.config.series as { data: NotaItem[] }[];
             const item = series[seriesIndex].data[dataPointIndex];
-            const relative = item.rel.toLocaleString("pt-BR");
+            const relative = item?.rel ? item.rel.toLocaleString("pt-BR") : "0";
             const css = {
               label: ["font-weight: 300", "opacity: 0.7"].join("; "),
               value: ["font-weight: bold", "margin-left: 4px"].join("; "),
@@ -212,6 +216,14 @@ export default function NotasRedacaoChart() {
       },
     };
   }, [axisColor, gridColor, selectedRowId, currentData, categories]);
+
+  if (!competenciaRowData) {
+    return (
+      <div style={{ color: textColor, padding: "20px", textAlign: "center" }}>
+        Carregando dados da redação...
+      </div>
+    );
+  }
 
   const selectOptions: { key: NotaKey; label: string }[] = [
     { key: "NU_NOTA_REDACAO", label: "Nota Total" },

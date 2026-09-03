@@ -12,10 +12,14 @@ const doughnutColors = ["rgba(60, 245, 188, 0.7)", "rgba(245, 99, 59, 0.7)"];
 export default function SEXO() {
   const { textColor } = useChartTheme();
   const { overviewData } = useYearData();
-  const sexoData = overviewData.sexoData;
-  const series = useMemo(() => sexoData.datasets[0].data, [sexoData]);
-  const absValues = useMemo(() => sexoData.datasets[0].abs_values, [sexoData]);
-  const labels = useMemo(() => sexoData.labels, [sexoData]);
+  const sexoData = overviewData?.sexoData;
+
+  const series = useMemo(() => sexoData?.datasets?.[0]?.data ?? [], [sexoData]);
+  const absValues = useMemo(
+    () => sexoData?.datasets?.[0]?.abs_values ?? [],
+    [sexoData],
+  );
+  const labels = useMemo(() => sexoData?.labels ?? [], [sexoData]);
 
   const options: ApexCharts.ApexOptions = useMemo(
     () => ({
@@ -65,8 +69,9 @@ export default function SEXO() {
         theme: "dark",
         y: {
           formatter: function (val, { seriesIndex }) {
-            const absolute = absValues[seriesIndex].toLocaleString("pt-BR");
-            const label = labels[seriesIndex];
+            const absolute =
+              absValues[seriesIndex]?.toLocaleString("pt-BR") ?? "";
+            const label = labels[seriesIndex] ?? "";
             const css = {
               label: ["font-weight: 300", "opacity: 0.7"].join("; "),
               value: ["font-weight: bold", "margin-left: 4px"].join("; "),
@@ -108,6 +113,22 @@ export default function SEXO() {
     }),
     [textColor, absValues, labels],
   );
+
+  if (!sexoData?.datasets?.[0]?.data || !sexoData?.labels) {
+    return (
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100%",
+        }}
+      >
+        <span style={{ color: textColor }}>Carregando...</span>
+      </div>
+    );
+  }
 
   return (
     <div style={{ flex: 1 }}>

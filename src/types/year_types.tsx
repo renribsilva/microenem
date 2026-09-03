@@ -352,30 +352,28 @@ export type FormatValueType = (
   type: "nota" | "acerto",
 ) => string;
 
-export type GetCodeByLabelType = (num: number, label: string) => number | null;
-
 export type GetParamByLabelType = (
   num: number,
   label: string,
   type: string,
 ) => number | null;
 
-export type GetItemDetails = (coItem: number) => ItemDetails | null;
+export type GetItemDetails = (coItem: number) => Promise<ItemDetails | null>;
 
 export type HandleToggleType = (num: number, isAbandoned: boolean) => void;
 
-interface AreaItemMap {
+export type AreaItemMap = {
   pos: number;
   status: "abandoned" | "correct" | "wrong";
   co_item: number;
-}
+};
 
 // 2. Tipo da Função (A assinatura completa do contrato)
 export type GetAreaMapType = (
   codProva: number,
   tpLingua: number,
   score: string,
-) => AreaItemMap[];
+) => Promise<AreaItemMap[]>;
 
 export type ViolinDataType = {
   0: number[];
@@ -416,6 +414,11 @@ export type CompetenciasJson = {
   [areaSigla: string]: CompAreaData;
 };
 
+export type CodesMapType = Record<
+  number,
+  { code: number; a: number | null; b: number | null; c: number | null }
+>;
+
 export type YearContextType = {
   lastItemActivate: number;
   selectedItems: SelectedItemsType | object;
@@ -438,7 +441,6 @@ export type YearContextType = {
   competencias: CompAreaData;
 
   // Carga dinamenica no server (bundle inicial)
-  itensData: ItensDataType | null;
   overviewData: OverviewType;
   respostaAoItemData: RespostaAoItemType;
   redacaoData: RedacaoType;
@@ -449,7 +451,7 @@ export type YearContextType = {
   itemGraphData: ItemGraphType | null;
   acertosData: AcertosDataType | null;
   meanData: MeanDataType;
-  codesMap: Record<number, number>;
+  codesMap: CodesMapType;
 
   // Carga solicitada pelo cliente (API externa: Render)
   EAPData: EAPDataType | null;
@@ -464,8 +466,6 @@ export type YearContextType = {
   violinData: ViolinDataType;
 
   // Funções
-  getCodeByLabel: GetCodeByLabelType;
-  getParamByLabel: GetParamByLabelType;
   getItemDetails: GetItemDetails;
   handleToggle: HandleToggleType;
   getAreaMap: GetAreaMapType;

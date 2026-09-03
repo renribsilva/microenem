@@ -21,25 +21,33 @@ interface TreemapSeries {
 export default function FX_ETARIA() {
   const { textColor, gridColor } = useChartTheme();
   const { overviewData } = useYearData();
-  const fxEtariaData = overviewData.fxEtariaData;
+  const fxEtariaData = overviewData?.fxEtariaData;
   const barColor = "#f0b335ff";
 
-  const series: TreemapSeries[] = useMemo(
-    () =>
-      fxEtariaData.datasets.map((dataset) => ({
-        name: "Porcentagem",
-        data: dataset.data.map((val, i) => ({
-          x: fxEtariaData.labels[i],
-          y: val,
-          abs: dataset.abs_values[i],
-        })),
-      })),
-    [fxEtariaData],
-  );
+  const series: TreemapSeries[] = useMemo(() => {
+    if (!fxEtariaData?.datasets || !fxEtariaData?.labels) {
+      return [];
+    }
 
-  const allValues = fxEtariaData.datasets.flatMap((d) => d.data);
-  const maxValue = Math.max(...allValues);
-  const chartMax = Math.ceil((maxValue + 20) / 10) * 10;
+    return fxEtariaData.datasets.map((dataset) => ({
+      name: "Porcentagem",
+      data: dataset.data.map((val, i) => ({
+        x: fxEtariaData.labels[i],
+        y: val,
+        abs: dataset.abs_values?.[i] || 0,
+      })),
+    }));
+  }, [fxEtariaData]);
+
+  const chartMax = useMemo(() => {
+    if (!fxEtariaData?.datasets || fxEtariaData.datasets.length === 0) {
+      return 100;
+    }
+    const allValues = fxEtariaData.datasets.flatMap((d) => d.data || []);
+    if (allValues.length === 0) return 100;
+    const maxValue = Math.max(...allValues);
+    return Math.ceil((maxValue + 20) / 10) * 10;
+  }, [fxEtariaData]);
 
   const options: ApexCharts.ApexOptions = useMemo(
     () => ({
@@ -112,7 +120,8 @@ export default function FX_ETARIA() {
         y: {
           formatter: function (val, { seriesIndex, dataPointIndex, w }) {
             const series = w.config.series as { data: CorRacaItem[] }[];
-            const item = series[seriesIndex].data[dataPointIndex];
+            const item = series?.[seriesIndex]?.data?.[dataPointIndex];
+            if (!item) return "";
             const absoluto = item.abs.toLocaleString("pt-BR");
             const css = {
               label: ["font-weight: 300", "opacity: 0.7"].join("; "),
@@ -160,6 +169,22 @@ export default function FX_ETARIA() {
     }),
     [textColor, gridColor, chartMax],
   );
+
+  if (!fxEtariaData?.datasets || !fxEtariaData?.labels) {
+    return (
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100%",
+        }}
+      >
+        <span style={{ color: textColor }}>Carregando...</span>
+      </div>
+    );
+  }
 
   return (
     <div style={{ flex: 1 }}>

@@ -30,9 +30,10 @@ export default function NotasRedacaoTable() {
   const { isMobile } = useSidebar();
   const { deferredArea, selectedRowId, setSelectedRowId } = useHomeData();
 
-  const competenciaRowData: CompetenciaRowType = redacaoData.competenciaRowData;
+  const competenciaRowData: CompetenciaRowType | undefined =
+    redacaoData?.competenciaRowData;
 
-  const formatValue = (id: string, value: number) => {
+  const formatValue = (id: string, value: number | undefined) => {
     if (value === undefined || value === null) return "-";
     if (id === "skew" || id === "kurtosis") {
       return value.toLocaleString("pt-BR", {
@@ -47,8 +48,12 @@ export default function NotasRedacaoTable() {
   };
 
   const tableData = useMemo<TableDataItem[]>(() => {
+    if (!competenciaRowData) {
+      return [];
+    }
+
     const metrics = [
-      { id: "media", label: "Média" }, // O ID aqui é 'media'
+      { id: "media", label: "Média" },
       { id: "mediana", label: "Mediana" },
       { id: "moda", label: "Moda" },
       { id: "q1", label: "Q1" },
@@ -64,27 +69,27 @@ export default function NotasRedacaoTable() {
       metric: m.label,
       comp1: formatValue(
         m.id,
-        competenciaRowData.NU_NOTA_COMP1.estatisticas[m.id],
+        competenciaRowData.NU_NOTA_COMP1?.estatisticas?.[m.id],
       ),
       comp2: formatValue(
         m.id,
-        competenciaRowData.NU_NOTA_COMP2.estatisticas[m.id],
+        competenciaRowData.NU_NOTA_COMP2?.estatisticas?.[m.id],
       ),
       comp3: formatValue(
         m.id,
-        competenciaRowData.NU_NOTA_COMP3.estatisticas[m.id],
+        competenciaRowData.NU_NOTA_COMP3?.estatisticas?.[m.id],
       ),
       comp4: formatValue(
         m.id,
-        competenciaRowData.NU_NOTA_COMP4.estatisticas[m.id],
+        competenciaRowData.NU_NOTA_COMP4?.estatisticas?.[m.id],
       ),
       comp5: formatValue(
         m.id,
-        competenciaRowData.NU_NOTA_COMP5.estatisticas[m.id],
+        competenciaRowData.NU_NOTA_COMP5?.estatisticas?.[m.id],
       ),
       total: formatValue(
         m.id,
-        competenciaRowData.NU_NOTA_REDACAO.estatisticas[m.id],
+        competenciaRowData.NU_NOTA_REDACAO?.estatisticas?.[m.id],
       ),
     }));
   }, [isMobile, competenciaRowData]);
@@ -138,32 +143,47 @@ export default function NotasRedacaoTable() {
             ))}
           </thead>
           <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr
-                key={`${deferredArea}-${row.id}`}
-                className={clsx(
-                  styles.describe_tr,
-                  selectedRowId === row.original.id && styles.row_selected,
-                )}
-                onClick={() => {
-                  setSelectedRowId(row.original.id);
-                  const topo = document.getElementById("topo-pagina");
-                  if (topo) {
-                    topo.scrollIntoView({
-                      behavior: "smooth",
-                      block: "start",
-                    });
-                  }
-                }}
-                style={{ cursor: "pointer" }}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className={styles.describe_td}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
+            {!competenciaRowData ? (
+              <tr>
+                <td
+                  colSpan={columns.length}
+                  className={styles.describe_td}
+                  style={{ textAlign: "center" }}
+                >
+                  Carregando...
+                </td>
               </tr>
-            ))}
+            ) : (
+              table.getRowModel().rows.map((row) => (
+                <tr
+                  key={`${deferredArea}-${row.id}`}
+                  className={clsx(
+                    styles.describe_tr,
+                    selectedRowId === row.original.id && styles.row_selected,
+                  )}
+                  onClick={() => {
+                    setSelectedRowId(row.original.id);
+                    const topo = document.getElementById("topo-pagina");
+                    if (topo) {
+                      topo.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start",
+                      });
+                    }
+                  }}
+                  style={{ cursor: "pointer" }}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <td key={cell.id} className={styles.describe_td}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

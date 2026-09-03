@@ -14,7 +14,10 @@ import { InscritosItem } from "../../../../../../types/year_types";
 
 export default function Treineiros() {
   const { overviewData } = useYearData();
-  const data = overviewData.inscritosData;
+  const data = useMemo(
+    () => overviewData?.inscritosData ?? [],
+    [overviewData?.inscritosData],
+  );
 
   const columns = useMemo<ColumnDef<InscritosItem>[]>(
     () => [
@@ -48,7 +51,7 @@ export default function Treineiros() {
     initialState: {
       expanded: true,
     },
-    getSubRows: (row) => row.subRows,
+    getSubRows: (row) => row?.subRows,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
   });
@@ -71,15 +74,27 @@ export default function Treineiros() {
           ))}
         </thead>
         <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id} className={styles.table_tbody_tr}>
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className={styles.table_tbody_td}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
+          {data.length === 0 ? (
+            <tr>
+              <td
+                colSpan={columns.length}
+                className={styles.table_tbody_td}
+                style={{ textAlign: "center" }}
+              >
+                Carregando...
+              </td>
             </tr>
-          ))}
+          ) : (
+            table.getRowModel().rows.map((row) => (
+              <tr key={row.id} className={styles.table_tbody_tr}>
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id} className={styles.table_tbody_td}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>

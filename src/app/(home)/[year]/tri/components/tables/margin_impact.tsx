@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useHomeData } from "../../../../../../context/home_context";
 import { useYearData } from "../../../../../../context/year_context";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import styles from "./tables.module.css";
@@ -36,13 +35,11 @@ type ImpactoRow = {
 };
 
 export default function MarginImpactTable() {
-  const { deferredArea, selectedLabel } = useHomeData();
   const { isMobile } = useSidebar();
   const {
     EAPData,
     selectedItems,
-    getParamByLabel,
-    getCodeByLabel,
+    codesMap,
     needUpdateEAP,
     isInitialRender,
     abandonadosCodes,
@@ -62,28 +59,21 @@ export default function MarginImpactTable() {
   // (deferredArea === "MT" && currentYear === "2019");
 
   const paramsPorCodigo = useMemo(() => {
-    const ranges = {
-      LC: { start: 1, end: 45 },
-      CH: { start: 46, end: 90 },
-      CN: { start: 91, end: 135 },
-      MT: { start: 136, end: 180 },
-    };
-
-    const { start, end } = ranges[deferredArea] || { start: 1, end: 45 };
-    const map: Record<string, { a: number; b: number; c: number }> = {};
-
-    for (let i = start; i <= end; i++) {
-      const code = getCodeByLabel(i, selectedLabel);
-      if (code) {
-        map[code] = {
-          a: getParamByLabel(i, selectedLabel, "a"),
-          b: getParamByLabel(i, selectedLabel, "b"),
-          c: getParamByLabel(i, selectedLabel, "c"),
+    const map: Record<
+      string,
+      { a: number | null; b: number | null; c: number | null }
+    > = {};
+    for (const itemInfo of Object.values(codesMap)) {
+      if (itemInfo && itemInfo.code) {
+        map[itemInfo.code] = {
+          a: itemInfo.a,
+          b: itemInfo.b,
+          c: itemInfo.c,
         };
       }
     }
     return map;
-  }, [deferredArea, selectedLabel, getCodeByLabel, getParamByLabel]);
+  }, [codesMap]);
 
   const impactosArray = useMemo(() => {
     if (!EAPData?.impacto_individual || isInitialRender) return [];

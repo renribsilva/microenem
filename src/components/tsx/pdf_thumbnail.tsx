@@ -1,10 +1,11 @@
 "use client";
 
-import { ComponentProps, useMemo, useState } from "react";
+import { ComponentProps, useEffect, useMemo, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { CropArea } from "../../types/questoes_types";
 import { useYearData } from "../../context/year_context";
 import LoadingFallback from "./loading_fallback";
+import { ItemDetails } from "../../types/year_types";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
@@ -36,6 +37,8 @@ export default function PdfThumbnail({
     [],
   );
   const [larguraBase, setLarguraBase] = useState<number>(300);
+  const [itemDetails, setItemDetails] = useState<ItemDetails | null>(null);
+
   const {
     getItemDetails,
     habilidades,
@@ -43,7 +46,17 @@ export default function PdfThumbnail({
     showGabarito,
     setShowGabarito,
   } = useYearData();
-  const itemDetails = getItemDetails(code);
+
+  useEffect(() => {
+    let isMounted = true;
+    getItemDetails(code).then((details) => {
+      if (isMounted) setItemDetails(details);
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, [code, getItemDetails]);
+
   const habInfo = itemDetails ? habilidades[itemDetails.CO_HABILIDADE] : null;
   const compInfo = habInfo ? competencias[habInfo.comp] : null;
 

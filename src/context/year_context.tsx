@@ -29,7 +29,6 @@ import {
   InscritosType,
   ItemGraphCacheType,
   ItemGraphType,
-  ItensDataType,
   OverviewType,
   ProbCacheType,
   RedacaoType,
@@ -50,8 +49,6 @@ import {
   ProbInfoDataType,
   MeanDataType,
   FormatValueType,
-  GetCodeByLabelType,
-  GetParamByLabelType,
   HandleToggleType,
   GetAreaMapType,
   ViolinDataType,
@@ -60,6 +57,8 @@ import {
   HabAreaData,
   CompetenciasJson,
   CompAreaData,
+  CodesMapType,
+  ItemDetails,
 } from "../types/year_types";
 
 const YearContext = createContext<YearContextType>(null);
@@ -183,7 +182,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
   // ------------ CARGA DINÂMICA DE JSON POR ANO (BUNDLE INICIAL) --------------
   // ---------------------------------------------------------------------------
 
-  const [itensData, setItensData] = useState<ItensDataType | null>(null);
   const [inscritosData, setInscritosData] = useState<InscritosType | null>(
     null,
   );
@@ -207,9 +205,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
     async function loadData() {
       setLoading(true);
       try {
-        const itensPromise = fetch(`/api/itens?year=${currentYear}`).then((r) =>
-          r.json(),
-        );
         let visaoPromise = null;
         let respostaPromise = null;
         let redacaoPromise = null;
@@ -227,11 +222,12 @@ export function YearProvider({ children }: { children: ReactNode }) {
             r.json(),
           );
         }
-        const [resItens, resVisao, resResposta, resRedacao] = await Promise.all(
-          [itensPromise, visaoPromise, respostaPromise, redacaoPromise],
-        );
+        const [resVisao, resResposta, resRedacao] = await Promise.all([
+          visaoPromise,
+          respostaPromise,
+          redacaoPromise,
+        ]);
         // 4. Atualiza os estados correspondentes
-        if (resItens) setItensData(resItens);
         if (resVisao) {
           setInscritosData(resVisao.inscritos);
           setabstencaoDia1(resVisao.abstencao1);
@@ -588,38 +584,16 @@ export function YearProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  // Função para traduzir Posição (ex: questão 95) em Código (ex: 11234)
-  const getCodeByLabel = useCallback<GetCodeByLabelType>(
-    (num, label) => {
-      if (!label || !itensData || !itensData.CO_POSICAO) return null;
-      const p = itensData;
-      const idx = Object.keys(p.CO_POSICAO).find((i) => {
-        const matchProva = Number(p.CO_PROVA[i]) === Number(codigo);
-        const matchPos = Number(p.CO_POSICAO[i]) === num;
-        if (!matchProva || !matchPos) return false;
-        if (deferredArea === "LC" && num <= 5 && lingua !== undefined) {
-          return Number(p.TP_LINGUA[i]) === Number(lingua);
-        }
-        if (versao === "D" && p.TP_VERSAO_DIGITAL) {
-          if (Number(versao) !== p.TP_VERSAO_DIGITAL[i]) return false;
-        }
-        return true;
-      });
-      return idx ? Number(p.CO_ITEM[idx]) : null;
-    },
-    [deferredArea, itensData, codigo, versao, lingua],
-  );
-
   // 2. Fetch do codesMap no Cliente
-  const [codesMap, setCodesMap] = useState<Record<number, number>>({});
+  const [codesMap, setCodesMap] = useState<CodesMapType>({});
 
   useEffect(() => {
     async function loadCodes() {
       if (!codigo || !currentYear) return;
       const isTriPage = pathName?.endsWith("/tri");
       const isRespostaPage = pathName?.endsWith("/resposta-ao-item");
-      if (!(isTriPage || isRespostaPage)) return;
-
+      const isProbInfoPage = pathName?.endsWith("/probabilidade-e-info");
+      if (!(isTriPage || isRespostaPage || isProbInfoPage)) return;
       setLoading(true);
       try {
         const params = new URLSearchParams({
@@ -631,7 +605,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
           ...(versao && { versao: String(versao) }),
           ...(lingua !== undefined && { lingua: String(lingua) }),
         });
-        const res = await fetch(`/api/itens?${params.toString()}`);
+        const res = await fetch(`/api/codes?${params.toString()}`);
         const data = await res.json();
         setCodesMap(data);
       } catch (err) {
@@ -643,66 +617,28 @@ export function YearProvider({ children }: { children: ReactNode }) {
     loadCodes();
   }, [currentYear, codigo, deferredArea, versao, lingua, pathName]);
 
-  // Função para traduzir Posição (ex: questão 95) em Parâmetro (ex: 1.234)
-  const getParamByLabel = useCallback<GetParamByLabelType>(
-    (num, label, type) => {
-      if (!label || !itensData || !itensData.CO_POSICAO) return null;
-      const p = itensData;
-      const idx = Object.keys(p.CO_POSICAO).find((i) => {
-        const matchProva = Number(p.CO_PROVA[i]) === Number(codigo);
-        const matchPos = Number(p.CO_POSICAO[i]) === num;
-        if (!matchProva || !matchPos) return false;
-        if (deferredArea === "LC" && num <= 5 && lingua !== undefined) {
-          return Number(p.TP_LINGUA[i]) === Number(lingua);
-        }
-        if (versao === "D" && p.TP_VERSAO_DIGITAL) {
-          if (Number(versao) !== p.TP_VERSAO_DIGITAL[i]) return false;
-        }
-        return true;
-      });
-      const map = {
-        a: p.NU_PARAM_A?.[idx],
-        b: p.NU_PARAM_B?.[idx],
-        c: p.NU_PARAM_C?.[idx],
-      };
-
-      const val = map[type];
-      return idx ? Number(val) : null;
-    },
-    [codigo, lingua, versao, deferredArea, itensData],
-  );
-
-  // Função para retornar metadata dos itens, a partir do codigo
-  // da prova e do item
   const getItemDetails = useCallback<GetItemDetails>(
-    (coItem: number) => {
-      if (!itensData || !itensData.CO_PROVA) return null;
-      const p = itensData;
-      // Encontra o índice onde ambos, prova e item, correspondem
-      const idx = p.CO_PROVA.findIndex(
-        (pVal, i) =>
-          Number(pVal) === Number(codigo) &&
-          Number(p.CO_ITEM[i]) === Number(coItem),
-      );
-
-      if (idx === -1) return null;
-
-      return {
-        CO_POSICAO: p.CO_POSICAO[idx],
-        SG_AREA: p.SG_AREA[idx],
-        TX_GABARITO: p.TX_GABARITO[idx],
-        CO_HABILIDADE: p.CO_HABILIDADE[idx],
-        IN_ITEM_ABAN: p.IN_ITEM_ABAN[idx],
-        TX_MOTIVO_ABAN: p.TX_MOTIVO_ABAN[idx],
-        TX_COR: p.TX_COR[idx],
-      };
+    async (coItem: number) => {
+      if (!codigo) return null;
+      try {
+        const response = await fetch(
+          `/api/itens_details?year=${currentYear}` +
+            `&codigo=${codigo}&coItem=${coItem}`,
+        );
+        if (!response.ok) return null;
+        const data: ItemDetails | null = await response.json();
+        return data;
+      } catch (error) {
+        console.error("Erro ao buscar detalhes do item:", error);
+        return null;
+      }
     },
-    [itensData, codigo],
+    [codigo, currentYear],
   );
 
   const handleToggle = useCallback<HandleToggleType>(
     (num, isAbandoned) => {
-      const codeItem = getCodeByLabel(num, selectedLabel);
+      const codeItem = codesMap[num]?.code;
       if (!codeItem) {
         console.warn(
           [
@@ -736,74 +672,48 @@ export function YearProvider({ children }: { children: ReactNode }) {
         return nextMapping;
       });
     },
-    [selectedLabel, getCodeByLabel],
+    [selectedLabel, codesMap],
   );
 
-  const getAreaMap: GetAreaMapType = (codProva, tpLingua, score) => {
-    if (!itensData || !score) return [];
-    const bits = score.split("");
-    const temVersaoDigital = "TP_VERSAO_DIGITAL" in itensData;
-    // 1. Coletar todos os índices válidos para esta prova e língua
-    const indicesFiltrados = Object.keys(itensData.CO_PROVA)
-      .map(Number)
-      .filter((i) => {
-        const matchProva = itensData.CO_PROVA[i] === codProva;
-        const matchLingua =
-          itensData.TP_LINGUA[i] === null ||
-          itensData.TP_LINGUA[i] === tpLingua;
-        let matchDigital = true;
-        if (temVersaoDigital && itensData.TP_VERSAO_DIGITAL[i] !== null) {
-          matchDigital = itensData.TP_VERSAO_DIGITAL[i] === tpLingua;
-        }
-        return matchProva && matchLingua && matchDigital;
-      });
-
-    // Ordenação por posição (essencial para parear com a string do score)
-    indicesFiltrados.sort(
-      (a, b) => itensData.CO_POSICAO[a] - itensData.CO_POSICAO[b],
-    );
-
-    // Se não encontrar exatamente 45 itens, a estrutura do caderno está errada
-    // e o score não pode ser mapeado com segurança.
-    if (indicesFiltrados.length !== 45) {
-      console.error(
-        [
-          `Erro de integridade: Esperados 45 itens, `,
-          `encontrados ${indicesFiltrados.length} para a prova ${codProva}.`,
-        ].join(""),
+  const getAreaMap: GetAreaMapType = async (codProva, tpLingua, score) => {
+    if (!score) return [];
+    try {
+      const response = await fetch(
+        `/api/area_map?year=${currentYear}` +
+          `&codProva=${codProva}&tpLingua=${tpLingua ?? ""}&score=${score}`,
       );
+      if (!response.ok) return [];
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        return [];
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Erro ao buscar area map:", error);
       return [];
     }
-
-    return indicesFiltrados.map((i, pointer) => {
-      return {
-        pos: itensData.CO_POSICAO[i],
-        status:
-          itensData.IN_ITEM_ABAN[i] === 1
-            ? "abandoned"
-            : bits[pointer] === "1"
-              ? "correct"
-              : "wrong",
-        co_item: itensData.CO_ITEM[i],
-      };
-    });
   };
 
   //---------------------------------ITEM CODES---------------------------------
 
-  const abandonadosCodes = useMemo(() => {
-    const codes = new Set<number>();
-    const data = itensData;
+  const [abandonadosCodes, setAbandonadosCodes] = useState<Set<number>>(
+    new Set(),
+  );
 
-    if (!data || !data.CO_ITEM) return codes;
-
-    data.CO_ITEM.forEach((code: number, index: number) => {
-      if (data.IN_ITEM_ABAN && data.IN_ITEM_ABAN[index] === 1) {
-        codes.add(code);
+  useEffect(() => {
+    if (!currentYear) return;
+    async function fetchAbandonados() {
+      try {
+        const response = await fetch(`/api/aband?year=${currentYear}`);
+        const codesArray: number[] = await response.json();
+        setAbandonadosCodes(new Set(codesArray));
+      } catch (error) {
+        console.error("Erro ao carregar itens abandonados:", error);
       }
-    });
-    return codes;
-  }, [itensData]);
+    }
+    fetchAbandonados();
+  }, [currentYear]);
 
   const activeCodes = useMemo(() => {
     if (Object.keys(selectedItems).length === 0) return [];
@@ -811,7 +721,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
     const { start, end } = ranges[deferredArea] || { start: 1, end: 45 };
     const validCodesForCurrentLabel = new Set();
     for (let num = start; num <= end; num++) {
-      const currentCode = getCodeByLabel(num, selectedLabel);
+      const currentCode = codesMap[num]?.code;
       if (currentCode) {
         validCodesForCurrentLabel.add(currentCode);
       }
@@ -820,7 +730,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
       const existsInCurrentLabel = validCodesForCurrentLabel.has(code);
       return existsInCurrentLabel;
     });
-  }, [selectedItems, getCodeByLabel, deferredArea, selectedLabel]);
+  }, [selectedItems, codesMap, deferredArea]);
 
   //-----------------------------DIFICULDADE DO EXAME---------------------------
 
@@ -861,22 +771,21 @@ export function YearProvider({ children }: { children: ReactNode }) {
   //---------------------------PROBABILIDADE E INFO-----------------------------
 
   const prevLabelRef = useRef<string>(selectedLabel);
+  const prevCodesMapRef = useRef<typeof codesMap>(codesMap);
 
   useLayoutEffect(() => {
     const previousLabel = prevLabelRef.current;
     if (previousLabel === selectedLabel) return;
-
     const { start, end } = ranges[deferredArea] || { start: 1, end: 45 };
-
+    const oldCodesMap = prevCodesMapRef.current;
     setSelectedItems((prev) => {
       const currentlySelectedCodes = Object.keys(prev).map(Number);
       if (currentlySelectedCodes.length === 0) return prev;
       const nextMapping: typeof prev = {};
       const translationMap = new Map();
       for (let num = start; num <= end; num++) {
-        const oldCode = getCodeByLabel(num, previousLabel);
-        const newCode = getCodeByLabel(num, selectedLabel);
-
+        const oldCode = oldCodesMap[num]?.code;
+        const newCode = codesMap[num]?.code;
         if (oldCode && newCode) {
           translationMap.set(oldCode, { newCode, posicao: num });
         }
@@ -895,7 +804,8 @@ export function YearProvider({ children }: { children: ReactNode }) {
       return nextMapping;
     });
     prevLabelRef.current = selectedLabel;
-  }, [selectedLabel, getCodeByLabel, deferredArea]);
+    prevCodesMapRef.current = codesMap;
+  }, [selectedLabel, codesMap, deferredArea]);
 
   //--------------------------RESPOSTA AO ITEM---------------------------
 
@@ -988,7 +898,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
         competencias,
 
         // Carga dinâmica no server (bundle inicial)
-        itensData,
         overviewData,
         respostaAoItemData,
         redacaoData,
@@ -1014,8 +923,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
         violinData,
 
         // Funções
-        getCodeByLabel,
-        getParamByLabel,
         getItemDetails,
         handleToggle,
         getAreaMap,

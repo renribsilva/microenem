@@ -31,18 +31,24 @@ const statusMap: Record<string, string> = {
 
 export default function StatusRedacaoTable() {
   const { redacaoData } = useYearData();
-  const statusData = redacaoData.statusData;
+  const statusData = redacaoData?.statusData;
+
   const tableData = useMemo<StatusRow[]>(() => {
-    const nTotal = statusData?.datasets[0]?.n_total || 0;
+    if (!statusData || !statusData.datasets || !statusData.labels) {
+      return [];
+    }
+
+    const nTotal = statusData.datasets[0]?.n_total || 0;
     const firstRow: StatusRow = {
       grupo: "Total de Registros (n)",
       total: nTotal,
       freq: "100.00",
       isTotal: true,
     };
+
     const rows: StatusRow[] = statusData.labels.map((label, index) => {
-      const total = statusData.datasets[0].data[index];
-      const freq = ((total / nTotal) * 100).toFixed(2);
+      const total = statusData.datasets[0]?.data?.[index] || 0;
+      const freq = nTotal > 0 ? ((total / nTotal) * 100).toFixed(2) : "0.00";
       return {
         grupo: statusMap[label] || `Status ${label}`,
         total: total,
@@ -50,8 +56,9 @@ export default function StatusRedacaoTable() {
         isTotal: false,
       };
     });
+
     return [firstRow, ...rows];
-  }, [statusData.datasets, statusData.labels]);
+  }, [statusData]);
 
   const columns = useMemo<ColumnDef<StatusRow>[]>(
     () => [
@@ -130,15 +137,26 @@ export default function StatusRedacaoTable() {
           ))}
         </thead>
         <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
+          {tableData.length === 0 ? (
+            <tr>
+              <td
+                colSpan={columns.length}
+                style={{ textAlign: "center", padding: "1rem" }}
+              >
+                Carregando...
+              </td>
             </tr>
-          ))}
+          ) : (
+            table.getRowModel().rows.map((row) => (
+              <tr key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
       <div className={styles.table_footer}>

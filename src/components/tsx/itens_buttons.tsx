@@ -21,20 +21,13 @@ interface BackdropAlertType {
   limitRight: number;
 }
 
-const ranges: Record<string, { start: number; end: number }> = {
-  LC: { start: 1, end: 45 },
-  CH: { start: 46, end: 90 },
-  CN: { start: 91, end: 135 },
-  MT: { start: 136, end: 180 },
-};
-
 function ItensButtons() {
-  const { pathName, chartProps, deferredArea, selectedLabel } = useHomeData();
+  const { pathName, chartProps } = useHomeData();
   const {
     abandonadosCodes,
     selectedItems,
+    codesMap,
     handleToggle,
-    getCodeByLabel,
     setNeedUpdateEAP,
   } = useYearData();
   const { panelColor, textColor, gridColor, isDark } = useChartTheme();
@@ -43,15 +36,13 @@ function ItensButtons() {
     null,
   );
   const containerRef = useRef<HTMLDivElement>(null);
-  const { start, end } = ranges[deferredArea] || { start: 1, end: 45 };
 
-  const questions = Array.from(
-    { length: end - start + 1 },
-    (_, i) => start + i,
-  );
+  const questions = Object.keys(codesMap)
+    .map(Number)
+    .sort((a, b) => a - b);
 
   const onButtonClick: onButtonClickType = (num, e) => {
-    const codeItem = getCodeByLabel(num, selectedLabel);
+    const codeItem = codesMap[num]?.code;
     if (!codeItem) return;
 
     const isAbandoned = abandonadosCodes.has(codeItem);
@@ -60,7 +51,6 @@ function ItensButtons() {
     // 1. Pinta a cor no DOM INSTANTANEAMENTE antes do React re-renderizar
     const btn = e.currentTarget;
     if (isAbandoned) {
-      // Para itens abandonados
       const nextBg = !currentStatus
         ? isDark
           ? "#4a4a4a"
@@ -70,7 +60,6 @@ function ItensButtons() {
       btn.style.backgroundColor = nextBg;
       btn.style.color = nextText;
     } else {
-      // Ciclo de cores: null -> acerto (verde) -> erro (vermelho) -> null
       if (!currentStatus) {
         btn.style.backgroundColor = "#22c55e";
         btn.style.color = "#fff";
@@ -108,20 +97,15 @@ function ItensButtons() {
   };
 
   const areAllFilled = questions.every((num) => {
-    const codeItem = getCodeByLabel(num, selectedLabel);
+    const codeItem = codesMap[num]?.code;
     if (!codeItem) return true;
-
     const isAbandoned = abandonadosCodes.has(codeItem);
     if (isAbandoned) return true;
-
     return Boolean(selectedItems[codeItem]?.status);
   });
 
   const handleToggleAll = (e: React.MouseEvent<HTMLButtonElement>) => {
-    // 1. Optimistic Rendering: Altera botões
-    // e o próprio checkbox instantaneamente
     const willFill = !areAllFilled;
-    // Atualiza o visual do próprio botão "Preencher Tudo" no DOM
     const fillBtn = e.currentTarget;
     const checkboxSpan = fillBtn.querySelector(`.${styles.fill_all_checkbox}`);
     const labelSpan = fillBtn.querySelector(`.${styles.fill_all_label}`);
@@ -138,7 +122,7 @@ function ItensButtons() {
     if (labelSpan) {
       labelSpan.textContent = willFill ? "Despreencher tudo" : "Preencher tudo";
     }
-    // Atualiza todos os botões no DOM
+
     if (containerRef.current) {
       const buttons = containerRef.current.querySelectorAll("button");
       const targetBg = willFill ? "#22c55e" : panelColor;
@@ -154,11 +138,11 @@ function ItensButtons() {
           : chartColor + "85";
       });
     }
-    // 2. Processa as alterações de estado no frame seguinte
+
     setTimeout(() => {
       setNeedUpdateEAP(true);
       questions.forEach((num) => {
-        const codeItem = getCodeByLabel(num, selectedLabel);
+        const codeItem = codesMap[num]?.code;
         if (!codeItem) return;
         const currentStatus = selectedItems[codeItem]?.status;
         const isAbandoned = abandonadosCodes.has(codeItem);
@@ -191,10 +175,9 @@ function ItensButtons() {
       <div className={styles.EAPButton_container}>
         {pathName.endsWith("tri") && <EAPButton />}
       </div>
-      {/* Grid de Botões das Questões */}
       <div ref={containerRef} className={styles.itens_container}>
         {questions.map((num) => {
-          const thisCodeItem = getCodeByLabel(num, selectedLabel);
+          const thisCodeItem = codesMap[num]?.code;
           const status = thisCodeItem
             ? selectedItems[thisCodeItem]?.status
             : null;
@@ -227,9 +210,7 @@ function ItensButtons() {
               onMouseEnter={(e) => {
                 e.currentTarget.style.filter = "brightness(1.2)";
                 if (!status) {
-                  e.currentTarget.style.backgroundColor = isDark
-                    ? gridColor
-                    : gridColor;
+                  e.currentTarget.style.backgroundColor = gridColor;
                 }
               }}
               onMouseLeave={(e) => {

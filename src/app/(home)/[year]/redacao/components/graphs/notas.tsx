@@ -7,7 +7,7 @@ import { useYearData } from "../../../../../../context/year_context";
 import { CompetenciaRowType } from "../../../../../../types/year_types";
 import dynamic from "next/dynamic";
 
-const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
+const Chart = dynamic(() => import("react-apexcharts"));
 
 type NotaKey =
   | "NU_NOTA_COMP1"

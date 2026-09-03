@@ -7,7 +7,7 @@ import { useYearData } from "../../../../../../context/year_context";
 import { FreqDensityType } from "../../../../../../types/year_types";
 import dynamic from "next/dynamic";
 
-const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
+const Chart = dynamic(() => import("react-apexcharts"));
 
 const densidadeColor: Record<string, string> = {
   curve: "#8b5cf6",

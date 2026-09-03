@@ -10,9 +10,7 @@ const Navbar = dynamic(() => import("../../../components/tsx/navbar"));
 const TableFooter = dynamic(
   () => import("../../../components/tsx/table_footer"),
 );
-const PdfModal = dynamic(() => import("../../../components/tsx/pdf_modal"), {
-  ssr: false,
-});
+const PdfModal = dynamic(() => import("../../../components/tsx/pdf_modal"), {});
 
 function YearLayoutContent({ children }: { children: React.ReactNode }) {
   const { currentYear, deferredArea } = useHomeData();

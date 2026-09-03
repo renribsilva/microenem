@@ -18,14 +18,10 @@ import dynamic from "next/dynamic";
 
 const InputShell = dynamic(
   () => import("../../../../../../components/tsx/input_shell"),
-  { ssr: false },
 );
-const Sort = dynamic(() => import("../../../../../../components/svg/sort"), {
-  ssr: false,
-});
+const Sort = dynamic(() => import("../../../../../../components/svg/sort"), {});
 const Visibility = dynamic(
   () => import("../../../../../../components/svg/open_in_new"),
-  { ssr: false },
 );
 
 type TableRow = {

@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { useYearData } from "../../../../../../context/year_context";
 import dynamic from "next/dynamic";
 
-const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
+const Chart = dynamic(() => import("react-apexcharts"));
 
 interface CorRacaItem {
   x: string;

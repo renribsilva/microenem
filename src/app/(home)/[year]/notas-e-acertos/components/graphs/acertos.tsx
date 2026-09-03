@@ -7,7 +7,7 @@ import styles from "./graphs.module.css";
 import { useSidebar } from "../../../../../../context/sidebar_context";
 import dynamic from "next/dynamic";
 
-const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
+const Chart = dynamic(() => import("react-apexcharts"));
 
 export default function DensityNotasChart() {
   const { isMobile } = useSidebar();

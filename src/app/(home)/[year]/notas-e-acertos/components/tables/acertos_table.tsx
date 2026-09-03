@@ -15,9 +15,7 @@ import { useSidebar } from "../../../../../../context/sidebar_context";
 import clsx from "clsx";
 import dynamic from "next/dynamic";
 
-const Sort = dynamic(() => import("../../../../../../components/svg/sort"), {
-  ssr: false,
-});
+const Sort = dynamic(() => import("../../../../../../components/svg/sort"), {});
 
 type TableRow = {
   id: number;

@@ -449,6 +449,7 @@ export type YearContextType = {
   itemGraphData: ItemGraphType | null;
   acertosData: AcertosDataType | null;
   meanData: MeanDataType;
+  codesMap: Record<number, number>;
 
   // Carga solicitada pelo cliente (API externa: Render)
   EAPData: EAPDataType | null;

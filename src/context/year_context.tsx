@@ -204,31 +204,49 @@ export function YearProvider({ children }: { children: ReactNode }) {
   const [statusData, setStatusData] = useState<StatusType | null>(null);
 
   useEffect(() => {
-    async function loadYearlyData() {
+    async function loadData() {
       setLoading(true);
       try {
-        const [resItens, resVisao, resResposta, resRedacao] = await Promise.all(
-          [
-            fetch(`/api/itens?year=${currentYear}`).then((r) => r.json()),
-            fetch(`/api/visao?year=${currentYear}`).then((r) => r.json()),
-            fetch(`/api/resposta?year=${currentYear}`).then((r) => r.json()),
-            fetch(`/api/redacao?year=${currentYear}`).then((r) => r.json()),
-          ],
+        const itensPromise = fetch(`/api/itens?year=${currentYear}`).then((r) =>
+          r.json(),
         );
-
-        setItensData(resItens);
-
-        setInscritosData(resVisao.inscritos);
-        setabstencaoDia1(resVisao.abstencao1);
-        setabstencaoDia2(resVisao.abstencao2);
-        setCor_raca_data(resVisao.cor_raca);
-        setSexo_data(resVisao.sexo);
-        setFx_etaria_data(resVisao.fx_etaria);
-
-        setScoreData(resResposta);
-
-        setCompetenciaRowData(resRedacao.competencia);
-        setStatusData(resRedacao.status);
+        let visaoPromise = null;
+        let respostaPromise = null;
+        let redacaoPromise = null;
+        // 2. Dispara apenas a requisição condizente com a rota atual
+        if (pathName?.endsWith("/visao-geral")) {
+          visaoPromise = fetch(`/api/visao?year=${currentYear}`).then((r) =>
+            r.json(),
+          );
+        } else if (pathName?.endsWith("/resposta-ao-item")) {
+          respostaPromise = fetch(`/api/resposta?year=${currentYear}`).then(
+            (r) => r.json(),
+          );
+        } else if (pathName?.endsWith("/redacao")) {
+          redacaoPromise = fetch(`/api/redacao?year=${currentYear}`).then((r) =>
+            r.json(),
+          );
+        }
+        const [resItens, resVisao, resResposta, resRedacao] = await Promise.all(
+          [itensPromise, visaoPromise, respostaPromise, redacaoPromise],
+        );
+        // 4. Atualiza os estados correspondentes
+        if (resItens) setItensData(resItens);
+        if (resVisao) {
+          setInscritosData(resVisao.inscritos);
+          setabstencaoDia1(resVisao.abstencao1);
+          setabstencaoDia2(resVisao.abstencao2);
+          setCor_raca_data(resVisao.cor_raca);
+          setSexo_data(resVisao.sexo);
+          setFx_etaria_data(resVisao.fx_etaria);
+        }
+        if (resResposta) {
+          setScoreData(resResposta);
+        }
+        if (resRedacao) {
+          setCompetenciaRowData(resRedacao.competencia);
+          setStatusData(resRedacao.status);
+        }
       } catch (err) {
         console.error(
           `Erro ao carregar dados da API para o ano ${currentYear}:`,
@@ -238,8 +256,8 @@ export function YearProvider({ children }: { children: ReactNode }) {
         setLoading(false);
       }
     }
-    loadYearlyData();
-  }, [currentYear]);
+    loadData();
+  }, [currentYear, pathName]);
 
   // ---------------------------------------------------------------------------
   // ------- CARGA DINÂMICA DE JSON POR ANO E POR ÁREA (BUNDLE INICIAL) --------
@@ -259,7 +277,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
     const loadData = async () => {
       const isDescribePage = pathName?.endsWith("/dificuldade-do-exame");
       if (!isDescribePage) return;
-
       try {
         const response = await fetch(
           `/api/describe?year=${currentYear}&area=${deferredArea}`,
@@ -592,6 +609,39 @@ export function YearProvider({ children }: { children: ReactNode }) {
     },
     [deferredArea, itensData, codigo, versao, lingua],
   );
+
+  // 2. Fetch do codesMap no Cliente
+  const [codesMap, setCodesMap] = useState<Record<number, number>>({});
+
+  useEffect(() => {
+    async function loadCodes() {
+      if (!codigo || !currentYear) return;
+      const isTriPage = pathName?.endsWith("/tri");
+      const isRespostaPage = pathName?.endsWith("/resposta-ao-item");
+      if (!(isTriPage || isRespostaPage)) return;
+
+      setLoading(true);
+      try {
+        const params = new URLSearchParams({
+          year: Array.isArray(currentYear)
+            ? currentYear[0]
+            : String(currentYear),
+          codigo: String(codigo),
+          area: deferredArea,
+          ...(versao && { versao: String(versao) }),
+          ...(lingua !== undefined && { lingua: String(lingua) }),
+        });
+        const res = await fetch(`/api/itens?${params.toString()}`);
+        const data = await res.json();
+        setCodesMap(data);
+      } catch (err) {
+        console.error("Erro ao carregar códigos:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadCodes();
+  }, [currentYear, codigo, deferredArea, versao, lingua, pathName]);
 
   // Função para traduzir Posição (ex: questão 95) em Parâmetro (ex: 1.234)
   const getParamByLabel = useCallback<GetParamByLabelType>(
@@ -949,6 +999,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
         itemGraphData,
         acertosData,
         meanData,
+        codesMap,
 
         // Carga solicitada pelo cliente (API externa: render)
         EAPData,

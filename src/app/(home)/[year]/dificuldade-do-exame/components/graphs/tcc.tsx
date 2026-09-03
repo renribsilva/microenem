@@ -272,16 +272,41 @@ export default function TCCChart() {
     ],
   );
 
+  if (!activeTCC?.data_teorico) {
+    return (
+      <div className={`${styles.container}`}>
+        <div className={styles.cabecalho}>
+          <div>
+            <div className={styles.title} style={{ color: textColor }}>
+              Curva característica do teste{" "}
+            </div>
+            <div className={styles.subtitle} style={{ color: textColor }}>
+              Comportamento esperado (teórico) e observado (empírico) da relação
+              nota/acerto. Destaque para o ponto de inflexão que representa a
+              dificuldade média da prova.
+            </div>
+          </div>
+          <DropdownBooks />
+        </div>
+        <div className={styles.loading}>
+          <span style={{ color: textColor }}>Carregando...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className={styles.tcc_container}>
-      <div className={styles.tcc_cabecalho}>
-        <div className={styles.tcc_title}>
-          <h3 className={styles.tcc_title_h3}>Curva característica do teste</h3>
-          <p className={styles.tcc_subtitle_p}>
+    <div className={styles.container}>
+      <div className={styles.cabecalho}>
+        <div>
+          <div className={styles.title} style={{ color: textColor }}>
+            Curva característica do teste{" "}
+          </div>
+          <div className={styles.subtitle} style={{ color: textColor }}>
             Comportamento esperado (teórico) e observado (empírico) da relação
             nota/acerto. Destaque para o ponto de inflexão que representa a
             dificuldade média da prova.
-          </p>
+          </div>
         </div>
         <DropdownBooks />
       </div>

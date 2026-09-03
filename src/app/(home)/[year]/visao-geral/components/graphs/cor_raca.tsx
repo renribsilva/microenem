@@ -4,6 +4,7 @@ import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import { useMemo } from "react";
 import { useYearData } from "../../../../../../context/year_context";
 import dynamic from "next/dynamic";
+import styles from "./graphs.module.css";
 
 const Chart = dynamic(() => import("react-apexcharts"));
 
@@ -40,21 +41,12 @@ export default function COR_RACA() {
     () => ({
       chart: {
         type: "treemap",
-        toolbar: { show: true },
+        toolbar: { show: true, offsetY: -30 },
         animations: {
           enabled: false,
           dynamicAnimation: {
             enabled: false,
           },
-        },
-      },
-      title: {
-        text: "Cor ou raça",
-        align: "center",
-        style: {
-          color: textColor,
-          fontSize: "16px",
-          fontWeight: "bold",
         },
       },
       colors: [
@@ -130,34 +122,36 @@ export default function COR_RACA() {
         },
       },
     }),
-    [textColor],
+    [],
   );
 
   if (!corRacaData?.datasets?.[0]?.tree) {
     return (
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "100%",
-        }}
-      >
-        <span style={{ color: textColor }}>Carregando...</span>
+      <div className={`${styles.container} ${styles.cor_raca}`}>
+        <div className={styles.title} style={{ color: textColor }}>
+          Cor ou raça
+        </div>
+        <div className={styles.loading}>
+          <span style={{ color: textColor }}>Carregando...</span>
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={{ flex: 1 }}>
-      <Chart
-        options={options}
-        series={series}
-        type="treemap"
-        height="100%"
-        width="100%"
-      />
+    <div className={`${styles.container} ${styles.cor_raca}`}>
+      <div className={styles.title} style={{ color: textColor }}>
+        Cor ou raça
+      </div>
+      <div className={styles.chartWrapper}>
+        <Chart
+          options={options}
+          series={series}
+          type="treemap"
+          height="100%"
+          width="100%"
+        />
+      </div>
     </div>
   );
 }

@@ -27,18 +27,15 @@ export default function DadosDoExame() {
             className={styles.main_right_top}
             style={{ minWidth: 0, minHeight: 0 }}
           >
-            <Card className={styles.card_density}>
+            <Card className={styles.card_density} fullSize>
               <DensityNotasChart />
             </Card>
-            <Card className={styles.card_frequency}>
+            <Card className={styles.card_frequency} fullSize>
               <FrequencyAcertosChart />
             </Card>
           </div>
-          <div
-            className={styles.main_right_bottom}
-            style={{ minWidth: 0, minHeight: 0 }}
-          >
-            <Card className={styles.card_tcc}>
+          <div>
+            <Card className={styles.card_tcc} fullSize>
               <TCCChart />
             </Card>
           </div>

@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useRef, useState, useEffect } from "react";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import { useHomeData } from "../../../../../../context/home_context";
 import { useYearData } from "../../../../../../context/year_context";
 import dynamic from "next/dynamic";
+import styles from "./graphs.module.css";
 
 const Chart = dynamic(() => import("react-apexcharts"));
 
@@ -15,6 +16,7 @@ interface FreqItem {
   strokeColor: string;
   abs: number;
 }
+
 const acertosColor: Record<string, string> = {
   bar: "#10b77f33",
   fill: "#10b77fcc",
@@ -22,6 +24,24 @@ const acertosColor: Record<string, string> = {
 };
 
 export default function FrequencyAcertosChart() {
+  const headerRef = useRef<HTMLDivElement>(null);
+  const [toolbarOffsetY, setToolbarOffsetY] = useState<number>(-50);
+
+  // Monitora redimensionamentos da largura/altura do container do header
+  useEffect(() => {
+    if (!headerRef.current) return;
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const headerHeight = entry.contentRect.height;
+        setToolbarOffsetY(-headerHeight);
+      }
+    });
+    observer.observe(headerRef.current);
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   // Contexto necessário
   const { deferredArea } = useHomeData();
   const { dificuldadeDoExame, dificuldadeDoExameAux } = useYearData();
@@ -133,31 +153,13 @@ export default function FrequencyAcertosChart() {
       chart: {
         id: `freq-${deferredArea}`,
         type: "bar",
-        toolbar: { show: true },
+        toolbar: { show: true, offsetY: toolbarOffsetY },
         zoom: { enabled: false },
         animations: {
           enabled: false,
           dynamicAnimation: {
             enabled: false,
           },
-        },
-      },
-      noData: {
-        text: "Atualizando...",
-      },
-      title: {
-        text: "Frequência de acertos",
-        style: {
-          color: textColor,
-          fontSize: "16px",
-        },
-      },
-      subtitle: {
-        text: "Distribuição da frequência de acertos.",
-        floating: true,
-        style: {
-          color: textColor,
-          fontSize: "13px",
         },
       },
       plotOptions: {
@@ -306,22 +308,48 @@ export default function FrequencyAcertosChart() {
   }, [
     describeDifData,
     frequencyDifData,
-    textColor,
     activeSelectedRow,
     axisColor,
     gridColor,
     deferredArea,
+    toolbarOffsetY,
   ]);
 
+  if (!frequencyDifData?.datasets) {
+    return (
+      <div className={`${styles.container}`}>
+        <div className={styles.title} style={{ color: textColor }}>
+          Frequência de acertos
+        </div>
+        <div className={styles.subtitle} style={{ color: textColor }}>
+          Distribuição da frequência relativa de acertos.
+        </div>
+        <div className={styles.loading}>
+          <span style={{ color: textColor }}>Carregando...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div style={{ flex: 1 }}>
-      <Chart
-        options={options}
-        series={series}
-        type="bar"
-        height="100%"
-        width="100%"
-      />
+    <div className={styles.container}>
+      <div className={styles.header} ref={headerRef}>
+        <div className={styles.title} style={{ color: textColor }}>
+          Frequência de acertos
+        </div>
+        <div className={styles.subtitle} style={{ color: textColor }}>
+          Distribuição da frequência relativa de acertos.
+        </div>
+      </div>
+      <div className={styles.chartWrapper}>
+        <Chart
+          options={options}
+          series={series}
+          type="bar"
+          height="100%"
+          width="100%"
+        />
+      </div>
     </div>
   );
 }

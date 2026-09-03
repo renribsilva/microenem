@@ -19,23 +19,47 @@
 }
 
 .describe_table {
-  /* background-color: aquamarine; */
   min-width: 100%;
   border-collapse: collapse;
   font-size: 0.9rem;
   text-align: left;
+  table-layout: fixed; /* Obrigatório para respeitar as larguras */
+  width: 100%;
 }
 
 .describe_thead {
   border: solid 1px var(--tab-hover);
   font-weight: 600;
   background-color: var(--tab-hover);
+  height: 40px;
+  max-height: 40px;
+}
+
+/* Larguras fixas aplicadas individualmente para travar o layout */
+.describe_th:nth-child(1),
+.describe_td:nth-child(1) {
+  width: 44%; /* Coluna de Medidas */
+}
+
+.describe_th:nth-child(2),
+.describe_td:nth-child(2) {
+  width: 28%; /* Coluna de Notas */
+}
+
+.describe_th:nth-child(3),
+.describe_td:nth-child(3) {
+  width: 28%; /* Coluna de Acertos */
 }
 
 .describe_th {
-  padding: 10px;
+  padding: 0 10px;
   font-weight: 300;
-  width: 70%;
+  height: 40px;
+  max-height: 40px;
+  min-height: 40px;
+  overflow: hidden;
+  box-sizing: border-box;
+  white-space: nowrap;
 }
 
 .describe_tr {
@@ -47,28 +71,40 @@
 }
 
 .describe_tr.row_selected {
-  /* Adicional: você pode colocar um border-left ou negrito para destacar mais */
   font-weight: 600;
 }
 
 .describe_td {
-  padding: 8px;
+  padding: 0 8px;
   border-bottom: 1px solid var(--grid);
+  height: 37px;
+  max-height: 37px;
+  min-height: 37px;
+  overflow: hidden;
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 
 .describe_metricLabel {
-  /* font-weight: 600; */
-  /* color: #374151; */
 }
 
 .describe_valueText {
-  /* font-family: monospace; */
 }
 
 .describe_footer {
   padding: 5px;
   padding-top: 10px;
-  font-size: 0.75rem; /* 12px */
+  font-size: 0.75rem;
   font-weight: 300;
   color: #888;
+}
+
+.describe_fixed_cell {
+  display: flex;
+  align-items: center;
+  height: 37px;
+  max-height: 37px;
+  min-height: 37px;
+  overflow: hidden;
+  box-sizing: border-box;
 }

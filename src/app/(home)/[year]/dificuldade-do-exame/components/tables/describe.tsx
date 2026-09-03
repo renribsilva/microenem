@@ -13,10 +13,10 @@ import { useYearData } from "../../../../../../context/year_context";
 import { TableDataItem } from "../../../../../../types/year_types";
 import { clsx } from "clsx";
 import { useSidebar } from "../../../../../../context/sidebar_context";
+import TDShort from "../../../../../../components/skt/visao-geral/td_short";
 
 const columnHelper = createColumnHelper<TableDataItem>();
 
-// Lista estática com a estrutura fixa de todas as medidas necessárias na tabela
 const MEDIDAS_PADRAO = [
   { id: "mean", metric: "Média" },
   { id: "median", metric: "Mediana" },
@@ -37,11 +37,13 @@ export default function DescribeTable() {
   const { isMobile } = useSidebar();
   const describeRowData = dificuldadeDoExameAux.describeRowData;
   const describeDifData = dificuldadeDoExame.describeDifData;
+
+  const isLoading = !describeDifData;
+
   const stableData = useMemo<TableDataItem[]>(() => {
     const hasData = describeRowData?.data && describeRowData.data.length > 0;
 
     return MEDIDAS_PADRAO.map((medida) => {
-      // Se houver dados carregados, procura a linha correspondente pelo ID
       const realRow = hasData
         ? describeRowData.data.find((item) => item.id === medida.id)
         : null;
@@ -49,11 +51,11 @@ export default function DescribeTable() {
       return {
         id: medida.id,
         metric: realRow?.metric || medida.metric,
-        nota: !describeDifData ? "---" : realRow?.nota || "---",
-        acerto: !describeDifData ? "---" : realRow?.acerto || "---",
+        nota: realRow?.nota ?? "---",
+        acerto: realRow?.acerto ?? "---",
       };
     });
-  }, [describeRowData, describeDifData]);
+  }, [describeRowData]);
 
   const formatCellText = (value: number | string) => {
     if (value === "---" || value === undefined || value === null) return "---";
@@ -74,27 +76,41 @@ export default function DescribeTable() {
       }),
       columnHelper.accessor("nota", {
         header: "Notas",
-        cell: (info) => (
-          <span className={styles.describe_valueText}>
-            {formatCellText(info.getValue())}
-          </span>
-        ),
+        cell: (info) =>
+          isLoading || info.getValue() === "---" ? (
+            <div className={styles.describe_fixed_cell}>
+              <TDShort />
+            </div>
+          ) : (
+            <div className={styles.describe_fixed_cell}>
+              <span className={styles.describe_valueText}>
+                {formatCellText(info.getValue())}
+              </span>
+            </div>
+          ),
       }),
       columnHelper.accessor("acerto", {
         header: "Acertos",
-        cell: (info) => (
-          <span className={styles.describe_valueText}>
-            {formatCellText(info.getValue())}
-          </span>
-        ),
+        cell: (info) =>
+          isLoading || info.getValue() === "---" ? (
+            <div className={styles.describe_fixed_cell}>
+              <TDShort />
+            </div>
+          ) : (
+            <div className={styles.describe_fixed_cell}>
+              <span className={styles.describe_valueText}>
+                {formatCellText(info.getValue())}
+              </span>
+            </div>
+          ),
       }),
     ],
-    [],
+    [isLoading],
   );
 
-  // eslint-disable-next-line
+  //eslint-disable-next-line
   const table = useReactTable({
-    data: stableData, // Usa a lista de dados protegida contra quebras
+    data: stableData,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });

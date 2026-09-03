@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import { useYearData } from "../../../../../../context/year_context";
 import dynamic from "next/dynamic";
+import styles from "./graphs.module.css";
 
 const Chart = dynamic(() => import("react-apexcharts"));
 
@@ -25,7 +26,7 @@ export default function SEXO() {
     () => ({
       chart: {
         type: "donut",
-        toolbar: { show: true },
+        toolbar: { show: true, offsetY: -60 },
         animations: {
           enabled: false,
           dynamicAnimation: {
@@ -43,7 +44,7 @@ export default function SEXO() {
           donut: {
             size: "45%",
           },
-          offsetY: -5,
+          offsetY: 0,
         },
       },
       dataLabels: {
@@ -56,13 +57,7 @@ export default function SEXO() {
         dropShadow: { enabled: false },
       },
       legend: {
-        position: "top",
-        labels: { colors: textColor },
-        markers: {
-          strokeWidth: 0,
-          offsetX: -2,
-        },
-        offsetY: -5,
+        show: false,
       },
       tooltip: {
         fillSeriesColor: false,
@@ -101,44 +96,52 @@ export default function SEXO() {
           show: false,
         },
       },
-      title: {
-        text: "Sexo",
-        align: "center",
-        style: {
-          color: textColor,
-          fontSize: "16px",
-          fontWeight: "bold",
-        },
-      },
     }),
     [textColor, absValues, labels],
   );
 
   if (!sexoData?.datasets?.[0]?.data || !sexoData?.labels) {
     return (
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "100%",
-        }}
-      >
-        <span style={{ color: textColor }}>Carregando...</span>
+      <div className={`${styles.container} ${styles.sexo}`}>
+        <div className={styles.title} style={{ color: textColor }}>
+          Sexo
+        </div>
+        <div className={styles.loading}>
+          <span style={{ color: textColor }}>Carregando...</span>
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={{ flex: 1 }}>
-      <Chart
-        options={options}
-        series={series}
-        type="donut"
-        height="100%"
-        width="100%"
-      />
+    <div className={`${styles.container} ${styles.sexo}`}>
+      <div className={styles.title} style={{ color: textColor }}>
+        Sexo
+      </div>
+      <div className={styles.legendContainer}>
+        {labels.map((label, index) => (
+          <div key={label} className={styles.legendItem}>
+            <span
+              className={styles.legendMarker}
+              style={{
+                backgroundColor: doughnutColors[index % doughnutColors.length],
+              }}
+            />
+            <span style={{ color: textColor }} className={styles.legendText}>
+              {label}
+            </span>
+          </div>
+        ))}
+      </div>
+      <div className={styles.chartWrapper}>
+        <Chart
+          options={options}
+          series={series}
+          type="donut"
+          height="100%"
+          width="100%"
+        />
+      </div>
     </div>
   );
 }

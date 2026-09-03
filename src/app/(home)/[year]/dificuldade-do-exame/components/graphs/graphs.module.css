@@ -1,15 +1,55 @@
+/******************************************************/
+/*******************ESTILOS COMUNS*********************/
+/******************************************************/
+
+/* Estilos Comuns */
+.container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: left;
+  padding-block: 8px;
+}
+
+.subtitle {
+  font-size: 13px;
+  font-weight: 350;
+  opacity: 0.8;
+}
+
+.loading {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chartWrapper {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+}
+
+.titleContainer {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+}
+
 /*******************************************/
 /*******************TCC*********************/
 /*******************************************/
 
-.tcc_container {
-  /* background-color: blueviolet; */
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.tcc_cabecalho {
+.cabecalho {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
@@ -23,35 +63,11 @@
 }
 
 @media (max-width: 800px) {
-  .tcc_cabecalho {
+  .cabecalho {
     flex-direction: column;
     gap: 15px;
     margin-bottom: 10px;
   }
-}
-
-.tcc_title {
-  /* background-color: azure; */
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.tcc_title_h3 {
-  /* background-color: rgb(73, 182, 182); */
-  color: var(--foreground);
-  font-size: 16px;
-  font-weight: bold;
-  margin: 0;
-}
-
-.tcc_subtitle_p {
-  /* background-color: bisque; */
-  margin: 0;
-  font-size: 12px;
-  color: var(--foreground);
-  line-height: 1.2;
-  margin-right: 15px;
 }
 
 .tcc_graph_container {

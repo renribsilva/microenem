@@ -1,0 +1,54 @@
+/*******************************************************************/
+/******************************PAGE*********************************/
+/*******************************************************************/
+
+.skeletonText {
+  display: inline-block;
+  height: 1.2rem;
+  width: 80px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+  vertical-align: middle;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/*******************************************************************/
+/******************************TABLES*******************************/
+/*******************************************************************/
+
+.skeletonTextMedium,
+.skeletonTextShort {
+  display: inline-block;
+  height: 1rem;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+.skeletonTextMedium {
+  width: 120px;
+}
+
+.skeletonTextShort {
+  width: 50px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

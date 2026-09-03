@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import styles from "./visao-geral.module.css";
 import Card from "../../../../components/tsx/card";
 import { useYearData } from "../../../../context/year_context";
+import P from "../../../../components/skt/visao-geral/p";
 
 const Group = dynamic(() => import("../../../../components/svg/group"));
 const PersonRemove = dynamic(
@@ -25,23 +26,29 @@ export default function Visao() {
   const abstencaoDia1 = overviewData?.abstencaoDia1;
   const abstencaoDia2 = overviewData?.abstencaoDia2;
 
-  const total_inscritos = inscritosData?.[0]?.total
-    ? inscritosData[0].total.toLocaleString("pt-BR")
-    : "Carregando...";
+  const total_inscritos = inscritosData?.[0]?.total ? (
+    inscritosData[0].total.toLocaleString("pt-BR")
+  ) : (
+    <P />
+  );
 
-  const abstencao_dia1 = abstencaoDia1?.[0]?.abst
-    ? abstencaoDia1[0].abst.toLocaleString("pt-BR", {
-        minimumFractionDigits: 1,
-        maximumFractionDigits: 1,
-      }) + "%"
-    : "Carregando...";
+  const abstencao_dia1 = abstencaoDia1?.[0]?.abst ? (
+    abstencaoDia1[0].abst.toLocaleString("pt-BR", {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
+    }) + "%"
+  ) : (
+    <P />
+  );
 
-  const abstencao_dia2 = abstencaoDia2?.[0]?.abst
-    ? abstencaoDia2[0].abst.toLocaleString("pt-BR", {
-        minimumFractionDigits: 1,
-        maximumFractionDigits: 1,
-      }) + "%"
-    : "Carregando...";
+  const abstencao_dia2 = abstencaoDia2?.[0]?.abst ? (
+    abstencaoDia2[0].abst.toLocaleString("pt-BR", {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
+    }) + "%"
+  ) : (
+    <P />
+  );
 
   return (
     <section className={styles.main}>
@@ -83,7 +90,7 @@ export default function Visao() {
             className={styles.block1_second_left}
             style={{ minWidth: 0, minHeight: 0 }}
           >
-            <Card className={styles.card_fxetaria}>
+            <Card className={styles.card_fxetaria} fullSize>
               <FX_ETARIA />
             </Card>
           </div>
@@ -91,7 +98,7 @@ export default function Visao() {
             className={styles.block1_second_right}
             style={{ minWidth: 0, minHeight: 0 }}
           >
-            <Card className={styles.card_sexo}>
+            <Card className={styles.card_sexo} fullSize>
               <SEXO />
             </Card>
           </div>
@@ -103,7 +110,7 @@ export default function Visao() {
           className={styles.block_third}
           style={{ minWidth: 0, minHeight: 0 }}
         >
-          <Card className={styles.card_racacor}>
+          <Card className={styles.card_racacor} fullSize>
             <COR_RACA />
           </Card>
         </div>

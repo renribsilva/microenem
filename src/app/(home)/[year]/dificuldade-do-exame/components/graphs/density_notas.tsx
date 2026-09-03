@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useRef, useState, useEffect } from "react";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import { useHomeData } from "../../../../../../context/home_context";
 import { useYearData } from "../../../../../../context/year_context";
 import { FreqDensityType } from "../../../../../../types/year_types";
 import dynamic from "next/dynamic";
+import styles from "./graphs.module.css";
 
 const Chart = dynamic(() => import("react-apexcharts"));
 
@@ -18,7 +19,24 @@ const densidadeColor: Record<string, string> = {
 };
 
 export default function DensityNotasChart() {
-  // Constextos necessários
+  const headerRef = useRef<HTMLDivElement>(null);
+  const [toolbarOffsetY, setToolbarOffsetY] = useState<number>(-50);
+
+  // Monitora redimensionamentos da largura/altura do container do header
+  useEffect(() => {
+    if (!headerRef.current) return;
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const headerHeight = entry.contentRect.height;
+        setToolbarOffsetY(-headerHeight);
+      }
+    });
+    observer.observe(headerRef.current);
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   const { deferredArea } = useHomeData();
   const { dificuldadeDoExame, dificuldadeDoExameAux } = useYearData();
   const activeSelectedRow = dificuldadeDoExameAux.activeSelectedRow;
@@ -128,30 +146,13 @@ export default function DensityNotasChart() {
       chart: {
         id: `density-${deferredArea}`,
         type: "area" as const,
-        toolbar: { show: true },
+        toolbar: { show: true, offsetY: toolbarOffsetY },
         zoom: { enabled: false },
         animations: {
           enabled: false,
           dynamicAnimation: {
             enabled: false,
           },
-        },
-      },
-      noData: {
-        text: "Atualizando...",
-      },
-      title: {
-        text: "Curva de densidade",
-        style: {
-          color: textColor,
-          fontSize: "16px",
-        },
-      },
-      subtitle: {
-        text: "Distribuição da densidade das notas.",
-        style: {
-          color: textColor,
-          fontSize: "13px",
         },
       },
       colors: chartColors,
@@ -284,23 +285,49 @@ export default function DensityNotasChart() {
     describeDifData,
     axisColor,
     activeSelectedRow,
-    textColor,
     gridColor,
     xMin,
     xMax,
     deferredArea,
     densityDifData,
+    toolbarOffsetY,
   ]);
 
+  if (!densityDifData?.datasets) {
+    return (
+      <div className={`${styles.container}`}>
+        <div className={styles.title} style={{ color: textColor }}>
+          Curva de densidade
+        </div>
+        <div className={styles.subtitle} style={{ color: textColor }}>
+          Distribuição da densidade das notas por proeficiência.
+        </div>
+        <div className={styles.loading}>
+          <span style={{ color: textColor }}>Carregando...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div style={{ flex: 1 }}>
-      <Chart
-        options={options}
-        series={series}
-        type="area"
-        height="100%"
-        width="100%"
-      />
+    <div className={styles.container}>
+      <div className={styles.header} ref={headerRef}>
+        <div className={styles.title} style={{ color: textColor }}>
+          Curva de densidade
+        </div>
+        <div className={styles.subtitle} style={{ color: textColor }}>
+          Distribuição da densidade das notas por proeficiência.
+        </div>
+      </div>
+      <div className={styles.chartWrapper}>
+        <Chart
+          options={options}
+          series={series}
+          type="area"
+          height="100%"
+          width="100%"
+        />
+      </div>
     </div>
   );
 }

@@ -93,6 +93,5 @@
 .card_tcc {
   /* background-color: aquamarine; */
   display: flex;
-  min-height: 260px;
+  min-height: 390px;
 }
-

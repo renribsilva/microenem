@@ -125,8 +125,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
     SelectedItemsType | object
   >({});
 
-  const [loading, setLoading] = useState(true);
-
   const [codigo, lingua, versao] = selectedLabel.split("_");
 
   const [acertosNum, setAcertosNum] = useState<number>(0);
@@ -203,7 +201,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     async function loadData() {
-      setLoading(true);
       try {
         let visaoPromise = null;
         let respostaPromise = null;
@@ -248,8 +245,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
           `Erro ao carregar dados da API para o ano ${currentYear}:`,
           err,
         );
-      } finally {
-        setLoading(false);
       }
     }
     loadData();
@@ -594,7 +589,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
       const isRespostaPage = pathName?.endsWith("/resposta-ao-item");
       const isProbInfoPage = pathName?.endsWith("/probabilidade-e-info");
       if (!(isTriPage || isRespostaPage || isProbInfoPage)) return;
-      setLoading(true);
       try {
         const params = new URLSearchParams({
           year: Array.isArray(currentYear)
@@ -610,8 +604,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
         setCodesMap(data);
       } catch (err) {
         console.error("Erro ao carregar códigos:", err);
-      } finally {
-        setLoading(false);
       }
     }
     loadCodes();

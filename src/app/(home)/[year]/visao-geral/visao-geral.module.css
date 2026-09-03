@@ -53,7 +53,7 @@
   min-height: 230px;
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 800px) {
   .block1_first {
     flex-direction: column;
   }
@@ -64,21 +64,25 @@
   display: flex;
   gap: 10px;
   flex: 1 1 50%;
+  min-width: 0;
 }
 
 .block1_first_left1 {
   /* background-color: bisque; */
   flex: 1 1 50%;
+  min-width: 0;
 }
 
 .block1_first_left2 {
   /* background-color: bisque; */
   flex: 1 1 50%;
+  min-width: 0;
 }
 
 .block1_first_right {
   /* background-color: bisque; */
   flex: 1 1 50%;
+  min-width: 0;
 }
 
 /*******************************************/
@@ -200,4 +204,3 @@
   min-height: 300px;
   display: flex;
 }
-

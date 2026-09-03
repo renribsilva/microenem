@@ -1,0 +1,73 @@
+/*************************************************************************/
+/****************************ESTILOS COMUNS*******************************/
+/*************************************************************************/
+
+/* Estilos Comuns */
+.container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  padding-top: 8px;
+}
+
+.loading {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chartWrapper {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+}
+
+/*********************************************************************/
+/*******************************SEXO**********************************/
+/*********************************************************************/
+
+/* Legenda Customizada (Apenas para Sexo) */
+.legendContainer {
+  margin-top: 5px;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 6px 0;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legendMarker {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.legendText {
+  font-size: 13px;
+}
+
+/* Estilos Individualizados (se precisar futuramente) */
+.cor_raca {
+  /* Adicione regras específicas de cor_raca aqui se necessário */
+}
+
+.sexo {
+  /* Adicione regras específicas de sexo aqui se necessário */
+}

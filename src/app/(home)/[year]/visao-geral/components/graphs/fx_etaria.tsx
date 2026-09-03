@@ -4,18 +4,19 @@ import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import { useMemo } from "react";
 import { useYearData } from "../../../../../../context/year_context";
 import dynamic from "next/dynamic";
+import styles from "./graphs.module.css";
 
 const Chart = dynamic(() => import("react-apexcharts"));
 
-interface CorRacaItem {
+interface FxEtariaItem {
   x: string;
   y: number;
   abs: number;
 }
 
-interface TreemapSeries {
+interface BarSeries {
   name: string;
-  data: CorRacaItem[];
+  data: FxEtariaItem[];
 }
 
 export default function FX_ETARIA() {
@@ -24,7 +25,7 @@ export default function FX_ETARIA() {
   const fxEtariaData = overviewData?.fxEtariaData;
   const barColor = "#f0b335ff";
 
-  const series: TreemapSeries[] = useMemo(() => {
+  const series: BarSeries[] = useMemo(() => {
     if (!fxEtariaData?.datasets || !fxEtariaData?.labels) {
       return [];
     }
@@ -53,7 +54,7 @@ export default function FX_ETARIA() {
     () => ({
       chart: {
         type: "bar",
-        toolbar: { show: true },
+        toolbar: { show: true, offsetY: -30 },
         animations: {
           enabled: false,
           dynamicAnimation: {
@@ -119,7 +120,7 @@ export default function FX_ETARIA() {
         inverseOrder: true,
         y: {
           formatter: function (val, { seriesIndex, dataPointIndex, w }) {
-            const series = w.config.series as { data: CorRacaItem[] }[];
+            const series = w.config.series as { data: FxEtariaItem[] }[];
             const item = series?.[seriesIndex]?.data?.[dataPointIndex];
             if (!item) return "";
             const absoluto = item.abs.toLocaleString("pt-BR");
@@ -154,15 +155,6 @@ export default function FX_ETARIA() {
           },
         },
       },
-      title: {
-        text: "Faixa Etária",
-        align: "center",
-        style: {
-          color: textColor,
-          fontSize: "16px",
-          fontWeight: "bold",
-        },
-      },
       legend: {
         show: false,
       },
@@ -172,29 +164,31 @@ export default function FX_ETARIA() {
 
   if (!fxEtariaData?.datasets || !fxEtariaData?.labels) {
     return (
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "100%",
-        }}
-      >
-        <span style={{ color: textColor }}>Carregando...</span>
+      <div className={`${styles.container} ${styles.fx_etaria}`}>
+        <div className={styles.title} style={{ color: textColor }}>
+          Faixa Etária
+        </div>
+        <div className={styles.loading}>
+          <span style={{ color: textColor }}>Carregando...</span>
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={{ flex: 1 }}>
-      <Chart
-        options={options}
-        series={series}
-        type="bar"
-        height="100%"
-        width="100%"
-      />
+    <div className={`${styles.container} ${styles.fx_etaria}`}>
+      <div className={styles.title} style={{ color: textColor }}>
+        Faixa Etária
+      </div>
+      <div className={styles.chartWrapper}>
+        <Chart
+          options={options}
+          series={series}
+          type="bar"
+          height="100%"
+          width="100%"
+        />
+      </div>
     </div>
   );
 }

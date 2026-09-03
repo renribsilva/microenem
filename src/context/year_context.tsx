@@ -869,10 +869,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
   //----------------------------------RETURN------------------------------------
   //----------------------------------------------------------------------------
 
-  if (loading) {
-    return null;
-  }
-
   return (
     <YearContext.Provider
       value={{

@@ -130,11 +130,17 @@ function ItensButtons() {
       const buttons = containerRef.current.querySelectorAll("button");
       const targetBg = willFill ? "#22c55e" : panelColor;
       const targetText = willFill ? "#fff" : textColor;
+      const abandonedBg = isDark ? "#4a4a4a" : "#94a3b8";
 
       buttons.forEach((btn) => {
-        if (willFill && btn.textContent?.includes("⚠️")) return;
         const htmlBtn = btn as HTMLButtonElement;
-        htmlBtn.style.backgroundColor = targetBg;
+        const isAbanBtn = htmlBtn.textContent?.includes("⚠️");
+
+        htmlBtn.style.backgroundColor = willFill
+          ? isAbanBtn
+            ? abandonedBg
+            : targetBg
+          : panelColor;
         htmlBtn.style.color = targetText;
         htmlBtn.style.borderColor = willFill
           ? "transparent"
@@ -153,7 +159,7 @@ function ItensButtons() {
         if (areAllFilled) {
           if (!currentStatus) return;
           if (isAbandoned) {
-            handleToggle(num, true);
+            handleToggle(num, true); // Despreenche o item abandonado
           } else if (currentStatus === "acerto") {
             handleToggle(num, false);
             handleToggle(num, false);
@@ -161,7 +167,10 @@ function ItensButtons() {
             handleToggle(num, false);
           }
         } else {
-          if (isAbandoned) return;
+          if (isAbandoned) {
+            if (!currentStatus) handleToggle(num, true);
+            return;
+          }
           if (currentStatus === "erro") {
             handleToggle(num, false);
             handleToggle(num, false);

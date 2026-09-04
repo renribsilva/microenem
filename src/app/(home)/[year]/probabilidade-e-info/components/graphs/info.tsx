@@ -7,7 +7,7 @@ import { useHomeData } from "../../../../../../context/home_context";
 import styles from "./graphs.module.css";
 import dynamic from "next/dynamic";
 
-const Chart = dynamic(() => import("react-apexcharts"));
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 function transformTheta(theta: number, k: number, d: number) {
   return theta * k + d;
@@ -16,7 +16,7 @@ function transformTheta(theta: number, k: number, d: number) {
 export default function InfoChart() {
   const { chartProps, deferredArea } = useHomeData();
   const { chartColor, proficienciaAtual, xMin, xMax } = chartProps;
-  const { gridColor, axisColor } = useChartTheme();
+  const { textColor, gridColor, axisColor } = useChartTheme();
   const {
     abandonadosCodes,
     fixedPalette,
@@ -24,6 +24,7 @@ export default function InfoChart() {
     probInfoData,
     selectedItems,
     activeCodes,
+    curve,
   } = useYearData();
 
   const infoLabels = probInfoData.infoLabels;
@@ -58,11 +59,16 @@ export default function InfoChart() {
           };
         });
 
+        const baseColor =
+          colorIndex !== -1 ? fixedPalette[colorIndex % 45] : "#999";
+        const isFaded = curve !== null && curve.code !== code;
+        const color = isFaded ? "rgba(150, 150, 150, 0.2)" : baseColor;
+
         return {
           item: code,
           name: `Item ${code}`,
           data: dataPoints,
-          color: colorIndex !== -1 ? fixedPalette[colorIndex % 45] : "#999",
+          color,
           strokeDashArray: status === "erro" ? 4 : 0,
         };
       })
@@ -88,6 +94,7 @@ export default function InfoChart() {
     constantesData.k,
     constantesData.d,
     abandonadosCodes,
+    curve,
   ]);
 
   // --- CONFIGURAÇÕES DO APEXCHARTS ---
@@ -108,7 +115,9 @@ export default function InfoChart() {
       },
       stroke: {
         curve: "monotoneCubic",
-        width: 2,
+        width: series.map((s) =>
+          curve !== null && s.item === curve.code ? 3 : 2,
+        ),
         lineCap: "round",
         dashArray: series.map((s) => s.strokeDashArray),
       },
@@ -190,27 +199,30 @@ export default function InfoChart() {
     chartColor,
     axisColor,
     gridColor,
+    curve,
   ]);
 
   return (
-    <div style={{ minHeight: "350px", minWidth: "0", flex: "1 1 50%" }}>
-      <div className={styles.tcc_cabecalho}>
-        <div className={styles.tcc_title}>
-          <h3 className={styles.tcc_title_h3}>Curva de informação do item</h3>
-          <p className={styles.tcc_subtitle_p}>
-            Pontos da proficiência para os quais o item apresenta maior precisão
-            para distinguir quem domina de quem não domina a habilidade
-            avalidada.
-          </p>
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <div className={styles.title} style={{ color: textColor }}>
+          <span>Curva de informação do item</span>{" "}
+          {curve && <span>{curve.num}</span>}
+        </div>
+        <div className={styles.subtitle} style={{ color: textColor }}>
+          Pontos da proficiência para os quais o item apresenta maior precisão
+          para distinguir quem domina de quem não domina a habilidade avalidada.
         </div>
       </div>
-      <Chart
-        options={options}
-        series={series}
-        type="line"
-        height="100%"
-        // width="100%"
-      />
+      <div className={styles.chartWrapper}>
+        <Chart
+          options={options}
+          series={series}
+          type="line"
+          height="100%"
+          width="100%"
+        />
+      </div>
     </div>
   );
 }

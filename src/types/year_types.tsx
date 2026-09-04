@@ -268,6 +268,13 @@ interface ImpactoItem {
 }
 
 export type EAPDataType = {
+  meta: {
+    sample: string;
+    area: string;
+    ano: number | string;
+    codigo: number | string;
+    lingua: number | string;
+  };
   theta: number[];
   posterior: number[];
   eap: number[];
@@ -419,6 +426,11 @@ export type CodesMapType = Record<
   { code: number; a: number | null; b: number | null; c: number | null }
 >;
 
+export type CurveType = {
+  num: number;
+  code: number;
+};
+
 export type YearContextType = {
   lastItemActivate: number;
   selectedItems: SelectedItemsType | object;
@@ -430,6 +442,7 @@ export type YearContextType = {
   isLoaded: boolean;
   showGabarito: boolean;
   listCode: number[];
+  curve: CurveType | null;
 
   //Updatings
   isInitialRender: boolean;
@@ -486,4 +499,6 @@ export type YearContextType = {
   setIsLoaded: React.Dispatch<React.SetStateAction<boolean>>;
   setShowGabarito: React.Dispatch<React.SetStateAction<boolean>>;
   setListCode: React.Dispatch<React.SetStateAction<number[]>>;
+  setCurve: React.Dispatch<React.SetStateAction<CurveType | null>>;
+  setSelectedItems: React.Dispatch<React.SetStateAction<SelectedItemsType>>;
 };

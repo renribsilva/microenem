@@ -29,6 +29,7 @@ function ItensButtons() {
     codesMap,
     handleToggle,
     setNeedUpdateEAP,
+    setCurve,
   } = useYearData();
   const { panelColor, textColor, gridColor, isDark } = useChartTheme();
   const { chartColor } = chartProps;
@@ -37,9 +38,11 @@ function ItensButtons() {
   );
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const questions = Object.keys(codesMap)
-    .map(Number)
-    .sort((a, b) => a - b);
+  const questionKeys = Object.keys(codesMap).map(Number);
+  const isLoaded = questionKeys.length > 0;
+  const questions = isLoaded
+    ? questionKeys.sort((a, b) => a - b)
+    : Array.from({ length: 45 }, (_, i) => i + 1);
 
   const onButtonClick: onButtonClickType = (num, e) => {
     const codeItem = codesMap[num]?.code;
@@ -141,6 +144,7 @@ function ItensButtons() {
 
     setTimeout(() => {
       setNeedUpdateEAP(true);
+      setCurve(null);
       questions.forEach((num) => {
         const codeItem = codesMap[num]?.code;
         if (!codeItem) return;
@@ -232,7 +236,7 @@ function ItensButtons() {
             </button>
           );
         })}
-      </div>
+      </div>{" "}
       <button
         type="button"
         className={styles.fill_all_btn}

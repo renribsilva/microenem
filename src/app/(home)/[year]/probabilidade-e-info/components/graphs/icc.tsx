@@ -7,7 +7,7 @@ import { useHomeData } from "../../../../../../context/home_context";
 import styles from "./graphs.module.css";
 import dynamic from "next/dynamic";
 
-const Chart = dynamic(() => import("react-apexcharts"));
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 function transformTheta(theta: number, k: number, d: number) {
   return theta * k + d;
@@ -16,7 +16,7 @@ function transformTheta(theta: number, k: number, d: number) {
 export default function ICCChart() {
   const { chartProps, deferredArea } = useHomeData();
   const { chartColor, proficienciaAtual, xMin, xMax } = chartProps;
-  const { gridColor, axisColor } = useChartTheme();
+  const { textColor, gridColor, axisColor } = useChartTheme();
   const {
     abandonadosCodes,
     fixedPalette,
@@ -24,6 +24,7 @@ export default function ICCChart() {
     probInfoData,
     selectedItems,
     activeCodes,
+    curve,
   } = useYearData();
 
   const probLabels = probInfoData.probLabels;
@@ -44,6 +45,12 @@ export default function ICCChart() {
         const rawPoints = probData?.[itemKey] as (number | null)[];
         if (!rawPoints) return null;
         const colorIndex = allItemsInProva.indexOf(itemKey);
+        const baseColor =
+          colorIndex !== -1 ? fixedPalette[colorIndex % 45] : "#999";
+
+        const isFaded = curve !== null && curve.code !== code;
+        const color = isFaded ? "rgba(150, 150, 150, 0.2)" : baseColor;
+
         return {
           item: code,
           name: `Item ${code}`,
@@ -57,7 +64,7 @@ export default function ICCChart() {
               (status === "erro" ? 1 - (yValue || 0) : yValue || 0).toFixed(3),
             ),
           })),
-          color: colorIndex !== -1 ? fixedPalette[colorIndex % 45] : "#999",
+          color,
           strokeDashArray: status === "erro" ? 4 : 0,
         };
       })
@@ -73,6 +80,7 @@ export default function ICCChart() {
     abandonadosCodes,
     constantesData.k,
     constantesData.d,
+    curve,
   ]);
 
   const options: ApexCharts.ApexOptions = useMemo(() => {
@@ -93,7 +101,9 @@ export default function ICCChart() {
       },
       stroke: {
         curve: "monotoneCubic",
-        width: 2,
+        width: series.map((s) =>
+          curve !== null && s.item === curve.code ? 3 : 2,
+        ),
         lineCap: "round",
         dashArray: series.map((s) => s.strokeDashArray),
       },
@@ -174,20 +184,30 @@ export default function ICCChart() {
     chartColor,
     axisColor,
     gridColor,
+    curve,
   ]);
 
   return (
-    <div style={{ minHeight: "350px", minWidth: "0", flex: "1 1 50%" }}>
-      <div className={styles.tcc_cabecalho}>
-        <div className={styles.tcc_title}>
-          <h3 className={styles.tcc_title_h3}>Curva característica do item</h3>
-          <p className={styles.tcc_subtitle_p}>
-            Modelagem da probabilidade de acerto em função da proficiência
-            estimada.
-          </p>
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <div className={styles.title} style={{ color: textColor }}>
+          <span>Curva característica do item</span>{" "}
+          {curve && <span>{curve.num}</span>}
+        </div>
+        <div className={styles.subtitle} style={{ color: textColor }}>
+          Modelagem da probabilidade de acerto em função da proficiência
+          estimada.
         </div>
       </div>
-      <Chart options={options} series={series} type="line" height="100%" />
+      <div className={styles.chartWrapper}>
+        <Chart
+          options={options}
+          series={series}
+          type="line"
+          height="100%"
+          width="100%"
+        />
+      </div>
     </div>
   );
 }

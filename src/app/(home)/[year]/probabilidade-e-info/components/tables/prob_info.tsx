@@ -15,6 +15,7 @@ import { useYearData } from "../../../../../../context/year_context";
 import { useSidebar } from "../../../../../../context/sidebar_context";
 import clsx from "clsx";
 import dynamic from "next/dynamic";
+import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 
 const InputShell = dynamic(
   () => import("../../../../../../components/tsx/input_shell"),
@@ -35,6 +36,7 @@ type TableRow = {
 
 export default function ProbsInfoTable() {
   const { chartProps } = useHomeData();
+  const { textColor } = useChartTheme();
   const { isMobile } = useSidebar();
   const { proficienciaAtual } = chartProps;
   const {
@@ -47,6 +49,8 @@ export default function ProbsInfoTable() {
     setQuestaoPopUp,
     setIsLoaded,
     setListCode,
+    setCurve,
+    curve,
   } = useYearData();
 
   const probLabels = probInfoData.probLabels;
@@ -258,16 +262,16 @@ export default function ProbsInfoTable() {
 
   return (
     <section className={styles.probtable_container}>
-      <h3 className={styles.card_title}>
-        Tabela de probabilidade e informação do item
-      </h3>
-      <p className={styles.card_subtitle_p}>
-        {[
-          `Probabilidade¹ e informação² estimadas do item `,
-          `para a proficiência ${proficienciaAtual}, segundo `,
-          `os parâmetros de chute, dificuldade e discriminação.`,
-        ].join("")}
-      </p>
+      <div className={styles.header}>
+        <div className={styles.title} style={{ color: textColor }}>
+          Tabela de probabilidade e informação do item
+        </div>
+        <div className={styles.subtitle} style={{ color: textColor }}>
+          <span>Probabilidade¹ e informação² estimadas do item para</span> a
+          proficiência {proficienciaAtual}, segundo os parâmetros de chute,
+          dificuldade e discriminação.
+        </div>
+      </div>
       <InputShell />
       <table className={styles.probtable_table}>
         <thead className={styles.probtable_thead}>
@@ -324,15 +328,40 @@ export default function ProbsInfoTable() {
           ))}
         </thead>
         <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id} className={styles.probtable_tr}>
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className={styles.probtable_td}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
-            </tr>
-          ))}
+          {table.getRowModel().rows.map((row) => {
+            const isAbandonado = row.original.isAbandonado;
+            const itemId = row.original.id;
+            const itemNum = row.original.posicao;
+            const isActive = curve?.code === itemId;
+            return (
+              <tr
+                key={row.id}
+                className={clsx(
+                  styles.probtable_tr1 || styles.probtable_tr,
+                  isActive && styles.row_active,
+                )}
+                onClick={() => {
+                  if (!isAbandonado) {
+                    setCurve({ num: itemNum, code: itemId });
+                    const topo = document.getElementById("topo-pagina");
+                    if (topo) {
+                      topo.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start",
+                      });
+                    }
+                  }
+                }}
+                style={{ cursor: isAbandonado ? "default" : "pointer" }}
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id} className={styles.probtable_td}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            );
+          })}
         </tbody>
       </table>
       <div className={styles.table_footer}>

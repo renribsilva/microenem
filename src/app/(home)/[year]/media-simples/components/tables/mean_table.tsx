@@ -216,9 +216,11 @@ export default function RankingTable() {
         className={styles.meantable_cabecalho}
         suppressHydrationWarning
       >
-        <h3 className={styles.card_title}>Top 2.500 Médias Simples</h3>
+        <h3 className={styles.card_title} suppressHydrationWarning>
+          Top 2.500 Médias Simples
+        </h3>
         <div className={styles.header_searches} suppressHydrationWarning>
-          <div className={styles.page_info}>
+          <div className={styles.page_info} suppressHydrationWarning>
             Ir para:
             <input
               type="number"
@@ -251,9 +253,10 @@ export default function RankingTable() {
               }}
               onBlur={handleRankSubmit}
               className={styles.rank_input}
+              suppressHydrationWarning
             />
           </div>
-          <div className={styles.page_info}>
+          <div className={styles.page_info} suppressHydrationWarning>
             Pág.{" "}
             <input
               type="number"
@@ -270,20 +273,25 @@ export default function RankingTable() {
                 }
               }}
               className={styles.page_input}
+              suppressHydrationWarning
             />{" "}
-            de <span>{pageCount}</span>
+            de <span suppressHydrationWarning>{pageCount}</span>
           </div>
         </div>
       </div>
       {/* Container flexível da tabela */}
       <div className={styles.table_scroll} suppressHydrationWarning>
-        <table className={styles.meantable_table}>
-          <thead className={styles.meantable_thead}>
+        <table className={styles.meantable_table} suppressHydrationWarning>
+          <thead className={styles.meantable_thead} suppressHydrationWarning>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
+              <tr key={headerGroup.id} suppressHydrationWarning>
                 {headerGroup.headers.map((header) => (
-                  <th key={header.id} className={styles.meantable_th}>
-                    <div className={styles.th_content}>
+                  <th
+                    key={header.id}
+                    className={styles.meantable_th}
+                    suppressHydrationWarning
+                  >
+                    <div className={styles.th_content} suppressHydrationWarning>
                       {flexRender(
                         header.column.columnDef.header,
                         header.getContext(),
@@ -294,17 +302,33 @@ export default function RankingTable() {
               </tr>
             ))}
           </thead>
-          <tbody>
+          <tbody suppressHydrationWarning>
             {isLoading
               ? Array.from({ length: pagination.pageSize }).map((_, idx) => (
-                  <tr key={idx} className={styles.meantable_tr}>
-                    <td className={styles.meantable_td}>
-                      <span style={{ display: "inline-block", width: "40px" }}>
+                  <tr
+                    key={idx}
+                    className={styles.meantable_tr}
+                    suppressHydrationWarning
+                  >
+                    <td
+                      className={styles.meantable_td}
+                      suppressHydrationWarning
+                    >
+                      <span
+                        style={{ display: "inline-block", width: "40px" }}
+                        suppressHydrationWarning
+                      >
                         <TDMedium />
                       </span>
                     </td>
-                    <td className={styles.meantable_td}>
-                      <span style={{ display: "inline-block", width: "80px" }}>
+                    <td
+                      className={styles.meantable_td}
+                      suppressHydrationWarning
+                    >
+                      <span
+                        style={{ display: "inline-block", width: "80px" }}
+                        suppressHydrationWarning
+                      >
                         <TDMedium />
                       </span>
                     </td>
@@ -320,6 +344,7 @@ export default function RankingTable() {
                         styles.meantable_tr,
                         isSelected && styles.row_active,
                       )}
+                      suppressHydrationWarning
                       onClick={() => {
                         setActiveRanking(currentRank);
                         const topo = document.getElementById("topo-pagina");
@@ -332,7 +357,11 @@ export default function RankingTable() {
                       }}
                     >
                       {row.getVisibleCells().map((cell) => (
-                        <td key={cell.id} className={styles.meantable_td}>
+                        <td
+                          key={cell.id}
+                          className={styles.meantable_td}
+                          suppressHydrationWarning
+                        >
                           {flexRender(
                             cell.column.columnDef.cell,
                             cell.getContext(),
@@ -371,8 +400,11 @@ export default function RankingTable() {
             ‹
           </button>
 
-          <span className={styles.footer_page_indicator}>
-            <strong>{pageIndex}</strong> / {pageCount}
+          <span
+            className={styles.footer_page_indicator}
+            suppressHydrationWarning
+          >
+            <strong suppressHydrationWarning>{pageIndex}</strong> / {pageCount}
           </span>
 
           <button

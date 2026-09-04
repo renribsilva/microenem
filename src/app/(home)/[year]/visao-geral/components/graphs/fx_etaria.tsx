@@ -6,7 +6,7 @@ import { useYearData } from "../../../../../../context/year_context";
 import dynamic from "next/dynamic";
 import styles from "./graphs.module.css";
 
-const Chart = dynamic(() => import("react-apexcharts"));
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 interface FxEtariaItem {
   x: string;

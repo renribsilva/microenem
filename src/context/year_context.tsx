@@ -6,7 +6,6 @@ import {
   useMemo,
   ReactNode,
   useRef,
-  useLayoutEffect,
   useState,
   useCallback,
   useEffect,
@@ -154,6 +153,10 @@ export function YearProvider({ children }: { children: ReactNode }) {
   const [showGabarito, setShowGabarito] = useState<boolean>(false);
 
   const [listCode, setListCode] = useState<number[]>([]);
+
+  const [curve, setCurve] = useState<{ num: number; code: number } | null>(
+    null,
+  );
 
   // ---------------------------------------------------------------------------
   // ----------------- CARGA ESTÁTICA DE JSON (BUNDLE INICIAL) -----------------
@@ -515,7 +518,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const isPathOfInterest = pathName.endsWith("tri");
-    if (!isPathOfInterest) return;
+    if (!isPathOfInterest || !isFetchingEAP) return;
     async function fetchEAPData() {
       try {
         const res = await fetch(
@@ -535,6 +538,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
     if (isPathOfInterest || needUpdateEAP) fetchEAPData();
   }, [
     deferredArea,
+    isFetchingEAP,
     lingua,
     versao,
     codigo,
@@ -585,10 +589,13 @@ export function YearProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     async function loadCodes() {
       if (!codigo || !currentYear) return;
+
       const isTriPage = pathName?.endsWith("/tri");
       const isRespostaPage = pathName?.endsWith("/resposta-ao-item");
       const isProbInfoPage = pathName?.endsWith("/probabilidade-e-info");
+
       if (!(isTriPage || isRespostaPage || isProbInfoPage)) return;
+
       try {
         const params = new URLSearchParams({
           year: Array.isArray(currentYear)
@@ -597,15 +604,54 @@ export function YearProvider({ children }: { children: ReactNode }) {
           codigo: String(codigo),
           area: deferredArea,
           ...(versao && { versao: String(versao) }),
-          ...(lingua !== undefined && { lingua: String(lingua) }),
+          ...(lingua !== undefined && {
+            lingua: String(lingua),
+          }),
         });
+
         const res = await fetch(`/api/codes?${params.toString()}`);
-        const data = await res.json();
+        const data: CodesMapType = await res.json();
+
+        // Primeiro sincroniza a seleção com o NOVO mapa.
+        setSelectedItems((prev) => {
+          if (Object.keys(prev).length === 0) {
+            return prev;
+          }
+
+          const codeToPosition = new Map<string, number>();
+
+          Object.entries(data).forEach(([posStr, item]) => {
+            if (item?.code !== undefined && item?.code !== null) {
+              codeToPosition.set(String(item.code), Number(posStr));
+            }
+          });
+
+          const nextMapping: typeof prev = {};
+
+          Object.entries(prev).forEach(([code, itemData]) => {
+            const newPosition = codeToPosition.get(String(code));
+
+            // Não existe no novo codesMap -> remove.
+            if (newPosition === undefined) {
+              return;
+            }
+
+            nextMapping[code] = {
+              ...itemData,
+              posicao: newPosition,
+            };
+          });
+
+          return nextMapping;
+        });
+
+        // Depois atualiza o mapa.
         setCodesMap(data);
       } catch (err) {
         console.error("Erro ao carregar códigos:", err);
       }
     }
+
     loadCodes();
   }, [currentYear, codigo, deferredArea, versao, lingua, pathName]);
 
@@ -760,45 +806,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
     activeSelectedRow,
   };
 
-  //---------------------------PROBABILIDADE E INFO-----------------------------
-
-  const prevLabelRef = useRef<string>(selectedLabel);
-  const prevCodesMapRef = useRef<typeof codesMap>(codesMap);
-
-  useLayoutEffect(() => {
-    const previousLabel = prevLabelRef.current;
-    if (previousLabel === selectedLabel) return;
-    const { start, end } = ranges[deferredArea] || { start: 1, end: 45 };
-    const oldCodesMap = prevCodesMapRef.current;
-    setSelectedItems((prev) => {
-      const currentlySelectedCodes = Object.keys(prev).map(Number);
-      if (currentlySelectedCodes.length === 0) return prev;
-      const nextMapping: typeof prev = {};
-      const translationMap = new Map();
-      for (let num = start; num <= end; num++) {
-        const oldCode = oldCodesMap[num]?.code;
-        const newCode = codesMap[num]?.code;
-        if (oldCode && newCode) {
-          translationMap.set(oldCode, { newCode, posicao: num });
-        }
-      }
-      currentlySelectedCodes.forEach((oldCode) => {
-        const translation = translationMap.get(oldCode);
-        if (translation) {
-          nextMapping[translation.newCode] = {
-            ...prev[oldCode],
-            posicao: translation.posicao,
-          };
-        } else {
-          nextMapping[oldCode] = prev[oldCode];
-        }
-      });
-      return nextMapping;
-    });
-    prevLabelRef.current = selectedLabel;
-    prevCodesMapRef.current = codesMap;
-  }, [selectedLabel, codesMap, deferredArea]);
-
   //--------------------------RESPOSTA AO ITEM---------------------------
 
   const [violinData, setViolinData] = useState<ViolinDataType>(null);
@@ -875,6 +882,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
         isLoaded,
         showGabarito,
         listCode,
+        curve,
 
         // Updatings
         isInitialRender,
@@ -931,6 +939,8 @@ export function YearProvider({ children }: { children: ReactNode }) {
         setIsLoaded,
         setShowGabarito,
         setListCode,
+        setCurve,
+        setSelectedItems,
       }}
     >
       {children}

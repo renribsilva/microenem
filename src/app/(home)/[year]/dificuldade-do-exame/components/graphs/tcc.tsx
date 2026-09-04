@@ -6,7 +6,7 @@ import { useHomeData } from "../../../../../../context/home_context";
 import dynamic from "next/dynamic";
 import styles from "./graphs.module.css";
 
-const Chart = dynamic(() => import("react-apexcharts"));
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 const DropdownBooks = dynamic(
   () => import("../../../../../../components/tsx/dropdown_books"),
 );

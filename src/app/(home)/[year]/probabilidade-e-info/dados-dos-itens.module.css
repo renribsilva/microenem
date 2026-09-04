@@ -55,3 +55,9 @@
   }
 }
 
+.card_icc,
+.card_info {
+  /* background-color: aquamarine; */
+  display: flex;
+  min-height: 360px;
+}

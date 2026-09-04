@@ -6,7 +6,7 @@ import { useYearData } from "../../../../../../context/year_context";
 import dynamic from "next/dynamic";
 import styles from "./graphs.module.css";
 
-const Chart = dynamic(() => import("react-apexcharts"));
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const doughnutColors = ["rgba(60, 245, 188, 0.7)", "rgba(245, 99, 59, 0.7)"];
 

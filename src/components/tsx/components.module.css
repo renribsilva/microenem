@@ -520,6 +520,7 @@
   font-weight: 600;
   opacity: 0.9;
 }
+
 /************************************************/
 /*******************DROPDOWN*********************/
 /************************************************/
@@ -538,7 +539,6 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  font-size: 0.85rem;
   font-weight: 600;
   height: 40px;
   width: 100%;
@@ -547,17 +547,46 @@
 
 .dropdown_list {
   position: absolute;
+  top: calc(100% + 4px);
   width: 100%;
   background-color: var(--panel);
   border: 1px solid var(--grid);
   border-radius: 8px;
-  max-height: 250px;
+  max-height: 300px;
   overflow-y: auto;
   z-index: 101;
+  /* Sombra ultra leve e suave para separação limpa */
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.08),
+    0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.dropdown_list_item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  border-left: 4px solid transparent; /* Borda reservada para não 'pular' no layout */
+  transition: all 0.15s ease;
 }
 
 .dropdown_list_item:hover {
   background-color: var(--tab-hover) !important;
+}
+
+/* Marcação do item ativo */
+.active_item {
+  font-weight: 600;
+  background-color: var(--tab-hover);
+  border-left: 4px solid var(--accent, #475569); /* Barra lateral colorida */
+}
+
+.check_icon {
+  font-size: 0.85rem;
+  opacity: 0.8;
 }
 
 /*******************************************************/

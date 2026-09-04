@@ -33,6 +33,8 @@ function DropdownSidebar({
   const { isMobileOpen, isMobile } = useSidebar();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  const activeYear = currentYear || "2025";
+
   const getYearDestinationPath = (targetYear: string) => {
     if (!pathName) return `/${targetYear}/visao-geral`;
     const yearRegex = /^\/\d{4}/;
@@ -68,7 +70,7 @@ function DropdownSidebar({
             fontSize: "16px",
           }}
         >
-          Edição: {currentYear || "2025"}
+          Edição: {activeYear}
         </span>
         {(isMobileOpen || !isMobile) && (
           <span
@@ -84,6 +86,7 @@ function DropdownSidebar({
       {isOpen && (
         <div className={styles.dropdown_list}>
           {years.map((ds) => {
+            const isActive = ds.name === activeYear;
             return (
               <Link
                 key={ds.name}
@@ -92,17 +95,12 @@ function DropdownSidebar({
                   setIsOpen(false);
                   handleItemClick();
                 }}
-                className={styles.dropdown_list_item}
-                style={{
-                  display: "block", // Garante que o Link ocupe a linha toda
-                  padding: "10px 14px",
-                  cursor: "pointer",
-                  fontSize: "1rem",
-                  textDecoration: "none",
-                  color: "inherit",
-                }}
+                className={`${styles.dropdown_list_item} ${
+                  isActive ? styles.active_item : ""
+                }`}
               >
-                {ds.name}
+                <span>{ds.name}</span>
+                {isActive && <span className={styles.check_icon}>✓</span>}
               </Link>
             );
           })}

@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import styles from "./visao-geral.module.css";
 import Card from "../../../../components/tsx/card";
 import { useYearData } from "../../../../context/year_context";
-import P from "../../../../components/skt/visao-geral/p";
+import P from "../../../../components/skt/p";
 
 const Group = dynamic(() => import("../../../../components/svg/group"));
 const PersonRemove = dynamic(

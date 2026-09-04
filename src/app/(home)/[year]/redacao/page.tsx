@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
 import Card from "../../../../components/tsx/card";
 import styles from "./redacao.module.css";
+import Scatter from "../../../../components/svg/scatter";
 
 const PersonText = dynamic(
   () => import("../../../../components/svg/person_text"),
@@ -22,6 +23,10 @@ export default function Redacao() {
         </div>
         <div className={styles.redacao_top_right}>
           <Card>
+            <Scatter />
+            <h3 className={styles.card_redacao_title}>
+              Medidas de dispersão e centralidade
+            </h3>
             <NotasRedacaoTable />
           </Card>
         </div>

@@ -7,6 +7,7 @@ import { useHomeData } from "../../../../../../context/home_context";
 import { useSidebar } from "../../../../../../context/sidebar_context";
 import clsx from "clsx";
 import { AreaItemMap } from "../../../../../../types/year_types";
+import TDMedium from "../../../../../../components/skt/td";
 
 export default function CandidateFullDetail() {
   const { dicData, setActiveArea } = useHomeData();
@@ -24,7 +25,7 @@ export default function CandidateFullDetail() {
   );
   const { isMobile } = useSidebar();
 
-  const candidateData = meanData.candidateData;
+  const candidateData = meanData?.candidateData;
 
   const linguaEstrangeira =
     candidateData?.TP_LINGUA === 0 ? "Inglês" : "Espanhol";
@@ -34,7 +35,7 @@ export default function CandidateFullDetail() {
       {
         label: isMobile
           ? `LC (${linguaEstrangeira.slice(0, 3)})`
-          : `Linguagens (${linguaEstrangeira})`,
+          : `Linguagens ${candidateData ? `(${linguaEstrangeira})` : ""}`,
         key: "LC",
         nota: candidateData?.NU_NOTA_LC,
         score: candidateData?.SCORE_LC,
@@ -97,7 +98,7 @@ export default function CandidateFullDetail() {
   }, [candidateData, getAreaMap, areas]);
 
   const getProvaInfo = (codProva: number) => {
-    if (!dicData || !dicData.codigo) return { cor: "#333", nome: "---" };
+    if (!dicData || !dicData.codigo) return { cor: "#333", nome: <TDMedium /> };
     const index = dicData.codigo.indexOf(codProva);
     if (index === -1) return { cor: "#333", nome: `Cód: ${codProva}` };
     const nomeCorOriginal = dicData.cor[index];
@@ -114,15 +115,20 @@ export default function CandidateFullDetail() {
     return { cor: hex, nome: nomeCorOriginal };
   };
 
-  if (!candidateData) return <div className={styles.fallback}>Aguarde...</div>;
-
   return (
     <section className={styles.candidate_container}>
       <div className={styles.full_header}>
         <div className={styles.main_info}>
-          <span className={styles.rank_badge}>#{candidateData.RANKING}°</span>
+          <span className={styles.rank_badge}>
+            {candidateData ? `#${candidateData.RANKING}°` : ""}
+          </span>
           <h2 className={styles.media_title}>
-            Média Simples: {Number(candidateData.MEDIA_GERAL).toFixed(2)}
+            Média Simples:{" "}
+            {candidateData ? (
+              Number(candidateData.MEDIA_GERAL).toFixed(2)
+            ) : (
+              <TDMedium height="22px" width="70px" />
+            )}
           </h2>
         </div>
       </div>
@@ -172,16 +178,14 @@ export default function CandidateFullDetail() {
                   return (
                     <tr key={area.key} className={styles.static_tr}>
                       <td className={styles.static_td}>{area.label}</td>
-                      <td className={styles.static_td}>{area.nota}</td>
                       <td className={styles.static_td}>
-                        {acertos}/{validos}
+                        {area.nota ?? <TDMedium />}
+                      </td>
+                      <td className={styles.static_td}>
+                        {candidateData ? `${acertos}/${validos}` : <TDMedium />}
                       </td>
                       <td className={styles.static_td}>
                         <div className={styles.prova_color_cell}>
-                          <span
-                            className={styles.color_circle}
-                            style={{ backgroundColor: info.cor }}
-                          />
                           <span
                             style={{
                               color: info.cor === "#ffffff" ? "#999" : info.cor,
@@ -195,11 +199,13 @@ export default function CandidateFullDetail() {
                   );
                 })}
               </tbody>
-            </table>
+            </table>{" "}
             <div className={styles.redacao_full_card}>
               <div className={styles.redacao_header_row}>
                 <span className={styles.redacao_label}>Redação: </span>
-                <strong>{candidateData.NU_NOTA_REDACAO}</strong>
+                <strong>
+                  {candidateData?.NU_NOTA_REDACAO ?? <TDMedium width="30px" />}
+                </strong>
               </div>
               <div>
                 {[1, 2, 3, 4, 5].map((i) => (
@@ -210,6 +216,7 @@ export default function CandidateFullDetail() {
                         className={styles.comp_bar_fill}
                         style={{
                           width: (() => {
+                            if (!candidateData) return "0%";
                             const notaCompetencia = candidateData[
                               `NU_NOTA_COMP${i}` as keyof typeof candidateData
                             ] as number;
@@ -220,11 +227,13 @@ export default function CandidateFullDetail() {
                       />
                     </div>
                     <span className={styles.comp_val}>
-                      {
+                      {candidateData ? (
                         candidateData[
                           `NU_NOTA_COMP${i}` as keyof typeof candidateData
                         ]
-                      }
+                      ) : (
+                        <TDMedium width="30px" height="0.75rem" />
+                      )}
                     </span>
                   </div>
                 ))}

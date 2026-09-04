@@ -7,40 +7,72 @@
 }
 
 .table_body {
-  /* background-color: aqua; */
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 0.9rem;
 }
 
 .table_footer {
-  padding: 5px;
+  padding: 15px 0 0 10px;
   font-size: 0.75rem; /* 12px */
   font-weight: 300;
   color: #888;
 }
 
-.table_body tr {
-  border-bottom: none;
+.table_tr {
+  height: 32px;
   white-space: nowrap;
+  transition: background-color 0.2s;
 }
 
-.table_body thead tr {
+.table_body thead .table_tr {
+  border-bottom: 1px solid var(--grid);
+  height: 32px;
+}
+
+.table_body tbody .table_tr {
   border-bottom: 1px solid var(--grid);
 }
 
-.table_body tbody tr:last-child {
-  border-bottom: 1px solid var(--grid);
-}
-.table_body th {
+.table_th {
   text-align: left;
-  padding: 10px;
-}
-
-.table_body td {
-  padding: 5px;
+  padding: 0 8px;
+  height: 32px;
+  box-sizing: border-box;
+  overflow: hidden;
   font-weight: 300;
+  border-bottom: 1px solid var(--grid);
 }
 
+.table_td {
+  padding: 0 8px;
+  height: 32px;
+  box-sizing: border-box;
+  overflow: hidden;
+  font-weight: 300;
+  border-bottom: 1px solid var(--grid);
+}
+
+.table_fixed_cell {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.table_metricLabel {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.table_valueText {
+  /* font-family: monospace; */
+}
 /************************************************/
 /*******************DESCRIBE*********************/
 /************************************************/
@@ -50,7 +82,6 @@
 }
 
 .describe_table {
-  /* background-color: aquamarine; */
   min-width: 100%;
   border-collapse: collapse;
   font-size: 0.9rem;
@@ -59,18 +90,21 @@
 }
 
 .describe_thead {
-  background-color: var(--tab-hover);
 }
 
 .describe_th {
-  padding: 10px;
+  padding: 0 8px;
   border-bottom: 1px solid var(--grid);
   font-weight: 300;
+  height: 32px;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .describe_tr {
   transition: background-color 0.2s;
   font-weight: 300;
+  height: 32px;
 }
 
 .describe_tr:hover {
@@ -82,16 +116,25 @@
 }
 
 .describe_td {
-  padding: 8px;
+  padding: 0 8px;
   border-bottom: 1px solid var(--grid);
+  height: 32px;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
-.describe_td:first-child {
-  width: 40%;
+.describe_fixed_cell {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: 100%;
 }
 
 .describe_metricLabel {
-  /* color: #374151; */
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: 100%;
 }
 
 .describe_valueText {

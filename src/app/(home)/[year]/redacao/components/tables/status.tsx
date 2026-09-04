@@ -7,14 +7,16 @@ import {
   getExpandedRowModel,
   flexRender,
   ColumnDef,
+  createColumnHelper,
 } from "@tanstack/react-table";
 import styles from "./tables.module.css";
 import { useYearData } from "../../../../../../context/year_context";
+import TDMedium from "../../../../../../components/skt/td";
 
 interface StatusRow {
   grupo: string;
-  total: number;
-  freq: string;
+  total: number | string | null;
+  freq: string | null;
   isTotal: boolean;
 }
 
@@ -29,13 +31,32 @@ const statusMap: Record<string, string> = {
   "9": "Parte desconectada",
 };
 
+const STATUS_KEYS = ["1", "2", "3", "4", "6", "7", "8", "9"];
+
 export default function StatusRedacaoTable() {
   const { redacaoData } = useYearData();
   const statusData = redacaoData?.statusData;
 
+  const isLoading = !statusData || !statusData.datasets || !statusData.labels;
+
   const tableData = useMemo<StatusRow[]>(() => {
-    if (!statusData || !statusData.datasets || !statusData.labels) {
-      return [];
+    if (isLoading) {
+      const fallbackRows: StatusRow[] = STATUS_KEYS.map((key) => ({
+        grupo: statusMap[key],
+        total: null,
+        freq: null,
+        isTotal: false,
+      }));
+
+      return [
+        {
+          grupo: "Total de Registros (n)",
+          total: null,
+          freq: null,
+          isTotal: true,
+        },
+        ...fallbackRows,
+      ];
     }
 
     const nTotal = statusData.datasets[0]?.n_total || 0;
@@ -58,54 +79,81 @@ export default function StatusRedacaoTable() {
     });
 
     return [firstRow, ...rows];
-  }, [statusData]);
+  }, [statusData, isLoading]);
+
+  const columnHelper = createColumnHelper<StatusRow>();
 
   const columns = useMemo<ColumnDef<StatusRow>[]>(
     () => [
-      {
-        accessorKey: "grupo",
+      columnHelper.accessor("grupo", {
         header: "",
+        size: 180,
+        minSize: 180,
+        maxSize: 180,
+        enableResizing: false,
         cell: ({ row, getValue }) => {
           const val = getValue() as string;
           return (
             <div
               title={val}
+              className={styles.table_metricLabel}
               style={{
                 paddingLeft: `${row.depth * 2}rem`,
-                fontWeight: "300",
-                maxWidth: "180px",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
               }}
             >
               {val}
             </div>
           );
         },
-      },
-      {
-        accessorKey: "total",
+      }),
+      columnHelper.accessor("total", {
         header: "Total",
+        size: 90,
+        minSize: 90,
+        maxSize: 90,
+        enableResizing: false,
         cell: ({ getValue }) => {
-          const val = getValue() as number;
+          const val = getValue() as number | string | null;
+          if (isLoading || val === null || val === "---") {
+            return (
+              <div className={styles.table_fixed_cell}>
+                <TDMedium />
+              </div>
+            );
+          }
           return (
-            <span style={{ fontWeight: "300" }}>
-              {val?.toLocaleString("pt-BR")}
-            </span>
+            <div className={styles.table_fixed_cell}>
+              <span className={styles.table_valueText}>
+                {typeof val === "number" ? val.toLocaleString("pt-BR") : val}
+              </span>
+            </div>
           );
         },
-      },
-      {
-        accessorKey: "freq",
+      }),
+      columnHelper.accessor("freq", {
         header: "(%)",
+        size: 70,
+        minSize: 70,
+        maxSize: 70,
+        enableResizing: false,
         cell: ({ getValue }) => {
-          const val = getValue() as string;
-          return <span style={{ fontWeight: "300" }}>{val}%</span>;
+          const val = getValue() as string | null;
+          if (isLoading || val === null || val === "---") {
+            return (
+              <div className={styles.table_fixed_cell}>
+                <TDMedium />
+              </div>
+            );
+          }
+          return (
+            <div className={styles.table_fixed_cell}>
+              <span className={styles.table_valueText}>{val}%</span>
+            </div>
+          );
         },
-      },
+      }),
     ],
-    [],
+    [columnHelper, isLoading],
   );
 
   // eslint-disable-next-line
@@ -114,6 +162,11 @@ export default function StatusRedacaoTable() {
     columns,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
+    defaultColumn: {
+      size: 90,
+      minSize: 50,
+      maxSize: 300,
+    },
   });
 
   return (
@@ -124,9 +177,17 @@ export default function StatusRedacaoTable() {
       >
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header, i) => (
-                <th key={header.id} style={{ width: i === 0 ? "50%" : "25%" }}>
+            <tr key={headerGroup.id} className={styles.table_tr}>
+              {headerGroup.headers.map((header) => (
+                <th
+                  key={header.id}
+                  className={styles.table_th}
+                  style={{
+                    width: `${header.getSize()}px`,
+                    minWidth: `${header.getSize()}px`,
+                    maxWidth: `${header.getSize()}px`,
+                  }}
+                >
                   {flexRender(
                     header.column.columnDef.header,
                     header.getContext(),
@@ -137,26 +198,23 @@ export default function StatusRedacaoTable() {
           ))}
         </thead>
         <tbody>
-          {tableData.length === 0 ? (
-            <tr>
-              <td
-                colSpan={columns.length}
-                style={{ textAlign: "center", padding: "1rem" }}
-              >
-                Carregando...
-              </td>
+          {table.getRowModel().rows.map((row) => (
+            <tr key={row.id} className={styles.table_tr}>
+              {row.getVisibleCells().map((cell) => (
+                <td
+                  key={cell.id}
+                  className={styles.table_td}
+                  style={{
+                    width: `${cell.column.getSize()}px`,
+                    minWidth: `${cell.column.getSize()}px`,
+                    maxWidth: `${cell.column.getSize()}px`,
+                  }}
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
             </tr>
-          ) : (
-            table.getRowModel().rows.map((row) => (
-              <tr key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))
-          )}
+          ))}
         </tbody>
       </table>
       <div className={styles.table_footer}>

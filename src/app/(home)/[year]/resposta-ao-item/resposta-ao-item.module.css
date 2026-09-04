@@ -35,3 +35,9 @@
     /* min-height: 350px; */
   }
 }
+
+.card_acertos,
+.card_violin {
+  display: flex;
+  min-height: 350px;
+}

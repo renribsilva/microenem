@@ -6,6 +6,7 @@ import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import { useHomeData } from "../../../../../../context/home_context";
 import { useSidebar } from "../../../../../../context/sidebar_context";
 import dynamic from "next/dynamic";
+import styles from "./graphs.module.css";
 
 const Chart = dynamic(() => import("react-apexcharts"));
 
@@ -25,12 +26,13 @@ export default function ViolinBinsChart() {
 
   const subtitleText = useMemo(() => {
     return [
-      `Frequência absoluta de acertos e erros`,
-      `por faixa de proficiência`,
+      `Frequência absoluta de acertos e erros por faixa de proficiência`,
       violinData
         ? `(cod: ${lastItemActivate}; p: ${activeTCC?.metadata?.cor}).`
         : ``,
-    ];
+    ]
+      .filter(Boolean)
+      .join(" ");
   }, [violinData, lastItemActivate, activeTCC]);
 
   const series = useMemo(() => {
@@ -98,7 +100,7 @@ export default function ViolinBinsChart() {
              <div style="margin-top: 2px;">
                 <span style="${css.label}">Proficiência: </span>
                 <span style="${css.value}">${value}</span>
-              </div>
+             </div>
             `;
           },
         },
@@ -166,7 +168,7 @@ export default function ViolinBinsChart() {
                     </span>
                   </div>
                 </div>
-              </div>
+             </div>
             `;
           },
           title: {
@@ -201,8 +203,7 @@ export default function ViolinBinsChart() {
         title: {
           text: "Quantidade de Alunos",
           style: { color: axisColor },
-          // eslint-disable-next-line
-        } as any,
+        },
         labels: {
           style: { colors: axisColor },
           formatter: function (val): string {
@@ -227,37 +228,49 @@ export default function ViolinBinsChart() {
           offsetX: -2,
         },
       },
-      title: {
-        text: `Frequência de resposta ao item ${lastItemActivateNum}`,
-        style: { color: textColor, fontSize: "16px", fontWeight: "bold" },
-      },
-      subtitle: {
-        // eslint-disable-next-line
-        text: subtitleText as any,
-        style: { color: textColor, fontSize: "13px" },
-      },
     }),
-    [
-      violinData,
-      isMobile,
-      maxAbsValue,
-      textColor,
-      axisColor,
-      lastItemActivateNum,
-      gridColor,
-      subtitleText,
-    ],
+    [violinData, isMobile, maxAbsValue, textColor, axisColor, gridColor],
   );
 
+  if (!violinData) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <div className={styles.title} style={{ color: textColor }}>
+            Frequência de resposta ao item{" "}
+            {lastItemActivateNum != 0 ? lastItemActivateNum : ""}
+          </div>
+          <div className={styles.subtitle} style={{ color: textColor }}>
+            {subtitleText}
+          </div>
+        </div>
+        <div className={styles.loading}>
+          <span style={{ color: textColor }}>Carregando...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div style={{ height: "350px" }}>
-      <Chart
-        options={options}
-        series={series}
-        type="bar"
-        height="100%"
-        width="100%"
-      />
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <div className={styles.title} style={{ color: textColor }}>
+          Frequência de resposta ao item{" "}
+          {lastItemActivateNum != 0 ? lastItemActivateNum : ""}
+        </div>
+        <div className={styles.subtitle} style={{ color: textColor }}>
+          {subtitleText}
+        </div>
+      </div>
+      <div className={styles.chartWrapper}>
+        <Chart
+          options={options}
+          series={series}
+          type="bar"
+          height="100%"
+          width="100%"
+        />
+      </div>
     </div>
   );
 }

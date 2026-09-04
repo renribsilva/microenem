@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import { useHomeData } from "../../../../../../context/home_context";
 import { useYearData } from "../../../../../../context/year_context";
 import { useSidebar } from "../../../../../../context/sidebar_context";
 import dynamic from "next/dynamic";
+import styles from "./graphs.module.css";
 
 const Chart = dynamic(() => import("react-apexcharts"));
 
@@ -17,13 +18,14 @@ export default function AcertosChart() {
     useYearData();
 
   const { chartColor } = chartProps;
-  const parentRef = useRef<HTMLDivElement>(null);
   const { xMin, xMax } = chartProps;
 
   const subtitleText = useMemo(() => {
     return [
       `Frequência relativa de acertos observados em cada`,
+      " ",
       `faixa de proficiência`,
+      " ",
       itemGraphData
         ? `(cod: ${lastItemActivate}; p: ${activeTCC?.metadata?.cor}).`
         : ``,
@@ -63,9 +65,6 @@ export default function AcertosChart() {
             enabled: false,
           },
         },
-      },
-      noData: {
-        text: "Atualizando...",
       },
       markers: {
         size: [1, 0],
@@ -198,15 +197,6 @@ export default function AcertosChart() {
           show: false,
         },
       },
-      title: {
-        text: `Frequência de acertos do item ${lastItemActivateNum}`,
-        style: { color: textColor, fontSize: "16px", fontWeight: "bold" },
-      },
-      subtitle: {
-        // eslint-disable-next-line
-        text: subtitleText as any,
-        style: { color: textColor, fontSize: "13px" },
-      },
       legend: {
         position: "bottom",
         labels: { colors: textColor },
@@ -220,21 +210,49 @@ export default function AcertosChart() {
     chartColor,
     panelColor,
     xMax,
-    lastItemActivateNum,
     isMobile,
     textColor,
-    subtitleText,
   ]);
 
+  if (!itemGraphData) {
+    return (
+      <div className={`${styles.container}`}>
+        <div className={styles.header}>
+          <div className={styles.title} style={{ color: textColor }}>
+            Frequência de acerto do item{" "}
+            {lastItemActivateNum != 0 ? lastItemActivateNum : ""}
+          </div>
+          <div className={styles.subtitle} style={{ color: textColor }}>
+            {subtitleText}
+          </div>
+        </div>
+        <div className={styles.loading}>
+          <span style={{ color: textColor }}>Carregando...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div ref={parentRef} style={{ height: "350px", width: "100%" }}>
-      <Chart
-        options={options}
-        series={series}
-        type="line"
-        height="100%"
-        width="100%"
-      />
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <div className={styles.title} style={{ color: textColor }}>
+          Frequência de acerto do item{" "}
+          {lastItemActivateNum != 0 ? lastItemActivateNum : ""}
+        </div>
+        <div className={styles.subtitle} style={{ color: textColor }}>
+          {subtitleText}
+        </div>
+      </div>
+      <div className={styles.chartWrapper}>
+        <Chart
+          options={options}
+          series={series}
+          type="line"
+          height="100%"
+          width="100%"
+        />
+      </div>
     </div>
   );
 }

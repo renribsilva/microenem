@@ -44,11 +44,3 @@
   flex-direction: column;
   margin-bottom: 8px;
 }
-
-.table_footer {
-  padding-inline: 10px;
-  padding-bottom: 10px;
-  font-size: 0.75rem; /* 12px */
-  font-weight: 300;
-  color: #888;
-}

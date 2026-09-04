@@ -9,7 +9,7 @@ export default function QuestoesPage() {
   return (
     <main id="topo-pagina" className={styles.main_container}>
       <div className={styles.main_top}>
-        <Card className={styles.card_top}>
+        <Card className={styles.card_top} fullSize>
           <AcertosChart />
         </Card>
       </div>

@@ -11,12 +11,12 @@ export default function QuestoesPage() {
     <main id="topo-pagina" className={styles.main_container}>
       <div className={styles.main_top}>
         <div className={styles.main_top1}>
-          <Card>
+          <Card className={styles.card_acertos} fullSize>
             <AcertosChart />
           </Card>
         </div>
         <div className={styles.main_top2}>
-          <Card>
+          <Card className={styles.card_violin} fullSize>
             <ViolinBinsChart />
           </Card>
         </div>

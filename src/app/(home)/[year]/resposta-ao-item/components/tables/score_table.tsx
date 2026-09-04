@@ -52,20 +52,19 @@ export default function ScoreTable() {
     setListCode,
   } = useYearData();
 
-  const [windowWidth, setWindowWidth] = useState(
-    typeof window !== "undefined" ? window.innerWidth : 1200,
-  );
+  const [windowWidth, setWindowWidth] = useState<number | null>(null);
 
   useEffect(() => {
+    setWindowWidth(window.innerWidth);
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Defina a constante de visibilidade
-  const hideExtraColumns = windowWidth <= 1000;
+  const isClient = windowWidth !== null;
+  const hideExtraColumns = isClient && windowWidth <= 1000;
 
-  const scoreData = respostaAoItemData.scoreData;
+  const scoreData = respostaAoItemData?.scoreData;
 
   const [sorting, setSorting] = useState<SortingState>([
     { id: "posicao", desc: false },
@@ -132,7 +131,6 @@ export default function ScoreTable() {
           );
         },
       }),
-      // Só inclui Abandonado se não for mobile
       ...(!isMobile
         ? [
             columnHelper.accessor("abandonado", {
@@ -156,7 +154,6 @@ export default function ScoreTable() {
         : []),
     ];
 
-    // Definimos as sub-colunas de Score
     const scoreCols = [
       ...(!isMobile
         ? [
@@ -294,6 +291,7 @@ export default function ScoreTable() {
   ]);
 
   const data = useMemo(() => {
+    if (!codesMap) return [];
     return Object.entries(codesMap).map(([posStr, itemInfo]) => {
       const num = Number(posStr);
       const code = itemInfo?.code;
@@ -323,7 +321,7 @@ export default function ScoreTable() {
     });
   }, [codesMap, scoreData, abandonadosCodes]);
 
-  // eslint-disable-next-line
+  //eslint-disable-next-line
   const table = useReactTable({
     data,
     columns,
@@ -334,7 +332,6 @@ export default function ScoreTable() {
     enableSortingRemoval: false,
   });
 
-  // INICIA COM O PRIMEIRO ITEM
   useEffect(() => {
     if (data.length > 0) {
       setLastItemActivate(data[0].id);
@@ -390,13 +387,12 @@ export default function ScoreTable() {
                         cursor: canSort ? "pointer" : "default",
                       }}
                     >
-                      {" "}
                       {!header.isPlaceholder &&
                         flexRender(
                           header.column.columnDef.header,
                           header.getContext(),
                         )}
-                      {canSort && (
+                      {canSort && isClient && (
                         <span>
                           {{
                             asc: !isMobile && <Sort height="20px" />,
@@ -405,7 +401,7 @@ export default function ScoreTable() {
                             (!isMobile && <Sort height="20px" />)}
                         </span>
                       )}
-                    </div>{" "}
+                    </div>
                   </th>
                 );
               })}

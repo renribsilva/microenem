@@ -8,25 +8,39 @@ import {
   flexRender,
   createColumnHelper,
 } from "@tanstack/react-table";
+
 import styles from "./tables.module.css";
 import { useYearData } from "../../../../../../context/year_context";
 import { useChartTheme } from "../../../../../../hooks/use_chart_theme";
 import clsx from "clsx";
 import { useSidebar } from "../../../../../../context/sidebar_context";
+import TDMedium from "../../../../../../components/skt/td";
 
 type RankingRow = {
   ranking: number;
   media: number;
 };
 
+const MOCK_DATA: RankingRow[] = Array.from({ length: 20 }, (_, index) => ({
+  ranking: index + 1,
+  media: 0,
+}));
+
 export default function RankingTable() {
   const { meanData, setActiveRanking } = useYearData();
   const { isMobile } = useSidebar();
   const columnHelper = createColumnHelper<RankingRow>();
   const { textColor } = useChartTheme();
+  const activeRanking = meanData?.activeRanking;
+  const top2000Data = meanData?.top2000Data;
 
-  const activeRanking = meanData.activeRanking;
-  const top2000Data = meanData.top2000Data;
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const isLoading = !isMounted || !top2000Data;
 
   const mainContainerRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
@@ -137,9 +151,11 @@ export default function RankingTable() {
     [columnHelper, textColor],
   );
 
+  const tableData = isMounted && top2000Data ? top2000Data : MOCK_DATA;
+
   //eslint-disable-next-line
   const table = useReactTable({
-    data: top2000Data || [],
+    data: tableData,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -183,12 +199,25 @@ export default function RankingTable() {
     setRankInput("");
   };
 
+  const canPrevious = isMounted ? table.getCanPreviousPage() : false;
+  const canNext = isMounted ? table.getCanNextPage() : false;
+  const pageCount = isMounted ? table.getPageCount() || 1 : 1;
+  const pageIndex = isMounted ? table.getState().pagination.pageIndex + 1 : 1;
+
   return (
-    <section ref={mainContainerRef} className={styles.meantable_container}>
+    <section
+      ref={mainContainerRef}
+      className={styles.meantable_container}
+      suppressHydrationWarning
+    >
       {/* CABEÇALHO DO CARD COM AS BUSCAS */}
-      <div ref={headerRef} className={styles.meantable_cabecalho}>
+      <div
+        ref={headerRef}
+        className={styles.meantable_cabecalho}
+        suppressHydrationWarning
+      >
         <h3 className={styles.card_title}>Top 2.500 Médias Simples</h3>
-        <div className={styles.header_searches}>
+        <div className={styles.header_searches} suppressHydrationWarning>
           <div className={styles.page_info}>
             Ir para:
             <input
@@ -229,7 +258,7 @@ export default function RankingTable() {
             <input
               type="number"
               min={1}
-              max={table.getPageCount()}
+              max={pageCount}
               value={pageInput}
               onChange={(e) => setPageInput(e.target.value)}
               onFocus={(e) => e.target.select()}
@@ -242,12 +271,12 @@ export default function RankingTable() {
               }}
               className={styles.page_input}
             />{" "}
-            de <span>{table.getPageCount()}</span>
+            de <span>{pageCount}</span>
           </div>
         </div>
       </div>
       {/* Container flexível da tabela */}
-      <div className={styles.table_scroll}>
+      <div className={styles.table_scroll} suppressHydrationWarning>
         <table className={styles.meantable_table}>
           <thead className={styles.meantable_thead}>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -266,75 +295,101 @@ export default function RankingTable() {
             ))}
           </thead>
           <tbody>
-            {table.getPaginationRowModel().rows.map((row) => {
-              const currentRank = row.original.ranking;
-              const isSelected = activeRanking === currentRank;
-              return (
-                <tr
-                  key={row.id}
-                  className={clsx(
-                    styles.meantable_tr,
-                    isSelected && styles.row_active,
-                  )}
-                  onClick={() => {
-                    setActiveRanking(currentRank);
-                    const topo = document.getElementById("topo-pagina");
-                    if (topo && isMobile) {
-                      topo.scrollIntoView({
-                        behavior: "smooth",
-                        block: "start",
-                      });
-                    }
-                  }}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className={styles.meantable_td}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
+            {isLoading
+              ? Array.from({ length: pagination.pageSize }).map((_, idx) => (
+                  <tr key={idx} className={styles.meantable_tr}>
+                    <td className={styles.meantable_td}>
+                      <span style={{ display: "inline-block", width: "40px" }}>
+                        <TDMedium />
+                      </span>
                     </td>
-                  ))}
-                </tr>
-              );
-            })}
+                    <td className={styles.meantable_td}>
+                      <span style={{ display: "inline-block", width: "80px" }}>
+                        <TDMedium />
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              : table.getPaginationRowModel().rows.map((row) => {
+                  const currentRank = row.original.ranking;
+                  const isSelected = activeRanking === currentRank;
+                  return (
+                    <tr
+                      key={row.id}
+                      className={clsx(
+                        styles.meantable_tr,
+                        isSelected && styles.row_active,
+                      )}
+                      onClick={() => {
+                        setActiveRanking(currentRank);
+                        const topo = document.getElementById("topo-pagina");
+                        if (topo && isMobile) {
+                          topo.scrollIntoView({
+                            behavior: "smooth",
+                            block: "start",
+                          });
+                        }
+                      }}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <td key={cell.id} className={styles.meantable_td}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  );
+                })}
           </tbody>
         </table>
       </div>
       {/* Controles de Paginação (Rodapé) */}
-      <div ref={footerRef} className={styles.pagination_controls}>
-        <div className={styles.page_navigation}>
+      <div
+        ref={footerRef}
+        className={styles.pagination_controls}
+        suppressHydrationWarning
+      >
+        <div className={styles.page_navigation} suppressHydrationWarning>
           <button
             onClick={() => table.setPageIndex(0)}
-            disabled={!table.getCanPreviousPage()}
+            disabled={!isMounted || isLoading || !canPrevious}
             className={styles.page_btn}
             title="Ir para a primeira página"
+            suppressHydrationWarning
           >
             «
           </button>
+
           <button
             onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+            disabled={!isMounted || isLoading || !canPrevious}
             className={styles.page_btn}
+            suppressHydrationWarning
           >
             ‹
           </button>
+
           <span className={styles.footer_page_indicator}>
-            <strong>{table.getState().pagination.pageIndex + 1}</strong> /{" "}
-            {table.getPageCount()}
+            <strong>{pageIndex}</strong> / {pageCount}
           </span>
+
           <button
             onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
+            disabled={!isMounted || isLoading || !canNext}
             className={styles.page_btn}
+            suppressHydrationWarning
           >
-            ›{" "}
+            ›
           </button>
+
           <button
-            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-            disabled={!table.getCanNextPage()}
+            onClick={() => table.setPageIndex(pageCount - 1)}
+            disabled={!isMounted || isLoading || !canNext}
             className={styles.page_btn}
             title="Ir para a última página"
+            suppressHydrationWarning
           >
             »
           </button>

@@ -13,7 +13,7 @@ import { useYearData } from "../../../../../../context/year_context";
 import { TableDataItem } from "../../../../../../types/year_types";
 import { clsx } from "clsx";
 import { useSidebar } from "../../../../../../context/sidebar_context";
-import TDShort from "../../../../../../components/skt/visao-geral/td_short";
+import TDMedium from "../../../../../../components/skt/td";
 
 const columnHelper = createColumnHelper<TableDataItem>();
 
@@ -79,7 +79,7 @@ export default function DescribeTable() {
         cell: (info) =>
           isLoading || info.getValue() === "---" ? (
             <div className={styles.describe_fixed_cell}>
-              <TDShort />
+              <TDMedium />
             </div>
           ) : (
             <div className={styles.describe_fixed_cell}>
@@ -94,7 +94,7 @@ export default function DescribeTable() {
         cell: (info) =>
           isLoading || info.getValue() === "---" ? (
             <div className={styles.describe_fixed_cell}>
-              <TDShort />
+              <TDMedium />
             </div>
           ) : (
             <div className={styles.describe_fixed_cell}>

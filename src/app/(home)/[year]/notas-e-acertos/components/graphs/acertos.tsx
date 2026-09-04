@@ -107,7 +107,7 @@ export default function DensityNotasChart() {
                   : "MÉDIA: ---",
               position: "left",
               orientation: "horizontal",
-              offsetY: 20,
+              offsetY: -105,
               style: {
                 color: "#fff",
                 background: "#1B1C1D",
@@ -121,37 +121,54 @@ export default function DensityNotasChart() {
           },
         ],
       },
-      title: {
-        text: `Distribuição das notas: ${acertosNum} acertos`,
-        style: { color: textColor, fontSize: "16px", fontWeight: "bold" },
-      },
-      subtitle: {
-        text: [
-          `Pontos da proficiência para os quais as notas`,
-          `são mais frequentes.`,
-          // eslint-disable-next-line
-        ] as any,
-        style: { color: textColor, fontSize: "13px" },
-      },
     };
-  }, [chartData, acertosNum, gridColor, isMobile, textColor, axisColor]);
+  }, [chartData, gridColor, isMobile, axisColor]);
+
+  if (!acertosData) {
+    return (
+      <div className={`${styles.container}`}>
+        <div className={styles.header}>
+          <div className={styles.title} style={{ color: textColor }}>
+            Distribuição das notas: {acertosNum} acertos
+          </div>
+          <div className={styles.subtitle} style={{ color: textColor }}>
+            Pontos da proficiência para os quais as notas são mais frequentes.
+          </div>
+        </div>
+        <div className={styles.loading}>
+          <span style={{ color: textColor }}>Carregando...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div style={{ flex: 1, minHeight: "350px", width: "100%" }}>
-      <Chart
-        options={options}
-        series={series}
-        type="area"
-        height="100%"
-        width="100%"
-      />
-      <div className={styles.table_footer}>
-        Observação: 0/x e x/x acertos são casos de sequências de respostas
-        idênticas e, à primeira vista, deveriam apresentar valores iguais para
-        max, min e média. No entando, alguns cadernos da mesma área podem conter
-        um pool de itens distintos, como é o caso da área de Linguagens que tem
-        tanto questões de Inglês quanto de Espanhol. Essa diferença reflete na
-        nota final do exame, mesmo que a sequência de respostas seja idêntica.
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <div className={styles.title} style={{ color: textColor }}>
+          Distribuição das notas: {acertosNum} acertos
+        </div>
+        <div className={styles.subtitle} style={{ color: textColor }}>
+          Pontos da proficiência para os quais as notas são mais frequentes.
+        </div>
+      </div>
+      <div className={styles.chartWrapper}>
+        <Chart
+          options={options}
+          series={series}
+          type="area"
+          height="100%"
+          width="100%"
+        />
+        <div className={styles.table_footer}>
+          Observação: 0/x e x/x acertos são casos de sequências de respostas
+          idênticas e, à primeira vista, deveriam apresentar valores iguais para
+          max, min e média. No entando, alguns cadernos da mesma área podem
+          conter um pool de itens distintos, como é o caso da área de Linguagens
+          que tem tanto questões de Inglês quanto de Espanhol. Essa diferença
+          reflete na nota final do exame, mesmo que a sequência de respostas
+          seja idêntica.
+        </div>
       </div>
     </div>
   );

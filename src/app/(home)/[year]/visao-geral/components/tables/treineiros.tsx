@@ -11,7 +11,7 @@ import {
 import styles from "./tables.module.css";
 import { useYearData } from "../../../../../../context/year_context";
 import { InscritosItem } from "../../../../../../types/year_types";
-import TDShort from "../../../../../../components/skt/visao-geral/td_short";
+import TDMedium from "../../../../../../components/skt/td";
 
 const STATIC_GROUPS = [
   {
@@ -53,7 +53,7 @@ export default function Treineiros() {
         header: "Total",
         cell: ({ getValue }) =>
           isLoading || getValue() === undefined ? (
-            <TDShort />
+            <TDMedium />
           ) : (
             <span className={styles.card_abstencao_num}>
               {Number(getValue()).toLocaleString("pt-BR")}
@@ -65,7 +65,7 @@ export default function Treineiros() {
         header: "(%)",
         cell: ({ getValue }) =>
           isLoading || getValue() === undefined ? (
-            <TDShort />
+            <TDMedium />
           ) : (
             <span className={styles.card_abstencao_num}>
               {String(getValue())}%

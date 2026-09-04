@@ -5,6 +5,7 @@ import styles from "./layout.module.css";
 import { HomeProvider } from "../../context/home_context";
 import clsx from "clsx";
 import dynamic from "next/dynamic";
+import RenderKeepAlive from "../../components/tsx/keep_alive";
 
 const AppHeader = dynamic(() => import("../../components/tsx/header"));
 const AppSidebar = dynamic(() => import("../../components/tsx/sidebar"));
@@ -14,6 +15,7 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <HomeProvider>
+      <RenderKeepAlive />
       <div className={styles.layout_container}>
         {isMobile && (
           <div

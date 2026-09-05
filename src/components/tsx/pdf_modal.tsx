@@ -257,13 +257,11 @@ export default function PdfModal({
             {itemDetails?.IN_ITEM_ABAN === 1 ? "(anulada)" : ""}
           </div>
         </div>
-
         {/* Container com a ref para capturar a largura real do thumbnail */}
         <div
           ref={thumbnailContainerRef}
           style={{
-            display: "flex",
-            width: "100%",
+            display: "inline-flex", // Alterado de "flex" para "inline-flex"
             justifyContent: "center",
           }}
         >
@@ -276,7 +274,6 @@ export default function PdfModal({
             setIsLoaded={setIsLoaded}
           />
         </div>
-
         {isLoaded && itemDetails && (
           <div
             style={{

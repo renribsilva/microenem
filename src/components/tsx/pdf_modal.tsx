@@ -45,7 +45,8 @@ export default function PdfModal({
 }: PdfModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const thumbnailContainerRef = useRef<HTMLDivElement>(null);
-  const [thumbnailWidth, setThumbnailWidth] = useState<number | null>(null);
+  const thumbnailContentRef = useRef<HTMLDivElement>(null);
+  const [modalWidth, setModalWidth] = useState<number | null>(null);
 
   const {
     habilidades,
@@ -61,12 +62,6 @@ export default function PdfModal({
   const [itemDetails, setItemDetails] = useState<ItemDetails | null>(null);
   const habInfo = itemDetails ? habilidades[itemDetails.CO_HABILIDADE] : null;
   const compInfo = habInfo ? competencias[habInfo.comp] : null;
-
-  useEffect(() => {
-    if (thumbnailContainerRef.current) {
-      setThumbnailWidth(thumbnailContainerRef.current.offsetWidth);
-    }
-  }, [isLoaded, scale, crops, direction]);
 
   useEffect(() => {
     let cancelled = false;
@@ -86,33 +81,33 @@ export default function PdfModal({
     listCode && currentIndex >= 0 && currentIndex < listCode.length - 1;
 
   const handlePrev = () => {
-    if (hasPrev) {
-      setIsLoaded(false);
-      setQuestaoPopUp(listCode[currentIndex - 1]);
-      setShowGabarito(false);
-    }
+    if (!hasPrev) return;
+    setIsLoaded(false);
+    setQuestaoPopUp(listCode[currentIndex - 1]);
+    setShowGabarito(false);
   };
 
   const handleNext = () => {
-    if (hasNext) {
-      setIsLoaded(false);
-      setQuestaoPopUp(listCode[currentIndex + 1]);
-      setShowGabarito(false);
-    }
+    if (!hasNext) return;
+    setIsLoaded(false);
+    setQuestaoPopUp(listCode[currentIndex + 1]);
+    setShowGabarito(false);
   };
 
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
-
     if (isOpen) {
-      dialog.showModal();
+      if (!dialog.open) {
+        dialog.showModal();
+      }
       document.body.style.overflow = "hidden";
     } else {
-      dialog.close();
+      if (dialog.open) {
+        dialog.close();
+      }
       document.body.style.overflow = "unset";
     }
-
     return () => {
       document.body.style.overflow = "unset";
     };
@@ -120,23 +115,23 @@ export default function PdfModal({
 
   useEffect(() => {
     if (!isOpen) return;
-
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "ArrowLeft" && hasPrev) {
         event.preventDefault();
-        setIsLoaded(false);
         setQuestaoPopUp(listCode[currentIndex - 1]);
         setShowGabarito(false);
-      } else if (event.key === "ArrowRight" && hasNext) {
+      }
+      if (event.key === "ArrowRight" && hasNext) {
         event.preventDefault();
         setIsLoaded(false);
         setQuestaoPopUp(listCode[currentIndex + 1]);
         setShowGabarito(false);
       }
     };
-
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
   }, [
     isOpen,
     hasPrev,
@@ -148,36 +143,58 @@ export default function PdfModal({
     setShowGabarito,
   ]);
 
+  useEffect(() => {
+    const content = thumbnailContentRef.current;
+    if (!content || !isOpen) return;
+    const updateWidth = () => {
+      const width = content.scrollWidth;
+      if (width > 0) {
+        setModalWidth(width);
+      }
+    };
+    updateWidth();
+    const observer = new ResizeObserver(updateWidth);
+    observer.observe(content);
+    return () => {
+      observer.disconnect();
+    };
+  }, [isOpen, fileUrl, code, scale, direction, crops]);
+
   return (
     <dialog
       ref={dialogRef}
       onClose={onClose}
       style={{
-        padding: "14px",
+        padding: 0,
+        margin: "auto",
         borderRadius: "16px",
-        backgroundColor: "#ffffff",
         border: "1px solid #ffffff",
-        width: `calc(100% - 90px)`,
-        maxWidth: `max-content`,
-        height: `max-content`,
-        minHeight: "400px",
-        minWidth: "300px",
+        backgroundColor: "#ffffff",
+        width: `${modalWidth + 5}px`,
+        maxWidth: "calc(100vw - 30px)",
+        height: "90vh",
+        maxHeight: "90vh",
+        overflow: "hidden",
+        boxSizing: "border-box",
       }}
     >
       <div
         style={{
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
-          width: "100%",
+          height: "100%",
+          minWidth: 0,
+          minHeight: 0,
+          overflow: "hidden",
         }}
       >
         <div
           style={{
-            display: "flex",
-            flexDirection: "column",
+            flex: "0 0 auto",
             width: "100%",
-            marginBottom: "16px",
+            padding: "14px",
+            paddingBottom: "0",
+            boxSizing: "border-box",
           }}
         >
           <div
@@ -186,6 +203,7 @@ export default function PdfModal({
               justifyContent: "space-between",
               alignItems: "center",
               width: "100%",
+              minWidth: 0,
             }}
           >
             <h3
@@ -194,11 +212,24 @@ export default function PdfModal({
                 fontWeight: "bold",
                 color: "#1f2937",
                 fontSize: "18px",
+                minWidth: 0,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
               }}
             >
-              {tituloQuestao || `Questão ${itemDetails?.CO_POSICAO ?? ""} `}
+              {tituloQuestao || `Questão ${itemDetails?.CO_POSICAO ?? ""}`}
             </h3>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                flexShrink: 0,
+                marginLeft: "12px",
+              }}
+            >
               <button
                 onClick={handlePrev}
                 disabled={!hasPrev}
@@ -228,12 +259,17 @@ export default function PdfModal({
           </div>
           <div
             style={{
-              paddingBottom: "16px",
               paddingTop: "10px",
+              paddingBottom: "16px",
             }}
           >
             {itemDetails && (
-              <div style={{ fontSize: "12px", color: "#6b7280" }}>
+              <div
+                style={{
+                  fontSize: "12px",
+                  color: "#6b7280",
+                }}
+              >
                 Área: {areaMap[itemDetails.SG_AREA] || itemDetails.SG_AREA} |
                 Prova:{" "}
                 <span
@@ -248,6 +284,7 @@ export default function PdfModal({
               </div>
             )}
           </div>
+
           <div
             style={{
               borderBottom: "1px solid #e5e7eb",
@@ -257,29 +294,45 @@ export default function PdfModal({
             {itemDetails?.IN_ITEM_ABAN === 1 ? "(anulada)" : ""}
           </div>
         </div>
-        {/* Container com a ref para capturar a largura real do thumbnail */}
         <div
           ref={thumbnailContainerRef}
           style={{
-            display: "inline-flex", // Alterado de "flex" para "inline-flex"
-            justifyContent: "center",
+            flex: "1 1 auto",
+            width: "100%",
+            minWidth: 0,
+            minHeight: 0,
+            overflow: "auto",
           }}
         >
-          <PdfThumbnail
-            fileUrl={fileUrl}
-            crops={crops}
-            direction={direction}
-            scale={scale}
-            isLoaded={isLoaded}
-            setIsLoaded={setIsLoaded}
-          />
+          <div
+            ref={thumbnailContentRef}
+            style={{
+              justifyContent: "center",
+              width: "max-content",
+              minWidth: "max-content",
+              padding: "14px",
+              boxSizing: "border-box",
+            }}
+          >
+            <PdfThumbnail
+              fileUrl={fileUrl}
+              crops={crops}
+              direction={direction}
+              scale={scale}
+              isLoaded={isLoaded}
+              setIsLoaded={setIsLoaded}
+            />
+          </div>
         </div>
         {isLoaded && itemDetails && (
           <div
             style={{
+              flex: "0 0 auto",
+              width: "100%",
               borderTop: "1px solid #e5e7eb",
-              marginTop: "12px",
-              width: thumbnailWidth ? `${thumbnailWidth}px` : "100%",
+              padding: "0 14px 14px",
+              boxSizing: "border-box",
+              overflow: "hidden",
             }}
           >
             <div
@@ -316,12 +369,18 @@ export default function PdfModal({
                   {showGabarito ? itemDetails.TX_GABARITO : "Ver"}
                 </button>
               </div>
+
               {compInfo && (
-                <div style={{ marginBottom: "10px" }}>
+                <div
+                  style={{
+                    marginBottom: "10px",
+                  }}
+                >
                   <strong>Competência: </strong>
                   {compInfo[0]}
                 </div>
               )}
+
               {habInfo && (
                 <div>
                   <strong>Habilidade: </strong>

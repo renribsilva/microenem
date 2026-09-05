@@ -66,26 +66,16 @@ export default function PdfThumbnail({
       setIsLoaded(false);
 
       try {
-        /**
-         * Usa exatamente o mesmo PDF que pode ter sido
-         * pré-carregado pelo YearLayout.
-         */
         const pdf = await getCachedPdf(fileUrl);
 
         if (cancelled) return;
 
-        /**
-         * Carrega todas as páginas necessárias em paralelo.
-         */
         const pages = await Promise.all(
           crops.map((crop) => pdf.getPage(crop.pagina)),
         );
 
         if (cancelled) return;
 
-        /**
-         * Renderiza os crops em paralelo.
-         */
         const novosCanvases = await Promise.all(
           pages.map(async (page, index) => {
             const crop = crops[index];
@@ -94,9 +84,13 @@ export default function PdfThumbnail({
               scale,
             });
 
+            // Equivale ao antigo `page.width` do react-pdf.
+            const larguraBase = viewport.width;
+
+            // MESMA fórmula da implementação antiga.
             const largura = Math.max(
               1,
-              Math.round(viewport.width - crop.offsetX - crop.cropWidth),
+              Math.round(larguraBase - crop.offsetX - crop.cropWidth),
             );
 
             const altura = Math.max(1, Math.round(crop.cropHeight));
@@ -122,7 +116,14 @@ export default function PdfThumbnail({
               canvas,
               canvasContext: context,
               viewport,
-              transform: [1, 0, 0, 1, -crop.offsetX, -crop.offsetY],
+              transform: [
+                1,
+                0,
+                0,
+                1,
+                -Math.round(crop.offsetX),
+                -Math.round(crop.offsetY),
+              ],
             });
 
             await renderTask.promise;
@@ -130,7 +131,6 @@ export default function PdfThumbnail({
             return canvas;
           }),
         );
-
         if (cancelled) return;
 
         const container = containerRef.current;
@@ -164,9 +164,17 @@ export default function PdfThumbnail({
     <div
       style={{
         position: "relative",
-        width: "100%",
-        overflow: "auto",
+
+        /*
+         * O tamanho do PDF pode ser maior que o viewport.
+         * Quem controla o scroll agora é o pai no PdfModal.
+         */
+        width: "max-content",
+        minWidth: "max-content",
+
         minHeight: !isLoaded ? "400px" : "auto",
+
+        boxSizing: "border-box",
       }}
     >
       {!isLoaded && (
@@ -191,9 +199,16 @@ export default function PdfThumbnail({
               ? "flex"
               : "block"
             : "none",
+
+          flexDirection: direction === "column" ? "column" : undefined,
+
           alignItems: "flex-start",
           gap: "10px",
-          width: "100%",
+
+          width: "max-content",
+          minWidth: "max-content",
+
+          boxSizing: "border-box",
         }}
       />
     </div>

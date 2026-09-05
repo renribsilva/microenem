@@ -236,23 +236,28 @@
 /******************************************/
 
 .tab_container {
+  --tab-count: 1;
+  --active-tab: 0;
+
+  position: relative;
+  display: flex;
+  height: 40px;
   border-radius: 1rem;
   background-color: var(--panel);
   overflow: hidden;
-  display: flex;
 }
 
 .tab_button {
+  position: relative;
   flex: 1;
   padding: 10px;
-  font-size: 0.875rem;
-  font-weight: 500;
   border: none;
   background: transparent;
-  cursor: pointer;
   color: var(--tab-text);
-  position: relative;
-  transition: all 0.2s ease;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  z-index: 1;
 }
 
 .tab_button:hover {
@@ -260,13 +265,32 @@
   background-color: var(--tab-hover);
 }
 
-.tab_indicator {
+/* Indicador */
+.tab_container::after {
+  content: "";
   position: absolute;
+  z-index: 2;
   bottom: 0;
-  left: 0;
-  right: 0;
+  left: calc((100% / var(--tab-count)) * var(--active-tab));
+  width: calc(100% / var(--tab-count));
   height: 2px;
   background-color: var(--tab-indicator);
+}
+
+/* ================================================= */
+/* MOBILE: indicador desliza */
+/* ================================================= */
+
+.tab_container_mobile::after {
+  transition: left 0.25s ease;
+}
+
+/* ================================================= */
+/* DESKTOP: indicador troca instantaneamente */
+/* ================================================= */
+
+.tab_container:not(.tab_container_mobile)::after {
+  transition: none;
 }
 
 /****************************************/
@@ -301,7 +325,7 @@
 }
 
 .custom_slider {
-  background-color: bisque;
+  background-color: var(--grid);
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
@@ -315,13 +339,26 @@
 /* Thumb (Bolinha) */
 .custom_slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 20px;
-  height: 20px;
+  width: 14px;
+  height: 14px;
+  background-color: var(
+    --thumb-color,
+    var(--grid)
+  ); /* Usa a cor dinâmica ou fallback */
   border: 3px solid var(--grid);
   border-radius: 50%;
   cursor: pointer;
 }
 
+/* Se você também quiser dar suporte para Firefox */
+.custom_slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background-color: var(--thumb-color, var(--grid));
+  border: 3px solid var(--grid);
+  border-radius: 50%;
+  cursor: pointer;
+}
 .label_title {
   font-size: 1rem;
   color: var(--tab-text);
@@ -373,8 +410,11 @@
   font-size: 0.85rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
   display: flex;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    filter 0.2s ease;
   align-items: center;
   justify-content: center;
   position: relative;
@@ -559,6 +599,18 @@
   box-shadow:
     0 8px 24px rgba(0, 0, 0, 0.08),
     0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.dropdown_list_sidebar {
+  position: absolute;
+  top: calc(100% + 4px);
+  width: 100%;
+  background-color: var(--panel);
+  border: 1px solid var(--grid);
+  border-radius: 8px;
+  height: calc(100svh - 230px);
+  overflow-y: auto;
+  z-index: 101;
 }
 
 .dropdown_list_item {

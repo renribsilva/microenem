@@ -84,7 +84,7 @@ function DropdownSidebar({
         )}
       </button>
       {isOpen && (
-        <div className={styles.dropdown_list}>
+        <div className={styles.dropdown_list_sidebar}>
           {years.map((ds) => {
             const isActive = ds.name === activeYear;
             return (

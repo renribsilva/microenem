@@ -12,6 +12,7 @@ import {
 import styles from "./tables.module.css";
 import { useYearData } from "../../../../../../context/year_context";
 import TDMedium from "../../../../../../components/skt/td";
+import { useSidebar } from "../../../../../../context/sidebar_context";
 
 interface StatusRow {
   grupo: string;
@@ -34,6 +35,7 @@ const statusMap: Record<string, string> = {
 const STATUS_KEYS = ["1", "2", "3", "4", "6", "7", "8", "9"];
 
 export default function StatusRedacaoTable() {
+  const { isMobile } = useSidebar();
   const { redacaoData } = useYearData();
   const statusData = redacaoData?.statusData;
 
@@ -88,8 +90,8 @@ export default function StatusRedacaoTable() {
       columnHelper.accessor("grupo", {
         header: "",
         size: 180,
-        minSize: 180,
-        maxSize: 180,
+        minSize: 0,
+        maxSize: isMobile ? 90 : 180,
         enableResizing: false,
         cell: ({ row, getValue }) => {
           const val = getValue() as string;
@@ -108,9 +110,9 @@ export default function StatusRedacaoTable() {
       }),
       columnHelper.accessor("total", {
         header: "Total",
-        size: 90,
-        minSize: 90,
-        maxSize: 90,
+        size: 60,
+        minSize: 0,
+        maxSize: 80,
         enableResizing: false,
         cell: ({ getValue }) => {
           const val = getValue() as number | string | null;
@@ -132,8 +134,8 @@ export default function StatusRedacaoTable() {
       }),
       columnHelper.accessor("freq", {
         header: "(%)",
-        size: 70,
-        minSize: 70,
+        size: 60,
+        minSize: 0,
         maxSize: 70,
         enableResizing: false,
         cell: ({ getValue }) => {
@@ -153,7 +155,7 @@ export default function StatusRedacaoTable() {
         },
       }),
     ],
-    [columnHelper, isLoading],
+    [isMobile, columnHelper, isLoading],
   );
 
   // eslint-disable-next-line

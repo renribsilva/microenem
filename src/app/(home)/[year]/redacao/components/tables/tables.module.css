@@ -52,6 +52,7 @@
   overflow: hidden;
   font-weight: 300;
   border-bottom: 1px solid var(--grid);
+  text-overflow: ellipsis;
 }
 
 .table_fixed_cell {

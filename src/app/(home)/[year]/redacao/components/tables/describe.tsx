@@ -123,10 +123,10 @@ export default function NotasRedacaoTable() {
   const columns = useMemo(
     () => [
       columnHelper.accessor("metric", {
-        header: isMobile ? "" : "",
+        header: "",
         size: 90,
-        minSize: 90,
-        maxSize: 90,
+        minSize: 0,
+        maxSize: isMobile ? 50 : 100,
         enableResizing: false,
         cell: (info) => (
           <span className={styles.describe_metricLabel}>{info.getValue()}</span>
@@ -134,9 +134,9 @@ export default function NotasRedacaoTable() {
       }),
       columnHelper.accessor("comp1", {
         header: "C1",
-        size: 45,
-        minSize: 45,
-        maxSize: 45,
+        size: 30,
+        minSize: 0,
+        maxSize: 35,
         enableResizing: false,
         cell: (info) =>
           isLoading || info.getValue() === "---" ? (
@@ -153,9 +153,9 @@ export default function NotasRedacaoTable() {
       }),
       columnHelper.accessor("comp2", {
         header: "C2",
-        size: 45,
-        minSize: 45,
-        maxSize: 45,
+        size: 30,
+        minSize: 0,
+        maxSize: 35,
         enableResizing: false,
         cell: (info) =>
           isLoading || info.getValue() === "---" ? (
@@ -172,9 +172,9 @@ export default function NotasRedacaoTable() {
       }),
       columnHelper.accessor("comp3", {
         header: "C3",
-        size: 45,
-        minSize: 45,
-        maxSize: 45,
+        size: 30,
+        minSize: 0,
+        maxSize: 35,
         enableResizing: false,
         cell: (info) =>
           isLoading || info.getValue() === "---" ? (
@@ -191,9 +191,9 @@ export default function NotasRedacaoTable() {
       }),
       columnHelper.accessor("comp4", {
         header: "C4",
-        size: 45,
-        minSize: 45,
-        maxSize: 45,
+        size: 30,
+        minSize: 0,
+        maxSize: 35,
         enableResizing: false,
         cell: (info) =>
           isLoading || info.getValue() === "---" ? (
@@ -210,9 +210,9 @@ export default function NotasRedacaoTable() {
       }),
       columnHelper.accessor("comp5", {
         header: "C5",
-        size: 45,
-        minSize: 45,
-        maxSize: 45,
+        size: 30,
+        minSize: 0,
+        maxSize: 35,
         enableResizing: false,
         cell: (info) =>
           isLoading || info.getValue() === "---" ? (
@@ -230,8 +230,8 @@ export default function NotasRedacaoTable() {
       columnHelper.accessor("total", {
         header: isMobile ? "N.T." : "Nota Total",
         size: 65,
-        minSize: 65,
-        maxSize: 65,
+        minSize: 0,
+        maxSize: isMobile ? 35 : 65,
         enableResizing: false,
         cell: (info) =>
           isLoading || info.getValue() === "---" ? (

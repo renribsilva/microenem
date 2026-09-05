@@ -63,19 +63,19 @@ function ItensButtons() {
         : panelColor;
       const nextText = !currentStatus ? "#fff" : textColor;
       btn.style.backgroundColor = nextBg;
-      btn.style.color = nextText;
+      btn.style.color = nextText; // <-- Garantido aqui
     } else {
       if (!currentStatus) {
         btn.style.backgroundColor = "#22c55e";
-        btn.style.color = "#fff";
+        btn.style.color = "#fff"; // <-- Garantido aqui
         btn.style.borderColor = "transparent";
       } else if (currentStatus === "acerto") {
         btn.style.backgroundColor = "#ef4444";
-        btn.style.color = "#fff";
+        btn.style.color = "#fff"; // <-- Garantido aqui
         btn.style.borderColor = "transparent";
       } else {
         btn.style.backgroundColor = panelColor;
-        btn.style.color = textColor;
+        btn.style.color = textColor; // <-- Garantido aqui
         btn.style.borderColor = chartColor + "85";
       }
     }
@@ -212,9 +212,9 @@ function ItensButtons() {
             if (status === "erro")
               return { bg: "#ef4444", text: "#fff", border: "transparent" };
             return {
-              bg: panelColor,
+              bg: panelColor ?? "transparent",
               text: textColor,
-              border: chartColor + "85",
+              border: chartColor ? chartColor + "85" : "transparent",
             };
           };
           const s = getStyles();
@@ -237,7 +237,6 @@ function ItensButtons() {
                 border: `1px solid ${s.border}`,
                 backgroundColor: s.bg,
                 color: s.text,
-                opacity: isAbandoned && !status ? 0.6 : 1,
               }}
             >
               {num}

@@ -72,7 +72,6 @@
   width: 100%;
   border-collapse: collapse;
   font-size: 0.9rem;
-  table-layout: fixed;
 }
 
 .probtable_thead {
@@ -110,7 +109,7 @@
 
 /* Estilo apenas para a linha superior (os Grupos) */
 .probtable_group_th {
-  padding: 5px;
+  padding: 3px;
   opacity: 0.5;
   font-weight: 300;
 }

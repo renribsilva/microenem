@@ -92,11 +92,14 @@ function InputShell() {
           <input
             type="range"
             className={styles.custom_slider}
-            style={{
-              background: `linear-gradient(
-                to right, ${chartColor} ${progressPercent}%, 
-                ${gridColor} ${progressPercent}%)`,
-            }}
+            style={
+              {
+                background: `linear-gradient(
+      to right, ${chartColor} ${progressPercent}%, 
+      ${gridColor} ${progressPercent}%)`,
+                "--thumb-color": chartColor,
+              } as React.CSSProperties
+            }
             min="0"
             max={maxRange}
             value={pointIndexStuff.pointIndex || 0}

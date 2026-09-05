@@ -181,16 +181,22 @@ export default function PdfThumbnail({
         <div
           style={{
             display: "flex",
-            justifyContent: "center",
-            padding: "20px",
-            minHeight: "400px",
             alignItems: "center",
+            justifyContent: "center",
+
+            width: "100%",
+            minWidth: 0,
+
+            height: "100%",
+            minHeight: "400px",
+
+            boxSizing: "border-box",
+            overflow: "hidden",
           }}
         >
           <LoadingFallback />
         </div>
       )}
-
       <div
         ref={containerRef}
         style={{

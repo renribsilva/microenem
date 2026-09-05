@@ -3,16 +3,27 @@
 import { useYearData, YearProvider } from "../../../context/year_context";
 import dynamic from "next/dynamic";
 import { useHomeData } from "../../../context/home_context";
-import { QuestaoCoordenadas } from "../../../types/questoes_types";
-import { useEffect, useState } from "react";
+import { CropArea, QuestaoCoordenadas } from "../../../types/questoes_types";
+import { useEffect, useMemo, useState } from "react";
 import RenderKeepAlive from "../../../components/tsx/keep_alive";
 import Navbar from "../../../components/tsx/navbar";
 import TableFooter from "../../../components/tsx/table_footer";
 
 const PdfModal = dynamic(() => import("../../../components/tsx/pdf_modal"), {});
 
+const CROP_DEFAULT: CropArea[] = [
+  {
+    pagina: 1,
+    cropHeight: 0,
+    cropWidth: 0,
+    offsetX: 0,
+    offsetY: 0,
+  },
+];
+
 function YearLayoutContent({ children }: { children: React.ReactNode }) {
-  const { currentYear, deferredArea } = useHomeData();
+  const { pathName, currentYear, deferredArea } = useHomeData();
+
   const {
     showPopUp,
     questaoPopUp,
@@ -21,56 +32,91 @@ function YearLayoutContent({ children }: { children: React.ReactNode }) {
     setIsLoaded,
     setShowGabarito,
   } = useYearData();
-  const [dadosQuestao, setDadosQuestao] = useState<QuestaoCoordenadas | null>(
-    null,
-  );
+
+  const [questoesMap, setQuestoesMap] = useState<
+    Map<number, QuestaoCoordenadas>
+  >(new Map());
+
   const ehPrimeiroDia = deferredArea === "LC" || deferredArea === "CH";
   const sufixoDia = ehPrimeiroDia ? "1DIA" : "2DIA";
-  const fileUrlDinamico = `/${currentYear}_${sufixoDia}.pdf`;
 
-  if (process.env.NODE_ENV === "development") {
-    if (questaoPopUp && currentYear && deferredArea) {
-      import(`../../../questoes/${currentYear}/${deferredArea}.json`)
-        .then((modulo) => {
-          const listaQuestoes = modulo.default as QuestaoCoordenadas[];
-          const questaoEncontrada = listaQuestoes.find(
-            (q) => q.codigo === questaoPopUp,
-          );
-          setDadosQuestao(questaoEncontrada || null);
-        })
-        .catch((err) => {
-          console.error(`Erro ao carregar questões:`, err);
-          setDadosQuestao(null);
-        });
-    }
-  }
+  const fileUrlDinamico =
+    currentYear && deferredArea ? `/${currentYear}_${sufixoDia}.pdf` : null;
+
+  const isValidPath =
+    pathName.endsWith("probabilidade-e-info") ||
+    pathName.endsWith("resposta-ao-item") ||
+    pathName.endsWith("tri");
 
   useEffect(() => {
-    if (process.env.NODE_ENV !== "production") return;
-    if (!showPopUp || !questaoPopUp || !currentYear || !deferredArea) return;
-    import(`../../../questoes/${currentYear}/${deferredArea}.json`)
-      .then((modulo) => {
-        const listaQuestoes = modulo.default as QuestaoCoordenadas[];
-        const questaoEncontrada = listaQuestoes.find(
-          (q) => q.codigo === questaoPopUp,
+    let cancelled = false;
+    async function carregarQuestoes() {
+      try {
+        const response = await fetch(
+          `/questoes/${currentYear}/${deferredArea}.json`,
+          {
+            cache: "force-cache",
+          },
         );
-        setDadosQuestao(questaoEncontrada || null);
-      })
-      .catch((err) => {
-        console.error(`Erro ao carregar questões:`, err);
-        setDadosQuestao(null);
-      });
-  }, [showPopUp, questaoPopUp, currentYear, deferredArea]);
+        if (!response.ok) {
+          throw new Error(`Erro ao carregar questões: ${response.status}`);
+        }
+        const lista = (await response.json()) as QuestaoCoordenadas[];
+        if (cancelled) return;
+        const map = new Map<number, QuestaoCoordenadas>();
+        for (const questao of lista) {
+          map.set(questao.codigo, questao);
+        }
+        setQuestoesMap(map);
+      } catch (error) {
+        if (!cancelled) {
+          console.error("Erro ao carregar questões:", error);
+          setQuestoesMap(new Map());
+        }
+      }
+    }
+    if (isValidPath) {
+      carregarQuestoes();
+    }
+    return () => {
+      cancelled = true;
+    };
+  }, [currentYear, deferredArea, isValidPath]);
 
-  const cropDefault = [
-    {
-      pagina: 1,
-      cropHeight: 0,
-      cropWidth: 0,
-      offsetX: 0,
-      offsetY: 0,
-    },
-  ];
+  const dadosQuestao = useMemo(() => {
+    if (!questaoPopUp) return null;
+    return questoesMap.get(questaoPopUp) ?? null;
+  }, [questoesMap, questaoPopUp]);
+
+  useEffect(() => {
+    if (!fileUrlDinamico || !isValidPath) return;
+    const preload = async () => {
+      try {
+        const { preloadPdf } =
+          await import("../../../components/tsx/pdf_thumbnail");
+        preloadPdf(fileUrlDinamico);
+      } catch (error) {
+        console.error("Erro ao fazer preload do PDF:", error);
+      }
+    };
+    preload();
+  }, [fileUrlDinamico, isValidPath]);
+
+  useEffect(() => {
+    const carregarModal = () => {
+      import("../../../components/tsx/pdf_modal").catch(() => {});
+    };
+    if ("requestIdleCallback" in window) {
+      const idleId = window.requestIdleCallback(carregarModal);
+      return () => {
+        window.cancelIdleCallback(idleId);
+      };
+    }
+    const timer = setTimeout(carregarModal, 1000);
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, []);
 
   function handleOnClose() {
     setShowPopUp(false);
@@ -81,13 +127,13 @@ function YearLayoutContent({ children }: { children: React.ReactNode }) {
     <>
       {showPopUp && (
         <PdfModal
-          fileUrl={fileUrlDinamico}
+          fileUrl={fileUrlDinamico ?? ""}
           isOpen={showPopUp}
           onClose={handleOnClose}
-          code={dadosQuestao ? dadosQuestao.codigo : 0}
-          scale={dadosQuestao ? dadosQuestao.scale : 1.2}
-          crops={dadosQuestao ? dadosQuestao.crops : cropDefault}
-          direction={dadosQuestao ? dadosQuestao.direction : "row"}
+          code={dadosQuestao?.codigo ?? 0}
+          scale={dadosQuestao?.scale ?? 1.2}
+          crops={dadosQuestao?.crops ?? CROP_DEFAULT}
+          direction={dadosQuestao?.direction ?? "row"}
           isLoaded={isLoaded}
           setIsLoaded={setIsLoaded}
         />

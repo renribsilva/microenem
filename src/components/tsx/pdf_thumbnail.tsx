@@ -1,211 +1,201 @@
 "use client";
 
-import { ComponentProps, useEffect, useMemo, useState } from "react";
-import { Document, Page, pdfjs } from "react-pdf";
+import { useEffect, useRef } from "react";
+import { pdfjs } from "react-pdf";
 import { CropArea } from "../../types/questoes_types";
-import { useYearData } from "../../context/year_context";
 import LoadingFallback from "./loading_fallback";
-import { ItemDetails } from "../../types/year_types";
-
-pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 interface PdfThumbnailProps {
   fileUrl: string;
   scale: number;
   crops: CropArea[];
-  code: number;
-  direction?: "row" | "column";
+  direction?: "row" | "column" | null;
   isLoaded: boolean;
   setIsLoaded: (x: boolean) => void;
 }
 
-type PageLoadSuccessParams = Parameters<
-  Required<ComponentProps<typeof Page>>["onLoadSuccess"]
->[0];
+pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+
+const pdfCache = new Map<string, Promise<pdfjs.PDFDocumentProxy>>();
+
+function getCachedPdf(url: string): Promise<pdfjs.PDFDocumentProxy> {
+  let promise = pdfCache.get(url);
+
+  if (!promise) {
+    const loadingTask = pdfjs.getDocument({
+      url,
+      useWorkerFetch: true,
+      isEvalSupported: true,
+    });
+
+    promise = loadingTask.promise;
+
+    pdfCache.set(url, promise);
+
+    promise.catch(() => {
+      pdfCache.delete(url);
+    });
+  }
+
+  return promise;
+}
+
+export function preloadPdf(url: string) {
+  if (!url) return;
+
+  getCachedPdf(url).catch(() => {});
+}
 
 export default function PdfThumbnail({
   fileUrl,
   scale,
   crops,
-  code,
   direction,
   isLoaded,
   setIsLoaded,
 }: PdfThumbnailProps) {
-  const pdfOptions = useMemo(
-    () => ({ wasmUrl: `https://unpkg.com/pdfjs-dist@${pdfjs.version}/wasm/` }),
-    [],
-  );
-  const [larguraBase, setLarguraBase] = useState<number>(300);
-  const [itemDetails, setItemDetails] = useState<ItemDetails | null>(null);
-
-  const {
-    getItemDetails,
-    habilidades,
-    competencias,
-    showGabarito,
-    setShowGabarito,
-  } = useYearData();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const canvasesRef = useRef<HTMLCanvasElement[]>([]);
 
   useEffect(() => {
-    let isMounted = true;
-    getItemDetails(code).then((details) => {
-      if (isMounted) setItemDetails(details);
-    });
+    if (!fileUrl || !crops.length) return;
+
+    let cancelled = false;
+
+    async function renderizarCrops() {
+      setIsLoaded(false);
+
+      try {
+        /**
+         * Usa exatamente o mesmo PDF que pode ter sido
+         * pré-carregado pelo YearLayout.
+         */
+        const pdf = await getCachedPdf(fileUrl);
+
+        if (cancelled) return;
+
+        /**
+         * Carrega todas as páginas necessárias em paralelo.
+         */
+        const pages = await Promise.all(
+          crops.map((crop) => pdf.getPage(crop.pagina)),
+        );
+
+        if (cancelled) return;
+
+        /**
+         * Renderiza os crops em paralelo.
+         */
+        const novosCanvases = await Promise.all(
+          pages.map(async (page, index) => {
+            const crop = crops[index];
+
+            const viewport = page.getViewport({
+              scale,
+            });
+
+            const largura = Math.max(
+              1,
+              Math.round(viewport.width - crop.offsetX - crop.cropWidth),
+            );
+
+            const altura = Math.max(1, Math.round(crop.cropHeight));
+
+            const canvas = document.createElement("canvas");
+
+            canvas.width = largura;
+            canvas.height = altura;
+
+            canvas.style.width = `${largura}px`;
+            canvas.style.height = `${altura}px`;
+            canvas.style.display = "block";
+
+            const context = canvas.getContext("2d", {
+              alpha: false,
+            });
+
+            if (!context) {
+              throw new Error("Não foi possível criar o contexto 2D.");
+            }
+
+            const renderTask = page.render({
+              canvas,
+              canvasContext: context,
+              viewport,
+              transform: [1, 0, 0, 1, -crop.offsetX, -crop.offsetY],
+            });
+
+            await renderTask.promise;
+
+            return canvas;
+          }),
+        );
+
+        if (cancelled) return;
+
+        const container = containerRef.current;
+
+        if (!container) return;
+
+        container.replaceChildren(...novosCanvases);
+
+        canvasesRef.current = novosCanvases;
+
+        setIsLoaded(true);
+      } catch (error) {
+        if (cancelled) return;
+
+        console.error("Erro ao renderizar PDF:", error);
+
+        setIsLoaded(true);
+      }
+    }
+
+    renderizarCrops();
+
     return () => {
-      isMounted = false;
+      cancelled = true;
+
+      canvasesRef.current = [];
     };
-  }, [code, getItemDetails]);
-
-  const habInfo = itemDetails ? habilidades[itemDetails.CO_HABILIDADE] : null;
-  const compInfo = habInfo ? competencias[habInfo.comp] : null;
-
-  const larguras = crops.map((c) => larguraBase - c.offsetX - c.cropWidth);
-
-  const larguraRodape =
-    crops.length > 1 && direction === "column"
-      ? larguras.reduce((acc, curr) => acc + curr, 0)
-      : Math.max(...larguras, 300);
-
-  function handlePageLoad(page: PageLoadSuccessParams) {
-    setLarguraBase(page.width);
-  }
-
-  function handlePageRendered() {
-    setIsLoaded(true);
-  }
+  }, [fileUrl, crops, scale, setIsLoaded]);
 
   return (
     <div
       style={{
         position: "relative",
-        alignItems: "right",
-        gap: "10px",
-        width: `100%`,
+        width: "100%",
         overflow: "auto",
         minHeight: !isLoaded ? "400px" : "auto",
       }}
     >
-      {!isLoaded && <LoadingFallback />}
-      {isLoaded && !itemDetails && (
+      {!isLoaded && (
         <div
           style={{
-            padding: "40px",
-            textAlign: "center",
-            color: "#6b7280",
-            minHeight: "400px",
             display: "flex",
-            alignItems: "center",
             justifyContent: "center",
+            padding: "20px",
+            minHeight: "400px",
+            alignItems: "center",
           }}
         >
-          Dados da questão não encontrados.
+          <LoadingFallback />
         </div>
       )}
-      <div style={{ display: isLoaded && itemDetails ? "block" : "none" }}>
-        <Document file={fileUrl} loading={null} options={pdfOptions}>
-          <div style={{ display: direction === "column" ? "flex" : "block" }}>
-            {crops.map((crop, index) => {
-              const { offsetX, offsetY, cropWidth, cropHeight, pagina } = crop;
-              const larguraIndividual = isLoaded
-                ? larguraBase - offsetX - cropWidth
-                : 300;
-              const isDev = process.env.NODE_ENV === "development";
-              return (
-                <div
-                  key={index}
-                  style={{
-                    position: "relative",
-                    width: `${larguraIndividual}px`,
-                    flexShrink: 0,
-                    flex: "0 0 auto",
-                    overflowY: "hidden",
-                    overflowX: "hidden",
-                    height: `${cropHeight}px`,
-                    border: isDev ? "1px solid #e5e7eb" : "none",
-                    borderRadius: "8px",
-                    backgroundColor: "#ffffff",
-                  }}
-                >
-                  <div
-                    style={{
-                      position: "relative",
-                      transform: `translate(${-offsetX}px, ${-offsetY}px)`,
-                    }}
-                  >
-                    <Page
-                      key={String(isLoaded)}
-                      pageNumber={pagina}
-                      scale={scale}
-                      onLoadSuccess={handlePageLoad}
-                      onRenderSuccess={handlePageRendered}
-                      renderTextLayer={false}
-                      renderAnnotationLayer={false}
-                    />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          <div
-            style={{
-              borderTop: "1px solid #e5e7eb",
-              marginTop: "12px",
-              width: `${larguraRodape}px`,
-            }}
-          >
-            {itemDetails && (
-              <div
-                style={{
-                  fontSize: "12px",
-                  color: "#6b7280",
-                }}
-              >
-                <div style={{ marginTop: "8px" }}>
-                  <strong>Gabarito: </strong>
-                  <button
-                    onClick={() => setShowGabarito(!showGabarito)}
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      height: "36px",
-                      padding: "0 12px",
-                      marginTop: "5px",
-                      marginBottom: "10px",
-                      borderRadius: "6px",
-                      border: showGabarito
-                        ? "1px solid #6ee7b7"
-                        : "1px solid #cdcccb",
-                      backgroundColor: showGabarito ? "#d1fae5" : "#ffffff",
-                      color: showGabarito ? "#065f46" : "#374151",
-                      fontSize: "14px",
-                      fontWeight: 500,
-                      cursor: "pointer",
-                      boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
-                      transition: "all 0.15s ease-in-out",
-                    }}
-                  >
-                    {showGabarito ? itemDetails.TX_GABARITO : "Ver"}
-                  </button>{" "}
-                </div>
-                {compInfo && (
-                  <div style={{ marginBottom: "10px" }}>
-                    <strong>Competência: </strong>
-                    {compInfo[0]}
-                  </div>
-                )}
-                {habInfo && (
-                  <div>
-                    <strong>Habilidade: </strong>
-                    {habInfo.plain[0]}
-                  </div>
-                )}{" "}
-              </div>
-            )}
-          </div>
-        </Document>
-      </div>
+
+      <div
+        ref={containerRef}
+        style={{
+          display: isLoaded
+            ? direction === "column"
+              ? "flex"
+              : "block"
+            : "none",
+          alignItems: "flex-start",
+          gap: "10px",
+          width: "100%",
+        }}
+      />
     </div>
   );
 }

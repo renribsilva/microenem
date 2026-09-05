@@ -5,7 +5,6 @@ import PdfThumbnail from "./pdf_thumbnail";
 import { CropArea } from "../../types/questoes_types";
 import { useYearData } from "../../context/year_context";
 import { useChartTheme } from "../../hooks/use_chart_theme";
-import LoadingFallback from "./loading_fallback";
 import ChevronLeft from "../svg/chevron_left";
 import ChevronRight from "../svg/chevron_right";
 import Close from "../svg/close";
@@ -45,19 +44,38 @@ export default function PdfModal({
   setIsLoaded,
 }: PdfModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const { getItemDetails, setShowGabarito, setQuestaoPopUp, listCode } =
-    useYearData();
-  const { colorMap } = useChartTheme();
+  const {
+    habilidades,
+    competencias,
+    showGabarito,
+    getItemDetails,
+    setShowGabarito,
+    setQuestaoPopUp,
+    listCode,
+  } = useYearData();
 
+  const { colorMap } = useChartTheme();
   const [itemDetails, setItemDetails] = useState<ItemDetails | null>(null);
+  const habInfo = itemDetails ? habilidades[itemDetails.CO_HABILIDADE] : null;
+  const compInfo = habInfo ? competencias[habInfo.comp] : null;
+  const larguras = crops.map((crop) => {
+    return Math.max(1, 300 - crop.offsetX - crop.cropWidth);
+  });
+
+  const larguraRodape =
+    crops.length > 1 && direction === "column"
+      ? larguras.reduce((acc, curr) => acc + curr, 0)
+      : Math.max(...larguras, 300);
 
   useEffect(() => {
-    let isMounted = true;
+    let cancelled = false;
     getItemDetails(code).then((details) => {
-      if (isMounted) setItemDetails(details);
+      if (!cancelled) {
+        setItemDetails(details);
+      }
     });
     return () => {
-      isMounted = false;
+      cancelled = true;
     };
   }, [code, getItemDetails]);
 
@@ -145,16 +163,9 @@ export default function PdfModal({
         minWidth: "300px",
       }}
     >
-      {!isLoaded && (
-        <div
-          style={{ display: "flex", justifyContent: "center", padding: "20px" }}
-        >
-          <LoadingFallback />
-        </div>
-      )}
       <div
         style={{
-          display: isLoaded ? "flex" : "none",
+          display: "flex",
           flexDirection: "column",
           alignItems: "center",
           width: "100%",
@@ -254,13 +265,69 @@ export default function PdfModal({
           <PdfThumbnail
             fileUrl={fileUrl}
             crops={crops}
-            code={code}
             direction={direction}
             scale={scale}
             isLoaded={isLoaded}
             setIsLoaded={setIsLoaded}
           />
         </div>
+        {isLoaded && itemDetails && (
+          <div
+            style={{
+              borderTop: "1px solid #e5e7eb",
+              marginTop: "12px",
+              width: `${larguraRodape}px`,
+            }}
+          >
+            <div
+              style={{
+                fontSize: "12px",
+                color: "#6b7280",
+              }}
+            >
+              <div style={{ marginTop: "8px" }}>
+                <strong>Gabarito: </strong>
+                <button
+                  onClick={() => setShowGabarito(!showGabarito)}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    height: "36px",
+                    padding: "0 12px",
+                    marginTop: "5px",
+                    marginBottom: "10px",
+                    borderRadius: "6px",
+                    border: showGabarito
+                      ? "1px solid #6ee7b7"
+                      : "1px solid #cdcccb",
+                    backgroundColor: showGabarito ? "#d1fae5" : "#ffffff",
+                    color: showGabarito ? "#065f46" : "#374151",
+                    fontSize: "14px",
+                    fontWeight: 500,
+                    cursor: "pointer",
+                    boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+                    transition: "all 0.15s ease-in-out",
+                  }}
+                >
+                  {showGabarito ? itemDetails.TX_GABARITO : "Ver"}
+                </button>
+              </div>
+              {compInfo && (
+                <div style={{ marginBottom: "10px" }}>
+                  <strong>Competência: </strong>
+                  {compInfo[0]}
+                </div>
+              )}
+              {habInfo && (
+                <div>
+                  <strong>Habilidade: </strong>
+                  {habInfo.plain[0]}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </dialog>
   );

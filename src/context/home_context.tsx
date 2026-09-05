@@ -202,12 +202,15 @@ export function HomeProvider({ children }: { children: ReactNode }) {
 
   const { colorMap } = useChartTheme();
 
+  const deferredPointIndex = useDeferredValue(pointIndexStuff.pointIndex);
+
   const chartProps: chartPropsType = {
     chartColor:
       colorMap[activeTCC?.metadata?.cor.replace(/\s*\(.*?\)\s*/g, "").trim()] ||
       "#3b82f6",
-    proficienciaAtual: activeTCC?.labels_x?.[pointIndexStuff.pointIndex] || 0,
-    resultadoAtual: activeTCC?.data_teorico?.[pointIndexStuff.pointIndex] || 0,
+    // Usar o índice postergado para os cálculos pesados/estados dependentes
+    proficienciaAtual: activeTCC?.labels_x?.[deferredPointIndex] || 0,
+    resultadoAtual: activeTCC?.data_teorico?.[deferredPointIndex] || 0,
     xMin: Math.floor((activeTCC?.metadata?.min || 0) / 100) * 100,
     xMax: Math.ceil((activeTCC?.metadata?.max || 1000) / 100) * 100,
     bMedio: activeTCC?.metadata?.b_medio_enem || 0,

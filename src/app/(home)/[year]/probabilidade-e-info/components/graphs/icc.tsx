@@ -89,62 +89,49 @@ export default function ICCChart() {
         id: "icc-chart",
         type: "line",
         toolbar: { show: false, offsetX: 0, offsetY: 0 },
-        zoom: {
-          enabled: false,
-        },
-        animations: {
-          enabled: false,
-          dynamicAnimation: {
-            enabled: false,
-          },
-        },
+        zoom: { enabled: false },
+        animations: { enabled: false },
       },
       stroke: {
         curve: "monotoneCubic",
-        width: series.map((s) =>
-          curve !== null && s.item === curve.code ? 3 : 2,
-        ),
+        width:
+          series.length > 0
+            ? series.map((s) =>
+                curve !== null && s.item === curve.code ? 3 : 2,
+              )
+            : 2,
         lineCap: "round",
-        dashArray: series.map((s) => s.strokeDashArray),
+        dashArray:
+          series.length > 0 ? series.map((s) => s.strokeDashArray) : [],
       },
-      colors: series.map((s) => s.color),
+      colors: series.length > 0 ? series.map((s) => s.color) : ["#3b82f6"],
       xaxis: {
         type: "numeric",
-        min: xMin,
-        max: xMax,
+        min: Number.isFinite(xMin) ? xMin : 0,
+        max: Number.isFinite(xMax) ? xMax : 1000,
         labels: {
           style: { colors: axisColor },
-          formatter: (val: string) => parseFloat(val).toFixed(0),
+          formatter: (val: string) => (val ? parseFloat(val).toFixed(0) : "0"),
         },
         title: {
-          text: `Notas na escala do Enem (${deferredArea})`,
+          text: `Notas na escala do Enem (${deferredArea || ""})`,
           style: { color: axisColor },
         },
         axisBorder: { show: false },
-        tooltip: {
-          enabled: true,
-        },
+        tooltip: { enabled: true },
         crosshairs: {
           show: true,
           width: 1,
           position: "back",
           opacity: 0.9,
-          stroke: {
-            color: axisColor,
-            width: 1,
-            dashArray: 3,
-          },
+          stroke: { color: axisColor, width: 1, dashArray: 3 },
         },
       },
       tooltip: {
         enabled: true,
         shared: true,
-        custom: function () {
-          return "";
-        },
-        marker: {
-          show: false,
-        },
+        custom: () => "",
+        marker: { show: false },
       },
       yaxis: {
         min: 0,
@@ -152,7 +139,8 @@ export default function ICCChart() {
         tickAmount: 5,
         labels: {
           style: { colors: axisColor },
-          formatter: (val) => Number(val).toFixed(1),
+          formatter: (val) =>
+            val !== undefined ? Number(val).toFixed(1) : "0.0",
         },
         title: { text: "Probabilidade", style: { color: axisColor } },
       },
@@ -161,11 +149,18 @@ export default function ICCChart() {
       annotations: {
         xaxis: [
           {
-            x: proficienciaAtual,
+            x: Number.isFinite(proficienciaAtual) ? proficienciaAtual : 0,
             borderColor: chartColor || "#ff0000",
             strokeDashArray: 0,
             label: {
-              text: `Traço de prob. da nota ${proficienciaAtual.toFixed(0)}`,
+              text: [
+                `Traço de prob. da nota`,
+                `${(Number.isFinite(proficienciaAtual)
+                  ? proficienciaAtual
+                  : 0
+                ).toFixed(0)}`,
+                //eslint-disable-next-line
+              ] as any,
               style: { color: "#fff", background: chartColor || "#ff0000" },
               borderWidth: 0,
               orientation: "horizontal",
@@ -186,7 +181,6 @@ export default function ICCChart() {
     gridColor,
     curve,
   ]);
-
   return (
     <div className={styles.container}>
       <div className={styles.header}>

@@ -99,6 +99,14 @@ export default function InfoChart() {
 
   // --- CONFIGURAÇÕES DO APEXCHARTS ---
   const options: ApexCharts.ApexOptions = useMemo(() => {
+    // Fallbacks seguros para os eixos caso venham vazios/NaN/Infinity
+    const safeXMin = Number.isFinite(xMin) ? xMin : 0;
+    const safeXMax = Number.isFinite(xMax) ? xMax : 1000;
+    const safeYMax = Number.isFinite(ymax) && ymax > 0 ? ymax : 1;
+    const safeProficiencia = Number.isFinite(proficienciaAtual)
+      ? proficienciaAtual
+      : 0;
+
     return {
       chart: {
         id: "icc-chart",
@@ -115,23 +123,27 @@ export default function InfoChart() {
       },
       stroke: {
         curve: "monotoneCubic",
-        width: series.map((s) =>
-          curve !== null && s.item === curve.code ? 3 : 2,
-        ),
+        width:
+          series.length > 0
+            ? series.map((s) =>
+                curve !== null && s.item === curve.code ? 3 : 2,
+              )
+            : 2,
         lineCap: "round",
-        dashArray: series.map((s) => s.strokeDashArray),
+        dashArray:
+          series.length > 0 ? series.map((s) => s.strokeDashArray) : [],
       },
-      colors: series.map((s) => s.color),
+      colors: series.length > 0 ? series.map((s) => s.color) : ["#3b82f6"],
       xaxis: {
         type: "numeric",
-        min: xMin,
-        max: xMax,
+        min: safeXMin,
+        max: safeXMax,
         labels: {
           style: { colors: axisColor },
-          formatter: (val: string) => parseFloat(val).toFixed(0),
+          formatter: (val: string) => (val ? parseFloat(val).toFixed(0) : "0"),
         },
         title: {
-          text: `Notas na escala do Enem (${deferredArea})`,
+          text: `Notas na escala do Enem (${deferredArea || ""})`,
           style: { color: axisColor },
         },
         axisBorder: { show: false },
@@ -162,11 +174,12 @@ export default function InfoChart() {
       },
       yaxis: {
         min: 0,
-        max: ymax,
+        max: safeYMax, // Protegido contra Infinity/NaN
         tickAmount: 5,
         labels: {
           style: { colors: axisColor },
-          formatter: (val) => Number(val).toFixed(1),
+          formatter: (val) =>
+            val !== undefined ? Number(val).toFixed(1) : "0.0",
         },
         title: { text: "Informação", style: { color: axisColor } },
       },
@@ -175,11 +188,11 @@ export default function InfoChart() {
       annotations: {
         xaxis: [
           {
-            x: proficienciaAtual,
+            x: safeProficiencia,
             borderColor: chartColor || "#ff0000",
             strokeDashArray: 0,
             label: {
-              text: `Traço de info. da nota ${proficienciaAtual.toFixed(0)}`,
+              text: `Traço de info. da nota ${safeProficiencia.toFixed(0)}`,
               style: { color: "#fff", background: chartColor || "#ff0000" },
               borderWidth: 0,
               orientation: "horizontal",

@@ -79,15 +79,20 @@ export default function PdfThumbnail({
         const novosCanvases = await Promise.all(
           pages.map(async (page, index) => {
             const crop = crops[index];
+
             const dpr = Math.min(window.devicePixelRatio || 1, 3);
-            const quality = 2;
+
+            // PC comum (DPR 1) = 4x
+            // Retina/mobile (DPR 2) = 6x
+            // Alta densidade (DPR 3) = 9x
+            const outputScale = Math.max(dpr * 3, 4);
 
             const visualViewport = page.getViewport({
               scale,
             });
 
             const renderViewport = page.getViewport({
-              scale: scale * dpr * quality,
+              scale: scale * outputScale,
             });
 
             const largura = Math.max(
@@ -99,8 +104,9 @@ export default function PdfThumbnail({
 
             const canvas = document.createElement("canvas");
 
-            canvas.width = Math.ceil(largura * dpr * quality);
-            canvas.height = Math.ceil(altura * dpr * quality);
+            canvas.width = Math.ceil(largura * outputScale);
+
+            canvas.height = Math.ceil(altura * outputScale);
 
             canvas.style.width = `${largura}px`;
             canvas.style.height = `${altura}px`;
@@ -123,16 +129,16 @@ export default function PdfThumbnail({
                 0,
                 0,
                 1,
-                -crop.offsetX * dpr * quality,
-                -crop.offsetY * dpr * quality,
+                -crop.offsetX * outputScale,
+                -crop.offsetY * outputScale,
               ],
             });
 
             await renderTask.promise;
+
             return canvas;
           }),
         );
-
         if (cancelled) return;
 
         const container = containerRef.current;

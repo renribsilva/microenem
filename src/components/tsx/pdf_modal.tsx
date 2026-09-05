@@ -44,6 +44,9 @@ export default function PdfModal({
   setIsLoaded,
 }: PdfModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const thumbnailContainerRef = useRef<HTMLDivElement>(null);
+  const [thumbnailWidth, setThumbnailWidth] = useState<number | null>(null);
+
   const {
     habilidades,
     competencias,
@@ -58,14 +61,12 @@ export default function PdfModal({
   const [itemDetails, setItemDetails] = useState<ItemDetails | null>(null);
   const habInfo = itemDetails ? habilidades[itemDetails.CO_HABILIDADE] : null;
   const compInfo = habInfo ? competencias[habInfo.comp] : null;
-  const larguras = crops.map((crop) => {
-    return Math.max(1, 300 - crop.offsetX - crop.cropWidth);
-  });
 
-  const larguraRodape =
-    crops.length > 1 && direction === "column"
-      ? larguras.reduce((acc, curr) => acc + curr, 0)
-      : Math.max(...larguras, 300);
+  useEffect(() => {
+    if (thumbnailContainerRef.current) {
+      setThumbnailWidth(thumbnailContainerRef.current.offsetWidth);
+    }
+  }, [isLoaded, scale, crops, direction]);
 
   useEffect(() => {
     let cancelled = false;
@@ -256,8 +257,12 @@ export default function PdfModal({
             {itemDetails?.IN_ITEM_ABAN === 1 ? "(anulada)" : ""}
           </div>
         </div>
+
+        {/* Container com a ref para capturar a largura real do thumbnail */}
         <div
+          ref={thumbnailContainerRef}
           style={{
+            display: "flex",
             width: "100%",
             justifyContent: "center",
           }}
@@ -271,12 +276,13 @@ export default function PdfModal({
             setIsLoaded={setIsLoaded}
           />
         </div>
+
         {isLoaded && itemDetails && (
           <div
             style={{
               borderTop: "1px solid #e5e7eb",
               marginTop: "12px",
-              width: `${larguraRodape}px`,
+              width: thumbnailWidth ? `${thumbnailWidth}px` : "100%",
             }}
           >
             <div

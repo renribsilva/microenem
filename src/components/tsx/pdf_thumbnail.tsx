@@ -79,85 +79,56 @@ export default function PdfThumbnail({
         const novosCanvases = await Promise.all(
           pages.map(async (page, index) => {
             const crop = crops[index];
+            const dpr = Math.min(window.devicePixelRatio || 1, 3);
+            const quality = 2;
 
-            /*
-             * Escala visual do PDF.
-             */
-            const viewport = page.getViewport({
+            const visualViewport = page.getViewport({
               scale,
             });
 
-            /*
-             * Pixel ratio da tela.
-             *
-             * Em uma tela Retina, por exemplo:
-             * devicePixelRatio = 2
-             *
-             * O canvas terá 2x mais pixels, mas continuará
-             * ocupando o mesmo tamanho visual.
-             */
-            const pixelRatio = Math.min(window.devicePixelRatio || 1, 3);
+            const renderViewport = page.getViewport({
+              scale: scale * dpr * quality,
+            });
 
-            /*
-             * Dimensão visual do crop.
-             */
             const largura = Math.max(
               1,
-              viewport.width - crop.offsetX - crop.cropWidth,
+              visualViewport.width - crop.offsetX - crop.cropWidth,
             );
 
             const altura = Math.max(1, crop.cropHeight);
 
             const canvas = document.createElement("canvas");
 
-            /*
-             * Resolução REAL do canvas.
-             */
-            canvas.width = Math.ceil(largura * pixelRatio);
-            canvas.height = Math.ceil(altura * pixelRatio);
+            canvas.width = Math.ceil(largura * dpr * quality);
+            canvas.height = Math.ceil(altura * dpr * quality);
 
-            /*
-             * Tamanho VISUAL do canvas.
-             */
             canvas.style.width = `${largura}px`;
             canvas.style.height = `${altura}px`;
             canvas.style.display = "block";
 
             const context = canvas.getContext("2d", {
               alpha: false,
-
-              /*
-               * Mantém o canvas com qualidade melhor para imagens/textos.
-               */
-              desynchronized: false,
             });
 
             if (!context) {
               throw new Error("Não foi possível criar o contexto 2D.");
             }
 
-            /*
-             * Como o canvas físico é maior que o tamanho visual,
-             * precisamos escalar o contexto.
-             */
-            context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-
-            /*
-             * O transform desloca o PDF para que somente o crop
-             * desejado apareça no canvas.
-             *
-             * Não arredondamos offsetX/offsetY, pois isso pode
-             * causar perda de definição em determinadas escalas.
-             */
             const renderTask = page.render({
               canvas,
               canvasContext: context,
-              viewport,
-              transform: [1, 0, 0, 1, -crop.offsetX, -crop.offsetY],
+              viewport: renderViewport,
+              transform: [
+                1,
+                0,
+                0,
+                1,
+                -crop.offsetX * dpr * quality,
+                -crop.offsetY * dpr * quality,
+              ],
             });
 
             await renderTask.promise;
-
             return canvas;
           }),
         );

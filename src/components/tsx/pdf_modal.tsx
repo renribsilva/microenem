@@ -170,7 +170,7 @@ export default function PdfModal({
         borderRadius: "16px",
         border: "1px solid #ffffff",
         backgroundColor: "#ffffff",
-        width: `${modalWidth + 5}px`,
+        width: `${modalWidth + 2}px`,
         maxWidth: "calc(100vw - 30px)",
         height: "90vh",
         maxHeight: "90vh",
@@ -321,6 +321,7 @@ export default function PdfModal({
               scale={scale}
               isLoaded={isLoaded}
               setIsLoaded={setIsLoaded}
+              itemDetails={itemDetails}
             />
           </div>
         </div>

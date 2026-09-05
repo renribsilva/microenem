@@ -80,50 +80,80 @@ export default function PdfThumbnail({
           pages.map(async (page, index) => {
             const crop = crops[index];
 
+            /*
+             * Escala visual do PDF.
+             */
             const viewport = page.getViewport({
               scale,
             });
 
-            // Equivale ao antigo `page.width` do react-pdf.
-            const larguraBase = viewport.width;
+            /*
+             * Pixel ratio da tela.
+             *
+             * Em uma tela Retina, por exemplo:
+             * devicePixelRatio = 2
+             *
+             * O canvas terá 2x mais pixels, mas continuará
+             * ocupando o mesmo tamanho visual.
+             */
+            const pixelRatio = Math.min(window.devicePixelRatio || 1, 3);
 
-            // MESMA fórmula da implementação antiga.
+            /*
+             * Dimensão visual do crop.
+             */
             const largura = Math.max(
               1,
-              Math.round(larguraBase - crop.offsetX - crop.cropWidth),
+              viewport.width - crop.offsetX - crop.cropWidth,
             );
 
-            const altura = Math.max(1, Math.round(crop.cropHeight));
+            const altura = Math.max(1, crop.cropHeight);
 
             const canvas = document.createElement("canvas");
 
-            canvas.width = largura;
-            canvas.height = altura;
+            /*
+             * Resolução REAL do canvas.
+             */
+            canvas.width = Math.ceil(largura * pixelRatio);
+            canvas.height = Math.ceil(altura * pixelRatio);
 
+            /*
+             * Tamanho VISUAL do canvas.
+             */
             canvas.style.width = `${largura}px`;
             canvas.style.height = `${altura}px`;
             canvas.style.display = "block";
 
             const context = canvas.getContext("2d", {
               alpha: false,
+
+              /*
+               * Mantém o canvas com qualidade melhor para imagens/textos.
+               */
+              desynchronized: false,
             });
 
             if (!context) {
               throw new Error("Não foi possível criar o contexto 2D.");
             }
 
+            /*
+             * Como o canvas físico é maior que o tamanho visual,
+             * precisamos escalar o contexto.
+             */
+            context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+
+            /*
+             * O transform desloca o PDF para que somente o crop
+             * desejado apareça no canvas.
+             *
+             * Não arredondamos offsetX/offsetY, pois isso pode
+             * causar perda de definição em determinadas escalas.
+             */
             const renderTask = page.render({
               canvas,
               canvasContext: context,
               viewport,
-              transform: [
-                1,
-                0,
-                0,
-                1,
-                -Math.round(crop.offsetX),
-                -Math.round(crop.offsetY),
-              ],
+              transform: [1, 0, 0, 1, -crop.offsetX, -crop.offsetY],
             });
 
             await renderTask.promise;
@@ -131,6 +161,7 @@ export default function PdfThumbnail({
             return canvas;
           }),
         );
+
         if (cancelled) return;
 
         const container = containerRef.current;
@@ -156,6 +187,11 @@ export default function PdfThumbnail({
     return () => {
       cancelled = true;
 
+      canvasesRef.current.forEach((canvas) => {
+        canvas.width = 0;
+        canvas.height = 0;
+      });
+
       canvasesRef.current = [];
     };
   }, [fileUrl, crops, scale, setIsLoaded]);
@@ -164,16 +200,9 @@ export default function PdfThumbnail({
     <div
       style={{
         position: "relative",
-
-        /*
-         * O tamanho do PDF pode ser maior que o viewport.
-         * Quem controla o scroll agora é o pai no PdfModal.
-         */
         width: "max-content",
         minWidth: "max-content",
-
         minHeight: !isLoaded ? "400px" : "auto",
-
         boxSizing: "border-box",
       }}
     >

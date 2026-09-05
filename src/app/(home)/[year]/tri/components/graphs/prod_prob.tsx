@@ -168,17 +168,13 @@ export default function ProdProbChart() {
 
   return (
     <div key={deferredArea} className={styles.eap_container}>
-      <div className={styles.eap_button_container}>
-        <div className={styles.tcc_cabecalho}>
-          <div className={styles.tcc_title}>
-            <h3 className={styles.tcc_title_h3}>
-              Curva de probabilidade a posteriori
-            </h3>
-            <p className={styles.tcc_subtitle_p}>
-              Função de probabilidade a posteriori da sequência de acertos e
-              erros determinada.
-            </p>
-          </div>
+      <div className={styles.header}>
+        <div className={styles.title} style={{ color: textColor }}>
+          Curva de probabilidade a posteriori
+        </div>
+        <div className={styles.subtitle} style={{ color: textColor }}>
+          Função de probabilidade a posteriori da sequência de acertos e erros
+          determinada
         </div>
       </div>
       {!isInitialRender ? (

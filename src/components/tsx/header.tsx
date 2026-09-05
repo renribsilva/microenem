@@ -1,5 +1,3 @@
-"use client";
-
 import Theme from "./theme_button";
 import styles from "./components.module.css";
 import EnemLogo from "../svg/enem_logo";
@@ -32,4 +30,3 @@ function AppHeader() {
 }
 
 export default AppHeader;
-

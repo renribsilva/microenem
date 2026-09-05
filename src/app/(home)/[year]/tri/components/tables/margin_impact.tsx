@@ -16,9 +16,12 @@ import {
 import clsx from "clsx";
 import dynamic from "next/dynamic";
 
-const Sort = dynamic(() => import("../../../../../../components/svg/sort"), {});
+const Sort = dynamic(() => import("../../../../../../components/svg/sort"), {
+  ssr: false,
+});
 const Visibility = dynamic(
   () => import("../../../../../../components/svg/open_in_new"),
+  { ssr: false },
 );
 
 type ImpactoRow = {
@@ -263,15 +266,13 @@ export default function MarginImpactTable() {
 
   return (
     <div className={styles.impact_container}>
-      <div className={styles.tcc_cabecalho}>
-        <div className={styles.tcc_title}>
-          <h3 className={styles.tcc_title_h3} style={{ color: textColor }}>
-            Impacto virtual do item
-          </h3>
-          <p className={styles.tcc_subtitle_p}>
-            Qual seria o impacto na nota final se o item tivesse o seu status
-            invertido, mantidos os outros status inalterados?
-          </p>
+      <div className={styles.header}>
+        <div className={styles.title} style={{ color: textColor }}>
+          Impacto virtual do item
+        </div>
+        <div className={styles.subtitle} style={{ color: textColor }}>
+          Qual seria o impacto na nota final se o item tivesse o seu status
+          invertido, mantidos os outros status inalterados?
         </div>
       </div>
       <div className={styles.margin_container}>

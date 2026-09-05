@@ -1,4 +1,7 @@
+"use client";
+
 import { useHomeData } from "../../context/home_context";
+import { useSidebar } from "../../context/sidebar_context";
 import { useYearData } from "../../context/year_context";
 import styles from "./components.module.css";
 
@@ -16,11 +19,11 @@ function EAPButton() {
     setEAPData,
   } = useYearData();
   const { chartProps } = useHomeData();
+  const { isMobile } = useSidebar();
   const { chartColor } = chartProps;
 
-  // Safe check: if selectedItems isn't initialized or is empty, treat as empty
-  const isEmpty = !selectedItems ? true : false;
-  const isDisabled = isFetchingEAP;
+  const isEmpty = Object.keys(selectedItems).length === 0;
+  const isDisabled = isFetchingEAP || isEmpty;
 
   const handleUpdateChart = () => {
     if (!needUpdateEAP || isEmpty) return;
@@ -30,7 +33,7 @@ function EAPButton() {
     setNeedUpdateEAP(false);
     setEAPData(null);
     const topo = document.getElementById("topo-pagina");
-    if (topo) {
+    if (topo && isMobile) {
       topo.scrollIntoView({
         behavior: "smooth",
         block: "start",

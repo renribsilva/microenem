@@ -5,8 +5,10 @@ import styles from "./components.module.css";
 import { useChartTheme } from "../../hooks/use_chart_theme";
 import { useHomeData } from "../../context/home_context";
 import { useYearData } from "../../context/year_context";
-import EAPButton from "./eap_button";
-import DropdownBooks from "./dropdown_books";
+import dynamic from "next/dynamic";
+
+const EAPButton = dynamic(() => import("./eap_button"));
+const DropdownBooks = dynamic(() => import("./dropdown_books"));
 
 type onButtonClickType = (
   num: number,

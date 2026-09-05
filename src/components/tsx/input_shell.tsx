@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import styles from "./components.module.css";
 import { useHomeData } from "../../context/home_context";

@@ -9,20 +9,16 @@ import { useEffect, useState } from "react";
 function Theme() {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-
   const toggleTheme = () => {
     setTheme(resolvedTheme === "light" ? "dark" : "light");
   };
-
   useEffect(() => {
     // eslint-disable-next-line
     setMounted(true);
   }, []);
-
   if (!mounted) {
     return null;
   }
-
   return (
     <button
       onClick={toggleTheme}
@@ -36,5 +32,4 @@ function Theme() {
     </button>
   );
 }
-
 export default Theme;

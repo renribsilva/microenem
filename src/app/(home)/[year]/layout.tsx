@@ -5,11 +5,10 @@ import dynamic from "next/dynamic";
 import { useHomeData } from "../../../context/home_context";
 import { QuestaoCoordenadas } from "../../../types/questoes_types";
 import { useEffect, useState } from "react";
+import RenderKeepAlive from "../../../components/tsx/keep_alive";
+import Navbar from "../../../components/tsx/navbar";
+import TableFooter from "../../../components/tsx/table_footer";
 
-const Navbar = dynamic(() => import("../../../components/tsx/navbar"));
-const TableFooter = dynamic(
-  () => import("../../../components/tsx/table_footer"),
-);
 const PdfModal = dynamic(() => import("../../../components/tsx/pdf_modal"), {});
 
 function YearLayoutContent({ children }: { children: React.ReactNode }) {
@@ -103,6 +102,7 @@ function YearLayoutContent({ children }: { children: React.ReactNode }) {
 function YearLayout({ children }: { children: React.ReactNode }) {
   return (
     <YearProvider>
+      <RenderKeepAlive />
       <YearLayoutContent>{children}</YearLayoutContent>
     </YearProvider>
   );

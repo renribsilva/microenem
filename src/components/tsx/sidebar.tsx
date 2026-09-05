@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./components.module.css";
 import Footer from "./footer";

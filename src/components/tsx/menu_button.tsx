@@ -1,5 +1,3 @@
-"use client";
-
 import { useSidebar } from "../../context/sidebar_context";
 import Menu from "../svg/menu";
 import styles from "./components.module.css";

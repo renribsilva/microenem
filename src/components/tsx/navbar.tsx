@@ -1,9 +1,7 @@
-"use client";
-
 import { useHomeData } from "../../context/home_context";
-import TabsNavigation from "./tab_navigation";
 import styles from "./components.module.css";
 import { useYearData } from "../../context/year_context";
+import TabsNavigation from "./tab_navigation";
 
 const menuItems = [
   { id: "LC", label: "Linguagens" },

@@ -28,7 +28,7 @@ export async function GET(request: Request) {
     const fullJson = JSON.parse(fileContent);
 
     return NextResponse.json({
-      code: code,
+      code: Number(code),
       dataset: fullJson[code] || null,
     });
   } catch (error) {

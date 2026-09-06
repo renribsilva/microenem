@@ -27,7 +27,12 @@ const MOCK_DATA: RankingRow[] = Array.from({ length: 20 }, (_, index) => ({
 }));
 
 export default function RankingTable() {
-  const { meanData, setActiveRanking } = useYearData();
+  const {
+    meanData,
+    setActiveRanking,
+    setLastItemActivate,
+    setLastItemActivateNum,
+  } = useYearData();
   const { isMobile } = useSidebar();
   const columnHelper = createColumnHelper<RankingRow>();
   const { textColor } = useChartTheme();
@@ -347,6 +352,8 @@ export default function RankingTable() {
                       suppressHydrationWarning
                       onClick={() => {
                         setActiveRanking(currentRank);
+                        setLastItemActivate(null);
+                        setLastItemActivateNum(null);
                         const topo = document.getElementById("topo-pagina");
                         if (topo && isMobile) {
                           topo.scrollIntoView({

@@ -390,38 +390,35 @@ export function YearProvider({ children }: { children: ReactNode }) {
           if (Object.keys(prev).length === 0) {
             return prev;
           }
-
           const codeToPosition = new Map<string, number>();
-
           Object.entries(data).forEach(([posStr, item]) => {
             if (item?.code !== undefined && item?.code !== null) {
               codeToPosition.set(String(item.code), Number(posStr));
             }
           });
-
           const nextMapping: typeof prev = {};
-
           Object.entries(prev).forEach(([code, itemData]) => {
             const newPosition = codeToPosition.get(String(code));
-
             if (newPosition === undefined) {
               return;
             }
-
             nextMapping[code] = {
               ...itemData,
               posicao: newPosition,
             };
           });
-
           return nextMapping;
         });
-        const firtItemNum = Number(Object.keys(data)[0]);
-        setLastItemActivateNum(firtItemNum);
-        setLastItemActivate(Number(data[firtItemNum].code));
+        const keys = Object.keys(data);
+        if (keys.length > 0) {
+          const firstItemNum = Number(keys[0]);
+          if (data[firstItemNum]?.code !== undefined) {
+            setLastItemActivateNum(firstItemNum);
+            setLastItemActivate(Number(data[firstItemNum].code));
+          }
+        }
         setCodesMap(data);
       };
-
       if (codesCacheRef.current.has(cacheKey)) {
         processData(codesCacheRef.current.get(cacheKey)!);
         return;
@@ -437,7 +434,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
         console.error("Erro ao carregar códigos:", err);
       }
     }
-
     loadCodes();
   }, [
     currentYear,
@@ -547,6 +543,8 @@ export function YearProvider({ children }: { children: ReactNode }) {
     setPrevIsRespostaPage(isRespostaPage);
     if (!isRespostaPage) {
       setItemGraphData(null);
+      setLastItemActivate(null);
+      setLastItemActivateNum(null);
     }
   }
 
@@ -567,10 +565,8 @@ export function YearProvider({ children }: { children: ReactNode }) {
             `&year=${currentYear}`,
         );
         const json = await res.json();
-
-        const resolvedCode = json?.code ?? codeToFetch;
         const newCacheData: ItemGraphType = {
-          code: resolvedCode,
+          code: json?.code,
           dataset: json?.dataset,
         };
 
@@ -659,6 +655,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
         const res = await fetch(`/api/mean?year=${normalizedYear}`);
         const json = await res.json();
         top2000Cache.current.set(normalizedYear, json);
+        setLastItemActivate(null);
         setTop2000Data(json);
       } catch (err) {
         console.error("Erro ao carregar probtrace:", err);
@@ -827,8 +824,8 @@ export function YearProvider({ children }: { children: ReactNode }) {
         );
         return;
       }
-      setLastItemActivate(codeItem);
-      setLastItemActivateNum(num);
+      setLastItemActivate(null);
+      setLastItemActivateNum(null);
       setSelectedItems((prev) => {
         const nextMapping = { ...prev };
         const current = nextMapping[codeItem];
@@ -989,6 +986,10 @@ export function YearProvider({ children }: { children: ReactNode }) {
   //----------------------------------------------------------------------------
   //----------------------------------RETURN------------------------------------
   //----------------------------------------------------------------------------
+  //
+  console.log("last:", lastItemActivate);
+  console.log("graph:", itemGraphData);
+  console.log("viol:", violinData);
 
   return (
     <YearContext.Provider

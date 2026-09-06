@@ -1,15 +1,21 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import PdfThumbnail from "./pdf_thumbnail";
 import { CropArea } from "../../types/questoes_types";
 import { useYearData } from "../../context/year_context";
 import { useChartTheme } from "../../hooks/use_chart_theme";
-import ChevronLeft from "../svg/chevron_left";
-import ChevronRight from "../svg/chevron_right";
-import Close from "../svg/close";
 import styles from "./components.module.css";
 import { ItemDetails } from "../../types/year_types";
+import dynamic from "next/dynamic";
+
+const PdfThumbnail = dynamic(() => import("./pdf_thumbnail"), { ssr: false });
+const ChevronLeft = dynamic(() => import("../svg/chevron_left"), {
+  ssr: false,
+});
+const ChevronRight = dynamic(() => import("../svg/chevron_right"), {
+  ssr: false,
+});
+const Close = dynamic(() => import("../svg/close"), { ssr: false });
 
 interface PdfModalProps {
   isOpen: boolean;

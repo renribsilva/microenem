@@ -4,7 +4,7 @@ import { useYearData, YearProvider } from "../../../context/year_context";
 import dynamic from "next/dynamic";
 import { useHomeData } from "../../../context/home_context";
 import { CropArea, QuestaoCoordenadas } from "../../../types/questoes_types";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import RenderKeepAlive from "../../../components/tsx/keep_alive";
 import Navbar from "../../../components/tsx/navbar";
 import TableFooter from "../../../components/tsx/table_footer";
@@ -33,10 +33,6 @@ function YearLayoutContent({ children }: { children: React.ReactNode }) {
     setShowGabarito,
   } = useYearData();
 
-  const [questoesMap, setQuestoesMap] = useState<
-    Map<number, QuestaoCoordenadas>
-  >(new Map());
-
   const ehPrimeiroDia = deferredArea === "LC" || deferredArea === "CH";
   const sufixoDia = ehPrimeiroDia ? "1DIA" : "2DIA";
 
@@ -46,11 +42,31 @@ function YearLayoutContent({ children }: { children: React.ReactNode }) {
   const isValidPath =
     pathName.endsWith("probabilidade-e-info") ||
     pathName.endsWith("resposta-ao-item") ||
+    pathName.endsWith("media-simples") ||
     pathName.endsWith("tri");
+
+  const [questoesData, setQuestoesData] = useState<{
+    key: string;
+    map: Map<number, QuestaoCoordenadas>;
+  } | null>(null);
+
+  const questoesCache = useRef<Map<string, Map<number, QuestaoCoordenadas>>>(
+    new Map(),
+  );
 
   useEffect(() => {
     let cancelled = false;
+    if (!currentYear || !deferredArea || !isValidPath) return;
     async function carregarQuestoes() {
+      const key = `${currentYear}-${deferredArea}`;
+      const cachedMap = questoesCache.current.get(key);
+      if (cachedMap) {
+        setQuestoesData({
+          key,
+          map: cachedMap,
+        });
+        return;
+      }
       try {
         const response = await fetch(
           `/questoes/${currentYear}/${deferredArea}.json`,
@@ -67,15 +83,18 @@ function YearLayoutContent({ children }: { children: React.ReactNode }) {
         for (const questao of lista) {
           map.set(questao.codigo, questao);
         }
-        setQuestoesMap(map);
+        questoesCache.current.set(key, map);
+        setQuestoesData({
+          key,
+          map,
+        });
       } catch (error) {
         if (!cancelled) {
           console.error("Erro ao carregar questões:", error);
-          setQuestoesMap(new Map());
         }
       }
     }
-    if (isValidPath) {
+    if (isValidPath && currentYear && deferredArea) {
       carregarQuestoes();
     }
     return () => {
@@ -84,9 +103,11 @@ function YearLayoutContent({ children }: { children: React.ReactNode }) {
   }, [currentYear, deferredArea, isValidPath]);
 
   const dadosQuestao = useMemo(() => {
-    if (!questaoPopUp) return null;
-    return questoesMap.get(questaoPopUp) ?? null;
-  }, [questoesMap, questaoPopUp]);
+    if (!questaoPopUp || !questoesData) return null;
+    const key = `${currentYear}-${deferredArea}`;
+    if (questoesData.key !== key) return null;
+    return questoesData.map.get(questaoPopUp) ?? null;
+  }, [questoesData, questaoPopUp, currentYear, deferredArea]);
 
   useEffect(() => {
     if (!fileUrlDinamico || !isValidPath) return;

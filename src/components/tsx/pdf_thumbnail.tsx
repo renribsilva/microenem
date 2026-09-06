@@ -3,9 +3,13 @@
 import { ComponentProps, useEffect, useMemo, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { CropArea } from "../../types/questoes_types";
-import LoadingFallback from "./loading_fallback";
 import { ItemDetails } from "../../types/year_types";
 import { useSidebar } from "../../context/sidebar_context";
+import dynamic from "next/dynamic";
+
+const LoadingFallback = dynamic(() => import("./loading_fallback"), {
+  ssr: false,
+});
 
 interface PdfThumbnailProps {
   fileUrl: string;

@@ -9,28 +9,29 @@ import { useEffect, useState } from "react";
 function Theme() {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    //eslint-disable-next-line
-    setMounted(true);
-  }, []);
-
   const toggleTheme = () => {
     setTheme(resolvedTheme === "light" ? "dark" : "light");
   };
+  useEffect(() => {
+    // eslint-disable-next-line
+    setMounted(true);
+  }, []);
 
-  const isDark = mounted ? resolvedTheme === "dark" : false;
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <button
       onClick={toggleTheme}
-      aria-label="Alternar tema"
-      style={{ cursor: "pointer", touchAction: "manipulation" }}
+      aria-label={
+        resolvedTheme === "light" ? "Ativar tema escuro" : "Ativar tema claro"
+      }
+      style={{ cursor: "pointer" }}
       className={styles.theme_button}
     >
-      {isDark ? <Light /> : <Dark />}
+      {resolvedTheme === "light" ? <Dark /> : <Light />}
     </button>
   );
 }
-
 export default Theme;

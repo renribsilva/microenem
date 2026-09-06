@@ -34,9 +34,10 @@
 }
 
 .chartWrapper {
+  position: relative;
+  width: 100%;
   flex: 1;
-  min-height: 0;
-  min-width: 0;
+  min-height: 250px; /* Garante um tamanho base para o ApexCharts se orientar no F5 */
 }
 
 .titleContainer {

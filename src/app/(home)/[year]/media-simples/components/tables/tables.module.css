@@ -7,14 +7,18 @@
   flex-direction: column;
   height: 100%;
   max-height: 100%;
+  min-height: 0;
   overflow: hidden;
+  box-sizing: border-box;
+  flex: 1 1 0px;
 }
 
 .table_scroll {
-  flex: 1;
+  flex: 1 1 0px;
   overflow-y: auto;
-  min-height: 0; /* Impede que o flexbox estoure o container */
+  min-height: 0;
 }
+
 /**********************CABECALHO********************/
 
 .meantable_cabecalho {

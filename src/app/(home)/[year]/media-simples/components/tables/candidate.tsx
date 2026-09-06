@@ -259,40 +259,42 @@ export default function CandidateFullDetail() {
                 ></span>
                 <span>Anulada</span>
               </div>
-            </div>{" "}
-            {areas.map((area) => {
-              const map = areaMaps[area.key] || [];
-              const orderedCodes = map.map((item) => item.co_item);
-              return (
-                <div key={area.key} className={styles.score_block}>
-                  <h4 className={styles.score_h4}>{area.label}</h4>
-                  <div className={styles.score_dots_grid}>
-                    {map.map((item, idx) => (
-                      <button
-                        key={idx}
-                        className={`${styles.dot} ${styles[item.status]}`}
-                        onClick={() => {
-                          setActiveArea(area.key);
-                          setShowPopUp(true);
-                          setQuestaoPopUp(item.co_item);
-                          setListCode(orderedCodes);
-                          setIsLoaded(false);
-                        }}
-                        title={`Questão ${item.pos}: ${
-                          item.status === "correct"
-                            ? "Acerto"
-                            : item.status === "wrong"
-                              ? "Erro"
-                              : "Anulada"
-                        }`}
-                      >
-                        <span className={styles.dot_number}>{item.pos}</span>
-                      </button>
-                    ))}{" "}
+            </div>
+            <div className={styles.score_dots_container}>
+              {areas.map((area) => {
+                const map = areaMaps[area.key] || [];
+                const orderedCodes = map.map((item) => item.co_item);
+                return (
+                  <div key={area.key} className={styles.score_block}>
+                    <h4 className={styles.score_h4}>{area.label}</h4>
+                    <div className={styles.score_dots_grid}>
+                      {map.map((item, idx) => (
+                        <button
+                          key={idx}
+                          className={`${styles.dot} ${styles[item.status]}`}
+                          onClick={() => {
+                            setActiveArea(area.key);
+                            setShowPopUp(true);
+                            setQuestaoPopUp(item.co_item);
+                            setListCode(orderedCodes);
+                            setIsLoaded(false);
+                          }}
+                          title={`Questão ${item.pos}: ${
+                            item.status === "correct"
+                              ? "Acerto"
+                              : item.status === "wrong"
+                                ? "Erro"
+                                : "Anulada"
+                          }`}
+                        >
+                          <span className={styles.dot_number}>{item.pos}</span>
+                        </button>
+                      ))}{" "}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         )}
       </div>

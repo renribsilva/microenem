@@ -987,9 +987,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
   //----------------------------------RETURN------------------------------------
   //----------------------------------------------------------------------------
   //
-  console.log("last:", lastItemActivate);
-  console.log("graph:", itemGraphData);
-  console.log("viol:", violinData);
 
   return (
     <YearContext.Provider

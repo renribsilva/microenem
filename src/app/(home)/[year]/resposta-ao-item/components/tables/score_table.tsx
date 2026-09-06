@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -36,7 +36,7 @@ type TableRow = {
 };
 
 export default function ScoreTable() {
-  const { isMobile } = useSidebar();
+  const { isMobile, isSemiMobile, windowWidth } = useSidebar();
   const {
     respostaAoItemData,
     codesMap,
@@ -52,17 +52,8 @@ export default function ScoreTable() {
     setListCode,
   } = useYearData();
 
-  const [windowWidth, setWindowWidth] = useState<number | null>(null);
-
-  useEffect(() => {
-    setWindowWidth(window.innerWidth);
-    const handleResize = () => setWindowWidth(window.innerWidth);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
   const isClient = windowWidth !== null;
-  const hideExtraColumns = isClient && windowWidth <= 1000;
+  const hideExtraColumns = isClient && isSemiMobile;
 
   const scoreData = respostaAoItemData?.scoreData;
 

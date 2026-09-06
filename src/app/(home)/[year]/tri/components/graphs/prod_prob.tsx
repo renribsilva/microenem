@@ -166,6 +166,8 @@ export default function ProdProbChart() {
     colors: [chartColor],
   };
 
+  const showFooter = series.length > 0 && !needUpdateEAP;
+
   return (
     <div key={deferredArea} className={styles.eap_container}>
       <div className={styles.header}>
@@ -192,15 +194,17 @@ export default function ProdProbChart() {
             type="area"
             height={350}
           />
-          <div
-            style={{ fontSize: "0.75rem", fontWeight: "300", color: "#888" }}
-          >
-            A nota mais provável é a média ponderada de todas as proficiências
-            sob a curva, tendo como peso as suas respectivas probabilidades
-            ajustadas à normal N(0,1). (Este gráfico pode apresentar valores que
-            não condizem com a nota oficial, devido a inconsistências nos
-            microdados.)
-          </div>
+          {showFooter && (
+            <div
+              style={{ fontSize: "0.75rem", fontWeight: "300", color: "#888" }}
+            >
+              A nota mais provável é a média ponderada de todas as proficiências
+              sob a curva, tendo como peso as suas respectivas probabilidades
+              ajustadas à normal N(0,1). (Este gráfico pode apresentar valores
+              que não condizem com a nota oficial, devido a inconsistências nos
+              microdados.)
+            </div>
+          )}
         </>
       ) : (
         <div className={styles.eap_initial}>

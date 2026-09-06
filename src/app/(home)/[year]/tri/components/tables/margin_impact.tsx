@@ -358,13 +358,13 @@ export default function MarginImpactTable() {
         )}
       </div>
       <div className={styles.table_footer}>
-        <div>
-          ¹ Parâmetro de discriminação: é o poder de discriminação do item para
-          diferenciar os participantes que dominam dos participantes que não
-          dominam a habilidade avaliada.
-        </div>
         {!isMobile && (
           <>
+            <div>
+              ¹ Parâmetro de discriminação: é o poder de discriminação do item
+              para diferenciar os participantes que dominam dos participantes
+              que não dominam a habilidade avaliada.
+            </div>
             <div>
               ² Parâmetro de dificuldade: associado à dificuldade do item, sendo
               que quanto maior seu valor, mais difícil é o item.

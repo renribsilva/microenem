@@ -23,13 +23,19 @@ export const SidebarProvider = ({ children }: { children: ReactNode }) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
+  const [isSemiMobile, setIsSemiMobile] = useState<boolean | null>(null);
+  const [windowWidth, setWindowWidth] = useState<number | null>(null);
+
   const [activeItem, setActiveItem] = useState<string | null>(null);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
 
   useEffect(() => {
     const handleResize = (): void => {
       const mobile = window.innerWidth <= 800;
+      const semiMobile = window.innerWidth <= 1000;
+      setWindowWidth(window.innerWidth);
       setIsMobile(mobile);
+      setIsSemiMobile(semiMobile);
       if (!mobile) {
         setIsMobileOpen(false);
         document.body.style.overflow = "unset";
@@ -64,6 +70,8 @@ export const SidebarProvider = ({ children }: { children: ReactNode }) => {
       value={{
         // Estados
         isMobile,
+        isSemiMobile,
+        windowWidth,
         isExpanded: isMobile ? false : isExpanded,
         isMobileOpen,
         activeItem,

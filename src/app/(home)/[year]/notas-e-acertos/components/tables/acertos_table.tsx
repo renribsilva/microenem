@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -30,22 +30,10 @@ type TableRow = {
 
 export default function AcertosTable() {
   const { acertosData, acertosNum, setAcertosNum } = useYearData();
-  const { isMobile } = useSidebar();
+  const { isMobile, isSemiMobile } = useSidebar();
   const [sorting, setSorting] = useState<SortingState>([
     { id: "id", desc: false },
   ]);
-
-  const [windowWidth, setWindowWidth] = useState<number>(
-    typeof window !== "undefined" ? window.innerWidth : 1200,
-  );
-
-  useEffect(() => {
-    const handleResize = () => setWindowWidth(window.innerWidth);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  const isBelow1000 = windowWidth < 1000;
 
   const columnHelper = createColumnHelper<TableRow>();
 
@@ -228,8 +216,8 @@ export default function AcertosTable() {
       sorting,
       columnVisibility: {
         n: !isMobile,
-        skew: !isBelow1000 && !isMobile,
-        kurtosis: !isBelow1000 && !isMobile,
+        skew: !isSemiMobile && !isMobile,
+        kurtosis: !isSemiMobile && !isMobile,
       },
     },
     onSortingChange: setSorting,

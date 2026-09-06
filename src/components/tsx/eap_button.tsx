@@ -19,11 +19,11 @@ function EAPButton() {
     setEAPData,
   } = useYearData();
   const { chartProps } = useHomeData();
-  const { isMobile } = useSidebar();
+  const { isSemiMobile } = useSidebar();
   const { chartColor } = chartProps;
 
-  const isEmpty = Object.keys(selectedItems).length === 0;
-  const isDisabled = isFetchingEAP || isEmpty;
+  const isEmpty = Object.keys(selectedItems ?? {}).length === 0;
+  const isDisabled = Boolean(isFetchingEAP || isEmpty);
 
   const handleUpdateChart = () => {
     if (!needUpdateEAP || isEmpty) return;
@@ -33,7 +33,7 @@ function EAPButton() {
     setNeedUpdateEAP(false);
     setEAPData(null);
     const topo = document.getElementById("topo-pagina");
-    if (topo && isMobile) {
+    if (topo && isSemiMobile) {
       topo.scrollIntoView({
         behavior: "smooth",
         block: "start",

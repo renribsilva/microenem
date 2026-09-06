@@ -135,9 +135,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
     null,
   );
 
-  const [selectedItems, setSelectedItems] = useState<
-    SelectedItemsType | object
-  >({});
+  const [selectedItems, setSelectedItems] = useState<SelectedItemsType>({});
 
   const [codigo, lingua, versao] = selectedLabel.split("_");
 

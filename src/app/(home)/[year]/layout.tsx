@@ -167,12 +167,29 @@ function YearLayoutContent({ children }: { children: React.ReactNode }) {
 }
 
 function YearLayout({ children }: { children: React.ReactNode }) {
+  const [isIdleReady, setIsIdleReady] = useState(false);
+
+  useEffect(() => {
+    const handleIdle = () => {
+      setIsIdleReady(true);
+    };
+    if ("requestIdleCallback" in window) {
+      const idleId = window.requestIdleCallback(handleIdle, { timeout: 2000 });
+      return () => {
+        window.cancelIdleCallback(idleId);
+      };
+    } else {
+      const timer = setTimeout(handleIdle, 1000);
+      return () => {
+        window.clearTimeout(timer);
+      };
+    }
+  }, []);
   return (
     <YearProvider>
-      <RenderKeepAlive />
+      {isIdleReady && <RenderKeepAlive />}
       <YearLayoutContent>{children}</YearLayoutContent>
     </YearProvider>
   );
 }
-
 export default YearLayout;

@@ -33,16 +33,16 @@ export default function AcertosChart() {
   }, [itemGraphData, lastItemActivate, activeTCC]);
 
   const series = useMemo(() => {
-    if (!itemGraphData || !Array.isArray(itemGraphData.x)) {
+    if (!itemGraphData?.dataset?.x || !itemGraphData?.dataset?.y) {
       return [];
     }
     return [
       {
         name: "Frequência de acertos",
         type: "scatter",
-        data: itemGraphData.x.map((valorX, index) => ({
+        data: itemGraphData.dataset.x.map((valorX, index) => ({
           x: valorX,
-          y: itemGraphData.y[index],
+          y: itemGraphData.dataset.y[index],
         })),
       },
     ];
@@ -80,15 +80,14 @@ export default function AcertosChart() {
       },
       xaxis: {
         type: "numeric",
-        min: xMin,
-        max: xMax,
+        min: xMin ?? undefined,
+        max: xMax ?? undefined,
         tickAmount: isMobile ? 5 : 10,
         axisBorder: {
           show: false,
         },
         labels: {
           style: { colors: axisColor },
-          // Proteção aqui:
           formatter: (val) =>
             val !== undefined && val !== null ? Number(val).toFixed(0) : "",
         },
@@ -184,7 +183,7 @@ export default function AcertosChart() {
                     <span>${Number(val0).toFixed(2)}</span>
                   </div>
                 </div>
-              </div>
+             </div>
             `;
           },
           title: {
@@ -214,7 +213,7 @@ export default function AcertosChart() {
     textColor,
   ]);
 
-  if (!itemGraphData) {
+  if (!itemGraphData || xMin === null || xMax === null) {
     return (
       <div className={`${styles.container}`}>
         <div className={styles.header}>

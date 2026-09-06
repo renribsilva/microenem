@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -34,6 +34,18 @@ export default function AcertosTable() {
   const [sorting, setSorting] = useState<SortingState>([
     { id: "id", desc: false },
   ]);
+
+  const [windowWidth, setWindowWidth] = useState<number>(
+    typeof window !== "undefined" ? window.innerWidth : 1200,
+  );
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const isBelow1000 = windowWidth < 1000;
 
   const columnHelper = createColumnHelper<TableRow>();
 
@@ -208,7 +220,7 @@ export default function AcertosTable() {
     });
   }, [acertosData]);
 
-  // eslint-disable-next-line
+  //eslint-disable-next-line
   const table = useReactTable({
     data,
     columns,
@@ -216,8 +228,8 @@ export default function AcertosTable() {
       sorting,
       columnVisibility: {
         n: !isMobile,
-        skew: !isMobile,
-        kurtosis: !isMobile,
+        skew: !isBelow1000 && !isMobile,
+        kurtosis: !isBelow1000 && !isMobile,
       },
     },
     onSortingChange: setSorting,
@@ -271,7 +283,6 @@ export default function AcertosTable() {
                           cursor: canSort ? "pointer" : "default",
                         }}
                       >
-                        {" "}
                         {!header.isPlaceholder &&
                           flexRender(
                             header.column.columnDef.header,
@@ -286,7 +297,7 @@ export default function AcertosTable() {
                               (!isMobile && <Sort height="20px" />)}
                           </span>
                         )}
-                      </div>{" "}
+                      </div>
                     </th>
                   );
                 })}

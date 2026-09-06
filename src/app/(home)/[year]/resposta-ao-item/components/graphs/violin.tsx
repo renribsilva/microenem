@@ -18,7 +18,10 @@ export default function ViolinBinsChart() {
 
   const maxAbsValue = useMemo(() => {
     if (!violinData) return 100;
-    const maxVal = Math.max(...violinData["1"], ...violinData["0"]);
+    const maxVal = Math.max(
+      ...violinData.dataset["1"],
+      ...violinData.dataset["0"],
+    );
     if (maxVal === 0) return 100;
     const withBuffer = maxVal * 1.1;
     return Math.ceil(withBuffer);
@@ -40,11 +43,11 @@ export default function ViolinBinsChart() {
     return [
       {
         name: "Acertos",
-        data: violinData["1"] || [],
+        data: violinData.dataset["1"] || [],
       },
       {
         name: "Erros",
-        data: (violinData["0"] || []).map((v: number) => -v),
+        data: (violinData.dataset["0"] || []).map((v: number) => -v),
       },
     ];
   }, [violinData]);
@@ -189,11 +192,11 @@ export default function ViolinBinsChart() {
       },
       yaxis: {
         labels: {
-          style: { colors: violinData ? axisColor : "#fff" },
+          style: { colors: violinData?.dataset ? axisColor : "#fff" },
         },
       },
       xaxis: {
-        categories: violinData?.labels || [],
+        categories: violinData?.dataset?.labels || [],
         axisBorder: {
           show: false,
         },

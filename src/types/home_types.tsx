@@ -105,4 +105,5 @@ export type HomeContextType = {
   setSelectionsByArea: React.Dispatch<
     React.SetStateAction<SelectionsByAreaType>
   >;
+  setActiveTCC: React.Dispatch<React.SetStateAction<ActiveTCCType | null>>;
 };

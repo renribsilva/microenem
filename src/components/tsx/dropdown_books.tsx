@@ -15,9 +15,10 @@ function DropdownBooks() {
     setSelectedLabel,
     getMetadata,
   } = useHomeData();
+  const { setNeedUpdateEAP, setItemGraphData, setLastItemActivate } =
+    useYearData();
 
   const { chartColor } = chartProps;
-  const { setNeedUpdateEAP } = useYearData();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { colorMap, tabColor, textColor } = useChartTheme();
@@ -71,6 +72,8 @@ function DropdownBooks() {
               <div
                 key={ds.label}
                 onClick={() => {
+                  setItemGraphData(null);
+                  setLastItemActivate(null);
                   setSelectedLabel(ds.label);
                   setIsOpen(false);
                   setNeedUpdateEAP(true);

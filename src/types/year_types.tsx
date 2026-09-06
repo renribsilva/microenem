@@ -224,14 +224,14 @@ export type ProbCacheType = {
 };
 
 export type ItemGraphType = {
-  x: number[];
-  y: number[];
+  code: number;
+  dataset: {
+    x: number[];
+    y: number[];
+  };
 };
 
-export type ItemGraphCacheType = {
-  code: number;
-  dataset: ItemGraphType;
-};
+export type ItemGraphCacheType = ItemGraphType;
 
 interface AcertosDensityItem {
   x: number[];
@@ -383,9 +383,12 @@ export type GetAreaMapType = (
 ) => Promise<AreaItemMap[]>;
 
 export type ViolinDataType = {
-  0: number[];
-  1: number[];
-  labels: string[];
+  code: number;
+  dataset: {
+    0: number[];
+    1: number[];
+    labels: string[];
+  };
 };
 
 export type ItemDetails = {

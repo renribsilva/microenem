@@ -332,13 +332,6 @@ export default function ScoreTable() {
     enableSortingRemoval: false,
   });
 
-  useEffect(() => {
-    if (data.length > 0) {
-      setLastItemActivate(data[0].id);
-      setLastItemActivateNum(data[0].posicao);
-    }
-  }, [data, setLastItemActivate, setLastItemActivateNum]);
-
   return (
     <section className={styles.probtable_container}>
       <div className={styles.probtable_cabecalho}>

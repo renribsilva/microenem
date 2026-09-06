@@ -3,23 +3,45 @@
 /****************************************/
 
 .main_container {
-  /* background-color: aquamarine; */
   padding: 10px;
   box-sizing: border-box;
   display: flex;
   gap: 10px;
-}
-
-@media (max-width: 1000px) {
-  .main_container {
-    flex-direction: column;
-  }
+  height: calc(100svh - 115px);
 }
 
 .main_left {
   flex: 1 1 45%;
+  height: 100%;
 }
 
 .main_right {
   flex: 1 1 55%;
+}
+
+.card_ranking {
+  height: 100%;
+}
+
+@media (max-width: 1000px) {
+  .main_container {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    gap: 10px;
+  }
+
+  .main_left {
+    flex: none;
+    height: calc(100svh - 80px);
+  }
+
+  .main_right {
+    flex: none;
+    height: fit-content;
+  }
+
+  .card_ranking {
+    height: 100%;
+  }
 }

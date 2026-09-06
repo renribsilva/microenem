@@ -11,7 +11,7 @@ export default function RedacaoPage() {
   return (
     <main className={styles.main_container}>
       <div className={styles.main_left}>
-        <Card fullSize>
+        <Card className={styles.card_ranking} fullSize>
           <RankingTable />
         </Card>
       </div>

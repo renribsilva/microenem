@@ -50,7 +50,6 @@ import {
   FormatValueType,
   HandleToggleType,
   GetAreaMapType,
-  ViolinDataType,
   GetItemDetails,
   HabilidadesJson,
   HabAreaData,
@@ -106,6 +105,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
     pathName,
     setActiveArea,
     setSelectionsByArea,
+    setActiveTCC,
     currentYear,
     deferredArea,
     selectedRowId,
@@ -113,12 +113,27 @@ export function YearProvider({ children }: { children: ReactNode }) {
   } = useHomeData();
 
   // ---------------------------------------------------------------------------
+  // ----------------------------- ENDPOINTS -----------------------------------
+  // ---------------------------------------------------------------------------
+
+  const isVisaoGeralPage = pathName.endsWith("visao-geral");
+  const isDificuldadePage = pathName.endsWith("dificuldade-do-exame");
+  const isProbInfoPage = pathName.endsWith("probabilidade-e-info");
+  const isRespostaPage = pathName.endsWith("resposta-ao-item");
+  const isNotaAcertosPage = pathName.endsWith("notas-e-acertos");
+  const isRedacaoPage = pathName.endsWith("redacao");
+  const isMediaSimplesPage = pathName.endsWith("media-simples");
+  const isTriPage = pathName.endsWith("tri");
+
+  // ---------------------------------------------------------------------------
   // ------------------------ DEFINIÇÕES INICIAIS ------------------------------
   // ---------------------------------------------------------------------------
   //
 
-  const [lastItemActivate, setLastItemActivate] = useState<number>(0);
-  const [lastItemActivateNum, setLastItemActivateNum] = useState<number>(0);
+  const [lastItemActivate, setLastItemActivate] = useState<number | null>(null);
+  const [lastItemActivateNum, setLastItemActivateNum] = useState<number | null>(
+    null,
+  );
 
   const [selectedItems, setSelectedItems] = useState<
     SelectedItemsType | object
@@ -209,15 +224,15 @@ export function YearProvider({ children }: { children: ReactNode }) {
         let respostaPromise = null;
         let redacaoPromise = null;
         // 2. Dispara apenas a requisição condizente com a rota atual
-        if (pathName?.endsWith("/visao-geral")) {
+        if (isVisaoGeralPage) {
           visaoPromise = fetch(`/api/visao?year=${currentYear}`).then((r) =>
             r.json(),
           );
-        } else if (pathName?.endsWith("/resposta-ao-item")) {
+        } else if (isRespostaPage) {
           respostaPromise = fetch(`/api/resposta?year=${currentYear}`).then(
             (r) => r.json(),
           );
-        } else if (pathName?.endsWith("/redacao")) {
+        } else if (isRedacaoPage) {
           redacaoPromise = fetch(`/api/redacao?year=${currentYear}`).then((r) =>
             r.json(),
           );
@@ -251,7 +266,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
       }
     }
     loadData();
-  }, [currentYear, pathName]);
+  }, [currentYear, isRespostaPage, isVisaoGeralPage, isRedacaoPage]);
 
   // ---------------------------------------------------------------------------
   // ------- CARGA DINÂMICA DE JSON POR ANO E POR ÁREA (BUNDLE INICIAL) --------
@@ -267,10 +282,28 @@ export function YearProvider({ children }: { children: ReactNode }) {
     FreqDensityType["regular"] | null
   >(null);
 
+  const cacheRef = useRef<
+    Map<
+      string,
+      {
+        density: FreqDensityType["regular"];
+        describe: DescribeType["regular"];
+        frequency: FreqDensityType["regular"];
+      }
+    >
+  >(new Map());
+
   useEffect(() => {
+    if (!isDificuldadePage) return;
     const loadData = async () => {
-      const isDescribePage = pathName?.endsWith("/dificuldade-do-exame");
-      if (!isDescribePage) return;
+      const cacheKey = `${currentYear}-${deferredArea}`;
+      if (cacheRef.current.has(cacheKey)) {
+        const cachedData = cacheRef.current.get(cacheKey)!;
+        setDensityDifData(cachedData.density);
+        setDescribeDifData(cachedData.describe);
+        setFrequencyDifData(cachedData.frequency);
+        return;
+      }
       try {
         const response = await fetch(
           `/api/describe?year=${currentYear}&area=${deferredArea}`,
@@ -279,15 +312,23 @@ export function YearProvider({ children }: { children: ReactNode }) {
           throw new Error("Erro ao carregar os dados de dificuldade");
         }
         const data = await response.json();
-        setDensityDifData(data.density.regular);
-        setDescribeDifData(data.describe.regular);
-        setFrequencyDifData(data.frequency.regular);
+        const newDensity = data.density.regular;
+        const newDescribe = data.describe.regular;
+        const newFrequency = data.frequency.regular;
+        cacheRef.current.set(cacheKey, {
+          density: newDensity,
+          describe: newDescribe,
+          frequency: newFrequency,
+        });
+        setDensityDifData(newDensity);
+        setDescribeDifData(newDescribe);
+        setFrequencyDifData(newFrequency);
       } catch (err) {
         console.error("Erro ao buscar dados:", err);
       }
     };
     loadData();
-  }, [deferredArea, currentYear, pathName]);
+  }, [deferredArea, currentYear, isDificuldadePage]);
 
   // ---------------------------------------------------------------------------
   // ----------------- AGRUPAMENTO DE DADOS DO BUNDLE INICIAL ------------------
@@ -321,6 +362,125 @@ export function YearProvider({ children }: { children: ReactNode }) {
   // ------------------ CARGA DINÂMICA DE JSON POR ANO (API) -------------------
   // ---------------------------------------------------------------------------
 
+  // ----------------- CODIGOS DOS ITENS (FILTRADO NO SERVIDOR) ----------------
+
+  const [codesMap, setCodesMap] = useState<CodesMapType>({});
+  const codesCacheRef = useRef<Map<string, CodesMapType>>(new Map());
+
+  useEffect(() => {
+    async function loadCodes() {
+      if (!codigo || !currentYear) return;
+      if (!(isTriPage || isRespostaPage || isProbInfoPage)) return;
+
+      const yearStr = Array.isArray(currentYear)
+        ? currentYear[0]
+        : String(currentYear);
+      const params = new URLSearchParams({
+        year: yearStr,
+        codigo: String(codigo),
+        area: deferredArea,
+        ...(versao && { versao: String(versao) }),
+        ...(lingua !== undefined && { lingua: String(lingua) }),
+      });
+
+      const cacheKey = params.toString();
+
+      const processData = (data: CodesMapType) => {
+        setSelectedItems((prev) => {
+          if (Object.keys(prev).length === 0) {
+            return prev;
+          }
+
+          const codeToPosition = new Map<string, number>();
+
+          Object.entries(data).forEach(([posStr, item]) => {
+            if (item?.code !== undefined && item?.code !== null) {
+              codeToPosition.set(String(item.code), Number(posStr));
+            }
+          });
+
+          const nextMapping: typeof prev = {};
+
+          Object.entries(prev).forEach(([code, itemData]) => {
+            const newPosition = codeToPosition.get(String(code));
+
+            if (newPosition === undefined) {
+              return;
+            }
+
+            nextMapping[code] = {
+              ...itemData,
+              posicao: newPosition,
+            };
+          });
+
+          return nextMapping;
+        });
+        const firtItemNum = Number(Object.keys(data)[0]);
+        setLastItemActivateNum(firtItemNum);
+        setLastItemActivate(Number(data[firtItemNum].code));
+        setCodesMap(data);
+      };
+
+      if (codesCacheRef.current.has(cacheKey)) {
+        processData(codesCacheRef.current.get(cacheKey)!);
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/codes?${cacheKey}`);
+        const data: CodesMapType = await res.json();
+
+        codesCacheRef.current.set(cacheKey, data);
+        processData(data);
+      } catch (err) {
+        console.error("Erro ao carregar códigos:", err);
+      }
+    }
+
+    loadCodes();
+  }, [
+    currentYear,
+    codigo,
+    deferredArea,
+    versao,
+    lingua,
+    isTriPage,
+    isProbInfoPage,
+    isRespostaPage,
+  ]);
+
+  // ----------------- CODIGOS ABANDONADOS (FILTRADO NO SERVIDOR) --------------
+
+  const [abandonadosCodes, setAbandonadosCodes] = useState<Set<number>>(
+    new Set(),
+  );
+
+  const abandonadosCacheRef = useRef<Map<string | number, number[]>>(new Map());
+
+  useEffect(() => {
+    if (!currentYear) return;
+    const normalizedYear = Array.isArray(currentYear)
+      ? currentYear[0]
+      : currentYear;
+    if (abandonadosCacheRef.current.has(normalizedYear)) {
+      const cachedArray = abandonadosCacheRef.current.get(normalizedYear)!;
+      setAbandonadosCodes(new Set(cachedArray));
+      return;
+    }
+    async function fetchAbandonados() {
+      try {
+        const response = await fetch(`/api/aband?year=${normalizedYear}`);
+        const codesArray: number[] = await response.json();
+        abandonadosCacheRef.current.set(normalizedYear, codesArray);
+        setAbandonadosCodes(new Set(codesArray));
+      } catch (error) {
+        console.error("Erro ao carregar itens abandonados:", error);
+      }
+    }
+    fetchAbandonados();
+  }, [currentYear]);
+
   // -----------------------PROBABILIDADE E INFORMAÇÃO--------------------------
 
   const [infoData, setInfoData] = useState<InfoProbDataType>(null);
@@ -331,9 +491,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
   const infoCache = useRef<ProbCacheType | null>(null);
 
   useEffect(() => {
-    if (!codigo) return;
-    const isProbInfoPage = pathName?.endsWith("/probabilidade-e-info");
-    if (!isProbInfoPage) return;
+    if (!codigo || !isProbInfoPage) return;
     if (probCache.current?.codigo === codigo) {
       setProbData(probCache.current.dataset);
       setProbLabels(probCache.current.labels);
@@ -375,39 +533,66 @@ export function YearProvider({ children }: { children: ReactNode }) {
     }
     fetchProbData();
     fetchInfoData();
-  }, [pathName, codigo, currentYear]);
+  }, [codigo, currentYear, isProbInfoPage]);
 
   // ---------------------------RESPOSTA AO ITEM--------------------------------
 
   const [itemGraphData, setItemGraphData] = useState<ItemGraphType | null>(
     null,
   );
+  const [prevIsRespostaPage, setPrevIsRespostaPage] = useState(isRespostaPage);
   const itemGraphCache = useRef<ItemGraphCacheType | null>(null);
 
+  if (prevIsRespostaPage !== isRespostaPage) {
+    setPrevIsRespostaPage(isRespostaPage);
+    if (!isRespostaPage) {
+      setItemGraphData(null);
+    }
+  }
+
   useEffect(() => {
-    if (!lastItemActivate) return;
-    if (itemGraphCache.current?.code === lastItemActivate) {
-      setItemGraphData(itemGraphCache.current.dataset);
+    const currentCode = lastItemActivate;
+    if (!currentCode || !isRespostaPage) return;
+    if (String(itemGraphCache.current?.code) === String(currentCode)) {
+      setItemGraphData({
+        code: currentCode,
+        dataset: itemGraphCache.current!.dataset,
+      });
       return;
     }
-    async function fetchItemData() {
+    async function fetchItemData(codeToFetch: number) {
       try {
         const res = await fetch(
-          `/api/score_graph?code=${String(lastItemActivate)}` +
+          `/api/score_graph?code=${String(codeToFetch)}` +
             `&year=${currentYear}`,
         );
         const json = await res.json();
-        itemGraphCache.current = {
-          code: lastItemActivate,
+
+        const resolvedCode = json?.code ?? codeToFetch;
+        const newCacheData: ItemGraphType = {
+          code: resolvedCode,
           dataset: json?.dataset,
         };
-        setItemGraphData(json?.dataset);
+
+        itemGraphCache.current = newCacheData;
+
+        if (lastItemActivate === codeToFetch) {
+          setItemGraphData(newCacheData);
+        }
       } catch (err) {
         console.error("Erro ao carregar item_score:", err);
       }
     }
-    fetchItemData();
-  }, [lastItemActivate, needUpdateEAP, currentYear]);
+
+    fetchItemData(currentCode);
+  }, [
+    lastItemActivate,
+    needUpdateEAP,
+    currentYear,
+    isRespostaPage,
+    isProbInfoPage,
+    isTriPage,
+  ]);
 
   // -------------------------RELAÇÃO NOTAS-ACERTOS-----------------------------
 
@@ -415,8 +600,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
   const acertosCache = useRef<AcertosDataCacheType | null>(null);
 
   useEffect(() => {
-    const isAcertosPage = pathName?.endsWith("/notas-e-acertos");
-    if (!isAcertosPage) return;
+    if (!isNotaAcertosPage) return;
     const tipo = "regular";
     if (
       acertosCache.current?.area === deferredArea &&
@@ -447,7 +631,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
     }
 
     fetchAcertosData();
-  }, [pathName, deferredArea, currentYear]);
+  }, [deferredArea, currentYear, isNotaAcertosPage]);
 
   //---------------------------------MEAN---------------------------------------
 
@@ -455,30 +639,59 @@ export function YearProvider({ children }: { children: ReactNode }) {
   const [top2000Data, setTop2000Data] = useState<Top2000Type>();
   const [candidateData, setCandidateData] = useState<CandidateDataType>();
 
+  const top2000Cache = useRef<Map<string | number, Top2000Type>>(new Map());
+  const candidateCache = useRef<Map<string, CandidateDataType>>(new Map());
+
+  const normalizedYear = Array.isArray(currentYear)
+    ? currentYear[0]
+    : currentYear;
+
   useEffect(() => {
-    const isMediaSimplesPage = pathName?.endsWith("/media-simples");
+    if (!isMediaSimplesPage || !normalizedYear) return;
+
+    if (top2000Cache.current.has(normalizedYear)) {
+      setTop2000Data(top2000Cache.current.get(normalizedYear));
+      return;
+    }
+
     async function fetchTop2000Data() {
-      if (!isMediaSimplesPage || !currentYear) return;
       try {
-        const res = await fetch(`/api/mean?year=${currentYear}`);
+        const res = await fetch(`/api/mean?year=${normalizedYear}`);
         const json = await res.json();
+        top2000Cache.current.set(normalizedYear, json);
         setTop2000Data(json);
       } catch (err) {
         console.error("Erro ao carregar probtrace:", err);
       }
     }
     fetchTop2000Data();
-  }, [pathName, currentYear]);
+  }, [normalizedYear, isMediaSimplesPage]);
 
   useEffect(() => {
-    const isMediaSimplesPage = pathName?.endsWith("/media-simples");
+    if (!isMediaSimplesPage || !normalizedYear || activeRanking === null)
+      return;
+
+    const cacheKey = `${normalizedYear}-${activeRanking}`;
+
+    if (candidateCache.current.has(cacheKey)) {
+      const json = candidateCache.current.get(cacheKey)!;
+      setCandidateData(json);
+      setSelectionsByArea({
+        LC: `${json.CO_PROVA_LC}_${json.TP_LINGUA}_X`,
+        CH: `${json.CO_PROVA_CH}_X_X`,
+        CN: `${json.CO_PROVA_CN}_X_X`,
+        MT: `${json.CO_PROVA_MT}_X_X`,
+      });
+      return;
+    }
+
     async function fetchCandidateData() {
-      if (!isMediaSimplesPage || !currentYear) return;
       try {
         const res = await fetch(
-          `/api/candidate?year=${currentYear}&rank=${activeRanking}`,
+          `/api/candidate?year=${normalizedYear}&rank=${activeRanking}`,
         );
         const json: CandidateDataType = await res.json();
+        candidateCache.current.set(cacheKey, json);
         setCandidateData(json);
         setSelectionsByArea({
           LC: `${json.CO_PROVA_LC}_${json.TP_LINGUA}_X`,
@@ -491,7 +704,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
       }
     }
     fetchCandidateData();
-  }, [pathName, currentYear, activeRanking, setSelectionsByArea]);
+  }, [normalizedYear, activeRanking, setSelectionsByArea, isMediaSimplesPage]);
 
   // ---------------------------------------------------------------------------
   // ------------ AGRUPAMENTO DE DADOS SOCILITIDADOS PELO CLIENTE --------------
@@ -517,8 +730,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
   const [EAPData, setEAPData] = useState<EAPDataType | null>(null);
 
   useEffect(() => {
-    const isPathOfInterest = pathName.endsWith("tri");
-    if (!isPathOfInterest || !isFetchingEAP) return;
+    if (!isTriPage || !isFetchingEAP) return;
     async function fetchEAPData() {
       try {
         const res = await fetch(
@@ -535,7 +747,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
         console.error("Erro ao carregar EAPdata:", err);
       }
     }
-    if (isPathOfInterest || needUpdateEAP) fetchEAPData();
+    if (isTriPage || needUpdateEAP) fetchEAPData();
   }, [
     deferredArea,
     isFetchingEAP,
@@ -543,10 +755,10 @@ export function YearProvider({ children }: { children: ReactNode }) {
     versao,
     codigo,
     sampleEAP,
-    pathName,
     needUpdateEAP,
     selectedLabel,
     currentYear,
+    isTriPage,
   ]);
 
   //----------------------------------------------------------------------------
@@ -569,8 +781,9 @@ export function YearProvider({ children }: { children: ReactNode }) {
       setDescribeDifData(null);
       //RespostaAoItem
       setItemGraphData(null);
-      setLastItemActivate(0);
-      setViolinData(null);
+      setLastItemActivate(null);
+      setLastItemActivateNum(null);
+      setActiveTCC(null);
     }
   };
 
@@ -582,78 +795,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
       minimumFractionDigits: 0,
     });
   };
-
-  // 2. Fetch do codesMap no Cliente
-  const [codesMap, setCodesMap] = useState<CodesMapType>({});
-
-  useEffect(() => {
-    async function loadCodes() {
-      if (!codigo || !currentYear) return;
-
-      const isTriPage = pathName?.endsWith("/tri");
-      const isRespostaPage = pathName?.endsWith("/resposta-ao-item");
-      const isProbInfoPage = pathName?.endsWith("/probabilidade-e-info");
-
-      if (!(isTriPage || isRespostaPage || isProbInfoPage)) return;
-
-      try {
-        const params = new URLSearchParams({
-          year: Array.isArray(currentYear)
-            ? currentYear[0]
-            : String(currentYear),
-          codigo: String(codigo),
-          area: deferredArea,
-          ...(versao && { versao: String(versao) }),
-          ...(lingua !== undefined && {
-            lingua: String(lingua),
-          }),
-        });
-
-        const res = await fetch(`/api/codes?${params.toString()}`);
-        const data: CodesMapType = await res.json();
-
-        // Primeiro sincroniza a seleção com o NOVO mapa.
-        setSelectedItems((prev) => {
-          if (Object.keys(prev).length === 0) {
-            return prev;
-          }
-
-          const codeToPosition = new Map<string, number>();
-
-          Object.entries(data).forEach(([posStr, item]) => {
-            if (item?.code !== undefined && item?.code !== null) {
-              codeToPosition.set(String(item.code), Number(posStr));
-            }
-          });
-
-          const nextMapping: typeof prev = {};
-
-          Object.entries(prev).forEach(([code, itemData]) => {
-            const newPosition = codeToPosition.get(String(code));
-
-            // Não existe no novo codesMap -> remove.
-            if (newPosition === undefined) {
-              return;
-            }
-
-            nextMapping[code] = {
-              ...itemData,
-              posicao: newPosition,
-            };
-          });
-
-          return nextMapping;
-        });
-
-        // Depois atualiza o mapa.
-        setCodesMap(data);
-      } catch (err) {
-        console.error("Erro ao carregar códigos:", err);
-      }
-    }
-
-    loadCodes();
-  }, [currentYear, codigo, deferredArea, versao, lingua, pathName]);
 
   const getItemDetails = useCallback<GetItemDetails>(
     async (coItem: number) => {
@@ -687,11 +828,11 @@ export function YearProvider({ children }: { children: ReactNode }) {
         return;
       }
       setLastItemActivate(codeItem);
+      setLastItemActivateNum(num);
       setSelectedItems((prev) => {
         const nextMapping = { ...prev };
         const current = nextMapping[codeItem];
         if (isAbandoned) {
-          // Se for abandonado: Toggle simples entre selecionado (cinza) e nada
           if (current) {
             delete nextMapping[codeItem];
           } else {
@@ -699,7 +840,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
           }
           return nextMapping;
         }
-        // Lógica de ciclo: Nada -> Acerto (verde) -> Erro (vermelho) -> Nada
         if (!current) {
           nextMapping[codeItem] = { status: "acerto", posicao: num };
         } else if (current.status === "acerto") {
@@ -735,24 +875,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
 
   //---------------------------------ITEM CODES---------------------------------
 
-  const [abandonadosCodes, setAbandonadosCodes] = useState<Set<number>>(
-    new Set(),
-  );
-
-  useEffect(() => {
-    if (!currentYear) return;
-    async function fetchAbandonados() {
-      try {
-        const response = await fetch(`/api/aband?year=${currentYear}`);
-        const codesArray: number[] = await response.json();
-        setAbandonadosCodes(new Set(codesArray));
-      } catch (error) {
-        console.error("Erro ao carregar itens abandonados:", error);
-      }
-    }
-    fetchAbandonados();
-  }, [currentYear]);
-
   const activeCodes = useMemo(() => {
     if (Object.keys(selectedItems).length === 0) return [];
     const currentlySelectedCodes = Object.keys(selectedItems).map(Number);
@@ -773,6 +895,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
   //-----------------------------DIFICULDADE DO EXAME---------------------------
 
   const tableData = useMemo<TableDataType>(() => {
+    if (!isDificuldadePage) return;
     if (!describeDifData?.notas) return [];
     return rowOrder
       .filter((key) => describeDifData.notas[key] !== undefined)
@@ -782,7 +905,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
         nota: formatValue(key, describeDifData.notas[key], "nota"),
         acerto: formatValue(key, describeDifData.acertos?.[key], "acerto"),
       }));
-  }, [describeDifData]);
+  }, [describeDifData, isDificuldadePage]);
 
   const describeRowData = useMemo<DescribeRowDataType>(
     () => ({
@@ -798,8 +921,9 @@ export function YearProvider({ children }: { children: ReactNode }) {
   );
 
   const activeSelectedRow = useMemo<TableDataItem>(() => {
+    if (!isDificuldadePage) return;
     return tableData.find((row) => row.id === selectedRowId) || null;
-  }, [tableData, selectedRowId]);
+  }, [tableData, selectedRowId, isDificuldadePage]);
 
   const dificuldadeDoExameAux = {
     describeRowData,
@@ -808,38 +932,36 @@ export function YearProvider({ children }: { children: ReactNode }) {
 
   //--------------------------RESPOSTA AO ITEM---------------------------
 
-  const [violinData, setViolinData] = useState<ViolinDataType>(null);
+  const violinData = useMemo(() => {
+    if (!isRespostaPage) return null;
+    if (!scoreData || !lastItemActivate || !scoreData[lastItemActivate]) {
+      return null;
+    }
+    const rawBins = scoreData[lastItemActivate].bins;
+    if (
+      !rawBins ||
+      !Array.isArray(rawBins["0"]) ||
+      !Array.isArray(rawBins["1"]) ||
+      !Array.isArray(rawBins.labels)
+    ) {
+      return null;
+    }
+    const v0 = rawBins["0"];
+    const v1 = rawBins["1"];
+    const labels = rawBins.labels;
+    const filteredIndices = labels
+      .map((_, i) => i)
+      .filter((i) => v0[i] > 0 || v1[i] > 0);
 
-  useEffect(() => {
-    async function defineVioninData() {
-      if (!scoreData || !lastItemActivate || !scoreData[lastItemActivate]) {
-        setViolinData(null);
-        return;
-      }
-      const rawBins = scoreData[lastItemActivate].bins;
-      if (
-        !rawBins ||
-        !Array.isArray(rawBins["0"]) ||
-        !Array.isArray(rawBins["1"]) ||
-        !Array.isArray(rawBins.labels)
-      ) {
-        setViolinData(null);
-        return;
-      }
-      const v0 = rawBins["0"];
-      const v1 = rawBins["1"];
-      const labels = rawBins.labels;
-      const filteredIndices = labels
-        .map((_, i) => i)
-        .filter((i) => v0[i] > 0 || v1[i] > 0);
-      setViolinData({
+    return {
+      code: lastItemActivate,
+      dataset: {
         "0": filteredIndices.map((i) => v0[i]).reverse(),
         "1": filteredIndices.map((i) => v1[i]).reverse(),
         labels: filteredIndices.map((i) => labels[i]).reverse(),
-      });
-    }
-    defineVioninData();
-  }, [scoreData, lastItemActivate]);
+      },
+    };
+  }, [scoreData, lastItemActivate, isRespostaPage]);
 
   //--------------------------EAP---------------------------
 
@@ -867,6 +989,10 @@ export function YearProvider({ children }: { children: ReactNode }) {
   //----------------------------------------------------------------------------
   //----------------------------------RETURN------------------------------------
   //----------------------------------------------------------------------------
+
+  console.log("last:", lastItemActivate);
+  console.log("graph:", itemGraphData);
+  console.log("viol:", violinData);
 
   return (
     <YearContext.Provider

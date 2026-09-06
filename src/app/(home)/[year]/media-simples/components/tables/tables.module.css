@@ -343,8 +343,8 @@
 
 /* Redação com Barras de Progresso */
 .redacao_full_card {
-  margin-top: 30px;
-  padding: 20px;
+  margin-top: 20px;
+  padding: 10px;
   border: 1px solid var(--grid);
   border-radius: 12px;
 }

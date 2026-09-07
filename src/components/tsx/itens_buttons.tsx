@@ -52,35 +52,39 @@ function ItensButtons() {
 
     const isAbandoned = abandonadosCodes.has(codeItem);
     const currentStatus = selectedItems[codeItem]?.status;
-
-    // 1. Pinta a cor no DOM INSTANTANEAMENTE antes do React re-renderizar
     const btn = e.currentTarget;
+
+    // 1. Atualização Instantânea no DOM (Efeito Visual Imediato)
     if (isAbandoned) {
-      const nextBg = !currentStatus
+      const willBeActive = !currentStatus;
+      btn.style.backgroundColor = willBeActive
         ? isDark
           ? "#4a4a4a"
           : "#94a3b8"
-        : panelColor;
-      const nextText = !currentStatus ? "#fff" : textColor;
-      btn.style.backgroundColor = nextBg;
-      btn.style.color = nextText; // <-- Garantido aqui
+        : (panelColor ?? "transparent");
+      btn.style.color = willBeActive ? "#fff" : textColor;
+      btn.style.borderColor = "transparent";
     } else {
+      // Alterna o ciclo: null -> acerto -> erro -> null
       if (!currentStatus) {
+        // Próximo estado: ACERTO (Verde)
         btn.style.backgroundColor = "#22c55e";
-        btn.style.color = "#fff"; // <-- Garantido aqui
+        btn.style.color = "#fff";
         btn.style.borderColor = "transparent";
       } else if (currentStatus === "acerto") {
+        // Próximo estado: ERRO (Vermelho)
         btn.style.backgroundColor = "#ef4444";
-        btn.style.color = "#fff"; // <-- Garantido aqui
+        btn.style.color = "#fff";
         btn.style.borderColor = "transparent";
       } else {
-        btn.style.backgroundColor = panelColor;
-        btn.style.color = textColor; // <-- Garantido aqui
-        btn.style.borderColor = chartColor + "85";
+        // Próximo estado: EM BRANCO (Reset)
+        btn.style.backgroundColor = panelColor ?? "transparent";
+        btn.style.color = textColor;
+        btn.style.borderColor = chartColor ? chartColor + "85" : "transparent";
       }
     }
 
-    // 2. Alertas e atualizações pesadas de contexto ficam assíncronos
+    // 2. Cálculo dos Alertas de Interface
     if (isAbandoned) {
       const rect = btn.getBoundingClientRect();
       const containerRect = containerRef.current?.getBoundingClientRect();
@@ -95,6 +99,7 @@ function ItensButtons() {
       setBackdropAlert(null);
     }
 
+    // 3. Processamento pesado / atualização de contexto diferida
     setTimeout(() => {
       setNeedUpdateEAP(true);
       handleToggle(num, isAbandoned);

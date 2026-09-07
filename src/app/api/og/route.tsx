@@ -49,7 +49,7 @@ export async function GET() {
               fontWeight: 700,
             }}
           >
-            Microdados / Exame
+            Microdados / Enem
           </span>
           <div
             style={{
@@ -81,7 +81,7 @@ export async function GET() {
               height: "140px",
             }}
           >
-            <ChartIcon color="#0d0d0d" width="64px" height="64px" />
+            <ChartIcon color="#0d0d0d" width="128px" height="128px" />
           </div>
 
           {/* Tipografia */}

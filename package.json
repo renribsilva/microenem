@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@tanstack/react-table": "^8.21.3",
+    "@vercel/og": "^1.0.2",
     "apexcharts": "^5.3.6",
     "chart.js": "^4.4.6",
     "chartjs-chart-treemap": "^3.1.0",

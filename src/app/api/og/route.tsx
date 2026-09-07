@@ -1,112 +1,157 @@
-import { ImageResponse } from "next/og";
-import { NextRequest } from "next/server";
+import { ImageResponse } from "@vercel/og";
 
 export const runtime = "edge";
-const size = {
-  width: 1200,
-  height: 630,
-};
 
-export async function GET(request: NextRequest) {
-  // Pega a rota da página atual a partir dos parâmetros da URL (?path=/2024)
-  const { searchParams } = new URL(request.url);
-  const path = searchParams.get("path") || "";
-
-  // Monta a URL exata do seu site que sofrerá o screenshot
-  const targetUrl = `https://microenem.vercel.app${path}`;
-
-  const queryParams = new URLSearchParams({
-    url: targetUrl,
-    screenshot: "true",
-    embed: "screenshot.url",
-    "viewport.width": "1200",
-    "viewport.height": "630",
-    "viewport.deviceScaleFactor": "2",
-  });
-
-  const screenshotServiceUrl = `https://api.microlink.io/?${queryParams.toString()}`;
-
-  const imageSrc = await fetch(screenshotServiceUrl)
-    .then(async (res) => {
-      if (!res.ok) return null;
-      const arrayBuffer = await res.arrayBuffer();
-      const base64Image = Buffer.from(arrayBuffer).toString("base64");
-      return `data:image/png;base64,${base64Image}`;
-    })
-    .catch(() => null);
-
-  if (!imageSrc) {
+export async function GET() {
+  try {
     return new ImageResponse(
       <div
         style={{
+          height: "100%",
+          width: "100%",
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          background: "black",
-          width: "100%",
-          height: "100%",
+          justifyContent: "space-between",
+          backgroundColor: "#0d0d0d",
           fontFamily: "sans-serif",
-          color: "white",
-          padding: "40px",
+          padding: "80px 90px",
         }}
       >
+        {/* Linha superior minimalista */}
         <div
           style={{
             display: "flex",
-            flexDirection: "column",
+            justifyContent: "space-between",
             alignItems: "center",
-            marginBottom: "40px",
+            width: "100%",
           }}
         >
-          <p
+          <span
             style={{
-              fontSize: 90,
-              margin: 0,
-              fontWeight: "900",
-              letterSpacing: "-0.05em",
-              color: "white",
+              fontSize: 16,
+              color: "#737373",
+              letterSpacing: "0.25em",
+              textTransform: "uppercase",
+              fontWeight: 700,
             }}
           >
-            ENEMmicro
-          </p>
-          <p
+            INEP / Microdados
+          </span>
+          <div
             style={{
-              fontSize: 26,
-              margin: 0,
-              fontWeight: "900",
-              letterSpacing: "-0.05em",
-              color: "white",
+              width: "48px",
+              height: "3px",
+              backgroundColor: "#2563eb",
+            }}
+          />
+        </div>
+
+        {/* Bloco central construtivista: E + Títulos */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: "56px",
+            width: "100%",
+          }}
+        >
+          {/* Bloco tipográfico puro do E */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "#2563eb",
+              width: "140px",
+              height: "140px",
             }}
           >
-            No bullshit, just data.
-          </p>
+            <span
+              style={{
+                fontSize: "92px",
+                fontWeight: 900,
+                color: "#0d0d0d",
+                lineHeight: 1,
+              }}
+            >
+              E
+            </span>
+          </div>
+
+          {/* Tipografia */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              flex: 1,
+            }}
+          >
+            <h1
+              style={{
+                fontSize: 68,
+                fontWeight: 900,
+                color: "#fafafa",
+                margin: "0 0 14px 0",
+                letterSpacing: "-0.03em",
+                lineHeight: 1,
+              }}
+            >
+              ENEMmicro
+            </h1>
+
+            <p
+              style={{
+                fontSize: 24,
+                color: "#a3a3a3",
+                margin: 0,
+                lineHeight: 1.4,
+                maxWidth: "640px",
+              }}
+            >
+              Visualização gráfica dos microdados do ENEM.
+            </p>
+          </div>
+        </div>
+
+        {/* Rodapé cru */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+          }}
+        >
+          <span
+            style={{
+              fontSize: 14,
+              color: "#2563eb",
+              fontWeight: 900,
+            }}
+          ></span>
+          <span
+            style={{
+              fontSize: 15,
+              color: "#737373",
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              fontWeight: 600,
+            }}
+          >
+            microenem.vercel.app
+          </span>
         </div>
       </div>,
-      { ...size },
+      {
+        width: 1200,
+        height: 630,
+      },
     );
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    return new Response(`Failed to generate the image: ${message}`, {
+      status: 500,
+    });
   }
-
-  return new ImageResponse(
-    <div
-      style={{
-        display: "flex",
-        width: "100%",
-        height: "100%",
-        background: "black",
-      }}
-    >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={imageSrc}
-        alt="Page Screenshot"
-        style={{
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-        }}
-      />
-    </div>,
-    { ...size },
-  );
 }

@@ -848,25 +848,28 @@ export function YearProvider({ children }: { children: ReactNode }) {
     [selectedLabel, codesMap],
   );
 
-  const getAreaMap: GetAreaMapType = async (codProva, tpLingua, score) => {
-    if (!score) return [];
-    try {
-      const response = await fetch(
-        `/api/area_map?year=${currentYear}` +
-          `&codProva=${codProva}&tpLingua=${tpLingua ?? ""}&score=${score}`,
-      );
-      if (!response.ok) return [];
-      const contentType = response.headers.get("content-type");
-      if (!contentType || !contentType.includes("application/json")) {
+  const getAreaMap: GetAreaMapType = useCallback(
+    async (codProva, tpLingua, score) => {
+      if (!score) return [];
+      try {
+        const response = await fetch(
+          `/api/area_map?year=${currentYear}` +
+            `&codProva=${codProva}&tpLingua=${tpLingua ?? ""}&score=${score}`,
+        );
+        if (!response.ok) return [];
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          return [];
+        }
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error("Erro ao buscar area map:", error);
         return [];
       }
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error("Erro ao buscar area map:", error);
-      return [];
-    }
-  };
+    },
+    [currentYear],
+  );
 
   //---------------------------------ITEM CODES---------------------------------
 

@@ -6,8 +6,9 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const codigo = searchParams.get("codigo");
   const year = searchParams.get("year");
+  const codesParam = searchParams.get("codes");
 
-  if (!codigo || !year) {
+  if (!codigo || !year || !codesParam) {
     return NextResponse.json(
       { error: "Informe os parâmtros obrigatórios: codigo, year" },
       { status: 400 },
@@ -26,8 +27,23 @@ export async function GET(request: Request) {
     const fileContent = fs.readFileSync(filePath, "utf8");
     const fullJson = JSON.parse(fileContent);
 
+    let dataset: Record<string, number[]> | null =
+      fullJson.datasets[codigo] || null;
+
+    if (dataset && codesParam) {
+      const targetCodes = new Set(codesParam.split(","));
+      const filteredDataset: Record<string, number[]> = {};
+
+      for (const [codeKey, values] of Object.entries(dataset)) {
+        if (targetCodes.has(codeKey)) {
+          filteredDataset[codeKey] = values as number[];
+        }
+      }
+      dataset = filteredDataset;
+    }
+
     return NextResponse.json({
-      dataset: fullJson.datasets[codigo] || null,
+      dataset: dataset,
       theta_labels: fullJson.theta_labels,
     });
   } catch (error) {

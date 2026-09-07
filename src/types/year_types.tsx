@@ -218,7 +218,7 @@ export type InfoProbDataType = Record<string, number[]> | null;
 export type InfoProbLabelType = number[];
 
 export type ProbCacheType = {
-  codigo: string;
+  key: string;
   dataset: InfoProbDataType;
   labels: InfoProbLabelType;
 };

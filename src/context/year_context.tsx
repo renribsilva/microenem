@@ -394,16 +394,16 @@ export function YearProvider({ children }: { children: ReactNode }) {
               codeToPosition.set(String(item.code), Number(posStr));
             }
           });
-          const nextMapping: typeof prev = {};
+
+          const nextMapping: typeof prev = { ...prev };
           Object.entries(prev).forEach(([code, itemData]) => {
             const newPosition = codeToPosition.get(String(code));
-            if (newPosition === undefined) {
-              return;
+            if (newPosition !== undefined) {
+              nextMapping[code] = {
+                ...itemData,
+                posicao: newPosition,
+              };
             }
-            nextMapping[code] = {
-              ...itemData,
-              posicao: newPosition,
-            };
           });
           return nextMapping;
         });
@@ -417,6 +417,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
         }
         setCodesMap(data);
       };
+
       if (codesCacheRef.current.has(cacheKey)) {
         processData(codesCacheRef.current.get(cacheKey)!);
         return;
@@ -443,6 +444,25 @@ export function YearProvider({ children }: { children: ReactNode }) {
     isProbInfoPage,
     isRespostaPage,
   ]);
+
+  //-----------------------------CÓDIGOS ATIVOS---------------------------------
+
+  const activeCodes = useMemo(() => {
+    if (Object.keys(selectedItems).length === 0) return [];
+    const currentlySelectedCodes = Object.keys(selectedItems).map(Number);
+    const { start, end } = ranges[deferredArea] || { start: 1, end: 45 };
+    const validCodesForCurrentLabel = new Set();
+    for (let num = start; num <= end; num++) {
+      const currentCode = codesMap[num]?.code;
+      if (currentCode) {
+        validCodesForCurrentLabel.add(currentCode);
+      }
+    }
+    return currentlySelectedCodes.filter((code) => {
+      const existsInCurrentLabel = validCodesForCurrentLabel.has(code);
+      return existsInCurrentLabel;
+    });
+  }, [selectedItems, codesMap, deferredArea]);
 
   // ----------------- CODIGOS ABANDONADOS (FILTRADO NO SERVIDOR) --------------
 
@@ -484,21 +504,39 @@ export function YearProvider({ children }: { children: ReactNode }) {
   const probCache = useRef<ProbCacheType | null>(null);
   const infoCache = useRef<ProbCacheType | null>(null);
 
+  const activeCodesString = useMemo(() => {
+    return [...activeCodes].sort((a, b) => a - b).join(",");
+  }, [activeCodes]);
+
   useEffect(() => {
     if (!codigo || !isProbInfoPage) return;
-    if (probCache.current?.codigo === codigo) {
+    if (activeCodes.length === 0) return;
+
+    const cacheKey = `${codigo}-${activeCodesString}`;
+
+    if (
+      probCache.current?.key === cacheKey &&
+      infoCache.current?.key === cacheKey
+    ) {
       setProbData(probCache.current.dataset);
       setProbLabels(probCache.current.labels);
+      setInfoData(infoCache.current.dataset);
+      setInfoLabels(infoCache.current.labels);
       return;
     }
+
+    const params = new URLSearchParams({
+      codigo: String(codigo),
+      year: String(currentYear),
+      codes: activeCodesString,
+    });
+
     async function fetchProbData() {
       try {
-        const res = await fetch(
-          `/api/probtrace?codigo=${String(codigo)}&year=${currentYear}`,
-        );
+        const res = await fetch(`/api/probtrace?${params.toString()}`);
         const json = await res.json();
         probCache.current = {
-          codigo: codigo,
+          key: cacheKey,
           dataset: json.dataset,
           labels: json.theta_labels,
         };
@@ -508,14 +546,13 @@ export function YearProvider({ children }: { children: ReactNode }) {
         console.error("Erro ao carregar probtrace:", err);
       }
     }
+
     async function fetchInfoData() {
       try {
-        const res = await fetch(
-          `/api/info?codigo=${String(codigo)}&year=${currentYear}`,
-        );
+        const res = await fetch(`/api/info?${params.toString()}`);
         const json = await res.json();
         infoCache.current = {
-          codigo: codigo,
+          key: cacheKey,
           dataset: json.dataset,
           labels: json.theta_labels,
         };
@@ -525,9 +562,10 @@ export function YearProvider({ children }: { children: ReactNode }) {
         console.error("Erro ao carregar infotrace:", err);
       }
     }
+
     fetchProbData();
     fetchInfoData();
-  }, [codigo, currentYear, isProbInfoPage]);
+  }, [codigo, currentYear, isProbInfoPage, activeCodesString, activeCodes]);
 
   // ---------------------------RESPOSTA AO ITEM--------------------------------
 
@@ -871,25 +909,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
     [currentYear],
   );
 
-  //---------------------------------ITEM CODES---------------------------------
-
-  const activeCodes = useMemo(() => {
-    if (Object.keys(selectedItems).length === 0) return [];
-    const currentlySelectedCodes = Object.keys(selectedItems).map(Number);
-    const { start, end } = ranges[deferredArea] || { start: 1, end: 45 };
-    const validCodesForCurrentLabel = new Set();
-    for (let num = start; num <= end; num++) {
-      const currentCode = codesMap[num]?.code;
-      if (currentCode) {
-        validCodesForCurrentLabel.add(currentCode);
-      }
-    }
-    return currentlySelectedCodes.filter((code) => {
-      const existsInCurrentLabel = validCodesForCurrentLabel.has(code);
-      return existsInCurrentLabel;
-    });
-  }, [selectedItems, codesMap, deferredArea]);
-
   //-----------------------------DIFICULDADE DO EXAME---------------------------
 
   const tableData = useMemo<TableDataType>(() => {
@@ -987,7 +1006,10 @@ export function YearProvider({ children }: { children: ReactNode }) {
   //----------------------------------------------------------------------------
   //----------------------------------RETURN------------------------------------
   //----------------------------------------------------------------------------
-  //
+
+  console.log("selectes:", selectedItems);
+  console.log(activeCodes);
+  console.log(codesMap);
 
   return (
     <YearContext.Provider

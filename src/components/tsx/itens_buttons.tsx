@@ -24,7 +24,8 @@ interface BackdropAlertType {
 }
 
 function ItensButtons() {
-  const { pathName, chartProps } = useHomeData();
+  // 1. Extraído deferredArea de useHomeData()
+  const { pathName, chartProps, deferredArea } = useHomeData();
   const {
     abandonadosCodes,
     selectedItems,
@@ -40,11 +41,27 @@ function ItensButtons() {
   );
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const questionKeys = Object.keys(codesMap).map(Number);
-  const isLoaded = questionKeys.length > 0;
-  const questions = isLoaded
-    ? questionKeys.sort((a, b) => a - b)
-    : Array.from({ length: 45 }, (_, i) => i + 1);
+  // 2. Cálculo do intervalo dinâmico com base unicamente em deferredArea
+  const getRangeByArea = (area: string) => {
+    switch (area) {
+      case "LC":
+        return { start: 1, end: 45 };
+      case "CH":
+        return { start: 46, end: 90 };
+      case "CN":
+        return { start: 91, end: 135 };
+      case "MT":
+        return { start: 136, end: 180 };
+      default:
+        return { start: 1, end: 45 };
+    }
+  };
+
+  const { start, end } = getRangeByArea(deferredArea);
+  const questions = Array.from(
+    { length: end - start + 1 },
+    (_, i) => start + i,
+  );
 
   const onButtonClick: onButtonClickType = (num, e) => {
     const codeItem = codesMap[num]?.code;

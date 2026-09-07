@@ -17,6 +17,9 @@ export default function AcertosChart() {
   const { lastItemActivate, lastItemActivateNum, itemGraphData } =
     useYearData();
 
+  console.log(lastItemActivate);
+  console.log(itemGraphData);
+
   const { chartColor } = chartProps;
   const { xMin, xMax } = chartProps;
 
@@ -213,7 +216,12 @@ export default function AcertosChart() {
     textColor,
   ]);
 
-  if (!itemGraphData || xMin === null || xMax === null) {
+  if (
+    !itemGraphData ||
+    xMin === null ||
+    xMax === null ||
+    lastItemActivate != itemGraphData.code
+  ) {
     return (
       <div className={`${styles.container}`}>
         <div className={styles.header}>

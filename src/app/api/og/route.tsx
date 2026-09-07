@@ -1,9 +1,23 @@
 import { ImageResponse } from "@vercel/og";
+import ChartIcon from "../../../components/svg/chart";
 
 export const runtime = "edge";
 
+const colors: Record<string, string> = {
+  azul: "#3284eb",
+  amarela: "#eab308",
+  laranja: "#f97316",
+  verde: "#22c55e",
+  roxa: "#8b5cf6",
+  rosa: "#db2777",
+};
+
 export async function GET() {
   try {
+    const colorKeys = Object.keys(colors);
+    const randomKey = colorKeys[Math.floor(Math.random() * colorKeys.length)];
+    const selectedColor = colors[randomKey];
+
     return new ImageResponse(
       <div
         style={{
@@ -35,18 +49,18 @@ export async function GET() {
               fontWeight: 700,
             }}
           >
-            INEP / Microdados
+            Microdados / Exame
           </span>
           <div
             style={{
               width: "48px",
               height: "3px",
-              backgroundColor: "#2563eb",
+              backgroundColor: selectedColor,
             }}
           />
         </div>
 
-        {/* Bloco central construtivista: E + Títulos */}
+        {/* Bloco central construtivista: Ícone + Títulos */}
         <div
           style={{
             display: "flex",
@@ -56,27 +70,18 @@ export async function GET() {
             width: "100%",
           }}
         >
-          {/* Bloco tipográfico puro do E */}
+          {/* Quadradinho com fundo sorteado e ícone preto */}
           <div
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              backgroundColor: "#2563eb",
+              backgroundColor: selectedColor,
               width: "140px",
               height: "140px",
             }}
           >
-            <span
-              style={{
-                fontSize: "92px",
-                fontWeight: 900,
-                color: "#0d0d0d",
-                lineHeight: 1,
-              }}
-            >
-              E
-            </span>
+            <ChartIcon color="#0d0d0d" width="64px" height="64px" />
           </div>
 
           {/* Tipografia */}
@@ -126,7 +131,7 @@ export async function GET() {
           <span
             style={{
               fontSize: 14,
-              color: "#2563eb",
+              color: selectedColor,
               fontWeight: 900,
             }}
           ></span>

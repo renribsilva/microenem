@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import { useSidebar } from "../../context/sidebar_context";
 import styles from "./layout.module.css";
 import { HomeProvider } from "../../context/home_context";
@@ -12,6 +13,27 @@ const AppSidebar = dynamic(() => import("../../components/tsx/sidebar"));
 function HomeLayout({ children }: { children: React.ReactNode }) {
   const { isMobileOpen, toggleMobileSidebar, isMobile } = useSidebar();
 
+  const touchStartX = useRef<number>(0);
+  const touchEndX = useRef<number>(0);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.targetTouches[0].clientX;
+    touchEndX.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    const swipeDistance = touchStartX.current - touchEndX.current;
+    const minSwipeDistance = 40;
+
+    if (swipeDistance > minSwipeDistance) {
+      toggleMobileSidebar();
+    }
+  };
+
   return (
     <HomeProvider>
       <div className={styles.layout_container}>
@@ -22,6 +44,9 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
               isMobileOpen && styles.backdrop_active,
             )}
             onClick={toggleMobileSidebar}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
           />
         )}
         <div className={styles.layout_sidebar}>

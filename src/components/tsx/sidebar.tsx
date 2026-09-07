@@ -33,10 +33,6 @@ function AppSidebar() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  // Referências para controlar o gesto de swipe no touch
-  const touchStartX = useRef<number>(0);
-  const touchEndX = useRef<number>(0);
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -48,30 +44,6 @@ function AppSidebar() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  // Manipuladores do gesto de touch
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (!isMobile || !isMobileOpen) return;
-    touchStartX.current = e.targetTouches[0].clientX;
-    touchEndX.current = e.targetTouches[0].clientX;
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isMobile || !isMobileOpen) return;
-    touchEndX.current = e.targetTouches[0].clientX;
-  };
-
-  const handleTouchEnd = () => {
-    if (!isMobile || !isMobileOpen) return;
-
-    const swipeDistance = touchStartX.current - touchEndX.current;
-    const minSwipeDistance = 50; // Mínimo em pixels para considerar swipe
-
-    // Arrastou da direita para a esquerda além do limite mínimo
-    if (swipeDistance > minSwipeDistance) {
-      toggleMobileSidebar();
-    }
-  };
 
   const items = generateItems(String(currentYear ? currentYear : "2025"));
 
@@ -117,12 +89,7 @@ function AppSidebar() {
   }
 
   return (
-    <aside
-      className={sidebarClass}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-    >
+    <aside className={sidebarClass}>
       <div className={styles.appsidebar_topper}>
         <div className={styles.appsidebar_dropdown}>
           <DropdownSidebar

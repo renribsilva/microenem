@@ -216,31 +216,36 @@ export function YearProvider({ children }: { children: ReactNode }) {
   const [statusData, setStatusData] = useState<StatusType | null>(null);
 
   useEffect(() => {
+    const controller = new AbortController();
+    const { signal } = controller;
+
     async function loadData() {
       try {
         let visaoPromise = null;
         let respostaPromise = null;
         let redacaoPromise = null;
-        // 2. Dispara apenas a requisição condizente com a rota atual
+
+        // 2. Repassa o `signal` em cada fetch
         if (isVisaoGeralPage) {
-          visaoPromise = fetch(`/api/visao?year=${currentYear}`).then((r) =>
-            r.json(),
-          );
+          visaoPromise = fetch(`/api/visao?year=${currentYear}`, {
+            signal,
+          }).then((r) => r.json());
         } else if (isRespostaPage) {
-          respostaPromise = fetch(`/api/resposta?year=${currentYear}`).then(
-            (r) => r.json(),
-          );
+          respostaPromise = fetch(`/api/resposta?year=${currentYear}`, {
+            signal,
+          }).then((r) => r.json());
         } else if (isRedacaoPage) {
-          redacaoPromise = fetch(`/api/redacao?year=${currentYear}`).then((r) =>
-            r.json(),
-          );
+          redacaoPromise = fetch(`/api/redacao?year=${currentYear}`, {
+            signal,
+          }).then((r) => r.json());
         }
+
         const [resVisao, resResposta, resRedacao] = await Promise.all([
           visaoPromise,
           respostaPromise,
           redacaoPromise,
         ]);
-        // 4. Atualiza os estados correspondentes
+
         if (resVisao) {
           setInscritosData(resVisao.inscritos);
           setabstencaoDia1(resVisao.abstencao1);
@@ -257,13 +262,21 @@ export function YearProvider({ children }: { children: ReactNode }) {
           setStatusData(resRedacao.status);
         }
       } catch (err) {
+        // 3. Ignora erros causados pelo aborto voluntário
+        if (err.name === "AbortError") {
+          return;
+        }
         console.error(
           `Erro ao carregar dados da API para o ano ${currentYear}:`,
           err,
         );
       }
     }
+
     loadData();
+    return () => {
+      controller.abort();
+    };
   }, [currentYear, isRespostaPage, isVisaoGeralPage, isRedacaoPage]);
 
   // ---------------------------------------------------------------------------
@@ -293,6 +306,10 @@ export function YearProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!isDificuldadePage) return;
+
+    const controller = new AbortController();
+    const { signal } = controller;
+
     const loadData = async () => {
       const cacheKey = `${currentYear}-${deferredArea}`;
       if (cacheRef.current.has(cacheKey)) {
@@ -305,6 +322,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
       try {
         const response = await fetch(
           `/api/describe?year=${currentYear}&area=${deferredArea}`,
+          { signal }, // Passa o signal na chamada
         );
         if (!response.ok) {
           throw new Error("Erro ao carregar os dados de dificuldade");
@@ -322,10 +340,15 @@ export function YearProvider({ children }: { children: ReactNode }) {
         setDescribeDifData(newDescribe);
         setFrequencyDifData(newFrequency);
       } catch (err) {
+        if (err.name === "AbortError") return;
         console.error("Erro ao buscar dados:", err);
       }
     };
+
     loadData();
+    return () => {
+      controller.abort();
+    };
   }, [deferredArea, currentYear, isDificuldadePage]);
 
   // ---------------------------------------------------------------------------
@@ -366,10 +389,12 @@ export function YearProvider({ children }: { children: ReactNode }) {
   const codesCacheRef = useRef<Map<string, CodesMapType>>(new Map());
 
   useEffect(() => {
+    const controller = new AbortController();
+    const { signal } = controller;
+
     async function loadCodes() {
       if (!codigo || !currentYear) return;
       if (!(isTriPage || isRespostaPage || isProbInfoPage)) return;
-
       const yearStr = Array.isArray(currentYear)
         ? currentYear[0]
         : String(currentYear);
@@ -380,9 +405,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
         ...(versao && { versao: String(versao) }),
         ...(lingua !== undefined && { lingua: String(lingua) }),
       });
-
       const cacheKey = params.toString();
-
       const processData = (data: CodesMapType) => {
         setSelectedItems((prev) => {
           if (Object.keys(prev).length === 0) {
@@ -417,23 +440,24 @@ export function YearProvider({ children }: { children: ReactNode }) {
         }
         setCodesMap(data);
       };
-
       if (codesCacheRef.current.has(cacheKey)) {
         processData(codesCacheRef.current.get(cacheKey)!);
         return;
       }
-
       try {
-        const res = await fetch(`/api/codes?${cacheKey}`);
+        const res = await fetch(`/api/codes?${cacheKey}`, { signal });
         const data: CodesMapType = await res.json();
-
         codesCacheRef.current.set(cacheKey, data);
         processData(data);
       } catch (err) {
+        if (err.name === "AbortError") return;
         console.error("Erro ao carregar códigos:", err);
       }
     }
     loadCodes();
+    return () => {
+      controller.abort();
+    };
   }, [
     currentYear,
     codigo,
@@ -512,8 +536,10 @@ export function YearProvider({ children }: { children: ReactNode }) {
     if (!codigo || !isProbInfoPage) return;
     if (activeCodes.length === 0) return;
 
-    const cacheKey = `${codigo}-${activeCodesString}`;
+    const controller = new AbortController();
+    const { signal } = controller;
 
+    const cacheKey = `${codigo}-${activeCodesString}`;
     if (
       probCache.current?.key === cacheKey &&
       infoCache.current?.key === cacheKey
@@ -524,16 +550,16 @@ export function YearProvider({ children }: { children: ReactNode }) {
       setInfoLabels(infoCache.current.labels);
       return;
     }
-
     const params = new URLSearchParams({
       codigo: String(codigo),
       year: String(currentYear),
       codes: activeCodesString,
     });
-
     async function fetchProbData() {
       try {
-        const res = await fetch(`/api/probtrace?${params.toString()}`);
+        const res = await fetch(`/api/probtrace?${params.toString()}`, {
+          signal,
+        });
         const json = await res.json();
         probCache.current = {
           key: cacheKey,
@@ -543,13 +569,14 @@ export function YearProvider({ children }: { children: ReactNode }) {
         setProbData(json.dataset);
         setProbLabels(json.theta_labels);
       } catch (err) {
+        if (err.name === "AbortError") return;
         console.error("Erro ao carregar probtrace:", err);
       }
     }
 
     async function fetchInfoData() {
       try {
-        const res = await fetch(`/api/info?${params.toString()}`);
+        const res = await fetch(`/api/info?${params.toString()}`, { signal });
         const json = await res.json();
         infoCache.current = {
           key: cacheKey,
@@ -559,12 +586,16 @@ export function YearProvider({ children }: { children: ReactNode }) {
         setInfoData(json.dataset);
         setInfoLabels(json.theta_labels);
       } catch (err) {
+        if (err.name === "AbortError") return;
         console.error("Erro ao carregar infotrace:", err);
       }
     }
 
     fetchProbData();
     fetchInfoData();
+    return () => {
+      controller.abort();
+    };
   }, [codigo, currentYear, isProbInfoPage, activeCodesString, activeCodes]);
 
   // ---------------------------RESPOSTA AO ITEM--------------------------------
@@ -587,6 +618,10 @@ export function YearProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const currentCode = lastItemActivate;
     if (!currentCode || !isRespostaPage) return;
+
+    const controller = new AbortController();
+    const { signal } = controller;
+
     if (String(itemGraphCache.current?.code) === String(currentCode)) {
       setItemGraphData({
         code: currentCode,
@@ -599,24 +634,27 @@ export function YearProvider({ children }: { children: ReactNode }) {
         const res = await fetch(
           `/api/score_graph?code=${String(codeToFetch)}` +
             `&year=${currentYear}`,
+          { signal },
         );
         const json = await res.json();
         const newCacheData: ItemGraphType = {
           code: json?.code,
           dataset: json?.dataset,
         };
-
         itemGraphCache.current = newCacheData;
-
         if (lastItemActivate === codeToFetch) {
           setItemGraphData(newCacheData);
         }
       } catch (err) {
+        if (err.name === "AbortError") return;
         console.error("Erro ao carregar item_score:", err);
       }
     }
 
     fetchItemData(currentCode);
+    return () => {
+      controller.abort();
+    };
   }, [
     lastItemActivate,
     needUpdateEAP,
@@ -633,6 +671,10 @@ export function YearProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!isNotaAcertosPage) return;
+
+    const controller = new AbortController();
+    const { signal } = controller;
+
     const tipo = "regular";
     if (
       acertosCache.current?.area === deferredArea &&
@@ -641,12 +683,12 @@ export function YearProvider({ children }: { children: ReactNode }) {
       setAcertosData(acertosCache.current.dataset);
       return;
     }
-
     async function fetchAcertosData() {
       try {
         const targetArea = deferredArea || "LC";
         const res = await fetch(
           `/api/acertos?area=${String(targetArea)}&year=${currentYear}`,
+          { signal },
         );
         const json = await res.json();
         if (json.dataset) {
@@ -658,11 +700,15 @@ export function YearProvider({ children }: { children: ReactNode }) {
           setAcertosData(json.dataset.regular);
         }
       } catch (err) {
+        if (err.name === "AbortError") return;
         console.error("Erro ao carregar item_score:", err);
       }
     }
 
     fetchAcertosData();
+    return () => {
+      controller.abort();
+    };
   }, [deferredArea, currentYear, isNotaAcertosPage]);
 
   //---------------------------------MEAN---------------------------------------
@@ -681,28 +727,38 @@ export function YearProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!isMediaSimplesPage || !normalizedYear) return;
 
+    const controller = new AbortController();
+    const { signal } = controller;
+
     if (top2000Cache.current.has(normalizedYear)) {
       setTop2000Data(top2000Cache.current.get(normalizedYear));
       return;
     }
-
     async function fetchTop2000Data() {
       try {
-        const res = await fetch(`/api/mean?year=${normalizedYear}`);
+        const res = await fetch(`/api/mean?year=${normalizedYear}`, { signal });
         const json = await res.json();
         top2000Cache.current.set(normalizedYear, json);
         setLastItemActivate(null);
         setTop2000Data(json);
       } catch (err) {
+        if (err.name === "AbortError") return;
         console.error("Erro ao carregar probtrace:", err);
       }
     }
     fetchTop2000Data();
+
+    return () => {
+      controller.abort();
+    };
   }, [normalizedYear, isMediaSimplesPage]);
 
   useEffect(() => {
     if (!isMediaSimplesPage || !normalizedYear || activeRanking === null)
       return;
+
+    const controller = new AbortController();
+    const { signal } = controller;
 
     const cacheKey = `${normalizedYear}-${activeRanking}`;
 
@@ -717,11 +773,11 @@ export function YearProvider({ children }: { children: ReactNode }) {
       });
       return;
     }
-
     async function fetchCandidateData() {
       try {
         const res = await fetch(
           `/api/candidate?year=${normalizedYear}&rank=${activeRanking}`,
+          { signal },
         );
         const json: CandidateDataType = await res.json();
         candidateCache.current.set(cacheKey, json);
@@ -733,10 +789,14 @@ export function YearProvider({ children }: { children: ReactNode }) {
           MT: `${json.CO_PROVA_MT}_X_X`,
         });
       } catch (err) {
+        if (err.name === "AbortError") return;
         console.error("Erro ao carregar probtrace:", err);
       }
     }
     fetchCandidateData();
+    return () => {
+      controller.abort();
+    };
   }, [normalizedYear, activeRanking, setSelectionsByArea, isMediaSimplesPage]);
 
   // ---------------------------------------------------------------------------
@@ -764,11 +824,16 @@ export function YearProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!isTriPage || !isFetchingEAP) return;
+
+    const controller = new AbortController();
+    const { signal } = controller;
+
     async function fetchEAPData() {
       try {
         const res = await fetch(
           `/api/eap?sample=${sampleEAP}&area=${deferredArea}&ano=` +
             `${currentYear}&codigo=${codigo}&lingua=${lingua}`,
+          { signal },
         );
         if (!res.ok) throw new Error("Erro na rota interna");
         const json = await res.json();
@@ -777,10 +842,16 @@ export function YearProvider({ children }: { children: ReactNode }) {
           setIsFetchingEAP(false);
         }
       } catch (err) {
+        if (err.name === "AbortError") return;
         console.error("Erro ao carregar EAPdata:", err);
       }
     }
+
     if (isTriPage || needUpdateEAP) fetchEAPData();
+
+    return () => {
+      controller.abort();
+    };
   }, [
     deferredArea,
     isFetchingEAP,
@@ -805,6 +876,7 @@ export function YearProvider({ children }: { children: ReactNode }) {
     setActiveArea(id);
     if (deferredArea !== id) {
       //EAP handle
+      setCodesMap({});
       setEAPData(null);
       setIsInitialRender(true);
       setNeedUpdateEAP(true);
@@ -829,20 +901,37 @@ export function YearProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const abortControllerRef = useRef<AbortController | null>(null);
+
   const getItemDetails = useCallback<GetItemDetails>(
     async (coItem: number) => {
       if (!codigo) return null;
+
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+      const { signal } = controller;
+
       try {
         const response = await fetch(
           `/api/itens_details?year=${currentYear}` +
             `&codigo=${codigo}&coItem=${coItem}`,
+          { signal },
         );
         if (!response.ok) return null;
         const data: ItemDetails | null = await response.json();
         return data;
       } catch (error) {
+        if (error.name === "AbortError") return null;
         console.error("Erro ao buscar detalhes do item:", error);
         return null;
+      } finally {
+        if (abortControllerRef.current === controller) {
+          abortControllerRef.current = null;
+        }
       }
     },
     [codigo, currentYear],
@@ -886,13 +975,25 @@ export function YearProvider({ children }: { children: ReactNode }) {
     [selectedLabel, codesMap],
   );
 
+  const areaMapAbortControllerRef = useRef<AbortController | null>(null);
+
   const getAreaMap: GetAreaMapType = useCallback(
     async (codProva, tpLingua, score) => {
       if (!score) return [];
+
+      if (areaMapAbortControllerRef.current) {
+        areaMapAbortControllerRef.current.abort();
+      }
+
+      const controller = new AbortController();
+      areaMapAbortControllerRef.current = controller;
+      const { signal } = controller;
+
       try {
         const response = await fetch(
           `/api/area_map?year=${currentYear}` +
             `&codProva=${codProva}&tpLingua=${tpLingua ?? ""}&score=${score}`,
+          { signal },
         );
         if (!response.ok) return [];
         const contentType = response.headers.get("content-type");
@@ -902,8 +1003,13 @@ export function YearProvider({ children }: { children: ReactNode }) {
         const data = await response.json();
         return data;
       } catch (error) {
+        if (error.name === "AbortError") return [];
         console.error("Erro ao buscar area map:", error);
         return [];
+      } finally {
+        if (areaMapAbortControllerRef.current === controller) {
+          areaMapAbortControllerRef.current = null;
+        }
       }
     },
     [currentYear],
@@ -1006,6 +1112,8 @@ export function YearProvider({ children }: { children: ReactNode }) {
   //----------------------------------------------------------------------------
   //----------------------------------RETURN------------------------------------
   //----------------------------------------------------------------------------
+  //
+  console.log(codesMap);
 
   return (
     <YearContext.Provider

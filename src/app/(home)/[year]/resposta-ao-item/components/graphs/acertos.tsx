@@ -214,7 +214,7 @@ export default function AcertosChart() {
   ]);
 
   console.log(itemGraphData);
-  console.log(lastItemActivate != itemGraphData?.code);
+  console.log("last:", lastItemActivate);
 
   if (
     !itemGraphData ||

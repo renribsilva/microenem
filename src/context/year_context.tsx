@@ -1007,10 +1007,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
   //----------------------------------RETURN------------------------------------
   //----------------------------------------------------------------------------
 
-  console.log("selectes:", selectedItems);
-  console.log(activeCodes);
-  console.log(codesMap);
-
   return (
     <YearContext.Provider
       value={{

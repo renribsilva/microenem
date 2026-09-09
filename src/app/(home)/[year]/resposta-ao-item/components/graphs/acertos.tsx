@@ -17,9 +17,6 @@ export default function AcertosChart() {
   const { lastItemActivate, lastItemActivateNum, itemGraphData } =
     useYearData();
 
-  console.log(lastItemActivate);
-  console.log(itemGraphData);
-
   const { chartColor } = chartProps;
   const { xMin, xMax } = chartProps;
 

@@ -213,9 +213,6 @@ export default function AcertosChart() {
     textColor,
   ]);
 
-  console.log(itemGraphData);
-  console.log("last:", lastItemActivate);
-
   if (
     !itemGraphData ||
     xMin === null ||

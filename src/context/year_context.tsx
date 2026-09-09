@@ -1113,7 +1113,6 @@ export function YearProvider({ children }: { children: ReactNode }) {
   //----------------------------------RETURN------------------------------------
   //----------------------------------------------------------------------------
   //
-  console.log(codesMap);
 
   return (
     <YearContext.Provider

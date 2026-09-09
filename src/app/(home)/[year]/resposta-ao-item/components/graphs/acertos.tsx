@@ -213,11 +213,14 @@ export default function AcertosChart() {
     textColor,
   ]);
 
+  console.log(itemGraphData);
+  console.log(lastItemActivate != itemGraphData?.code);
+
   if (
     !itemGraphData ||
     xMin === null ||
     xMax === null ||
-    lastItemActivate != itemGraphData.code
+    lastItemActivate != itemGraphData?.code
   ) {
     return (
       <div className={`${styles.container}`}>

@@ -10,12 +10,12 @@ function Footer() {
       <div>No bullshit, just data.</div>
       <div className={styles.link_container}>
         <div>
-          <Link href="/sources" className={styles.link_source}>
+          <Link href="/sources" className={styles.link_source} prefetch={false}>
             Código
           </Link>
         </div>
         <div>
-          <Link href="/privacy" className={styles.link_source}>
+          <Link href="/privacy" className={styles.link_source} prefetch={false}>
             Privacidade
           </Link>
         </div>

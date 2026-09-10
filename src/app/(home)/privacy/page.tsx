@@ -1,5 +1,5 @@
-import styles from "./privacy.module.css";
 import Card from "../../../components/tsx/card";
+import styles from "./privacy.module.css";
 
 export default function PrivacyLayout() {
   return (

@@ -33,6 +33,7 @@ function getCachedPdf(url: string): Promise<pdfjs.PDFDocumentProxy> {
       url,
       useWorkerFetch: true,
       isEvalSupported: true,
+      verbosity: pdfjs.VerbosityLevel.ERRORS,
     });
 
     promise = loadingTask.promise;

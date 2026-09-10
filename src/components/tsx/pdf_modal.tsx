@@ -176,8 +176,8 @@ export default function PdfModal({
         borderRadius: "16px",
         border: "1px solid #ffffff",
         backgroundColor: "#ffffff",
-        width: `${modalWidth + 2}px`,
-        maxWidth: "calc(100vw - 30px)",
+        width: `${modalWidth + 20}px`,
+        maxWidth: "calc(100vw - 0px)",
         height: "90vh",
         maxHeight: "90vh",
         overflow: "hidden",
@@ -317,6 +317,8 @@ export default function PdfModal({
               width: "max-content",
               minWidth: "max-content",
               padding: "14px",
+              paddingRight: "0px",
+              marginRight: "0px",
               boxSizing: "border-box",
             }}
           >

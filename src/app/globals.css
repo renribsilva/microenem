@@ -83,3 +83,21 @@ body {
 .apexcharts-toolbar {
   background: var(--panel) !important;
 }
+
+/****************************************************************************/
+/* Scrollbar customizada para o Chrome/Edge/Safari (Colocar no globals.css) */
+/****************************************************************************/
+
+dialog ::-webkit-scrollbar {
+  width: 5px !important;
+  height: 5px !important;
+}
+
+dialog ::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+  border-radius: 4px !important;
+}
+
+dialog ::-webkit-scrollbar-track {
+  background: transparent !important;
+}

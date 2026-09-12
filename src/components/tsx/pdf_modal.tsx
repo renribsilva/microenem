@@ -317,6 +317,7 @@ export default function PdfModal({
               width: "max-content",
               minWidth: "max-content",
               padding: "14px",
+              paddingRight: "0px",
               marginRight: "0px",
               boxSizing: "border-box",
             }}

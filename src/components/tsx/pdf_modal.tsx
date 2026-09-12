@@ -176,7 +176,7 @@ export default function PdfModal({
         borderRadius: "16px",
         border: "1px solid #ffffff",
         backgroundColor: "#ffffff",
-        width: `${modalWidth + 20}px`,
+        width: `${modalWidth + 8}px`,
         maxWidth: "calc(100vw - 35px)",
         height: "90vh",
         maxHeight: "90vh",
@@ -308,8 +308,6 @@ export default function PdfModal({
             minWidth: 0,
             minHeight: 0,
             overflow: "auto",
-            display: "flex",
-            justifyContent: "center",
           }}
         >
           <div
@@ -317,9 +315,8 @@ export default function PdfModal({
             style={{
               width: "max-content",
               minWidth: "max-content",
-              padding: "14px",
-              marginRight: "0px",
               boxSizing: "border-box",
+              paddingInline: "10px",
             }}
           >
             <PdfThumbnail

@@ -197,6 +197,7 @@ export default function PdfThumbnail({
           minWidth: "max-content",
           minHeight: !isLoaded ? "400px" : "auto",
           boxSizing: "border-box",
+          paddingBlock: "14px",
         }}
       >
         {!isLoaded && (
@@ -243,6 +244,7 @@ export default function PdfThumbnail({
         width: "100%",
         overflow: "auto",
         minHeight: !isLoaded ? "400px" : "auto",
+        paddingBlock: "14px",
       }}
     >
       {!isLoaded && (

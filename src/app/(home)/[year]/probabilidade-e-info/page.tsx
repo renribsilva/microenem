@@ -31,10 +31,10 @@ export default function DadosDoExame() {
         </div>
       </div>
       <div className={styles.main_bottom} id="topo-pagina">
-        <Card className={styles.card_icc} fullSize>
+        <Card className={styles.card_icc}>
           <ICCChart />
         </Card>
-        <Card className={styles.card_info} fullSize>
+        <Card className={styles.card_info}>
           <InfoChart />
         </Card>
       </div>

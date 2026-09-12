@@ -60,6 +60,4 @@
   /* background-color: aquamarine; */
   height: 400px;
   display: flex;
-  flex-direction: column;
-  overflow: hidden;
 }

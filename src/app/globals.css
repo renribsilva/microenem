@@ -85,7 +85,7 @@ body {
 }
 
 /****************************************************************************/
-/* Scrollbar customizada para o Chrome/Edge/Safari (Colocar no globals.css) */
+/*********************** Scrollbar customizada para o ***********************/
 /****************************************************************************/
 
 dialog ::-webkit-scrollbar {
@@ -100,4 +100,20 @@ dialog ::-webkit-scrollbar-thumb {
 
 dialog ::-webkit-scrollbar-track {
   background: transparent !important;
+}
+
+/****************************************************************************/
+/*********************** Scrollbar customizada para o ***********************/
+/****************************************************************************/
+
+/* Reset global de botões para Safari e dispositivos mobile */
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  color: inherit;
+  background-color: transparent;
 }

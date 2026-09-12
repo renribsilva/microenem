@@ -53,7 +53,7 @@
   min-height: 230px;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 1000px) {
   .block1_first {
     flex-direction: column;
   }
@@ -97,7 +97,7 @@
   min-height: 300px;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 1000px) {
   .block1_second {
     flex-direction: column;
   }

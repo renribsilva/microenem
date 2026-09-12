@@ -154,17 +154,25 @@ export default function ICCChart() {
             strokeDashArray: 0,
             label: {
               text: [
-                `Traço de prob. da nota`,
                 `${(Number.isFinite(proficienciaAtual)
                   ? proficienciaAtual
                   : 0
                 ).toFixed(0)}`,
                 //eslint-disable-next-line
               ] as any,
-              style: { color: "#fff", background: chartColor || "#ff0000" },
+              style: {
+                color: "#fff",
+                background: chartColor || "#ff0000",
+                padding: {
+                  left: 10,
+                  right: 10,
+                  top: 5,
+                  bottom: 5,
+                },
+              },
               borderWidth: 0,
               orientation: "horizontal",
-              offsetY: -15,
+              offsetY: 235,
             },
           },
         ],
@@ -190,7 +198,7 @@ export default function ICCChart() {
         </div>
         <div className={styles.subtitle} style={{ color: textColor }}>
           Modelagem da probabilidade de acerto em função da proficiência
-          estimada.
+          estimada – selecione um item na tabela para destacar a sua curva.
         </div>
       </div>
       <div className={styles.chartWrapper}>
@@ -201,6 +209,7 @@ export default function ICCChart() {
           height="100%"
           width="100%"
         />
+        <div className={styles.subtitle} style={{ marginTop: "10px" }}></div>
       </div>
     </div>
   );

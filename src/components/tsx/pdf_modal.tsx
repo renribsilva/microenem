@@ -177,7 +177,7 @@ export default function PdfModal({
         border: "1px solid #ffffff",
         backgroundColor: "#ffffff",
         width: `${modalWidth + 20}px`,
-        maxWidth: "calc(100vw - 0px)",
+        maxWidth: "calc(100vw - 35px)",
         height: "90vh",
         maxHeight: "90vh",
         overflow: "hidden",

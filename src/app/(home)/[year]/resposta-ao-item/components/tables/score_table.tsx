@@ -122,7 +122,7 @@ export default function ScoreTable() {
           );
         },
       }),
-      ...(!isMobile
+      ...(!isSemiMobile
         ? [
             columnHelper.accessor("abandonado", {
               header: "Anulado",
@@ -274,6 +274,7 @@ export default function ScoreTable() {
   }, [
     columnHelper,
     isMobile,
+    isSemiMobile,
     setIsLoaded,
     setQuestaoPopUp,
     setShowPopUp,

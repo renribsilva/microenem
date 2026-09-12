@@ -192,11 +192,20 @@ export default function InfoChart() {
             borderColor: chartColor || "#ff0000",
             strokeDashArray: 0,
             label: {
-              text: `Traço de info. da nota ${safeProficiencia.toFixed(0)}`,
-              style: { color: "#fff", background: chartColor || "#ff0000" },
+              text: `${safeProficiencia.toFixed(0)}`,
+              style: {
+                color: "#fff",
+                background: chartColor || "#ff0000",
+                padding: {
+                  left: 10,
+                  right: 10,
+                  top: 5,
+                  bottom: 5,
+                },
+              },
               borderWidth: 0,
               orientation: "horizontal",
-              offsetY: -15,
+              offsetY: 220,
             },
           },
         ],
@@ -224,7 +233,8 @@ export default function InfoChart() {
         </div>
         <div className={styles.subtitle} style={{ color: textColor }}>
           Pontos da proficiência para os quais o item apresenta maior precisão
-          para distinguir quem domina de quem não domina a habilidade avalidada.
+          para distinguir quem domina de quem não domina a habilidade avalidada
+          – selecione um item na tabela para destacar a sua curva.
         </div>
       </div>
       <div className={styles.chartWrapper}>

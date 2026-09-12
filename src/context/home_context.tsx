@@ -185,9 +185,36 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   const [userPointIndex, setUserPointIndex] = useState<number | null>(null);
 
   // PointIndex inicial
+  // PointIndex inicial baseado em 2/3 do range (xMin até xMax)
   const initialIndex = useMemo(() => {
     if (!activeTCC?.labels_x?.length) return 0;
-    return 0;
+
+    // Resgata o min e max dos metadados da mesma forma que em chartProps
+    const minVal =
+      activeTCC?.metadata?.min !== undefined &&
+      activeTCC?.metadata?.min !== null
+        ? Math.floor(activeTCC.metadata.min / 100) * 100
+        : activeTCC.labels_x[0];
+
+    const maxVal =
+      activeTCC?.metadata?.max !== undefined &&
+      activeTCC?.metadata?.max !== null
+        ? Math.ceil(activeTCC.metadata.max / 100) * 100
+        : activeTCC.labels_x[activeTCC.labels_x.length - 1];
+
+    // Ponto alvo correspondente a 2/3 da escala de proficiência
+    const targetValue = minVal + ((maxVal - minVal) * 2) / 3;
+
+    // Busca o índice em labels_x com valor numérico mais próximo do alvo
+    return activeTCC.labels_x.reduce(
+      (prev: number, curr: number, idx: number) => {
+        return Math.abs(curr - targetValue) <
+          Math.abs(activeTCC.labels_x[prev] - targetValue)
+          ? idx
+          : prev;
+      },
+      0,
+    );
   }, [activeTCC]);
 
   // PointIndex definido

@@ -58,6 +58,7 @@
 .card_icc,
 .card_info {
   /* background-color: aquamarine; */
+  height: 400px;
   display: flex;
   min-height: 360px;
 }

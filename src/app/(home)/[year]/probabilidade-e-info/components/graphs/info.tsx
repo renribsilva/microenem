@@ -193,9 +193,12 @@ export default function InfoChart() {
             strokeDashArray: 0,
             label: {
               text: `${safeProficiencia.toFixed(0)}`,
+              position: "bottom",
+              offsetY: 23,
               style: {
                 color: "#fff",
                 background: chartColor || "#ff0000",
+                fontSize: "12px",
                 padding: {
                   left: 10,
                   right: 10,
@@ -205,7 +208,6 @@ export default function InfoChart() {
               },
               borderWidth: 0,
               orientation: "horizontal",
-              offsetY: 220,
             },
           },
         ],

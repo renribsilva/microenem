@@ -160,9 +160,12 @@ export default function ICCChart() {
                 ).toFixed(0)}`,
                 //eslint-disable-next-line
               ] as any,
+              position: "bottom",
+              offsetY: 23,
               style: {
                 color: "#fff",
                 background: chartColor || "#ff0000",
+                fontSize: "12px",
                 padding: {
                   left: 10,
                   right: 10,
@@ -172,7 +175,6 @@ export default function ICCChart() {
               },
               borderWidth: 0,
               orientation: "horizontal",
-              offsetY: 235,
             },
           },
         ],

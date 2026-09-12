@@ -103,17 +103,4 @@ dialog ::-webkit-scrollbar-track {
 }
 
 /****************************************************************************/
-/*********************** Scrollbar customizada para o ***********************/
 /****************************************************************************/
-
-/* Reset global de botões para Safari e dispositivos mobile */
-button,
-input[type="button"],
-input[type="submit"],
-input[type="reset"] {
-  -webkit-appearance: none;
-  appearance: none;
-  -webkit-tap-highlight-color: transparent;
-  color: inherit;
-  background-color: transparent;
-}

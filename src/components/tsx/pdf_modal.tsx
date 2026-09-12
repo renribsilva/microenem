@@ -308,12 +308,13 @@ export default function PdfModal({
             minWidth: 0,
             minHeight: 0,
             overflow: "auto",
+            display: "flex",
+            justifyContent: "center",
           }}
         >
           <div
             ref={thumbnailContentRef}
             style={{
-              justifyContent: "center",
               width: "max-content",
               minWidth: "max-content",
               padding: "14px",

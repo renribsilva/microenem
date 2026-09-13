@@ -23,7 +23,9 @@ function EAPButton() {
   const { chartColor } = chartProps;
 
   const isEmpty = Object.keys(selectedItems ?? {}).length === 0;
-  const isDisabled = Boolean(isFetchingEAP || isEmpty);
+  const isDisabled = Boolean(
+    isFetchingEAP || isEmpty || (!needUpdateEAP && !isInitialRender),
+  );
 
   const handleUpdateChart = () => {
     if (!needUpdateEAP || isEmpty) return;

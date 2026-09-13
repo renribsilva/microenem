@@ -53,7 +53,7 @@ export default function Treineiros() {
         header: "Total",
         cell: ({ getValue }) =>
           isLoading || getValue() === undefined ? (
-            <TDMedium />
+            <TDMedium height="0.9rem" />
           ) : (
             <span className={styles.card_abstencao_num}>
               {Number(getValue()).toLocaleString("pt-BR")}
@@ -65,7 +65,7 @@ export default function Treineiros() {
         header: "(%)",
         cell: ({ getValue }) =>
           isLoading || getValue() === undefined ? (
-            <TDMedium />
+            <TDMedium height="0.9rem" />
           ) : (
             <span className={styles.card_abstencao_num}>
               {String(getValue())}%

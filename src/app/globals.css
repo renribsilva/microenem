@@ -88,19 +88,15 @@ body {
 /*********************** Scrollbar customizada para o ***********************/
 /****************************************************************************/
 
+/* Firefox */
+dialog,
+dialog * {
+  scrollbar-width: none !important;
+}
+
+/* Chrome, Safari, Edge */
 dialog ::-webkit-scrollbar {
   width: 0px !important;
   height: 0px !important;
+  display: none !important;
 }
-
-dialog ::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.3) !important;
-  border-radius: 4px !important;
-}
-
-dialog ::-webkit-scrollbar-track {
-  background: transparent !important;
-}
-
-/****************************************************************************/
-/****************************************************************************/

@@ -176,7 +176,7 @@ export default function PdfModal({
         borderRadius: "16px",
         border: "1px solid #ffffff",
         backgroundColor: "#ffffff",
-        width: `${modalWidth + 8}px`,
+        width: `${modalWidth + 10}px`,
         maxWidth: "calc(100vw - 35px)",
         height: "90vh",
         maxHeight: "90vh",
@@ -302,12 +302,15 @@ export default function PdfModal({
         </div>
         <div
           ref={thumbnailContainerRef}
+          className="scrollOverlay"
           style={{
             flex: "1 1 auto",
             width: "100%",
             minWidth: 0,
             minHeight: 0,
-            overflow: "auto",
+            overflow: "scroll",
+            position: "relative",
+            scrollbarGutter: "none",
           }}
         >
           <div
@@ -317,6 +320,7 @@ export default function PdfModal({
               minWidth: "max-content",
               boxSizing: "border-box",
               paddingInline: "10px",
+              margin: "0 auto",
             }}
           >
             <PdfThumbnail

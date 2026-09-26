@@ -47,22 +47,12 @@ function EAPButton() {
     <button
       onClick={handleUpdateChart}
       disabled={isDisabled}
+      className={styles.btn_chart}
       style={{
-        padding: "12px 28px",
-        width: "100%",
-        backgroundColor: isDisabled ? "#e2e8f0" : chartColor,
-        color: isDisabled ? "#94a3b8" : "white",
-        border: "none",
-        borderRadius: "12px",
-        cursor: isDisabled ? "not-allowed" : "pointer",
-        fontWeight: "700",
-        fontSize: "14px",
-        boxShadow: isDisabled
-          ? "none"
-          : "0 10px 15px -3px rgba(79, 70, 229, 0.3)",
-        transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
+        backgroundColor: isDisabled ? undefined : chartColor,
       }}
     >
+      {" "}
       {isFetchingEAP ? (
         <span className={styles.dots}>PROCESSANDO</span>
       ) : isEmpty ? (

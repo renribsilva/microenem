@@ -407,7 +407,7 @@ export default function ScoreTable() {
                   isActive && styles.row_active,
                 )}
                 onClick={() => {
-                  if (!isAbandonado) {
+                  if (!isAbandonado && !isActive) {
                     setLastItemActivate(itemId);
                     setLastItemActivateNum(row.original.posicao);
                     setItemGraphData(null);

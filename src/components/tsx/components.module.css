@@ -711,6 +711,29 @@
   }
 }
 
+.btn_chart {
+  padding: 12px 28px;
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 14px;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn_chart:disabled {
+  background-color: var(--tab-hover);
+  color: var(--tab-text);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.btn_chart:not(:disabled) {
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+}
+
 /**********************************************************/
 /***********************PDFBUTTON**************************/
 /**********************************************************/

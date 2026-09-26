@@ -52,7 +52,6 @@ function EAPButton() {
         backgroundColor: isDisabled ? undefined : chartColor,
       }}
     >
-      {" "}
       {isFetchingEAP ? (
         <span className={styles.dots}>PROCESSANDO</span>
       ) : isEmpty ? (
